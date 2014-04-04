@@ -14,9 +14,9 @@ namespace Dungeon {
 	class SplayTree { 
 		private:	
 			struct Node {
-				Node* left = 0;
-				Node* right = 0;
-				Node* parent = 0;
+				Node* left;
+				Node* right;
+				Node* parent;
 				IObject* value;
 			};
 

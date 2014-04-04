@@ -113,6 +113,8 @@ namespace Dungeon {
 			}
 		}
 		f = new Node;
+		f->left = 0;
+		f->right = 0;
 		f->value = obj;
 		f->parent = p;	
 		if(p == 0)

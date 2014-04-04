@@ -11,7 +11,7 @@
 namespace Dungeon {
 	class IObject {
 		public:
-			virtual int getId();
+			virtual int getId() = 0;
 	};
 }
 
