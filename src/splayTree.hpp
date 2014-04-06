@@ -8,7 +8,7 @@
 #ifndef SPLAYTREE_HPP
 #define	SPLAYTREE_HPP
 
-#include "iObject.hpp"
+#include "common.hpp"
 
 namespace Dungeon {
 	class SplayTree { 
@@ -29,9 +29,9 @@ namespace Dungeon {
 		public:
 			SplayTree();
 			void insert(IObject* obj);
-			void remove(int id);
-			IObject* find(int id);
+			void remove(objId id);
+			IObject* find(objId id);
 	};
 }
-#endif	/* SPLAYTREE_HPP */
+#endif
 

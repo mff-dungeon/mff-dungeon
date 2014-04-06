@@ -2,7 +2,7 @@ CC := g++
 CC := clang --analyze
 SRCDIR := src
 BUILDDIR := build
-TARGET := bin/dung
+TARGET := bin/dungeon
 
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -21,5 +21,7 @@ clean:
 
 tester:
 	$(CC) $(CFLAGS) test/tester.cpp $(INC) $(LIB) -o bin/tester
+	
+all: $(TARGET)
 
-.PHONY: clean
+.PHONY: clean all

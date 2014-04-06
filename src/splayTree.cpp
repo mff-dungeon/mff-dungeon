@@ -1,4 +1,4 @@
-#include "iObject.hpp"
+#include "common.hpp"
 #include "splayTree.hpp"
 
 namespace Dungeon {
@@ -128,9 +128,9 @@ namespace Dungeon {
 	};
 
 	/* 
-	 * Finds and returns the object in the tree with id = int id
+	 * Finds and returns the object in the tree with id = objId id
 	 */
-	IObject* SplayTree::find(int id) {
+	IObject* SplayTree::find(objId id) {
 		Node* f = this->mroot;
 		while(f != 0) {
 			if(f->value->getId() == id) 
@@ -147,9 +147,9 @@ namespace Dungeon {
 	};
 
 	/* 
-	 * Removes node with IObject having id = int id
+	 * Removes node with IObject having id = objId id
 	 */
-	void SplayTree::remove(int id) {
+	void SplayTree::remove(objId id) {
 		Node* f = this->mroot;
 		while(f != 0 && f->value->getId() != id) {
 			if(f->value->getId() < id)
