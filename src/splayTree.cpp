@@ -1,5 +1,6 @@
 #include "common.hpp"
 #include "splayTree.hpp"
+#include <fstream>
 
 namespace Dungeon {
 	
@@ -177,5 +178,53 @@ namespace Dungeon {
 		}
 
 		delete f;
+	};
+	
+	/*
+	 * Print blank Vertex
+	 */
+	void SplayTree::printDotNull(objId key, int nullcount, std::ofstream& stream) {
+		stream << "    null" << nullcount << " [shape=point];" << std::endl;
+		stream << "    " << key << " -> null" << nullcount << ";" << std::endl;
+	};
+
+	/* 
+	 * Print Vertex 
+	 */ 
+	void SplayTree::printDotVertex(Node* node, std::ofstream& stream) {
+		static int nullcount = 0;
+		
+		if(node->left) 
+		{
+			stream << "    " << node->value->getId() << " -> " << node->left->value->getId() << ";" << std::endl;
+			printDotVertex(node->left, stream);
+		}
+		else 
+			printDotNull(node->value->getId(), nullcount++, stream);
+		
+		if(node->right) 
+		{
+			stream << "    " << node->value->getId() << " -> " << node->right->value->getId() << ";" << std::endl;
+			printDotVertex(node->right, stream);
+		}
+		else 
+			printDotNull(node->value->getId(), nullcount++, stream);
+	};
+
+	/*
+	 * Serializes the Splay Tree into DOT notation
+	 */ 
+	void SplayTree::printDotFile(std::ofstream& stream) {
+		stream << "digraph BST {" << std::endl;
+		stream << "    node [fontname=\"Arial\"];\n";
+		
+		if (!mroot)
+			stream << std::endl;
+		else if (!mroot->right && !mroot->left)
+			stream << "    " << mroot->value->getId() << std::endl;
+		else
+			printDotVertex(mroot, stream);
+
+		stream << "}" << std::endl;
 	};
 }

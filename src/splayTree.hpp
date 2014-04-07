@@ -9,6 +9,7 @@
 #define	SPLAYTREE_HPP
 
 #include "common.hpp"
+#include <fstream>
 
 namespace Dungeon {
 	class SplayTree { 
@@ -26,11 +27,14 @@ namespace Dungeon {
 			void splay(Node* n);
 			void replace(Node* u, Node* v);
 			Node* findMinimum(Node *root);
+			void printDotNull(objId key, int nullcount, std::ofstream& stream);
+			void printDotVertex(Node* node, std::ofstream& stream);
 		public:
 			SplayTree();
 			void insert(IObject* obj);
 			void remove(objId id);
 			IObject* find(objId id);
+			void printDotFile(std::ofstream& stream);
 	};
 }
 #endif

@@ -7,6 +7,6 @@ namespace Dungeon {
 			SplayTree objects;
 
 		public:
-			IObject getObject(objId id);
+			IObject* getObject(objId id);
 	};
 }

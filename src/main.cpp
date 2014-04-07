@@ -7,6 +7,7 @@ using namespace Dungeon;
 int main(int argc, char** argv) {
 	std::cout << "This is Jabber Dungeon starting." << std::endl;
 	GameManager gm();
+	
 	/*
 	ActionQueue queue (gm);
 	XmppListener xmpp (queue);
