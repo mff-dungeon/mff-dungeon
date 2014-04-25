@@ -1,20 +1,35 @@
 CC := g++
-CC := clang --analyze
+#CC := clang --analyze
 SRCDIR := src
+DYNDIR := src/Objects/*.hpp
 BUILDDIR := build
 TARGET := bin/dungeon
 
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
+DYNAMICS := $(shell echo $(DYNDIR))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g -O2 -Wall
+CFLAGS := -std=c++11 -g -O2 -Wall
 
 $(TARGET): $(OBJECTS)
-	$(CC) $^ -o $(TARGET)
+	@echo "[ LD ] " $(TARGET)
+	@$(CC) $^ -o $(TARGET)
+
+src/dynamic.hpp: $(DYNAMICS)
+	@printf "#ifndef DYNAMIC_HPP\n#define	DYNAMIC_HPP\n\n" > $@
+	@echo $(DYNAMICS) | sed -r 's~src/([[:alnum:]/.-]+)\s*~#include "\1"\n~g' >> $@
+	@printf "#endif\n" >> $@
+	@echo "[ .. ] Dynamic file generated."
+
+build/main.o: src/main.cpp src/dynamic.hpp
+	@mkdir -p $(shell dirname $@)
+	@echo "[ CC ] " $< " --> " $@
+	@$(CC) $(CFLAGS) -c -o $@ $<
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-	@mkdir -p $(BUILDDIR)
-	$(CC) $(CFLAGS) -c -o $@ $<
+	@mkdir -p $(shell dirname $@)
+	@echo "[ CC ] " $< " --> " $@
+	@$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
 	$(RM) -r $(BUILDDIR) $(TARGET)

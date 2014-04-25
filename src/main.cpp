@@ -1,24 +1,29 @@
 #include "common.hpp"
-#include "gameManager.cpp"
+#include "dynamic.hpp"
+#include "GameManager.hpp"
+#include "ActionQueue.hpp"
 #include <iostream>
 
 using namespace Dungeon;
 
 int main(int argc, char** argv) {
 	std::cout << "This is Jabber Dungeon starting." << std::endl;
-	GameManager gm();
+	GameManager* gm = new GameManager();
+	ActionQueue* queue = new ActionQueue (gm);
 	
-	/*
-	ActionQueue queue (gm);
+	Alive* admin = new Alive("human/admin@jabberdung");
+    
+	/*ConsoleDriver* console = new ConsoleDriver(queue, admin);
+	console.run();
 	XmppListener xmpp (queue);
-	ConsoleDriver console (queue, "admin@jabberdung");
     
 	xmpp.connect();
 	xmpp.startThread();
-	queue.startLoop();
-	console.run();
+	 */
 	
-	queue.finish();
+	queue->loopToFinish();
+	
+	/*
 	xmpp.stopThread();
 	xmpp.disconnect();
 	*/

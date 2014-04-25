@@ -1,14 +1,30 @@
 #include <string>
+#include <vector>
 
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
-/**
- * Should be value type (struct), comparable
- */
-typedef std::string objId;
+using namespace std;
 
-#include "iObject.hpp"
+namespace Dungeon {
+    /*
+     * Circular dependencies...
+     */
+    class GameManager; 
+    class ObjectLoader;
+    class ObjectPointer;
+    class Action;
+    class ActionDescriptor;
+    class IObject;
+    
+    /**
+     * Should be value type (struct), comparable
+     */
+    typedef string objId;
+    typedef vector<Action *> ActionList;
+}
+
+#include "IObject.hpp"
 
 #endif
 
