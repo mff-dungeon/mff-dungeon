@@ -1,6 +1,10 @@
 /* 
  * This should be an easy way to create use-once actions.
- * Just kinda magic.
+ * Just kinda magic. Desired usage:
+ * 
+ *  new CallbackAction("action-type", "Explanation", 
+ *      RegexMatcher::matcher("^reg(ular)?ex(pression)?"),
+ *      [] (ActionDescriptor* ad) { ... });
  */
 
 #ifndef CALLBACKACTION_H
@@ -8,7 +12,7 @@
 
 #include <functional>
 #include "../common.hpp"
-#include "../RegexMatcher.cpp"
+#include "../RegexMatcher.hpp"
 
 namespace Dungeon {
 
@@ -16,8 +20,8 @@ namespace Dungeon {
     public:
         CallbackAction(string type,
                 string explanation,
-                bool (*matchCallback)(string command),
-                function<void(ActionDescriptor*)> commitCallback) 
+                function<bool (string)> matchCallback,
+                function<void (ActionDescriptor*)> commitCallback) 
             : Action(type), 
                 explanation(explanation), 
                 matchCallback(matchCallback), 
@@ -29,7 +33,7 @@ namespace Dungeon {
 
     private:
         string explanation;
-        bool (*matchCallback)(string);
+        function<bool (string)> matchCallback;
         function<void (ActionDescriptor*)> commitCallback;
     };
 

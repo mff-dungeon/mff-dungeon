@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <iostream>
 
 #ifndef COMMON_HPP
 #define COMMON_HPP

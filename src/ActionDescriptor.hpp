@@ -23,6 +23,7 @@ namespace Dungeon {
     private:
         Action *action;
         GameManager *gm;
+        int id;
 
     };
 }
