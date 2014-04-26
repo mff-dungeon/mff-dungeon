@@ -13,12 +13,12 @@ namespace Dungeon {
 
     class Driver {
     public:
-        Driver(ActionQueue queue, Alive figure);
+        Driver(ActionQueue* queue, Alive* figure);
         virtual void worker() = 0;
 
     protected:
-        ActionQueue queue;
-        Alive figure;
+        ActionQueue* queue;
+        Alive* figure;
     };
 }
 

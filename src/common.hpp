@@ -4,6 +4,7 @@
 
 #ifndef COMMON_HPP
 #define COMMON_HPP
+#define DB_NAME "data.db"
 
 using namespace std;
 

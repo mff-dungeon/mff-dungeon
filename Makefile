@@ -13,7 +13,7 @@ CFLAGS := -std=c++11 -g -O2 -Wall
 
 $(TARGET): $(OBJECTS)
 	@echo "[ LD ] " $(TARGET)
-	@$(CC) $^ -o $(TARGET)
+	@$(CC) $^ -o $(TARGET) -lsqlite3
 
 src/dynamic.hpp: $(DYNAMICS)
 	@printf "#ifndef DYNAMIC_HPP\n#define	DYNAMIC_HPP\n\n" > $@
