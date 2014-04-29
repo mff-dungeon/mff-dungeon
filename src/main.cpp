@@ -3,6 +3,7 @@
 #include "GameManager.hpp"
 #include "ActionQueue.hpp"
 #include "ConsoleDriver.hpp"
+#include "XmppListener.hpp"
 #include <iostream>
 
 using namespace Dungeon;
@@ -16,12 +17,10 @@ int main(int argc, char** argv) {
     
 	ConsoleDriver* console = new ConsoleDriver(queue, admin);
 	console->run();
-        /*
-	XmppListener xmpp (queue);
-    
-	xmpp.connect();
-	xmpp.startThread();
-	 */
+        
+	XmppListener* xmpp = new XmppListener ();
+	xmpp->run();
+	 
 	
 	queue->loopToFinish();
 	
