@@ -12,6 +12,7 @@ namespace Dungeon
     {
     public:
         Alive(objId id) : IObject(id) {};
+        void getAllActions(ActionList* list);
         virtual void getActions(ActionList* list, IObject *callee);
         int hitpoints;
     };

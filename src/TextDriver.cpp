@@ -7,15 +7,29 @@ namespace Dungeon {
     }
 
     TextDriver::~TextDriver() {
-		//TODO: check what is alist, delete[] instead
-		delete alist;
+	for (size_t i = 0; i < alist->size(); i++) {
+            delete alist[i];
+        }
+        
+	delete alist;
     }
     
     string TextDriver::process(string input) {
-        /*
-         Get my actions, find if any of them match, prepare result
-         */
-        string s = "Processing " + input + "\n";
-        return s;
+        alist->clear();
+        figure->getAllActions(alist);
+        
+        string response = "What do you mean \"" + input + "\"?\n";
+        for (size_t i = 0; i < alist->size(); i++) {
+            Action *action = alist[i];
+            
+            if (action->matchCommand(input)) {
+                queue->enqueue(action);
+                
+                response = "Found some action, let's see what happens!";
+                break;
+            }
+        }
+        
+        return response;
     }
 }

@@ -1,5 +1,7 @@
 #include "common.hpp"
 #include "Driver.hpp"
+#include "Action.hpp"
+#include "ActionQueue.hpp"
 
 #ifndef TEXTDRIVER_HPP
 #define	TEXTDRIVER_HPP
