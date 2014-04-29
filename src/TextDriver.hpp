@@ -13,7 +13,7 @@ namespace Dungeon {
         
         string process(string input);
     private:
-
+		ActionList* alist;
     };
 }
 #endif
