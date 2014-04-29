@@ -12,6 +12,7 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -std=c++11 -g -O2 -Wall
 
 $(TARGET): $(OBJECTS)
+	@mkdir -p $(shell dirname $@)
 	@echo "[ LD ] " $(TARGET)
 	@$(CC) $^ -o $(TARGET) -lsqlite3
 

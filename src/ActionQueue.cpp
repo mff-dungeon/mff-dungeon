@@ -24,7 +24,7 @@ namespace Dungeon {
 
 	void ActionQueue::process() {
 		ulock u(q_mutex);
-		while (actions.empty()) {
+		while (actions.empty() && running) {
 			q_condvar.wait(u);
                 }
 		if (actions.empty()) return;
@@ -32,17 +32,20 @@ namespace Dungeon {
 		ActionDescriptor *ad = actions.front();
 		actions.pop();
 
-                cout << "[ AQ ] Processing" << endl; 
 		ad->getAction()->commit(ad);
 	}
 
 	void ActionQueue::loopToFinish() {
 		while (running) {
+                        cout << "[ AQ ] Processing" << endl; 
 			process();
 		}
 	}
 
-
+        void ActionQueue::stop() {
+            this->running = false;
+            q_condvar.notify_one();
+        }
 }
 
 

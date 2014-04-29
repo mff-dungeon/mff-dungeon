@@ -14,7 +14,6 @@ namespace Dungeon {
     class Driver {
     public:
         Driver(ActionQueue* queue, Alive* figure);
-        virtual void worker() = 0;
 
     protected:
         ActionQueue* queue;

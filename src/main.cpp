@@ -2,6 +2,7 @@
 #include "dynamic.hpp"
 #include "GameManager.hpp"
 #include "ActionQueue.hpp"
+#include "ConsoleDriver.hpp"
 #include <iostream>
 
 using namespace Dungeon;
@@ -13,8 +14,9 @@ int main(int argc, char** argv) {
 	
 	Alive* admin = new Alive("human/admin@jabberdung");
     
-	/*ConsoleDriver* console = new ConsoleDriver(queue, admin);
-	console.run();
+	ConsoleDriver* console = new ConsoleDriver(queue, admin);
+	console->run();
+        /*
 	XmppListener xmpp (queue);
     
 	xmpp.connect();

@@ -23,12 +23,13 @@ namespace Dungeon {
         ActionDescriptor *enqueue(Action *action);
         void process();
         void loopToFinish();
+        void stop();
         
         typedef queue<ActionDescriptor *> qType;
     private:
         qType actions;
         GameManager* gm;
-        bool running = true;
+        volatile bool running = true;
         
         mutex q_mutex;
         condition_variable q_condvar;
