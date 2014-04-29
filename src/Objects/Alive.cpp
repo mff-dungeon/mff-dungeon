@@ -15,6 +15,6 @@ namespace Dungeon {
                     this->hitpoints = 0;
             }));
     }
-
+    
 }
 

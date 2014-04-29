@@ -1,7 +1,7 @@
 #include "ConsoleDriver.hpp"
 
 namespace Dungeon {
-    ConsoleDriver::ConsoleDriver(ActionQueue* queue, Alive* figure) : Driver(queue, figure) {
+    ConsoleDriver::ConsoleDriver(ActionQueue* queue, Alive* figure) : TextDriver(queue, figure) {
         
     }
 
@@ -12,9 +12,10 @@ namespace Dungeon {
         // do some shit
         cout << "[ CD ] Worker started" << endl;
         
-        string line;
-        while(cin >> line, !cin.eof()) {
-            cout << line << endl;
+        string line, output;
+        while(getline(cin, line), !cin.eof()) {
+            output = this->process(line);
+            cout << output;
         }
         
         this->queue->stop();

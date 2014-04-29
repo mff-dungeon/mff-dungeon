@@ -1,4 +1,4 @@
-#include "Driver.hpp"
+#include "TextDriver.hpp"
 #include "common.hpp"
 #include <thread>
 
@@ -7,7 +7,7 @@
 
 namespace Dungeon {
     
-    class ConsoleDriver : public Driver {
+    class ConsoleDriver : public TextDriver {
     public:
         ConsoleDriver(ActionQueue* queue, Alive* figure);
         virtual ~ConsoleDriver();
