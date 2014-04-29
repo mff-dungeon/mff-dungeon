@@ -35,7 +35,7 @@ namespace Dungeon {
 	}
 
 	void XmppListener::handleMessageReceived(Message::ref message) {
-		if (message->getBody()) {
+		if (message->getBody() == "") {
 			cout << "[ XMPP ] " << message->getFrom() << " is composing..." <<  endl;
 			return;
 		}
