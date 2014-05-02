@@ -19,6 +19,16 @@ namespace Dungeon {
                 }));
         }        
     }
+	
+	void Alive::serialize(Archiver& stream) {	// Implementation of serialization
+		if(stream->isStoring()) {
+			stream << hitpoints;
+		}
+		else {
+			stream >> hitpoints;
+		}
+	}
     
+	PERSISTENT_IMPLEMENTATION(Alive)
 }
 

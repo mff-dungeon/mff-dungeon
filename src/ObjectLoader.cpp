@@ -6,42 +6,29 @@
 #include "Objects/Dummy.hpp"
 
 namespace Dungeon {
-	/*
-	 * Just for now, will be probably changed soon
-	 * DB_NAME is defined in common.hpp
-	 * Testing table design: CREATE TABLE objects (oid TEXT NOT NULL, data TEXT NOT NULL);
-	 */
-	std::string ObjectLoader::loadFromDb(objId id) {
 
-		int sqlCode;
-		std::string result;
-		
-        sqlCode = sqlite3_open(DB_NAME, &dbConnection);
-        if(sqlCode != SQLITE_OK) { sqlite3_close(dbConnection); } /* Fucking error happened */
-
-        std::string stdstatement = "SELECT * FROM objects WHERE id = \"" + id + "\";";
-        const char *statement = stdstatement.c_str();
-		
-        sqlite3_prepare(dbConnection, statement, 200, &dbStatement, NULL);
-
-        sqlCode = sqlite3_step(dbStatement);
-        if(sqlCode == SQLITE_ROW) {
-            result = std::string((char *) sqlite3_column_text(dbStatement, 1));
-        }
-        else {
-			/* No objects with this is were found */
-			result = "";
-        }
-        sqlite3_finalize(dbStatement);
-        sqlite3_close(dbConnection);
-		return result;
+	IObject* ObjectLoader::loadObject(objId oid) {
+		stringstream cDataStream;
+		string cName;
+		if(DatabaseHandler::getInstance().loadObject(oid, cName, cDataStream) != 0)
+			return 0;
+		Archiver as(&cDataStream);
+		IObject* loaded = IObject::load(as, cName);
+		return loaded;
 	}
-	
-	IObject *ObjectLoader::loadObject(objId id) {
-		std::string objValue = loadFromDb(id);
-		return new DummyObject();
-	}
-	
-	void ObjectLoader::saveObject(IObject *obj) {
+
+	void ObjectLoader::saveObject(IObject* object) {
+		stringstream s;
+		Archiver as(&s);
+
+		string id, cName;
+		object->store(as, id, cName);
+
+		stringstream *cDataStream = new stringstream();
+		*cDataStream << as.printStream();
+		string cData = cDataStream->str();
+
+		DatabaseHandler::getInstance().saveObject(id, cName, cData);
+		delete cDataStream;
 	}
 }
