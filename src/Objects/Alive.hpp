@@ -17,6 +17,9 @@ namespace Dungeon
         virtual void getActions(ActionList* list, IObject *callee);
         int hitpoints;
 	
+	protected:
+		virtual void serialize(Archiver& stream);
+	
 	PERSISTENT_DECLARATION(Alive)		// Macro registering the object into list
     };
 

@@ -20,7 +20,7 @@ namespace Dungeon {
 			sqlite3_close(dbConnection);
 			return 1; //DatabaseHandler error: Error when opening database
 		}
-
+		
 		/*
 		 Count, to find out if we should delete or update
 		 */
@@ -55,7 +55,6 @@ namespace Dungeon {
 		if(sqlCode != SQLITE_DONE) { 
 			sqlite3_finalize(dbStatement);
 			sqlite3_close(dbConnection);
-			exit(sqlCode);
 			return 2; //DatabaseHandler error: Error when updating database
 		}
 		sqlite3_finalize(dbStatement);
@@ -89,7 +88,7 @@ namespace Dungeon {
 			memcpy(datac, dataptr, size);
 			for(int i=0; i<size; i++)
 				sData << datac[i];
-
+			
 			delete[] datac;
 		}
 		else {
@@ -101,6 +100,53 @@ namespace Dungeon {
 		sqlite3_finalize(dbStatement);
 		sqlite3_close(dbConnection);
 
+		return 0;
+	}
+	
+	int DatabaseHandler::initDatabase() {
+		sqlCode = sqlite3_open(DB_NAME, &dbConnection);
+		if(sqlCode != SQLITE_OK) { 
+			sqlite3_close(dbConnection);
+			return 1; //DatabaseHandler error: Error when opening database
+		}
+		
+		const char* create1 = "CREATE TABLE objects (" \
+			"id TEXT NOT NULL," \
+			"className TEXT NOT NULL," \
+			"data BLOB NOT NULL);";		// TODO: change to TEXT NOT NULL later
+		sqlite3_prepare(dbConnection, create1, strlen(create1), &dbStatement, 0);
+		sqlCode = sqlite3_step(dbStatement);
+		if(sqlCode != SQLITE_DONE) {
+			sqlite3_finalize(dbStatement);
+			sqlite3_close(dbConnection);
+			return 2; // DatabaseHandler error: Error creating table objects
+		}
+		
+		sqlite3_finalize(dbStatement);
+		sqlite3_close(dbConnection);
+		
+		return 0;
+	}
+	
+	int DatabaseHandler::dropDatabase() {
+		sqlCode = sqlite3_open(DB_NAME, &dbConnection);
+		if(sqlCode != SQLITE_OK) {
+			sqlite3_close(dbConnection);
+			return 1; // DatabaseHandler error: Error when opening database
+		}
+		
+		const char* drop = "DROP TABLE objects;";
+		sqlite3_prepare(dbConnection, drop, strlen(drop), &dbStatement, 0);
+		sqlCode = sqlite3_step(dbStatement);
+		if(sqlCode != SQLITE_DONE) {
+			sqlite3_finalize(dbStatement);
+			sqlite3_close(dbConnection);
+			return 2; // DatabaseHandler error: Error dropping table objects
+		}
+		
+		sqlite3_finalize(dbStatement);
+		sqlite3_close(dbConnection);
+		
 		return 0;
 	}
 }
