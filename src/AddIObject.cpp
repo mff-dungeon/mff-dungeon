@@ -1,4 +1,4 @@
-#include "AddClonable.hpp"
+#include "AddIObject.hpp"
 
 namespace Dungeon {
 	

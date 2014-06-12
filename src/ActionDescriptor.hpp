@@ -22,7 +22,7 @@ namespace Dungeon {
         
     private:
         Action *action;
-        GameManager *gm;
+        GameManager *gm;	// FIXME - not yet used
         int id;
 
     };

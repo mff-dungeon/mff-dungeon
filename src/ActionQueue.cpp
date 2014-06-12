@@ -29,6 +29,7 @@ namespace Dungeon {
                 }
 		if (actions.empty()) return;
 
+        cout << "[ AQ ] Processing." << endl;
 		ActionDescriptor *ad = actions.front();
 		actions.pop();
 
@@ -36,16 +37,21 @@ namespace Dungeon {
 	}
 
 	void ActionQueue::loopToFinish() {
-		while (running) {
-                        cout << "[ AQ ] Processing" << endl; 
+        cout << "[ AQ ] Started.\n";
+		while (running) { 
 			process();
 		}
 	}
 
-        void ActionQueue::stop() {
-            this->running = false;
-            q_condvar.notify_one();
-        }
+    void ActionQueue::stop() {
+        this->running = false;
+		/* TODO: check - how locks are implemented? can't notify_one 
+		 * in the middle of action processing start another processing?
+		 * Remove if not true, needed for safe finishing
+		 */ 
+		cout << "[ AQ ] Stopped." << endl;
+        q_condvar.notify_one();
+    }
 }
 
 

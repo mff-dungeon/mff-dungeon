@@ -1,8 +1,9 @@
 #include "IObject.hpp"
+#include <memory>
 
 namespace Dungeon {
 
-	objId IObject::getId() {
+	objId IObject::getId() const {
 		return id;
 	}
 

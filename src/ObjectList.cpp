@@ -2,7 +2,7 @@
 
 namespace Dungeon {
 	
-	ObjectList::~ClonableList() {	// Desctructor - clean the list!
+	ObjectList::~ObjectList() {	// Desctructor - clean the list!
 		for(map<string, const IObject*>::const_iterator it = names.begin(); it != names.end(); it++) {
 			const IObject* o = it->second;
 			delete o;
@@ -19,7 +19,7 @@ namespace Dungeon {
 	void ObjectList::addIObject(string className, const IObject* o) {
 		map<string, const IObject*>::const_iterator it = names.find(className);
 		if(it == names.end()) {
-			names[className] = c;
+			names[className] = o;
 		}
 	}
 

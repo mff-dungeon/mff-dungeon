@@ -12,8 +12,9 @@ namespace Dungeon {
     public:
         IObject() {};
         IObject(objId id) : id(id) {};
+		virtual ~IObject() {};
 
-        virtual objId getId();
+        virtual objId getId() const;
         virtual IObject * setId(objId id);
         virtual void getActions(ActionList * list, IObject *callee) = 0;
        

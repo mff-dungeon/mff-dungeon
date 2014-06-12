@@ -14,7 +14,7 @@ CFLAGS := -std=c++11 -g -O2 -Wall -DBOOST_SIGNALS_NO_DEPRECATION_WARNING
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(shell dirname $@)
 	@echo "[ LD ] " $(TARGET)
-	@$(CC) $^ -o $(TARGET) -lsqlite3 -lSwiften -lboost_signals -lboost_thread -lboost_regex -lboost_program_options -lboost_filesystem -lboost_serialization -lboost_system -lboost_date_time -lz -lresolv -lpthread -ldl -lm -lc -lstdc++ -lgconf-2 -lgobject-2.0 -lglib-2.0 -lgconf-2 -lidn -lz -lssl -lcrypto -lxml2 -lavahi-client -lavahi-common -lresolv -lpthread -ldl -lm -lc -lstdc++
+	@$(CC) $^ -o $(TARGET) -lsqlite3 -lstdc++
 
 src/dynamic.hpp: $(DYNAMICS)
 	@printf "#ifndef DYNAMIC_HPP\n#define	DYNAMIC_HPP\n\n" > $@

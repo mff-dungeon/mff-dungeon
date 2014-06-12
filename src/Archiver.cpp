@@ -3,7 +3,7 @@
 
 namespace Dungeon {
 
-	Archiver::Archiver(stringstream* stream, bool isStoring) : stream(stream), storing(isStoring) {
+	Archiver::Archiver(stringstream* stream, bool isStoring) : storing(isStoring), stream(stream) {
 
 	}
 

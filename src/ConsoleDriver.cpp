@@ -10,7 +10,7 @@ namespace Dungeon {
     
     void ConsoleDriver::worker() {
         // do some shit
-        cout << "[ CD ] Worker started" << endl;
+        cout << "[ CD ] Worker started.\n";
         
         string line, output;
         while(getline(cin, line), !cin.eof()) {
@@ -18,8 +18,8 @@ namespace Dungeon {
             cout << output;
         }
         
+        cout << "[ CD ] Worker ended." << endl;
         this->queue->stop();
-        cout << "[ CD ] Worker ended" << endl;
     }
     
     void ConsoleDriver::run() {

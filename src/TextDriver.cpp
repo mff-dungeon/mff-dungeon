@@ -7,11 +7,11 @@ namespace Dungeon {
     }
 
     TextDriver::~TextDriver() {
-	for (size_t i = 0; i < alist->size(); i++) {
-            delete alist[i];
-        }
+		for (size_t i = 0; i < alist->size(); i++) {
+		        delete alist->at(i);
+		}
         
-	delete alist;
+		delete alist;
     }
     
     string TextDriver::process(string input) {
@@ -20,12 +20,14 @@ namespace Dungeon {
         
         string response = "What do you mean \"" + input + "\"?\n";
         for (size_t i = 0; i < alist->size(); i++) {
-            Action *action = alist[i];
+            Action *action = alist->at(i);
             
             if (action->matchCommand(input)) {
                 queue->enqueue(action);
                 
-                response = "Found some action, let's see what happens!";
+                // TODO: connect the action and its proccessing, 
+				// so we can show a response
+				response = "Found some action, let's see what happens!" << std::endl;
                 break;
             }
         }
