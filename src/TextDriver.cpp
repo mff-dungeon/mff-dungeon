@@ -27,7 +27,7 @@ namespace Dungeon {
                 
                 // TODO: connect the action and its proccessing, 
 				// so we can show a response
-				response = "Found some action, let's see what happens!" << std::endl;
+				response = "Found some action, let's see what happens!\n";
                 break;
             }
         }
