@@ -9,12 +9,12 @@ SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 DYNAMICS := $(shell echo $(DYNDIR))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -std=c++11 -g -O2 -Wall -DBOOST_SIGNALS_NO_DEPRECATION_WARNING
+CFLAGS := -std=c++11 -g -O2 -Wall -DBOOST_SIGNALS_NO_DEPRECATION_WARNING -I/usr/local/include
 
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(shell dirname $@)
 	@echo "[ LD ] " $(TARGET)
-	@$(CC) $^ -o $(TARGET) -lsqlite3 -lstdc++
+	@$(CC) $^ -o $(TARGET) -lsqlite3 -lstdc++ -L/usr/local/lib -lgloox
 
 src/dynamic.hpp: $(DYNAMICS)
 	@printf "#ifndef DYNAMIC_HPP\n#define	DYNAMIC_HPP\n\n" > $@

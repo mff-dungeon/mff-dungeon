@@ -7,17 +7,15 @@
 
 #include "common.hpp"
 #include "ActionQueue.hpp"
-#include "Objects/Alive.hpp"
 
 namespace Dungeon {
 
     class Driver {
     public:
-        Driver(ActionQueue* queue, Alive* figure);
+        Driver(ActionQueue* queue);
 
     protected:
         ActionQueue* queue;
-        Alive* figure;
     };
 }
 

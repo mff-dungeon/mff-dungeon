@@ -2,7 +2,7 @@
 #include "dynamic.hpp"
 #include "GameManager.hpp"
 #include "ActionQueue.hpp"
-#include "ConsoleDriver.hpp"
+#include "JabberDriver.hpp"
 #include "DatabaseHandler.hpp"
 #include <iostream>
 #include <signal.h>		
@@ -17,8 +17,7 @@ using namespace Dungeon;
 GameManager *gm;
 ActionQueue* aqueue;
 Alive* admin;
-ConsoleDriver* console;
-//XmppListener* xmpp;
+JabberDriver* jabber;
 
 /* 
  *	Sends stop signal to the ActionQueue
@@ -27,11 +26,8 @@ void finish(int signal) {
 	if(signal == SIGINT) std::cout << " Caught SIGINT, terminating..." << std::endl;
 	else if(signal == SIGTERM) std::cout << " Caught SIGTERM, terminating..." << std::endl;
 	
+    jabber->stop();
 	aqueue->stop();
-	/*
-	xmpp.stopThread();
-	xmpp.disconnect();
-	*/
 }
 
 /*
@@ -45,11 +41,9 @@ void start() {
 	
 	admin = new Alive("human/admin@jabberdung");
     
-	console = new ConsoleDriver(aqueue, admin);
-	console->run();
-    std::cout << "Console driver started, starting queue." << std::endl;    
-	//XmppListener* xmpp = new XmppListener ();
-	//xmpp->run();
+	jabber = new JabberDriver(aqueue, admin, "dungeon@eideo.cz", "somemagicshit");
+	jabber->run();
+    std::cout << "Jabber driver started, starting queue." << std::endl;
 	 
 	signal(SIGTERM, finish);
 	signal(SIGINT, finish);

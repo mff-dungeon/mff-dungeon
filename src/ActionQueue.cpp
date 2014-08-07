@@ -44,6 +44,10 @@ namespace Dungeon {
 	}
 
     void ActionQueue::stop() {
+        if (!this->running) {
+            return;
+        }
+        
         this->running = false;
 		/* TODO: check - how locks are implemented? can't notify_one 
 		 * in the middle of action processing start another processing?

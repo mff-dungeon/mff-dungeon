@@ -2,7 +2,7 @@
 
 namespace Dungeon {
     
-    TextDriver::TextDriver(ActionQueue* queue, Alive* figure) : Driver(queue, figure) {
+    TextDriver::TextDriver(ActionQueue* queue) : Driver(queue) {
         this->alist = new ActionList();
     }
 
@@ -14,7 +14,7 @@ namespace Dungeon {
 		delete alist;
     }
     
-    string TextDriver::process(string input) {
+    string TextDriver::process(string input, Alive* figure) {
         alist->clear();
         figure->getAllActions(alist);
         

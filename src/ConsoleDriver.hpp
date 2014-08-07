@@ -1,9 +1,10 @@
-#include "TextDriver.hpp"
-#include "common.hpp"
-#include <thread>
-
 #ifndef CONSOLEDRIVER_HPP
 #define	CONSOLEDRIVER_HPP
+
+#include "TextDriver.hpp"
+#include "Objects/Alive.hpp"
+#include "common.hpp"
+#include <thread>
 
 namespace Dungeon {
     
@@ -16,6 +17,7 @@ namespace Dungeon {
     private:
         void worker();
         thread *workerThread;
+        Alive* figure;
     };
 
 }
