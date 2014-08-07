@@ -2,7 +2,7 @@
 #define	GAMEMANAGER_HPP
 
 #include "common.hpp"
-#include "splayTree.hpp"
+#include "SplayTree.hpp"
 #include "ObjectLoader.hpp"
 #include "ObjectPointer.hpp"
 

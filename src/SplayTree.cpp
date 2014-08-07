@@ -1,5 +1,5 @@
 #include "common.hpp"
-#include "splayTree.hpp"
+#include "SplayTree.hpp"
 #include <fstream>
 
 namespace Dungeon {

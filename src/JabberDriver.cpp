@@ -104,7 +104,7 @@ namespace Dungeon {
     }
     
     void JabberDriver::onDisconnect(ConnectionError e) {
-        cout << "[ JD ] Connection closed." << e << endl;
+        cout << "[ JD ] Connection closed. Error:" << e << endl;
         connected = false;
     }
     
