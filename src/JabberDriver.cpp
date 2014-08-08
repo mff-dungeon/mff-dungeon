@@ -144,7 +144,7 @@ namespace Dungeon {
             }
         }
         
-        if (!foundSession) {            
+        if (!foundSession) {
             JabberSession newSession(jid, figure);
             sessions.push_back(newSession);
             
@@ -270,10 +270,10 @@ namespace Dungeon {
     }
     
     Alive* JabberDriver::JabberSession::getFigure() {
-        
+        return m_figure;
     }
     
     JID JabberDriver::JabberSession::getJID() {
-        
+        return m_jid;
     }
 }
