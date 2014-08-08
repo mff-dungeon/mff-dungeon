@@ -80,6 +80,9 @@ namespace Dungeon {
         *this << endl;
         this->flush();
         
+        // file streams need to be flushed separately
+        logfile.flush();
+        
         // end atomic operation
         mutex.unlock();
     }
