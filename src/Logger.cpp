@@ -2,9 +2,13 @@
 
 namespace Dungeon {
     Logger::Logger() : ostream(NULL) {
+        // link logger with log stream
         ostream::rdbuf(&buffer);
+        
+        // output all messages to stdout
         this->linkStream(cout);
         
+        // generate log file name: yyyy-mm-dd_hh-mm-ss_stdout.log
         time_t t = time(nullptr);
         tm tm = *localtime(&t);
         
@@ -12,14 +16,17 @@ namespace Dungeon {
         ss << put_time(&tm, "%Y-%m-%d_%H-%M-%S") << "_stdout.log";
         string logname = ss.str();
         
+        // open file stream with "append at the end" flag and make it copy stdout
         logfile = ofstream(logname, fstream::out | fstream::app | fstream::ate);
         this->linkStream(logfile);
     }
     
     Logger::~Logger() {
+        // write new line into log and flush
         *this << endl;
         this->flush();
         
+        // close the log file
         logfile.close();
     }
     
@@ -38,10 +45,13 @@ namespace Dungeon {
     }
     
     void Logger::beginMessage(string source, Severity severity) {
+        // atomic operation
         mutex.lock();
         
+        // print timestamp
         *this << "[" << (*this).getTimestamp() << "] ";
         
+        // print severity level if needed
         switch (severity) {
             case Severity::Warning:
                 *this << "WARNING: ";
@@ -59,19 +69,23 @@ namespace Dungeon {
                 break;
         }
         
+        // print message source if needed
         if (source != "") {
             *this << source << ": ";
         }
     }
     
     void Logger::endMessage() {
+        // print new line and flush
         *this << endl;
         this->flush();
         
+        // end atomic operation
         mutex.unlock();
     }
     
     string Logger::getTimestamp() {
+        // generate timestamp: dd/mm hh:mm:ss
         time_t t = time(nullptr);
         tm tm = *localtime(&t);
         
@@ -81,6 +95,7 @@ namespace Dungeon {
     }
     
     void Logger::setHeadline(string title) {
+        // headline is actually just a fancy message
         LOG("") << "------------------------------------------------=[ " << title << " ]" << LOGF;
     }
 }

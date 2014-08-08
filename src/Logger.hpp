@@ -11,8 +11,12 @@
 using namespace std;
 
 namespace Dungeon {
+    /** Central logging singleton outputs all messages to stdout and log file.
+     */
     class Logger : public ostream {
     public:
+        /** Severity enum.
+         */
         enum Severity {
             Verbose = 1,
             Info = 2,
@@ -21,14 +25,26 @@ namespace Dungeon {
             Fatal = 16
         };
         
+        /** Retrieves the singleton instance
+         */
         static Logger& getInstance() {
             static Logger instance;
             return instance;
         }
         
+        /** Outputs timestamp of a new message and locks the mutex.
+         @param source      The section of application responsible for the message.
+         @param severity    The importance of the message.
+         */
         void beginMessage(string source = "", Severity severity = Severity::Info);
+        
+        /** Flushes streams and unlocks the mutex.
+         */
         void endMessage();
         
+        /** Writes headline into the log.
+         @param title   Title of the headline.
+         */
         void setHeadline(string title);
         
     private:
