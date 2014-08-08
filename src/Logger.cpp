@@ -1,4 +1,5 @@
 #include "Logger.hpp"
+#include <algorithm>
 
 namespace Dungeon {
     Logger::Logger() : ostream(NULL) {
@@ -12,7 +13,7 @@ namespace Dungeon {
         string logname = this->currentTime("%Y-%m-%d_%H-%M-%S") + "_stdout.log";
         
         // open file stream with "append at the end" flag and make it copy stdout
-        logfile = ofstream(logname, fstream::out | fstream::app | fstream::ate);
+        logfile.open(logname, fstream::out | fstream::app | fstream::ate);
         this->linkStream(logfile);
     }
     

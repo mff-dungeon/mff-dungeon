@@ -7,6 +7,7 @@
 
 #include "ActionQueue.hpp"
 #include "Driver.hpp"
+#include <algorithm>
 
 namespace Dungeon {
 
