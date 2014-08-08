@@ -15,6 +15,7 @@
 #include "ActionDescriptor.hpp"
 #include "GameManager.hpp"
 
+
 namespace Dungeon {
 
     class ActionQueue {
@@ -24,6 +25,9 @@ namespace Dungeon {
         void process();
         void loopToFinish();
         void stop();
+        
+        void registerDriver(Driver *driver);
+        void unregisterDriver(Driver *driver);
         
         typedef queue<ActionDescriptor *> qType;
     private:
@@ -36,6 +40,8 @@ namespace Dungeon {
 
         typedef lock_guard<std::mutex> lock;
         typedef unique_lock<std::mutex> ulock;
+        
+        vector<Driver *> drivers;
     };
 }
 

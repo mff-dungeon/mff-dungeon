@@ -7,12 +7,16 @@
 
 #include "common.hpp"
 #include "ActionQueue.hpp"
+#include "ActionDescriptor.hpp"
 
 namespace Dungeon {
 
     class Driver {
     public:
         Driver(ActionQueue* queue);
+        ~Driver();
+        
+        void processDescriptor(ActionDescriptor* descriptor);
 
     protected:
         ActionQueue* queue;

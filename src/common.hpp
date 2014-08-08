@@ -52,6 +52,7 @@ namespace Dungeon {
     class Action;
     class ActionDescriptor;
     class IObject;
+    class Driver;
     
     /**
      * Should be value type (struct), comparable

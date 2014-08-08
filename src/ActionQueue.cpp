@@ -6,6 +6,7 @@
  */
 
 #include "ActionQueue.hpp"
+#include "Driver.hpp"
 
 namespace Dungeon {
 
@@ -34,6 +35,9 @@ namespace Dungeon {
 		actions.pop();
 
 		ad->getAction()->commit(ad);
+        
+        // notify drivers
+        for_each(drivers.begin(), drivers.end(), bind2nd(mem_fun(&Driver::processDescriptor), ad));
 	}
 
 	void ActionQueue::loopToFinish() {
@@ -55,6 +59,14 @@ namespace Dungeon {
 		 */ 
 		LOG("ActionQueue") << "Stopped." << LOGF;
         q_condvar.notify_one();
+    }
+    
+    void ActionQueue::registerDriver(Driver *driver) {
+        drivers.push_back(driver);
+    }
+    
+    void ActionQueue::unregisterDriver(Driver *driver) {
+        drivers.erase(remove(drivers.begin(), drivers.end(), driver), drivers.end());
     }
 }
 
