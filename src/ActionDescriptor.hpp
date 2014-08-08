@@ -8,21 +8,23 @@
 #ifndef ACTIONDESCRIPTOR_HPP
 #define	ACTIONDESCRIPTOR_HPP
 
-class ActionDescriptor;
 #include "common.hpp"
 #include "Action.hpp"
 #include "GameManager.hpp"
 
 namespace Dungeon {
+	class Alive;
     class ActionDescriptor {
     public:
-        ActionDescriptor(Action *action, GameManager *gm);
-        Action *getAction();
+        ActionDescriptor(Action* action, GameManager* gm, Alive* caller);
+        Action* getAction();
+		Alive* getAlive();
         string message; // FIXME
         
     private:
-        Action *action;
-        GameManager *gm;	// FIXME - not yet used
+        Action* action;
+        GameManager* gm;	// FIXME - not yet used
+		Alive* caller;
         int id;
 
     };

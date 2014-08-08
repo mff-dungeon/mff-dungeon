@@ -36,6 +36,8 @@ namespace Dungeon {
         /** Stops listening and disconnects the driver from the Jabber server
          */
         void stop();
+		
+		virtual void processDescriptor(ActionDescriptor* descriptor);
         
         /* gloox::MessageHandler interface implementation */
         void handleMessage(const gloox::Message& message, gloox::MessageSession* session = 0);

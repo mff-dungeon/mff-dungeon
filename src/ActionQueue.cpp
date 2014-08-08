@@ -7,6 +7,7 @@
 
 #include "ActionQueue.hpp"
 #include "Driver.hpp"
+#include "Objects/Alive.hpp"
 #include <algorithm>
 
 namespace Dungeon {
@@ -15,9 +16,9 @@ namespace Dungeon {
 		this->gm = gm;
 	}
 
-	ActionDescriptor* ActionQueue::enqueue(Action* action) {
+	ActionDescriptor* ActionQueue::enqueue(Action* action, Alive* caller) {
 		lock l(q_mutex);
-		ActionDescriptor *ad = new ActionDescriptor(action, this->gm);
+		ActionDescriptor *ad = new ActionDescriptor(action, this->gm, caller);
 		bool wake = actions.empty();
 		if (running) this->actions.push(ad);
 		if (wake) q_condvar.notify_one();

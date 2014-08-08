@@ -4,14 +4,17 @@
 
 namespace Dungeon {
 
-	ActionDescriptor::ActionDescriptor(Action *action, GameManager *gm) : action(action), gm(gm) {
+	ActionDescriptor::ActionDescriptor(Action* action, GameManager* gm, Alive* caller) : action(action), gm(gm), caller(caller) {
 		id = rand();
 	}
 
 	Action* ActionDescriptor::getAction() {
 		return this->action;
 	}
-
+	
+	Alive* ActionDescriptor::getAlive() {
+		return this->caller;
+	}
 
 }
 

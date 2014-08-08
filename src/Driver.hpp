@@ -16,7 +16,7 @@ namespace Dungeon {
         Driver(ActionQueue* queue);
         ~Driver();
         
-        void processDescriptor(ActionDescriptor* descriptor);
+        virtual void processDescriptor(ActionDescriptor* descriptor);
 
     protected:
         ActionQueue* queue;

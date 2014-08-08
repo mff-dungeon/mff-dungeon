@@ -47,6 +47,10 @@ namespace Dungeon {
         this->workerThread = new thread(&JabberDriver::worker, this);
     }
     
+	void JabberDriver::processDescriptor(ActionDescriptor* descriptor) {
+		// get the Alive, message and send a response
+	}
+	
     void JabberDriver::handleMessage(const Message& message, MessageSession* session) {
         Message::MessageType type = message.subtype();
         

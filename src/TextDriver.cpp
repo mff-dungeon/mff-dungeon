@@ -23,7 +23,7 @@ namespace Dungeon {
             Action *action = alist->at(i);
             
             if (action->matchCommand(input)) {
-                queue->enqueue(action);
+                queue->enqueue(action, figure);
                 
                 // TODO: connect the action and its proccessing, 
 				// so we can show a response
