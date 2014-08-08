@@ -19,7 +19,7 @@ namespace Dungeon {
 		sqlCode = sqlite3_open(DB_NAME, &dbConnection);
 		if(sqlCode != SQLITE_OK) { 
 			sqlite3_close(dbConnection);
-			return 1; //DatabaseHandler error: Error when opening database
+			return E_CONNECTION_ERROR;
 		}
 		
 		/*
@@ -36,7 +36,7 @@ namespace Dungeon {
 		else {
 			sqlite3_finalize(dbStatement);
 			sqlite3_close(dbConnection);
-			return 3; //DatabaseHandler error: Error when counting database
+			return E_COUNT_ERROR;
 		}
 		if(!count) {
 			const char *statement = "INSERT INTO objects (id, className, data) VALUES (?, ?, ?);";
@@ -56,12 +56,12 @@ namespace Dungeon {
 		if(sqlCode != SQLITE_DONE) { 
 			sqlite3_finalize(dbStatement);
 			sqlite3_close(dbConnection);
-			return 2; //DatabaseHandler error: Error when updating database
+			return E_UPDATE_ERROR;
 		}
 		sqlite3_finalize(dbStatement);
 		sqlite3_close(dbConnection);
 
-		return 0;
+		return E_OK;
 	}
 
 	// Loading object into a stringstream, returns 0 if loaded successfuly
@@ -69,7 +69,7 @@ namespace Dungeon {
 		sqlCode = sqlite3_open(DB_NAME, &dbConnection);
 		if(sqlCode != SQLITE_OK) { 
 			sqlite3_close(dbConnection);
-			return 1; //DatabaseHandler error: Error when opening database
+			return E_CONNECTION_ERROR; //DatabaseHandler error: Error when opening database
 		}
 
 		string statestring = "SELECT * FROM objects WHERE id = " + oid + ";";
@@ -95,13 +95,13 @@ namespace Dungeon {
 		else {
 			sqlite3_finalize(dbStatement);
 			sqlite3_close(dbConnection);
-			return 2; //DatabaseHandler error: No object with id objId found
+			return E_NO_ROW; //DatabaseHandler error: No object with id objId found
 		}
 
 		sqlite3_finalize(dbStatement);
 		sqlite3_close(dbConnection);
 
-		return 0;
+		return E_OK;
 	}
 	
 	int DatabaseHandler::deleteObject(objId oid) {
@@ -121,8 +121,8 @@ namespace Dungeon {
 		sqlite3_close(dbConnection);
 
 		if(sqlCode != SQLITE_DONE)
-			return 3; // DatabaseHandler error: Error deleting an object
-		return 0;
+			return E_DELETE_ERROR;
+		return E_OK;
 
 	}
 
@@ -132,14 +132,14 @@ namespace Dungeon {
 		sqlCode = sqlite3_open(DB_NAME, &dbConnection);
 		if(sqlCode != SQLITE_OK) {
 			sqlite3_close(dbConnection);
-			return 1; //DatabaseHandler error: Error when opening database
+			return E_CONNECTION_ERROR;
 		}
 
 		const string qtmp = rel->getWhere();
 		// None parameters were handed, that is weird...
 		if(qtmp == "") {
 			sqlite3_close(dbConnection);
-			return 5; //DatabaseHandler error: Invalid query.
+			return E_INVALID_QUERY;
 		}
 	
 		const char* cquery = qtmp.c_str();
@@ -155,14 +155,14 @@ namespace Dungeon {
 		sqlite3_finalize(dbStatement);
 		sqlite3_close(dbConnection);
 
-		return 0;
+		return E_OK;
 	}
 
 	int DatabaseHandler::addRelation(Relation* rel) {
 		sqlCode = sqlite3_open(DB_NAME, &dbConnection);
 		if(sqlCode != SQLITE_OK) {
 			sqlite3_close(dbConnection);
-			return 1;
+			return E_CONNECTION_ERROR;
 		}
 
 		const char *statement = "INSERT INTO relations (pid, sid, pclass, sclass, relation) VALUES (?, ?, ?, ?, ?)";
@@ -178,26 +178,26 @@ namespace Dungeon {
 		if(sqlCode != SQLITE_DONE) { 
 			sqlite3_finalize(dbStatement);
 			sqlite3_close(dbConnection);
-			return 2; //DatabaseHandler error: Error when updating database
+			return E_UPDATE_ERROR;
 		}
 		sqlite3_finalize(dbStatement);
 		sqlite3_close(dbConnection);
 
-		return 0;
+		return E_OK;
 	}
 
 	int DatabaseHandler::deleteRelation(Relation* rel) {
 		sqlCode = sqlite3_open(DB_NAME, &dbConnection);
 		if(sqlCode != SQLITE_OK) {
 			sqlite3_close(dbConnection);
-			return 1; //DatabaseHandler error: Error when opening database
+			return E_CONNECTION_ERROR; 
 		}
 
 		const string qtmp = rel->getWhere();
 		// None parameters were handed, that is weird...
 		if(qtmp == "") {
 			sqlite3_close(dbConnection);
-			return 5; //DatabaseHandler error: Invalid query.
+			return E_INVALID_QUERY; 
 		}
 
 		const char* cquery = qtmp.c_str();
@@ -209,15 +209,15 @@ namespace Dungeon {
 		sqlite3_close(dbConnection);
 
 		if(sqlCode != SQLITE_DONE)
-			return 3; // DatabaseHandler error: Error deleting a relation
-		return 0;
+			return E_DELETE_ERROR;
+		return E_OK;
 	}
 	
 	int DatabaseHandler::initDatabase() {
 		sqlCode = sqlite3_open(DB_NAME, &dbConnection);
 		if(sqlCode != SQLITE_OK) { 
 			sqlite3_close(dbConnection);
-			return 1; //DatabaseHandler error: Error when opening database
+			return E_CONNECTION_ERROR;
 		}
 		
 		const char* create1 = "CREATE TABLE objects (" \
@@ -238,7 +238,7 @@ namespace Dungeon {
 		if(sqlCode != SQLITE_DONE) {
 			sqlite3_finalize(dbStatement);
 			sqlite3_close(dbConnection);
-			return 2; // DatabaseHandler error: Error creating table objects
+			return E_TABLE_CREATE_ERROR;
 		}
 		sqlite3_finalize(dbStatement);
                 
@@ -248,19 +248,19 @@ namespace Dungeon {
 		if(sqlCode != SQLITE_DONE) {
 			sqlite3_finalize(dbStatement);
 			sqlite3_close(dbConnection);
-			return 2;
+			return E_TABLE_CREATE_ERROR;
 		}
                 
 		sqlite3_close(dbConnection);
 		
-		return 0;
+		return E_OK;
 	}
 	
 	int DatabaseHandler::dropDatabase() {
 		sqlCode = sqlite3_open(DB_NAME, &dbConnection);
 		if(sqlCode != SQLITE_OK) {
 			sqlite3_close(dbConnection);
-			return 1; // DatabaseHandler error: Error when opening database
+			return E_CONNECTION_ERROR;
 		}
 		
 		const char* drop = "DROP TABLE IF EXISTS objects; DROP TABLE IF EXISTS relations;";
@@ -269,12 +269,12 @@ namespace Dungeon {
 		if(sqlCode != SQLITE_DONE) {
 			sqlite3_finalize(dbStatement);
 			sqlite3_close(dbConnection);
-			return 2; // DatabaseHandler error: Error dropping table objects
+			return E_TABLE_DROP_ERROR;
 		}
 		
 		sqlite3_finalize(dbStatement);
 		sqlite3_close(dbConnection);
 		
-		return 0;
+		return E_OK;
 	}
 }

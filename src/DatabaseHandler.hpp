@@ -29,6 +29,20 @@ namespace Dungeon {
 		~DatabaseHandler() {};
 	public:
 		static DatabaseHandler& getInstance();
+		
+		/*
+		 * Error codes
+		 */
+		const int E_OK = 0;
+		const int E_CONNECTION_ERROR = 1; // Unable to connect to database
+		const int E_NO_ROW = 3; // No row was found
+		const int E_UPDATE_ERROR = 5; // Unable to do an update query
+		const int E_DELETE_ERROR = 6; // Unable to do a delete query
+		const int E_TABLE_CREATE_ERROR = 10; // Unable to create a table
+		const int E_TABLE_DROP_ERROR = 11; // Unable to delete a table
+		const int E_COUNT_ERROR = 15; // Unable to count rows
+		const int E_INVALID_QUERY = 20; // Invalid DB query
+		
 		int saveObject(objId oid, string cName, string data);
 		int loadObject(objId oid, string& cName, stringstream& sData);
 		int deleteObject(objId oid);
