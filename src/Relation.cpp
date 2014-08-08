@@ -10,11 +10,34 @@ namespace Dungeon {
 		this->sclass = sclass;
 		this->relation = relation;
 	}
-
-	string Relation::getWhere() {
-		bool valid = false;
+	
+	string Relation::getSelectQuery() {
 		stringstream query;
-		query << "DELETE FROM relations WHERE ";
+		query << "SELECT * FROM relations ";
+		bool result = this->addWhere(query);
+		
+		if(!result) return "";
+		else {
+			query << ";";
+			return query.str();
+		}
+	}
+	
+	string Relation::getDeleteQuery() {
+		stringstream query;
+		query << "DELETE FROM relations ";
+		bool result = this->addWhere(query);
+		
+		if(!result) return "";
+		else {
+			query << ";";
+			return query.str();
+		}
+	}
+
+	bool Relation::addWhere(stringstream& query) {
+		bool valid = false;
+		query << "WHERE ";
 		if(pid != "0") {
 			query << "pid = '" << pid << "'";
 			valid = true;
@@ -39,9 +62,6 @@ namespace Dungeon {
 			else valid = true;
 			query << "relation = '" << relation << "'";
 		}
-		query << ";";
-		if(!valid) return "";
-		else return query.str();
-		
+		return valid;	
 	}
 }
