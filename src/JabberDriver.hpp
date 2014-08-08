@@ -61,9 +61,29 @@ namespace Dungeon {
         Alive* figure;
         gloox::Client* client;
         
-        Alive* findFigure(string jabberUsername);
+        Alive* findFigure(gloox::JID jid);
+        gloox::JID findJID(Alive *figure);
         
         static int presencePriority() { return 0; }
+        
+        class JabberSession {
+        public:
+            JabberSession(gloox::JID jid, Alive* figure);
+            ~JabberSession();
+            
+            bool isExpired();
+            void renew();
+            
+            Alive* getFigure();
+            gloox::JID getJID();
+            
+        private:
+            gloox::JID m_jid;
+            Alive* m_figure;
+            
+        };
+        
+        vector<JabberSession> sessions;
     };
     
 }

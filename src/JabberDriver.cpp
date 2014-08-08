@@ -49,6 +49,15 @@ namespace Dungeon {
     
 	void JabberDriver::processDescriptor(ActionDescriptor* descriptor) {
 		// get the Alive, message and send a response
+        Alive *figure = descriptor->getAlive();
+        JID jid = this->findJID(figure);
+        
+        if (!jid) {
+            return;
+        }
+        
+        Message msg(Message::Chat, jid, descriptor->message);
+        client->send(msg);
 	}
 	
     void JabberDriver::handleMessage(const Message& message, MessageSession* session) {
@@ -64,7 +73,7 @@ namespace Dungeon {
             }
             
             // load corresponding session and log message arrival
-            Alive* figure = this->findFigure(sender);
+            Alive* figure = this->findFigure(message.from());
             LOG("JabberDriver") << "User '" << sender << "' sent a message: '" << contents << "'" << LOGF;
             
             // produce a response
@@ -126,8 +135,35 @@ namespace Dungeon {
         return true;
     }
     
-    Alive* JabberDriver::findFigure(string jabberUsername) {
-        return figure; // TODO: poll figure from sessions list or spawn a new one
+    Alive* JabberDriver::findFigure(JID jid) {
+        JabberSession *foundSession = nullptr;
+        for (auto &session : sessions) {
+            if (session.getJID() == jid) {
+                foundSession = &session;
+                break;
+            }
+        }
+        
+        if (!foundSession) {            
+            JabberSession newSession(jid, figure);
+            sessions.push_back(newSession);
+            
+            foundSession = &newSession;
+        }
+        
+        return foundSession->getFigure();
+    }
+    
+    JID JabberDriver::findJID(Alive *figure) {
+        JabberSession *foundSession = nullptr;
+        for (auto &session : sessions) {
+            if (session.getFigure() == figure) {
+                foundSession = &session;
+                break;
+            }
+        }
+        
+        return foundSession ? foundSession->getJID() : JID();
     }
     
     void JabberDriver::handlePresence(const Presence &presence) {
@@ -215,5 +251,29 @@ namespace Dungeon {
         }
         
         LOG("JabberDriver") << "Received subcription packet: '" << typeName << "', sender '" << sender << "', status: '" << status << "'" << LOGF;
+    }
+    
+    JabberDriver::JabberSession::JabberSession(JID jid, Alive* figure) : m_jid(jid), m_figure(figure) {
+        
+    }
+    
+    JabberDriver::JabberSession::~JabberSession() {
+        
+    }
+    
+    bool JabberDriver::JabberSession::isExpired() {
+        return false;
+    }
+    
+    void JabberDriver::JabberSession::renew() {
+        
+    }
+    
+    Alive* JabberDriver::JabberSession::getFigure() {
+        
+    }
+    
+    JID JabberDriver::JabberSession::getJID() {
+        
     }
 }
