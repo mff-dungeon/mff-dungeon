@@ -55,6 +55,10 @@ namespace Dungeon {
             string contents = message.body();
             string sender = message.from().bare();
             
+            if (contents == "") {
+                return;
+            }
+            
             // load corresponding session and log message arrival
             Alive* figure = this->findFigure(sender);
             cout << "[ JD ] User '" << sender << "' sent a message: '" << contents << "'" << endl;

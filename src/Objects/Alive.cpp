@@ -12,7 +12,7 @@ namespace Dungeon {
         if (callee == this) {
             // And add some actions "on myself"
             list->push_back(new CallbackAction("suicide", "If you just dont want to live on this planet anymore.",
-                RegexMatcher::matcher("commit suicide"),
+                RegexMatcher::matcher("commit( a)? suicide"),
                 [this] (ActionDescriptor * ad) {
                         ad->message = "You've killed yaself. Cool yeah?";
                         this->hitpoints = 0;

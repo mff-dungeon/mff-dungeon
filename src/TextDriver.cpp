@@ -18,7 +18,7 @@ namespace Dungeon {
         alist->clear();
         figure->getAllActions(alist);
         
-        string response = "What do you mean \"" + input + "\"?\n";
+        string response = "What do you mean \"" + input + "\"?";
         for (size_t i = 0; i < alist->size(); i++) {
             Action *action = alist->at(i);
             
@@ -27,7 +27,7 @@ namespace Dungeon {
                 
                 // TODO: connect the action and its proccessing, 
 				// so we can show a response
-				response = "Found some action, let's see what happens!\n";
+				response = "Found some action, let's see what happens!";
                 break;
             }
         }
