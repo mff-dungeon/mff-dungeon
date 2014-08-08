@@ -25,8 +25,8 @@ JabberDriver* jabber;
 void finish(int signal) {
     LOGH("Finish");
     
-	if(signal == SIGINT) LOG("main") << " Caught SIGINT, terminating..." << LOGF;
-	else if(signal == SIGTERM) LOG("main") << " Caught SIGTERM, terminating..." << LOGF;
+	if(signal == SIGINT) LOG("main") << "Caught SIGINT, terminating..." << LOGF;
+	else if(signal == SIGTERM) LOG("main") << "Caught SIGTERM, terminating..." << LOGF;
 	
     jabber->stop();
 	aqueue->stop();
