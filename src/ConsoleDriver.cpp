@@ -9,16 +9,15 @@ namespace Dungeon {
     }
     
     void ConsoleDriver::worker() {
-        // do some shit
-        cout << "[ CD ] Worker started.\n";
+        LOG("ConsoleDriver") << "Worker started." << LOGF;
         
         string line, output;
         while(getline(cin, line), !cin.eof()) {
             output = this->process(line, figure);
-            cout << output;
+            LOG("ConsoleDriver") << output;
         }
         
-        cout << "[ CD ] Worker ended." << endl;
+        LOG("ConsoleDriver") << "Worker ended." << LOGF;
         this->queue->stop();
     }
     

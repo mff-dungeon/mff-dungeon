@@ -22,9 +22,11 @@ JabberDriver* jabber;
 /* 
  *	Sends stop signal to the ActionQueue
  */
-void finish(int signal) {	
-	if(signal == SIGINT) std::cout << " Caught SIGINT, terminating..." << std::endl;
-	else if(signal == SIGTERM) std::cout << " Caught SIGTERM, terminating..." << std::endl;
+void finish(int signal) {
+    LOGH("Finish");
+    
+	if(signal == SIGINT) LOG("main") << " Caught SIGINT, terminating..." << LOGF;
+	else if(signal == SIGTERM) LOG("main") << " Caught SIGTERM, terminating..." << LOGF;
 	
     jabber->stop();
 	aqueue->stop();
@@ -35,7 +37,8 @@ void finish(int signal) {
  *		the queue can be stopped.
  */
 void start() {
-	std::cout << "This is Jabber Dungeon starting." << std::endl;
+    LOGH("Start");
+	LOG("main") << "This is Jabber Dungeon starting." << LOGF;
 	gm = new GameManager();
 	aqueue = new ActionQueue (gm);
 	
@@ -43,13 +46,13 @@ void start() {
     
 	jabber = new JabberDriver(aqueue, admin, "dungeon@eideo.cz", "somemagicshit");
 	jabber->run();
-    std::cout << "Jabber driver started, starting queue." << std::endl;
+    LOG("main") << "Jabber driver started, starting queue." << LOGF;
 	 
 	signal(SIGTERM, finish);
 	signal(SIGINT, finish);
 	aqueue->loopToFinish();
 	
-	std::cout << "Dungeon ends. Bye!" << std::endl;
+	LOG("main") << "Dungeon ends. Bye!" << LOGF;
 }
 
 /*
@@ -61,24 +64,24 @@ void start() {
  */
 int dbRestart() {
 	std::string answer;
-	std::cout << "Database cleanup requested. Are you sure? [y/N]" << std::endl;
+	LOG("main") << "Database cleanup requested. Are you sure? [y/N]" << LOGF;
 
 	std::getline(std::cin, answer);
 	if(answer != "y") { 
-		std::cout << "Cleanup canceled." << std::endl;
+		LOG("main") << "Cleanup canceled." << LOGF;
 	}
 	else {
-		std::cout << "Cleanup initiated." << std::endl;
-		std::cout << "Dropping all tables." << std:: endl;
+		LOG("main") << "Cleanup initiated." << LOGF;
+		LOG("main") << "Dropping all tables." << std:: endl;
 		DatabaseHandler::getInstance().dropDatabase();
-		std::cout << "All tables dropped, creating and initializing tables." << std::endl;
+		LOG("main") << "All tables dropped, creating and initializing tables." << LOGF;
 		DatabaseHandler::getInstance().initDatabase();
-		std::cout << "Initialization completed." << std::endl;
+		LOG("main") << "Initialization completed." << LOGF;
 	}
-	std::cout << "Continue with startup? [Y/n]" << std::endl;
+	LOG("main") << "Continue with startup? [Y/n]" << LOGF;
 	std::getline(std::cin, answer);
 	if(answer == "n") {
-		std::cout << "Shutting down" << std::endl;
+		LOG("main") << "Shutting down" << LOGF;
 		return 1;
 	}
 	return 0;
@@ -94,12 +97,12 @@ int main(int argc, char** argv) {
 				return 0;
 		}
 		else 
-			cout << "Unknown argument: " << argv[a] << std::endl;
+			LOG("main") << "Unknown argument: " << argv[a];
 	}
 	/*
 	 *	Regular dungeon start 
 	 */
-	std::cout << "Starting dungeon..." << std::endl;
+	LOG("main") << "Starting dungeon..." << LOGF;
 	start();
 	return 0;
 }

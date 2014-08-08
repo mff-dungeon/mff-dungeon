@@ -29,7 +29,7 @@ namespace Dungeon {
                 }
 		if (actions.empty()) return;
 
-        cout << "[ AQ ] Processing." << endl;
+        LOG("ActionQueue") << "Processing." << LOGF;
 		ActionDescriptor *ad = actions.front();
 		actions.pop();
 
@@ -37,7 +37,7 @@ namespace Dungeon {
 	}
 
 	void ActionQueue::loopToFinish() {
-        cout << "[ AQ ] Started.\n";
+        LOG("ActionQueue") << "Started." << LOGF;
 		while (running) { 
 			process();
 		}
@@ -53,7 +53,7 @@ namespace Dungeon {
 		 * in the middle of action processing start another processing?
 		 * Remove if not true, needed for safe finishing
 		 */ 
-		cout << "[ AQ ] Stopped." << endl;
+		LOG("ActionQueue") << "Stopped." << LOGF;
         q_condvar.notify_one();
     }
 }

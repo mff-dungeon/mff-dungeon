@@ -21,7 +21,7 @@ namespace Dungeon {
     }
     
     void JabberDriver::worker() {
-        cout << "[ JD ] Worker started.\n";
+        LOG("JabberDriver") << "Worker started." << LOGF;
         
         // register event handlers
         client->registerMessageHandler(this);
@@ -32,7 +32,7 @@ namespace Dungeon {
         // connect and block this thread until the connection is closed
         client->connect(true);
         
-        cout << "[ JD ] Worker ended." << endl;
+        LOG("JabberDriver") << "Worker ended." << LOGF;
         this->queue->stop();
     }
     
@@ -61,7 +61,7 @@ namespace Dungeon {
             
             // load corresponding session and log message arrival
             Alive* figure = this->findFigure(sender);
-            cout << "[ JD ] User '" << sender << "' sent a message: '" << contents << "'" << endl;
+            LOG("JabberDriver") << "User '" << sender << "' sent a message: '" << contents << "'" << LOGF;
             
             // produce a response
             string response = this->process(contents, figure);
@@ -102,23 +102,23 @@ namespace Dungeon {
             string contents = message.body();
             string sender = message.from().bare();
             
-            cout << "[ JD ] Received unsupported message type: '" << typeName << "', sender: '" << sender << "', body: '" << contents << "'" << endl;
+            LOG("JabberDriver") << "Received unsupported message type: '" << typeName << "', sender: '" << sender << "', body: '" << contents << "'" << LOGF;
         }
     }
     
     void JabberDriver::onConnect() {
-        cout << "[ JD ] Connection estabilished." << endl;
+        LOG("JabberDriver") << "Connection estabilished." << LOGF;
         client->setPresence(Presence::Available, presencePriority(), "The adventure awaits!");
         connected = true;
     }
     
     void JabberDriver::onDisconnect(ConnectionError e) {
-        cout << "[ JD ] Connection closed. Error:" << e << endl;
+        LOG("JabberDriver") << "Connection closed. Error: " << e << LOGF;
         connected = false;
     }
     
     bool JabberDriver::onTLSConnect(const CertInfo& info) {
-        cout << "[ JD ] TLS connected." << endl;
+        LOG("JabberDriver") << "TLS connected." << LOGF;
         return true;
     }
     
@@ -173,7 +173,7 @@ namespace Dungeon {
                 break;
         }
         
-        cout << "[ JD ] Received presence: '" << typeName << "', sender: '" << sender << "', status: '" << status << "'" << endl;
+        LOG("JabberDriver") << "Received presence: '" << typeName << "', sender: '" << sender << "', status: '" << status << "'" << LOGF;
     }
     
     void JabberDriver::handleSubscription(const Subscription &subscription) {
@@ -210,6 +210,6 @@ namespace Dungeon {
                 break;
         }
         
-        cout << "[ JD ] Received subcription packet: '" << typeName << "', sender '" << sender << "', status: '" << status << "'" << endl;
+        LOG("JabberDriver") << "Received subcription packet: '" << typeName << "', sender '" << sender << "', status: '" << status << "'" << LOGF;
     }
 }

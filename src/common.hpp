@@ -31,6 +31,14 @@ private: \
 #define PERSISTENT_IMPLEMENTATION(cName) \
 	AddIObject cName::addIObject(#cName, new cName());
 
+/*
+ *  Logging
+ */
+#include "Logger.hpp"
+#define LOG(source) ( Logger::getInstance().beginMessage(source), Logger::getInstance() )
+#define LOGS(source, severity) ( Logger::getInstance().beginMessage(source, severity), Logger::getInstance() )
+#define LOGH(headline) { Logger::getInstance().setHeadline(headline); } 
+#define LOGF ( Logger::getInstance().endMessage(), "" )
 
 using namespace std;
 
