@@ -7,6 +7,9 @@ namespace Dungeon {
         // initialize Jabber client with credentials
         JID jid(jabberUsername);
         client = new Client(jid, jabberPassword);
+        
+        client->disco()->setVersion("Dungeon", "1.0");
+        client->disco()->setIdentity("client", "bot", "Dungeon");
     }
     
     JabberDriver::~JabberDriver() {
@@ -22,6 +25,8 @@ namespace Dungeon {
         
         // register event handlers
         client->registerMessageHandler(this);
+        client->registerPresenceHandler(this);
+        client->registerSubscriptionHandler(this);
         client->registerConnectionListener(this);
         
         // connect and block this thread until the connection is closed
@@ -33,7 +38,7 @@ namespace Dungeon {
     
     void JabberDriver::stop() {
         // disconnect client
-        client->setPresence(Presence::Unavailable, presencePriority());
+        client->setPresence(Presence::Unavailable, presencePriority(), "I will be back.");
         client->disconnect();
     }
     
@@ -99,7 +104,7 @@ namespace Dungeon {
     
     void JabberDriver::onConnect() {
         cout << "[ JD ] Connection estabilished." << endl;
-        client->setPresence(Presence::Available, presencePriority());
+        client->setPresence(Presence::Available, presencePriority(), "The adventure awaits!");
         connected = true;
     }
     
@@ -115,5 +120,92 @@ namespace Dungeon {
     
     Alive* JabberDriver::findFigure(string jabberUsername) {
         return figure; // TODO: poll figure from sessions list or spawn a new one
+    }
+    
+    void JabberDriver::handlePresence(const Presence &presence) {
+        string sender = presence.from().bare();
+        string status = presence.status();
+        string typeName;
+        
+        switch (presence.subtype()) {
+            case Presence::Available:
+                typeName = "available";
+                break;
+                
+            case Presence::Chat:
+                typeName = "chat";
+                break;
+                
+            case Presence::Away:
+                typeName = "away";
+                break;
+                
+            case Presence::DND:
+                typeName = "do not disturb";
+                break;
+                
+            case Presence::XA:
+                typeName = "extended away";
+                break;
+                
+            case Presence::Unavailable:
+                typeName = "unavailable";
+                break;
+                
+            case Presence::Probe:
+                typeName = "probe";
+                break;
+                
+            case Presence::Error:
+                typeName = "error";
+                break;
+                
+            case Presence::Invalid:
+                typeName = "invalid";
+                break;
+                
+            default:
+                typeName = "unknown";
+                break;
+        }
+        
+        cout << "[ JD ] Received presence: '" << typeName << "', sender: '" << sender << "', status: '" << status << "'" << endl;
+    }
+    
+    void JabberDriver::handleSubscription(const Subscription &subscription) {
+        string typeName;
+        string sender = subscription.from().bare();
+        string status = subscription.status();
+        
+        switch (subscription.subtype()) {
+            case Subscription::Subscribe:
+                typeName = "subscription request";
+                
+                // acknowledge request and send similar request back
+                this->client->rosterManager()->ackSubscriptionRequest(subscription.from(), true);
+                this->client->rosterManager()->subscribe(subscription.from(), EmptyString, StringList(), "The Dungeon wants you!");
+                break;
+                
+            case Subscription::Subscribed:
+                typeName = "subscribed notification";
+                break;
+                
+            case Subscription::Unsubscribe:
+                typeName = "unsubscription request";
+                
+                // acknowledge request and send similar request back
+                this->client->rosterManager()->cancel(subscription.from(), "Bye!");
+                this->client->rosterManager()->remove(subscription.from());
+                break;
+                
+            case Subscription::Unsubscribed:
+                typeName = "unsubscribed notification";
+                break;
+                
+            default:
+                break;
+        }
+        
+        cout << "[ JD ] Received subcription packet: '" << typeName << "', sender '" << sender << "', status: '" << status << "'" << endl;
     }
 }
