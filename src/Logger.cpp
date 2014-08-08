@@ -9,12 +9,7 @@ namespace Dungeon {
         this->linkStream(cout);
         
         // generate log file name: yyyy-mm-dd_hh-mm-ss_stdout.log
-        time_t t = time(nullptr);
-        tm tm = *localtime(&t);
-        
-        stringstream ss;
-        ss << put_time(&tm, "%Y-%m-%d_%H-%M-%S") << "_stdout.log";
-        string logname = ss.str();
+        string logname = this->currentTime("%Y-%m-%d_%H-%M-%S") + "_stdout.log";
         
         // open file stream with "append at the end" flag and make it copy stdout
         logfile = ofstream(logname, fstream::out | fstream::app | fstream::ate);
@@ -88,13 +83,15 @@ namespace Dungeon {
     }
     
     string Logger::getTimestamp() {
-        // generate timestamp: dd/mm hh:mm:ss
-        time_t t = time(nullptr);
-        tm tm = *localtime(&t);
+        return this->currentTime("%d/%m %H:%M:%S");
+    }
+    
+    string Logger::currentTime(string format) {
+        std::time_t t = std::time(NULL);
+        char mbstr[100];
+        std::strftime(mbstr, sizeof(mbstr), format.c_str(), std::localtime(&t));
         
-        stringstream ss;
-        ss << put_time(&tm, "%d/%m %H:%M:%S");
-        return ss.str();
+        return std::string(mbstr);
     }
     
     void Logger::setHeadline(string title) {

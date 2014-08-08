@@ -65,6 +65,8 @@ namespace Dungeon {
         LogBuffer buffer;
         void linkStream(ostream& stream);
         
+        string currentTime(string format);
+        
         string getTimestamp();
         mutex mutex;
         ofstream logfile;
