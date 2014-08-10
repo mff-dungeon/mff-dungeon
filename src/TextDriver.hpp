@@ -16,7 +16,7 @@ namespace Dungeon {
         
         string process(string input, Alive* figure);
     private:
-		ActionList* alist;
+	ActionList* alist;
     };
 }
 #endif
