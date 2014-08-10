@@ -72,7 +72,7 @@ int dbRestart() {
 	}
 	else {
 		LOG("main") << "Cleanup initiated." << LOGF;
-		LOG("main") << "Dropping all tables." << std:: endl;
+		LOG("main") << "Dropping all tables." << LOGF;
 		DatabaseHandler::getInstance().dropDatabase();
 		LOG("main") << "All tables dropped, creating and initializing tables." << LOGF;
 		DatabaseHandler::getInstance().initDatabase();
