@@ -1,4 +1,5 @@
 #include "TextDriver.hpp"
+#include "ActionDescriptor.hpp"
 
 namespace Dungeon {
     
@@ -14,31 +15,37 @@ namespace Dungeon {
 		delete alist;
     }
     
-    bool TextDriver::process(string input, objId figureId) {
+    bool TextDriver::process(TextActionDescriptor* ad) {
         alist->clear();
-        
-        // TODO: find all actions without actually loading Alive*
-        // figure->getAllActions(alist);
-        
-        for (size_t i = 0; i < alist->size(); i++) {
-            Action *action = alist->at(i);
-            
-            if (action->matchCommand(input)) {
-                queue->enqueue(action, figureId);
-                
-                return true;
+       
+        ad->getAlive()->getAllActions(alist);
+		
+        for (Action* action : *alist) {
+            if (action->matchCommand(ad->in_msg)) {
+				ad->matched(action);
+				break;
             }
         }
+		
+		if (ad->isValid(this)) {
+			ad->getAction()->commit(ad);
+			
+			// TODO - process results, create nice reply
+			return true;
+		} else {
+			ad->addMessage(getDontUnderstandResponse(ad->in_msg));
+		}
         
         return false;
     }
     
     string TextDriver::getDontUnderstandResponse(string input) {
         stringstream ss;
+		static 
         
         // TODO: think of something more creative
         
-        int rnd = rand() % 5;
+        int rnd = rand() % 6;
         switch (rnd) {
             case 0:
                 ss << "What do you mean \"" << input << "\"?";
@@ -55,6 +62,8 @@ namespace Dungeon {
             case 4:
                 ss << "I wouldn't do that if I were you. Besides, I can't do that.";
                 break;
+			case 5:
+				ss << "This is not the thing you are trying to do.";
         }
         
         return ss.str();

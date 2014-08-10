@@ -1,9 +1,10 @@
 #include "Action.hpp"
+#include "ActionDescriptor.hpp"
 
 namespace Dungeon {
 
 	void Action::commit(ActionDescriptor* ad) {
-		ad->message = "Olala! The action was commited!";
+		ad->addMessage("Olala! The action was commited!");
 	}
 	
 	bool Action::matchCommand(string command) {
@@ -11,7 +12,7 @@ namespace Dungeon {
 	}
 
 	void Action::explain(ActionDescriptor* ad) {
-		ad->message = "Sorry. Neither me does know what should that mean.";
+		ad->addMessage("Sorry. Neither me does know what should that mean.");
 	}
 	
 }

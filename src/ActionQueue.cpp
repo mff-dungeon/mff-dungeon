@@ -16,29 +16,12 @@ namespace Dungeon {
 		this->gm = gm;
 	}
 
-	ActionDescriptor* ActionQueue::enqueue(Action* action, Alive* caller) {
+	void ActionQueue::enqueue(ActionDescriptor* ad) {
 		lock l(q_mutex);
-		ActionDescriptor *ad = new ActionDescriptor(action, this->gm, caller);
+		ad->enqueued(this->gm);
 		bool wake = actions.empty();
 		if (running) this->actions.push(ad);
 		if (wake) q_condvar.notify_one();
-		return ad;
-	}
-    
-    ActionDescriptor* ActionQueue::enqueue(Action* action, objId callerId) {
-		IObject *object = this->gm->getObject(callerId);
-        if (!object) {
-            LOG("ActionQueue") << "Caller not found: '" << callerId << "'" << LOGF;
-            return nullptr;
-        }
-        
-        Alive *caller = (Alive *)object;
-        if (!caller) {
-            LOG("ActionQueue") << "Caller found but is not alive: '" << callerId << "'" << LOGF;
-            return nullptr;
-        }
-        
-        return enqueue(action, caller);
 	}
 
 	void ActionQueue::process() {
@@ -52,10 +35,7 @@ namespace Dungeon {
 		ActionDescriptor *ad = actions.front();
 		actions.pop();
 
-		ad->getAction()->commit(ad);
-        
-        // notify drivers
-        for_each(drivers.begin(), drivers.end(), bind2nd(mem_fun(&Driver::processDescriptor), ad));
+		ad->driver->processDescriptor(ad);
 		
 		delete ad;
 	}

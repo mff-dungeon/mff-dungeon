@@ -16,7 +16,7 @@ namespace Dungeon {
         TextDriver(ActionQueue* queue);
         virtual ~TextDriver();
         
-        bool process(string input, objId figureId);
+        bool process(TextActionDescriptor* ad);
         string getDontUnderstandResponse(string input);
     private:
 	ActionList* alist;

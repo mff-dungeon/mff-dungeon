@@ -1,6 +1,7 @@
 #include <netdb.h>
 
 #include "JabberDriver.hpp"
+#include "ActionDescriptor.hpp"
 
 using namespace gloox;
 
@@ -54,22 +55,21 @@ namespace Dungeon {
     }
     
 	void JabberDriver::processDescriptor(ActionDescriptor* descriptor) {
-		// get the Alive, message and send a response
-        objId figureId = descriptor->getAlive()->getId();
-        JID jid = this->findJID(figureId);
-        
-        if (!jid) {
-            return;
-        }
-        
-        Message msg(Message::Chat, jid, descriptor->message);
+		TextActionDescriptor* ad = (TextActionDescriptor*) descriptor;
+		objId figureId = this->findFigureId(ad->from);
+		Alive* figure = (Alive*) gm->getObject(figureId);
+		ad->assigned(figure);
+		
+		this->process(ad);
+		
+        Message msg(Message::Chat, ad->from, ad->getReply());
         client->send(msg);
 	}
 	
     void JabberDriver::handleMessage(const Message& message, MessageSession* session) {
         Message::MessageType type = message.subtype();
         
-        if (type == Message::Chat) {
+        if (type == Message::Chat || type == Message::Normal) {
             // find out who sent what
             string contents = message.body();
             string sender = message.from().bare();
@@ -77,19 +77,14 @@ namespace Dungeon {
             if (contents == "") {
                 return;
             }
-            
-            // load corresponding session and log message arrival
-            objId figureId = this->findFigureId(message.from());
+			
             LOG("JabberDriver") << "User '" << sender << "' sent a message: '" << contents << "'" << LOGF;
             
-            // process input
-            bool processed = this->process(contents, figureId);
-            
-            // send the response back to the client
-            if (!processed) {
-                Message msg(Message::Chat, message.from(), this->getDontUnderstandResponse(contents));
-                client->send(msg);
-            }
+            TextActionDescriptor* ad = new TextActionDescriptor(this);
+			ad->from.assign(sender);
+			ad->in_msg.assign(contents);
+			
+			queue->enqueue(ad);
         } else {
             // unsupported message type
             
@@ -105,10 +100,6 @@ namespace Dungeon {
                     
                 case Message::Headline:
                     typeName = "headline";
-                    break;
-                    
-                case Message::Normal:
-                    typeName = "normal";
                     break;
                     
                 case Message::Invalid:
@@ -144,42 +135,7 @@ namespace Dungeon {
     }
     
     objId JabberDriver::findFigureId(JID jid) {
-        objId id;
-        string buffer;
-        bool found = false;
-        
-        string cmpJid = jid.bare();
-        transform(cmpJid.begin(), cmpJid.end(), cmpJid.begin(), ::tolower);
-        
-        LOG("JabberDriver") << "Looking for JID: '" << cmpJid << "'." << LOGF;
-        
-        userFile.seekg(0, ios_base::beg);
-        while (getline(userFile, buffer, userFileSeparator())) {
-            string sessionJid = buffer;
-            if (sessionJid == cmpJid) {
-                found = true;
-                
-                getline(userFile, id, userFileSeparator());
-                LOG("JabberDriver") << "Found corresponding objId: '" << id << "'." << LOGF;
-                break;
-            }
-            
-            getline(userFile, buffer);
-        }
-        userFile.clear();
-        
-        if (!found) {
-            id = "human/" + jid.bare();
-            LOG("JabberDriver") << "Not found, creating new objId: '" << id << "'." << LOGF;
-            
-            // TODO: notify GameManager about new user
-            
-            userFile.seekp(0, ios_base::end);
-            userFile << cmpJid << userFileSeparator() << id << userFileSeparator() << time(0) << endl;
-            userFile.flush();
-        }
-        
-        return id;
+		return "human/" + jid.bare();
     }
     
     JID JabberDriver::findJID(objId figureId) {

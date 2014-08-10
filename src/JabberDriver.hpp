@@ -40,7 +40,7 @@ namespace Dungeon {
          */
         void stop();
 		
-		virtual void processDescriptor(ActionDescriptor* descriptor);
+        virtual void processDescriptor(ActionDescriptor* descriptor);
         
         /* gloox::MessageHandler interface implementation */
         void handleMessage(const gloox::Message& message, gloox::MessageSession* session = 0);

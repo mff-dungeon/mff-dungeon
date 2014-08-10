@@ -49,6 +49,7 @@ namespace Dungeon {
     class GameManager; 
     class ObjectLoader;
     class ObjectPointer;
+    class Alive;
     class Action;
     class ActionDescriptor;
     class ActionQueue;

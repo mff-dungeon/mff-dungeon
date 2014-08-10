@@ -8,24 +8,44 @@
 #ifndef ACTIONDESCRIPTOR_HPP
 #define	ACTIONDESCRIPTOR_HPP
 
+#include <vector>
 #include "common.hpp"
+#include "Driver.hpp"
 
 namespace Dungeon {
-	class Alive;
+    
     class ActionDescriptor {
     public:
-        ActionDescriptor(Action* action, GameManager* gm, Alive* caller);
+        ActionDescriptor(Driver * driver);
         Action* getAction();
         Alive* getAlive();
         GameManager* getGM();
-        string message; // FIXME
         
+        Driver* driver;
+        
+        void enqueued(GameManager* gm);
+        void assigned(Alive* alive);
+        void matched(Action* action);
+        
+        void addMessage(string msg);
+        
+        bool isValid(Driver* driver);
+        vector<string> messages;
     private:
         Action* action;
         GameManager* gm;
         Alive* caller;
         int id;
 
+    };
+    
+    class TextActionDescriptor : public ActionDescriptor {
+    public:
+        TextActionDescriptor(Driver * driver);
+        string from, in_msg;
+        
+        string getReply();
+        
     };
 }
 

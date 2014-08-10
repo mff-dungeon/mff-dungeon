@@ -13,14 +13,26 @@ namespace Dungeon {
         
         string line;
         while(getline(cin, line), !cin.eof()) {
-            if (!this->process(line, figure->getId())) {
-                cout << this->getDontUnderstandResponse(line) << endl;
-            }
+			TextActionDescriptor * ad = new TextActionDescriptor(this);
+			ad->in_msg = line;
+			ad->from = "console";
+			
+			queue->enqueue(ad);
         }
         
         LOG("ConsoleDriver") << "Worker ended." << LOGF;
         this->queue->stop();
     }
+	
+	void ConsoleDriver::processDescriptor(ActionDescriptor* descriptor) {
+		TextActionDescriptor* ad = (TextActionDescriptor*) descriptor;
+		ad->assigned(figure);
+		
+		this->process(ad);
+		
+		cout << ">>> " << ad->getReply() << endl;
+	}
+	
     
     void ConsoleDriver::run() {
         // create thread with worker()

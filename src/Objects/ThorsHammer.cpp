@@ -24,7 +24,7 @@ namespace Dungeon
 				RegexMatcher::matcher("server shutdown"), 
 				[] (ActionDescriptor* ad) {
 					ad->getGM()->shutdown();
-					ad->message = "OK. I will just finish the queue. Bye!";
+					ad->addMessage("OK. I will just finish the queue. Bye!");
 				}));
 	}
 	

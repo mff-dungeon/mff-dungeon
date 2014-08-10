@@ -1,8 +1,9 @@
 #include "CallbackAction.hpp"
+#include "../ActionDescriptor.hpp"
 
 namespace Dungeon {
 	void CallbackAction::explain(ActionDescriptor* ad) {
-		ad->message = explanation;
+		ad->addMessage(explanation);
 	}
 
 	void CallbackAction::commit(ActionDescriptor* ad) {

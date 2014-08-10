@@ -6,7 +6,6 @@
 #define	ACTION_HPP
 
 #include "common.hpp"
-#include "ActionDescriptor.hpp"
 
 namespace Dungeon {
 

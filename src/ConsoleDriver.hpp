@@ -14,6 +14,8 @@ namespace Dungeon {
         virtual ~ConsoleDriver();
         void run();
         
+        virtual void processDescriptor(ActionDescriptor* ad);
+        
     private:
         void worker();
         thread *workerThread;
