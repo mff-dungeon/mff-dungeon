@@ -10,6 +10,8 @@ namespace Dungeon {
         
         client->disco()->setVersion("Dungeon", "1.0");
         client->disco()->setIdentity("client", "bot", "Dungeon");
+        
+        userFile.open("jabber_sessions", fstream::in | fstream::out | fstream::app);
     }
     
     JabberDriver::~JabberDriver() {
@@ -18,6 +20,9 @@ namespace Dungeon {
         }
         
         delete client;
+        
+        userFile.flush();
+        userFile.close();
     }
     
     void JabberDriver::worker() {
@@ -49,8 +54,8 @@ namespace Dungeon {
     
 	void JabberDriver::processDescriptor(ActionDescriptor* descriptor) {
 		// get the Alive, message and send a response
-        Alive *figure = descriptor->getAlive();
-        JID jid = this->findJID(figure);
+        objId figureId = descriptor->getAlive()->getId();
+        JID jid = this->findJID(figureId);
         
         if (!jid) {
             return;
@@ -73,15 +78,17 @@ namespace Dungeon {
             }
             
             // load corresponding session and log message arrival
-            Alive* figure = this->findFigure(message.from());
+            objId figureId = this->findFigureId(message.from());
             LOG("JabberDriver") << "User '" << sender << "' sent a message: '" << contents << "'" << LOGF;
             
-            // produce a response
-            string response = this->process(contents, figure);
+            // process input
+            bool processed = this->process(contents, figureId);
             
             // send the response back to the client
-            Message msg(Message::Chat, message.from(), response);
-            client->send(msg);
+            if (!processed) {
+                Message msg(Message::Chat, message.from(), this->getDontUnderstandResponse(contents));
+                client->send(msg);
+            }
         } else {
             // unsupported message type
             
@@ -135,35 +142,73 @@ namespace Dungeon {
         return true;
     }
     
-    Alive* JabberDriver::findFigure(JID jid) {
-        JabberSession *foundSession = nullptr;
-        for (auto &session : sessions) {
-            if (session.getJID() == jid) {
-                foundSession = &session;
+    objId JabberDriver::findFigureId(JID jid) {
+        objId id;
+        string buffer;
+        bool found = false;
+        
+        string cmpJid = jid.bare();
+        transform(cmpJid.begin(), cmpJid.end(), cmpJid.begin(), ::tolower);
+        
+        LOG("JabberDriver") << "Looking for JID: '" << cmpJid << "'." << LOGF;
+        
+        userFile.seekg(0, ios_base::beg);
+        while (getline(userFile, buffer, userFileSeparator())) {
+            string sessionJid = buffer;
+            if (sessionJid == cmpJid) {
+                found = true;
+                
+                getline(userFile, id, userFileSeparator());
+                LOG("JabberDriver") << "Found corresponding objId: '" << id << "'." << LOGF;
                 break;
             }
-        }
-        
-        if (!foundSession) {
-            JabberSession newSession(jid, figure);
-            sessions.push_back(newSession);
             
-            foundSession = &newSession;
+            getline(userFile, buffer);
+        }
+        userFile.clear();
+        
+        if (!found) {
+            id = figure->getId();
+            LOG("JabberDriver") << "Not found, creating new objId: '" << id << "'." << LOGF;
+            
+            userFile.seekp(0, ios_base::end);
+            userFile << cmpJid << userFileSeparator() << id << userFileSeparator() << time(0) << endl;
+            userFile.flush();
         }
         
-        return foundSession->getFigure();
+        return id;
     }
     
-    JID JabberDriver::findJID(Alive *figure) {
-        JabberSession *foundSession = nullptr;
-        for (auto &session : sessions) {
-            if (session.getFigure() == figure) {
-                foundSession = &session;
+    JID JabberDriver::findJID(objId figureId) {
+        JID jid;
+        string buffer;
+        bool found = false;
+        
+        LOG("JabberDriver") << "Looking for objId: '" << figureId << "'." << LOGF;
+        
+        userFile.seekg(0, ios_base::beg);
+        while (getline(userFile, buffer, userFileSeparator())) {
+            string sessionJid = buffer;
+            string sessionObjId;
+            
+            getline(userFile, sessionObjId, userFileSeparator());
+            getline(userFile, buffer);
+            
+            if (sessionObjId == figureId) {
+                found = true;
+                
+                jid = JID(sessionJid);
+                LOG("JabberDriver") << "Found corresponding JID: '" << sessionJid << "'." << LOGF;
                 break;
             }
         }
+        userFile.clear();
         
-        return foundSession ? foundSession->getJID() : JID();
+        if (!found) {
+            LOG("JabberDriver") << "Not found, discarding..." << LOGF;
+        }
+        
+        return jid;
     }
     
     void JabberDriver::handlePresence(const Presence &presence) {
@@ -251,29 +296,5 @@ namespace Dungeon {
         }
         
         LOG("JabberDriver") << "Received subcription packet: '" << typeName << "', sender '" << sender << "', status: '" << status << "'" << LOGF;
-    }
-    
-    JabberDriver::JabberSession::JabberSession(JID jid, Alive* figure) : m_jid(jid), m_figure(figure) {
-        
-    }
-    
-    JabberDriver::JabberSession::~JabberSession() {
-        
-    }
-    
-    bool JabberDriver::JabberSession::isExpired() {
-        return false;
-    }
-    
-    void JabberDriver::JabberSession::renew() {
-        
-    }
-    
-    Alive* JabberDriver::JabberSession::getFigure() {
-        return m_figure;
-    }
-    
-    JID JabberDriver::JabberSession::getJID() {
-        return m_jid;
     }
 }

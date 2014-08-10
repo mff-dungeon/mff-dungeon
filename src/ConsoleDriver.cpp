@@ -1,7 +1,7 @@
 #include "ConsoleDriver.hpp"
 
 namespace Dungeon {
-    ConsoleDriver::ConsoleDriver(ActionQueue* queue, Alive* figure) : TextDriver(queue), figure(figure) {
+    ConsoleDriver::ConsoleDriver(ActionQueue* queue, objId figureId) : TextDriver(queue), figureId(figureId) {
         
     }
 
@@ -11,10 +11,11 @@ namespace Dungeon {
     void ConsoleDriver::worker() {
         LOG("ConsoleDriver") << "Worker started." << LOGF;
         
-        string line, output;
+        string line;
         while(getline(cin, line), !cin.eof()) {
-            output = this->process(line, figure);
-            LOG("ConsoleDriver") << output;
+            if (!this->process(line, figureId)) {
+                cout << this->getDontUnderstandResponse(line) << endl;
+            }
         }
         
         LOG("ConsoleDriver") << "Worker ended." << LOGF;

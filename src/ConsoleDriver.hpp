@@ -10,14 +10,14 @@ namespace Dungeon {
     
     class ConsoleDriver : public TextDriver {
     public:
-        ConsoleDriver(ActionQueue* queue, Alive* figure);
+        ConsoleDriver(ActionQueue* queue, objId figureId);
         virtual ~ConsoleDriver();
         void run();
         
     private:
         void worker();
         thread *workerThread;
-        Alive* figure;
+        objId figureId;
     };
 
 }

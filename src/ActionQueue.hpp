@@ -22,6 +22,7 @@ namespace Dungeon {
     public:
         ActionQueue(GameManager* gm);
         ActionDescriptor *enqueue(Action *action, Alive* caller);
+        ActionDescriptor *enqueue(Action *action, objId callerId);
         void process();
         void loopToFinish();
         void stop();

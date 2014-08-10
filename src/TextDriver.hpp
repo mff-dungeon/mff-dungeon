@@ -1,6 +1,8 @@
 #ifndef TEXTDRIVER_HPP
 #define	TEXTDRIVER_HPP
 
+#include <sstream>
+#include <cstdlib>
 #include "common.hpp"
 #include "Driver.hpp"
 #include "Action.hpp"
@@ -14,7 +16,8 @@ namespace Dungeon {
         TextDriver(ActionQueue* queue);
         virtual ~TextDriver();
         
-        string process(string input, Alive* figure);
+        bool process(string input, objId figureId);
+        string getDontUnderstandResponse(string input);
     private:
 		ActionList* alist;
     };

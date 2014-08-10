@@ -5,6 +5,10 @@
 #include "Objects/Alive.hpp"
 #include "common.hpp"
 #include <thread>
+#include <fstream>
+#include <ctime>
+#include <algorithm>
+#include <string>
 #include <gloox/client.h>
 #include <gloox/message.h>
 #include <gloox/messagehandler.h>
@@ -61,29 +65,12 @@ namespace Dungeon {
         Alive* figure;
         gloox::Client* client;
         
-        Alive* findFigure(gloox::JID jid);
-        gloox::JID findJID(Alive *figure);
+        objId findFigureId(gloox::JID jid);
+        gloox::JID findJID(objId figureId);
         
         static int presencePriority() { return 0; }
-        
-        class JabberSession {
-        public:
-            JabberSession(gloox::JID jid, Alive* figure);
-            ~JabberSession();
-            
-            bool isExpired();
-            void renew();
-            
-            Alive* getFigure();
-            gloox::JID getJID();
-            
-        private:
-            gloox::JID m_jid;
-            Alive* m_figure;
-            
-        };
-        
-        vector<JabberSession> sessions;
+        static char userFileSeparator() { return ':'; }
+        fstream userFile;
     };
     
 }

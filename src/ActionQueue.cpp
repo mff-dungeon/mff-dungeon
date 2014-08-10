@@ -24,6 +24,22 @@ namespace Dungeon {
 		if (wake) q_condvar.notify_one();
 		return ad;
 	}
+    
+    ActionDescriptor* ActionQueue::enqueue(Action* action, objId callerId) {
+		IObject *object = this->gm->getObject(callerId);
+        if (!object) {
+            LOG("ActionQueue") << "Caller not found: '" << callerId << "'" << LOGF;
+            return nullptr;
+        }
+        
+        Alive *caller = (Alive *)object;
+        if (!caller) {
+            LOG("ActionQueue") << "Caller found but is not alive: '" << callerId << "'" << LOGF;
+            return nullptr;
+        }
+        
+        return enqueue(action, caller);
+	}
 
 	void ActionQueue::process() {
 		ulock u(q_mutex);
