@@ -1,7 +1,7 @@
 #include "ConsoleDriver.hpp"
 
 namespace Dungeon {
-    ConsoleDriver::ConsoleDriver(ActionQueue* queue, objId figureId) : TextDriver(queue), figureId(figureId) {
+    ConsoleDriver::ConsoleDriver(ActionQueue* queue, Alive* figure) : TextDriver(queue), figure(figure) {
         
     }
 
@@ -13,7 +13,7 @@ namespace Dungeon {
         
         string line;
         while(getline(cin, line), !cin.eof()) {
-            if (!this->process(line, figureId)) {
+            if (!this->process(line, figure->getId())) {
                 cout << this->getDontUnderstandResponse(line) << endl;
             }
         }

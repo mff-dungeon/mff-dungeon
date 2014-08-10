@@ -11,7 +11,7 @@ namespace Dungeon
     class Alive : public IObject
     {
     public:
-		Alive() {};		// Constructor allowing to load class later
+        Alive() {};		// Constructor allowing to load class later
         Alive(objId id) : IObject(id) {};
         void getAllActions(ActionList* list);
         virtual void getActions(ActionList* list, IObject *callee);

@@ -51,8 +51,10 @@ namespace Dungeon {
     class ObjectPointer;
     class Action;
     class ActionDescriptor;
+    class ActionQueue;
     class IObject;
     class Driver;
+    class AddIObject;
     
     /**
      * Should be value type (struct), comparable
@@ -62,6 +64,7 @@ namespace Dungeon {
 }
 
 #include "IObject.hpp"
+#include "AddIObject.hpp"
 
 #endif
 

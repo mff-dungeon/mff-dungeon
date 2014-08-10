@@ -15,6 +15,11 @@ namespace Dungeon {
 	Alive* ActionDescriptor::getAlive() {
 		return this->caller;
 	}
+	
+	GameManager* ActionDescriptor::getGM() {
+		return this->gm;
+	}
+
 
 }
 

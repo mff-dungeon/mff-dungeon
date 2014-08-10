@@ -9,7 +9,7 @@ SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 DYNAMICS := $(shell echo $(DYNDIR))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -std=c++11 -g -O2 -Wall -DBOOST_SIGNALS_NO_DEPRECATION_WARNING -I/usr/local/include
+CFLAGS := -std=c++11 -g -O2 -Wall -I/usr/local/include
 
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(shell dirname $@)

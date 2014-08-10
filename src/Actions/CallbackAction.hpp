@@ -13,6 +13,7 @@
 #include <functional>
 #include "../common.hpp"
 #include "../RegexMatcher.hpp"
+#include "../Action.hpp"
 
 namespace Dungeon {
 

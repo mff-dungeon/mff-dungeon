@@ -2,6 +2,7 @@
 #define	DUMMY_HPP
 
 #include "../common.hpp"
+#include "../Action.hpp"
 
 namespace Dungeon {
 

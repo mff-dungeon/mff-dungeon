@@ -56,6 +56,8 @@ namespace Dungeon {
         
         // notify drivers
         for_each(drivers.begin(), drivers.end(), bind2nd(mem_fun(&Driver::processDescriptor), ad));
+		
+		delete ad;
 	}
 
 	void ActionQueue::loopToFinish() {
@@ -74,6 +76,9 @@ namespace Dungeon {
 		/* TODO: check - how locks are implemented? can't notify_one 
 		 * in the middle of action processing start another processing?
 		 * Remove if not true, needed for safe finishing
+		 * 
+		 * Notify_one should only wake sleeping thread, waiting for this
+		 * condition. When there isn't any, it should pass.
 		 */ 
 		LOG("ActionQueue") << "Stopped." << LOGF;
         q_condvar.notify_one();

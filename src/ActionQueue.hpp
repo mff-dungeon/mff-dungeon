@@ -14,6 +14,7 @@
 #include "Action.hpp"
 #include "ActionDescriptor.hpp"
 #include "GameManager.hpp"
+#include "Objects/Alive.hpp"
 
 
 namespace Dungeon {

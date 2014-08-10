@@ -1,9 +1,11 @@
+#include <netdb.h>
+
 #include "JabberDriver.hpp"
 
 using namespace gloox;
 
 namespace Dungeon {
-    JabberDriver::JabberDriver(ActionQueue* queue, Alive* figure, string jabberUsername, string jabberPassword) : TextDriver(queue), connected(false), figure(figure) {
+    JabberDriver::JabberDriver(GameManager* gm, string jabberUsername, string jabberPassword) : TextDriver(gm->getQueue()), connected(false), gm(gm) {
         // initialize Jabber client with credentials
         JID jid(jabberUsername);
         client = new Client(jid, jabberPassword);
@@ -38,7 +40,6 @@ namespace Dungeon {
         client->connect(true);
         
         LOG("JabberDriver") << "Worker ended." << LOGF;
-        this->queue->stop();
     }
     
     void JabberDriver::stop() {
@@ -168,8 +169,10 @@ namespace Dungeon {
         userFile.clear();
         
         if (!found) {
-            id = figure->getId();
+            id = "human/" + jid.bare();
             LOG("JabberDriver") << "Not found, creating new objId: '" << id << "'." << LOGF;
+            
+            // TODO: notify GameManager about new user
             
             userFile.seekp(0, ios_base::end);
             userFile << cmpJid << userFileSeparator() << id << userFileSeparator() << time(0) << endl;

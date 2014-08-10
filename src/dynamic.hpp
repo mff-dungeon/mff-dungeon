@@ -3,5 +3,6 @@
 
 #include "Objects/Alive.hpp"
 #include "Objects/Dummy.hpp"
+#include "Objects/ThorsHammer.hpp"
 
 #endif

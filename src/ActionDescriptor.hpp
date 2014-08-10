@@ -9,8 +9,6 @@
 #define	ACTIONDESCRIPTOR_HPP
 
 #include "common.hpp"
-#include "Action.hpp"
-#include "GameManager.hpp"
 
 namespace Dungeon {
 	class Alive;
@@ -18,13 +16,14 @@ namespace Dungeon {
     public:
         ActionDescriptor(Action* action, GameManager* gm, Alive* caller);
         Action* getAction();
-		Alive* getAlive();
+        Alive* getAlive();
+        GameManager* getGM();
         string message; // FIXME
         
     private:
         Action* action;
-        GameManager* gm;	// FIXME - not yet used
-		Alive* caller;
+        GameManager* gm;
+        Alive* caller;
         int id;
 
     };

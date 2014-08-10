@@ -1,12 +1,13 @@
+#include <iostream>
+#include <signal.h>		
+#include <cstring>		// strcmp
 #include "common.hpp"
 #include "dynamic.hpp"
 #include "GameManager.hpp"
 #include "ActionQueue.hpp"
 #include "JabberDriver.hpp"
 #include "DatabaseHandler.hpp"
-#include <iostream>
-#include <signal.h>		
-#include <cstring>		// strcmp
+#include "ConsoleDriver.hpp"
 
 using namespace Dungeon;
 
@@ -15,21 +16,21 @@ using namespace Dungeon;
  *		(mainly because of aqueue by finish() )  
  */
 GameManager *gm;
-ActionQueue* aqueue;
 Alive* admin;
 JabberDriver* jabber;
+ConsoleDriver* console;
 
 /* 
  *	Sends stop signal to the ActionQueue
  */
 void finish(int signal) {
-    LOGH("Finish");
-    
-	if(signal == SIGINT) LOG("main") << "Caught SIGINT, terminating..." << LOGF;
-	else if(signal == SIGTERM) LOG("main") << "Caught SIGTERM, terminating..." << LOGF;
-	
-    jabber->stop();
-	aqueue->stop();
+	LOGH("Finish");
+
+	if (signal == SIGINT) LOG("main") << "Caught SIGINT, terminating..." << LOGF;
+	else if (signal == SIGTERM) LOG("main") << "Caught SIGTERM, terminating..." << LOGF;
+
+	jabber->stop();
+	gm->shutdown();
 }
 
 /*
@@ -37,21 +38,22 @@ void finish(int signal) {
  *		the queue can be stopped.
  */
 void start() {
-    LOGH("Start");
+	LOGH("Start");
 	LOG("main") << "This is Jabber Dungeon starting." << LOGF;
 	gm = new GameManager();
-	aqueue = new ActionQueue (gm);
-	
+
 	admin = new Alive("human/admin@jabberdung");
-    
-	jabber = new JabberDriver(aqueue, admin, "dungeon@eideo.cz", "somemagicshit");
+	console = new ConsoleDriver(gm->getQueue(), admin);
+	console->run();
+
+	jabber = new JabberDriver(gm, "dungeon@eideo.cz", "somemagicshit");
 	jabber->run();
-    LOG("main") << "Jabber driver started, starting queue." << LOGF;
-	 
+	LOG("main") << "Drivers started, starting queue." << LOGF;
+
 	signal(SIGTERM, finish);
 	signal(SIGINT, finish);
-	aqueue->loopToFinish();
-	
+	gm->getQueue()->loopToFinish();
+
 	LOG("main") << "Dungeon ends. Bye!" << LOGF;
 }
 
@@ -67,10 +69,9 @@ int dbRestart() {
 	LOG("main") << "Database cleanup requested. Are you sure? [y/N]" << LOGF;
 
 	std::getline(std::cin, answer);
-	if(answer != "y") { 
+	if (answer != "y") {
 		LOG("main") << "Cleanup canceled." << LOGF;
-	}
-	else {
+	} else {
 		LOG("main") << "Cleanup initiated." << LOGF;
 		LOG("main") << "Dropping all tables." << LOGF;
 		DatabaseHandler::getInstance().dropDatabase();
@@ -80,7 +81,7 @@ int dbRestart() {
 	}
 	LOG("main") << "Continue with startup? [Y/n]" << LOGF;
 	std::getline(std::cin, answer);
-	if(answer == "n") {
+	if (answer == "n") {
 		LOG("main") << "Shutting down" << LOGF;
 		return 1;
 	}
@@ -91,12 +92,11 @@ int main(int argc, char** argv) {
 	/*
 	 *	Process command line parameters, if any found
 	 */
-	for(int a=1; a<argc; a++) {
-		if(strcmp(argv[a], "cleanDB") == 0) {
-			if(dbRestart() == 1)	// Terminate the program, don't start
+	for (int a = 1; a < argc; a++) {
+		if (strcmp(argv[a], "cleanDB") == 0) {
+			if (dbRestart() == 1) // Terminate the program, don't start
 				return 0;
-		}
-		else 
+		} else
 			LOG("main") << "Unknown argument: " << argv[a];
 	}
 	/*

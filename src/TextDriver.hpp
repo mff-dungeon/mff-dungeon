@@ -19,7 +19,7 @@ namespace Dungeon {
         bool process(string input, objId figureId);
         string getDontUnderstandResponse(string input);
     private:
-		ActionList* alist;
+	ActionList* alist;
     };
 }
 #endif
