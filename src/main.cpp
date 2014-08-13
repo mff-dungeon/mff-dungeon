@@ -106,6 +106,7 @@ int dbRestart() {
 	if (answer != "y") {
 		LOG("main") << "Cleanup canceled." << LOGF;
 	} else {
+        LOGH("Database cleanup");
 		LOG("main") << "Cleanup initiated." << LOGF;
 		LOG("main") << "Dropping all tables." << LOGF;
 		DatabaseHandler::getInstance().dropDatabase();

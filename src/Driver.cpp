@@ -11,9 +11,9 @@ namespace Dungeon {
     
     void Driver::processDescriptor(ActionDescriptor* descriptor) {
 		if (typeid(*descriptor) == typeid(TextActionDescriptor))
-			LOG("Driver") << "Action descriptor arrived: '" << ((TextActionDescriptor*)descriptor)->in_msg << "'." << LOGF;
+			LOGS("Driver", Verbose) << "Action descriptor arrived: '" << ((TextActionDescriptor*)descriptor)->in_msg << "'." << LOGF;
         else
-			LOG("Driver") << "Action descriptor arrived." << LOGF;
+			LOGS("Driver", Verbose) << "Action descriptor arrived." << LOGF;
     }
 
 }

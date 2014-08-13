@@ -20,7 +20,7 @@ namespace Dungeon {
 			else
 				throw new runtime_error("No such object found");
 		}
-        LOG("GameManager") << "Looking up object '" << id << "'." << LOGF;
+        LOGS("GameManager", Verbose) << "Looking up object '" << id << "'." << LOGF;
 		return r;
 	}
     
@@ -34,7 +34,7 @@ namespace Dungeon {
 			else
 				return false;
 		}
-        LOG("GameManager") << "Peeking object '" << id << "'." << LOGF;
+        LOGS("GameManager", Verbose) << "Peeking object '" << id << "'." << LOGF;
 		return true;
 	}
 

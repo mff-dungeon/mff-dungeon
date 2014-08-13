@@ -34,6 +34,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 
 clean:
 	$(RM) -r $(BUILDDIR) $(TARGET)
+	$(RM) *.log
 
 tester:
 	$(CC) $(CFLAGS) test/tester.cpp $(INC) $(LIB) -o bin/tester

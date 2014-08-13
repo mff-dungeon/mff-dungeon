@@ -31,7 +31,7 @@ namespace Dungeon {
                 }
 		if (actions.empty()) return;
 
-        LOG("ActionQueue") << "Processing." << LOGF;
+        LOGS("ActionQueue", Verbose) << "Processing action." << LOGF;
 		ActionDescriptor *ad = actions.front();
 		actions.pop();
 
