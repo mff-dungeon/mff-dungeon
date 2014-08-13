@@ -75,10 +75,22 @@ namespace Dungeon {
             string sender = message.from().bare();
             
             if (contents == "") {
+                // ignore empty messages
+                return;
+            }
+            
+            objId figureId = this->findFigureId(message.from());
+            if (!this->gm->hasObject(figureId)) {
+                
+                Message msg(Message::Chat, message.from(), this->getStrangerResponse(contents));
+                client->send(msg);
+                this->client->rosterManager()->subscribe(message.from(), EmptyString, StringList(), "The Dungeon wants you!");
+                LOG("JabberDriver") << "Unknown JID '" << sender << "' sent a message: '" << contents << "', replying with subscription request..." << LOGF;
+                
                 return;
             }
 			
-            LOG("JabberDriver") << "User '" << sender << "' sent a message: '" << contents << "'" << LOGF;
+            LOG("JabberDriver") << "User '" << figureId << "' sent a message: '" << contents << "'" << LOGF;
             
             TextActionDescriptor* ad = new TextActionDescriptor(this);
 			ad->from.assign(sender);
@@ -227,12 +239,25 @@ namespace Dungeon {
         
         switch (subscription.subtype()) {
             case Subscription::Subscribe:
+            {
                 typeName = "subscription request";
+                
+                // create new user if necessary
+                objId figureId = this->findFigureId(subscription.from());
+                
+                if (!this->gm->hasObject(figureId)) {
+                    Alive *figure = new Alive(figureId);
+                    this->gm->addNewFigure(figure);
+                    
+                    Message msg(Message::Chat, subscription.from(), this->getNewUserMessage());
+                    client->send(msg);
+                }
                 
                 // acknowledge request and send similar request back
                 this->client->rosterManager()->ackSubscriptionRequest(subscription.from(), true);
                 this->client->rosterManager()->subscribe(subscription.from(), EmptyString, StringList(), "The Dungeon wants you!");
                 break;
+            }
                 
             case Subscription::Subscribed:
                 typeName = "subscribed notification";

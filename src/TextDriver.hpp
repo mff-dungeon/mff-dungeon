@@ -18,6 +18,8 @@ namespace Dungeon {
         
         bool process(TextActionDescriptor* ad);
         string getDontUnderstandResponse(string input);
+        string getStrangerResponse(string input);
+        string getNewUserMessage();
     private:
 	ActionList* alist;
     };

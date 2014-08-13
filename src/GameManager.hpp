@@ -18,10 +18,13 @@ namespace Dungeon {
     public:
         GameManager();
         IObject* getObject(objId id);
+        bool hasObject(objId id);
         void insertObject(IObject *object);
         ObjectPointer* getObjectPointer(objId id);
         
         ActionQueue* getQueue();
+        
+        void addNewFigure(Alive *figure);
         
         void shutdown();
     };

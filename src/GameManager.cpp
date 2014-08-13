@@ -23,6 +23,20 @@ namespace Dungeon {
         LOG("GameManager") << "Looking up object '" << id << "'." << LOGF;
 		return r;
 	}
+    
+    bool GameManager::hasObject(objId id) {
+		IObject * r;
+		r = this->objects.find(id);
+		if (r == 0) {
+			r = loader->loadObject(id);
+			if (r != 0)
+				this->objects.insert(r);
+			else
+				return false;
+		}
+        LOG("GameManager") << "Peeking object '" << id << "'." << LOGF;
+		return true;
+	}
 
 	ObjectPointer* GameManager::getObjectPointer(objId id) {
 		return new ObjectPointer(this, id);
@@ -40,4 +54,10 @@ namespace Dungeon {
 	void GameManager::shutdown() {
 		this->aqueue->stop();
 	}
+    
+    void GameManager::addNewFigure(Alive *figure) {
+        // TODO: put the figure somewhere, initialize the inventory, and so on...
+        
+        this->insertObject(figure);
+    }
 }

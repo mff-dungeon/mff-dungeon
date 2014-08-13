@@ -68,4 +68,48 @@ namespace Dungeon {
         
         return ss.str();
     }
+    
+    string TextDriver::getStrangerResponse(string input) {
+        stringstream ss;
+		static
+        
+        // TODO: think of something more creative
+        
+        int rnd = rand() % 3;
+        switch (rnd) {
+            case 0:
+                ss << "The Dungeon speaks to no strangers. Add me as a friend and then we'll talk!";
+                break;
+            case 1:
+                ss << "Who are you, puny human? Prove yourself to me and add me as a friend!";
+                break;
+            case 2:
+                ss << "Do not disturb my peace, stranger. We can parley later upon you befriending me!";
+                break;
+        }
+        
+        return ss.str();
+    }
+    
+    string TextDriver::getNewUserMessage() {
+        stringstream ss;
+		static
+        
+        // TODO: think of something more creative
+        
+        int rnd = rand() % 3;
+        switch (rnd) {
+            case 0:
+                ss << "Greetings, brave warrior! You may now begin your quest.";
+                break;
+            case 1:
+                ss << "You have discovered the mighty Dungeon. Choose your words wisely!";
+                break;
+            case 2:
+                ss << "Beware of the great Dungeon! Ask me a question and I shall answer you.";
+                break;
+        }
+        
+        return ss.str();
+    }
 }
