@@ -85,12 +85,12 @@ namespace Dungeon {
                 Message msg(Message::Chat, message.from(), this->getStrangerResponse(contents));
                 client->send(msg);
                 this->client->rosterManager()->subscribe(message.from(), EmptyString, StringList(), "The Dungeon wants you!");
-                LOG("JabberDriver") << "Unknown JID '" << sender << "' sent a message: '" << contents << "', replying with subscription request..." << LOGF;
+                LOGS("JabberDriver", Verbose) << "Unknown JID '" << sender << "' sent a message: '" << contents << "', replying with subscription request..." << LOGF;
                 
                 return;
             }
 			
-            LOG("JabberDriver") << "User '" << figureId << "' sent a message: '" << contents << "'" << LOGF;
+            LOGS("JabberDriver", Verbose) << "User '" << figureId << "' sent a message: '" << contents << "'" << LOGF;
             
             TextActionDescriptor* ad = new TextActionDescriptor(this);
 			ad->from.assign(sender);
@@ -126,7 +126,7 @@ namespace Dungeon {
             string contents = message.body();
             string sender = message.from().bare();
             
-            LOG("JabberDriver") << "Received unsupported message type: '" << typeName << "', sender: '" << sender << "', body: '" << contents << "'" << LOGF;
+            LOGS("JabberDriver", Verbose) << "Received unsupported message type: '" << typeName << "', sender: '" << sender << "', body: '" << contents << "'" << LOGF;
         }
     }
     
@@ -155,7 +155,7 @@ namespace Dungeon {
         string buffer;
         bool found = false;
         
-        LOG("JabberDriver") << "Looking for objId: '" << figureId << "'." << LOGF;
+        LOGS("JabberDriver", Verbose) << "Looking for objId: '" << figureId << "'." << LOGF;
         
         userFile.seekg(0, ios_base::beg);
         while (getline(userFile, buffer, userFileSeparator())) {
@@ -169,14 +169,14 @@ namespace Dungeon {
                 found = true;
                 
                 jid = JID(sessionJid);
-                LOG("JabberDriver") << "Found corresponding JID: '" << sessionJid << "'." << LOGF;
+                LOGS("JabberDriver", Verbose) << "Found corresponding JID: '" << sessionJid << "'." << LOGF;
                 break;
             }
         }
         userFile.clear();
         
         if (!found) {
-            LOG("JabberDriver") << "Not found, discarding..." << LOGF;
+            LOGS("JabberDriver", Verbose) << "Not found, discarding..." << LOGF;
         }
         
         return jid;
@@ -229,7 +229,7 @@ namespace Dungeon {
                 break;
         }
         
-        LOG("JabberDriver") << "Received presence: '" << typeName << "', sender: '" << sender << "', status: '" << status << "'" << LOGF;
+        LOGS("JabberDriver", Verbose) << "Received presence: '" << typeName << "', sender: '" << sender << "', status: '" << status << "'" << LOGF;
     }
     
     void JabberDriver::handleSubscription(const Subscription &subscription) {
@@ -279,6 +279,6 @@ namespace Dungeon {
                 break;
         }
         
-        LOG("JabberDriver") << "Received subcription packet: '" << typeName << "', sender '" << sender << "', status: '" << status << "'" << LOGF;
+        LOGS("JabberDriver", Verbose) << "Received subcription packet: '" << typeName << "', sender '" << sender << "', status: '" << status << "'" << LOGF;
     }
 }

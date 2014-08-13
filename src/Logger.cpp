@@ -3,18 +3,26 @@
 
 namespace Dungeon {
     Logger::Logger() : ostream(NULL) {
+        mutex.lock();
+
         // link logger with log stream
         ostream::rdbuf(&buffer);
         
         // output all messages to stdout
-        this->linkStream(cout);
-        
-        // generate log file name: yyyy-mm-dd_hh-mm-ss_stdout.log
-        string logname = this->currentTime("%Y-%m-%d_%H-%M-%S") + "_stdout.log";
-        
+        this->linkStream(cout, Severity::Info);
         // open file stream with "append at the end" flag and make it copy stdout
-        logfile.open(logname, fstream::out | fstream::app | fstream::ate);
-        this->linkStream(logfile);
+        stdoutFile.open(this->currentTime("%Y-%m-%d_%H-%M-%S") + "_stdout.log", fstream::out | fstream::app | fstream::ate);
+        this->linkStream(stdoutFile, Severity::Info);
+        
+        // open file stream with "append at the end" flag and make it receive all messages
+        verboseFile.open(this->currentTime("%Y-%m-%d_%H-%M-%S") + "_verbose.log", fstream::out | fstream::app | fstream::ate);
+        this->linkStream(verboseFile, Severity::Verbose);
+        
+        // open file stream with "append at the end" flag and make it receive warnings or worse
+        warningsFile.open(this->currentTime("%Y-%m-%d_%H-%M-%S") + "_warnings.log", fstream::out | fstream::app | fstream::ate);
+        this->linkStream(warningsFile, Severity::Warning);
+        
+        mutex.unlock();
     }
     
     Logger::~Logger() {
@@ -23,26 +31,68 @@ namespace Dungeon {
         this->flush();
         
         // close the log file
-        logfile.close();
+        stdoutFile.close();
+        verboseFile.close();
+        warningsFile.close();
     }
     
-    void Logger::linkStream(std::ostream& stream) {
+    void Logger::linkStream(std::ostream& stream, Severity minSeverity) {
         stream.flush();
-        buffer.addBuffer(stream.rdbuf());
+        
+        stream << "[" << this->getTimestamp() << "] Logging began with minimal severity level: ";
+        switch (minSeverity) {
+            case Severity::Verbose:
+                stream << "verbose";
+                break;
+                
+            case Severity::Info:
+                stream << "info";
+                break;
+                
+            case Severity::Warning:
+                stream << "warning";
+                break;
+                
+            case Severity::Error:
+                stream << "error";
+                break;
+                
+            case Severity::Fatal:
+                stream << "fatal";
+                break;
+                
+            default:
+                stream << "unknown";
+                break;
+        }
+        stream << endl << endl;
+        stream.flush();
+        
+        buffer.addBuffer(stream.rdbuf(), minSeverity);
     }
     
-    void Logger::LogBuffer::addBuffer(streambuf* buf) {
-        bufs.push_back(buf);
+    void Logger::LogBuffer::addBuffer(streambuf* buf, Severity minSeverity) {
+        bufs.insert(pair<streambuf*, Severity>(buf, minSeverity));
     }
     
     int Logger::LogBuffer::overflow(int c) {
-        for_each(bufs.begin(), bufs.end(), bind2nd(mem_fun(&streambuf::sputc), c));
+        for (map<streambuf*, Severity>::iterator it = bufs.begin(); it != bufs.end(); ++it) {
+            Severity minSeverity = it->second;
+            
+            if (minSeverity <= currentSeverity) {
+                it->first->sputc(c);
+            }
+        }
+        
         return c;
     }
     
     void Logger::beginMessage(string source, Severity severity) {
         // atomic operation
         mutex.lock();
+        this->flush();
+        
+        buffer.currentSeverity = severity;
         
         // print timestamp
         *this << "[" << (*this).getTimestamp() << "] ";
@@ -77,7 +127,9 @@ namespace Dungeon {
         this->flush();
         
         // file streams need to be flushed separately
-        logfile.flush();
+        stdoutFile.flush();
+        verboseFile.flush();
+        warningsFile.flush();
         
         // end atomic operation
         mutex.unlock();
