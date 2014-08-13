@@ -4,12 +4,87 @@
 
 namespace Dungeon {
 
-	GameManager::GameManager() {
+	GameManager::GameManager(bool init) {
         LOG("GameManager") << "Created." << LOGF;
 		loader = new ObjectLoader();
+		
+		int dbCode = DatabaseHandler::getInstance().checkDatabase();
+		if(dbCode == DatabaseHandler::E_CONNECTION_ERROR) {
+			LOGS("DatabaseHandler", Fatal) << "Database isn't working" << LOGF;
+			exit(1);
+		}
+		else if(init) {
+			LOG("GameManager") << "Cleanup initiated." << LOGF;
+			initWorld();
+		}
+		else if(dbCode == DatabaseHandler::E_TABLE_COUNT_ERROR) {
+			LOG("GameManager") << "Wrong table count detected, cleaning up." << LOGF;
+			initWorld();
+		}
+		
 		aqueue = new ActionQueue(this);
 	}
 
+	void GameManager::initWorld() {
+		int err = 0;
+		LOGH("Database cleanup");
+		LOG("GameManager") << "Dropping all tables." << LOGF;
+		err = DatabaseHandler::getInstance().dropDatabase();
+		if(err != DatabaseHandler::E_OK) {
+			LOGS("GameManager", Fatal) << "Drop database query failed with error code " << err << LOGF;
+			exit(1);
+		}
+		LOG("GameManager") << "All tables dropped, creating and initializing tables." << LOGF;
+		err = DatabaseHandler::getInstance().initDatabase();
+		if(err != DatabaseHandler::E_OK) {
+			LOGS("GameManager", Fatal) << "Create table database query failed with error code " << err << LOGF;
+			exit(1);
+		}
+		/*
+		 * Init Objects
+		 */
+		this->insertObject(new Room("room/baseRoom"));
+		this->insertObject(new ThorsHammer());
+		this->insertObject(new Alive("human/aearsis@eideo.cz"));
+		this->insertObject(new Alive("human/asaru@jabbim.cz"));
+		this->insertObject(new Alive("human/petr.manek@jabbim.com"));
+		/*
+		 * Init relations
+		 */
+		Relation* rel;
+		rel = new Relation("room/baseRoom", "human/aearsis@eideo.cz", "Room", "Alive", "inside");
+		this->addRelation(rel);
+		delete rel;
+		rel = new Relation("room/baseRoom", "human/asaru@jabbim.cz", "Room", "Alive", "inside");
+		this->addRelation(rel);
+		delete rel;
+		rel = new Relation("room/baseRoom", "human/petr.manek@jabbim.com", "Room", "Alive", "inside");
+		this->addRelation(rel);
+		delete rel;
+		rel = new Relation("human/aearsis@eideo.cz", "ThorsHammer", "Alive", "ThorsHammer", "inventory");
+		this->addRelation(rel);
+		delete rel;
+		rel = new Relation("human/asaru@jabbim.cz", "ThorsHammer", "Alive", "ThorsHammer", "inventory");
+		this->addRelation(rel);
+		delete rel;
+		rel = new Relation("human/petr.manek@jabbim.com", "ThorsHammer", "Alive", "ThorsHammer", "inventory");
+		this->addRelation(rel);
+		delete rel;
+		/*
+		 * Finish
+		 */
+		LOG("GameManager") << "Initialization completed." << LOGF;
+		cout << "Continue with startup? [Y/n]" << std::endl;
+		
+		string answer;
+		getline(cin, answer);
+		if (answer == "n") {
+			LOG("GameManager") << "Shutting down" << LOGF;
+			exit(0);
+		}
+		LOGH("Database cleanup finished");
+	}
+	
 	IObject* GameManager::getObject(objId id) {
 		IObject * r;
 		r = this->objects.find(id);
@@ -45,6 +120,22 @@ namespace Dungeon {
 	void GameManager::insertObject(IObject* obj) {
 		objects.insert(obj);
 		loader->saveObject(obj);
+	}
+	
+	void GameManager::addRelation(Relation* rel) {
+		int err = DatabaseHandler::getInstance().addRelation(rel);
+        if(err != DatabaseHandler::E_OK) {
+			LOGS("GameManager", Fatal) << "Error adding relation to database, error code " << err << LOGF;
+		}
+	}
+	
+	vector<objId> GameManager::getRelationIds(Relation* rel) {
+		vector<objId> results;
+		int err = DatabaseHandler::getInstance().getRelations(results, rel);
+        if(err != DatabaseHandler::E_OK) {
+			LOGS("GameManager", Warning) << "Error adding relation to database, error code " << err << LOGF;
+		}
+		return results;
 	}
 	
 	ActionQueue* GameManager::getQueue() {

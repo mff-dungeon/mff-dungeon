@@ -22,6 +22,7 @@ GameManager *gm;
 Alive* admin;
 JabberDriver* jabber;
 ConsoleDriver* console;
+bool initWorld = false;
 
 /*
  *  Attempts to get current backtrace
@@ -73,7 +74,7 @@ void crash_segv(int signal) {
 void start() {
 	LOGH("Start");
 	LOG("main") << "This is Jabber Dungeon starting." << LOGF;
-	gm = new GameManager();
+	gm = new GameManager(initWorld);
 
 	admin = new Alive("human/admin@jabberdung");
 	console = new ConsoleDriver(gm->getQueue(), admin);
@@ -92,13 +93,9 @@ void start() {
 }
 
 /*
- *	Function handling DB restart. Should implement all the cleanup procedures.
- *	Basic cleanup function now found in DatabaseHandler::drop() and init()
- * 
- *	Returns 1 if the user demands to terminate the program after the cleanup,
- *	zero otherwise.
+ *	Confirms dbRestart and sets the flag for GM if confirmed
  */
-int dbRestart() {
+void dbRestart() {
 	string answer;
 	LOG("main") << "Database cleanup requested. Are you sure? [y/N]" << LOGF;
 
@@ -106,21 +103,8 @@ int dbRestart() {
 	if (answer != "y") {
 		LOG("main") << "Cleanup canceled." << LOGF;
 	} else {
-        LOGH("Database cleanup");
-		LOG("main") << "Cleanup initiated." << LOGF;
-		LOG("main") << "Dropping all tables." << LOGF;
-		DatabaseHandler::getInstance().dropDatabase();
-		LOG("main") << "All tables dropped, creating and initializing tables." << LOGF;
-		DatabaseHandler::getInstance().initDatabase();
-		LOG("main") << "Initialization completed." << LOGF;
+        initWorld = true;
 	}
-	LOG("main") << "Continue with startup? [Y/n]" << LOGF;
-	getline(cin, answer);
-	if (answer == "n") {
-		LOG("main") << "Shutting down" << LOGF;
-		return 1;
-	}
-	return 0;
 }
 
 int main(int argc, char** argv) {
@@ -131,8 +115,7 @@ int main(int argc, char** argv) {
 	 */
 	for (int a = 1; a < argc; a++) {
 		if (strcmp(argv[a], "cleanDB") == 0) {
-			if (dbRestart() == 1) // Terminate the program, don't start
-				return 0;
+			dbRestart();
 		} else
 			LOG("main") << "Unknown argument: " << argv[a];
 	}

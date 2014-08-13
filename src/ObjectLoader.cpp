@@ -31,7 +31,10 @@ namespace Dungeon {
 		*cDataStream << as.printStream();
 		string cData = cDataStream->str();
 
-		DatabaseHandler::getInstance().saveObject(id, cName, cData);
+		int err = DatabaseHandler::getInstance().saveObject(id, cName, cData);
 		delete cDataStream;
+		if(err != DatabaseHandler::E_OK) {
+			LOGS("Loader", Fatal) << "Error saving object " << id << ", error code " << err << LOGF;
+		}
 	}
 }

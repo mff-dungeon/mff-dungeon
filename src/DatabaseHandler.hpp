@@ -46,15 +46,18 @@ namespace Dungeon {
          */
 		static DatabaseHandler& getInstance();
 		
-		const int E_OK = 0; // Query successfull
-		const int E_CONNECTION_ERROR = 1; // Unable to connect to database
-		const int E_NO_ROW = 3; // No row was found
-		const int E_UPDATE_ERROR = 5; // Unable to do an update query
-		const int E_DELETE_ERROR = 6; // Unable to do a delete query
-		const int E_TABLE_CREATE_ERROR = 10; // Unable to create a table
-		const int E_TABLE_DROP_ERROR = 11; // Unable to delete a table
-		const int E_COUNT_ERROR = 15; // Unable to count rows
-		const int E_INVALID_QUERY = 20; // Invalid DB query
+		static const int E_OK = 0; // Query successfull
+		static const int E_CONNECTION_ERROR = 1; // Unable to connect to database
+		static const int E_NO_ROW = 3; // No row was found
+		static const int E_UPDATE_ERROR = 5; // Unable to do an update query
+		static const int E_DELETE_ERROR = 6; // Unable to do a delete query
+		static const int E_TABLE_CREATE_ERROR = 10; // Unable to create a table
+		static const int E_TABLE_DROP_ERROR = 11; // Unable to delete a table
+		static const int E_TABLE_COUNT_ERROR = 12; // Not found expected number of tables
+		static const int E_COUNT_ERROR = 15; // Unable to count rows
+		static const int E_INVALID_QUERY = 20; // Invalid DB query
+		
+		static const int TABLE_COUNT = 2; // The number of expected tables
 		
 		/**
 		 * Saves an object into database. Performs an insert query if the object
@@ -81,6 +84,14 @@ namespace Dungeon {
          * @return DatabaseHandler state value
          */
 		int deleteObject(objId oid);
+		
+		/**
+		 * Checks whether the database has correct table count. 
+		 * If not, something may be wrong / database is not set -> signal to 
+		 * init db
+         * @return DatabaseHandler state value
+         */
+		int checkDatabase();
 		
 		/**
 		 * Initializes the database by creating the table structure

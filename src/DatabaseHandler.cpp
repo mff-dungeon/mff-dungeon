@@ -5,6 +5,7 @@
 #include "DatabaseHandler.hpp"
 #include "common.hpp"
 #include "Relation.hpp"
+#include <unistd.h>
 
 namespace Dungeon {
 
@@ -41,12 +42,13 @@ namespace Dungeon {
 		int count = 0;
 		if(sqlCode == SQLITE_ROW) {
 			count = sqlite3_column_int(dbStatement, 0);
+			sqlite3_finalize(dbStatement);
 		}
 		else {
 			finalizeAndClose();
 			return E_COUNT_ERROR;
 		}
-		if(!count) {
+		if(count == 0) {
 			const char *statement = "INSERT INTO objects (id, className, data) VALUES (?, ?, ?);";
 			sqlite3_prepare_v2(dbConnection, statement, (int)strlen(statement), &dbStatement, 0);
 		}
@@ -54,11 +56,10 @@ namespace Dungeon {
 			const char *statement = "UPDATE objects SET id = ?, className = ?, data = ? WHERE id = ?;";
 			sqlite3_prepare_v2(dbConnection, statement, (int)strlen(statement), &dbStatement, 0);
 		}
-
 		sqlite3_bind_text(dbStatement, 1, oid.c_str(), strlen(oid.c_str()), 0);
 		sqlite3_bind_text(dbStatement, 2, cName.c_str(), strlen(cName.c_str()), 0);
 		sqlite3_bind_blob(dbStatement, 3, cData.c_str(), cData.size(), 0);
-		if(count) sqlite3_bind_text(dbStatement, 4, oid.c_str(), strlen(oid.c_str()), 0);
+		if(count != 0) sqlite3_bind_text(dbStatement, 4, oid.c_str(), strlen(oid.c_str()), 0);
 
 		sqlCode = sqlite3_step(dbStatement);
 		if(sqlCode != SQLITE_DONE) { 
@@ -180,6 +181,29 @@ namespace Dungeon {
 		return E_OK;
 	}
 	
+	int DatabaseHandler::checkDatabase() {
+		if(!openConnection()) return E_CONNECTION_ERROR;
+		const char* check = "SELECT COUNT(*) FROM sqlite_master WHERE type = ?;";
+		sqlite3_prepare_v2(dbConnection, check, strlen(check), &dbStatement, 0);
+		sqlite3_bind_text(dbStatement, 1, "table", strlen("table"), 0);
+		int sqlCode = sqlite3_step(dbStatement);
+		
+		if(sqlCode == SQLITE_ROW) {
+			int count = sqlite3_column_int(dbStatement, 0);
+			finalizeAndClose();
+			if(count == TABLE_COUNT)  {
+				return E_OK;
+			}
+			else {
+				return E_TABLE_COUNT_ERROR;
+			}
+		}
+		else {
+			finalizeAndClose();
+			return E_COUNT_ERROR;
+		}
+	}
+	
 	int DatabaseHandler::initDatabase() {
 		if(!openConnection()) return E_CONNECTION_ERROR;
 		const char* create1 = "CREATE TABLE objects (" \
@@ -217,8 +241,16 @@ namespace Dungeon {
 	
 	int DatabaseHandler::dropDatabase() {
 		if(!openConnection()) return E_CONNECTION_ERROR;
-		const char* drop = "DROP TABLE IF EXISTS objects; DROP TABLE IF EXISTS relations;";
-		sqlite3_prepare(dbConnection, drop, strlen(drop), &dbStatement, 0);
+		const char* drop1 = "DROP TABLE IF EXISTS objects;";
+		const char* drop2 = "DROP TABLE IF EXISTS relations;";
+		sqlite3_prepare(dbConnection, drop1, strlen(drop1), &dbStatement, 0);
+		sqlCode = sqlite3_step(dbStatement);
+		if(sqlCode != SQLITE_DONE) {
+			finalizeAndClose();
+			return E_TABLE_DROP_ERROR;
+		}
+		sqlite3_finalize(dbStatement);
+		sqlite3_prepare(dbConnection, drop2, strlen(drop2), &dbStatement, 0);
 		sqlCode = sqlite3_step(dbStatement);
 		if(sqlCode != SQLITE_DONE) {
 		finalizeAndClose();
