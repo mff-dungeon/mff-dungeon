@@ -3,6 +3,10 @@
 
 namespace Dungeon {
     
+	Alive::Alive(objId id) : IObject(id) {
+		this->hitpoints = 1000;
+	}
+	
     void Alive::getAllActions(ActionList* list) {
         // ask objects nearby for actions
         

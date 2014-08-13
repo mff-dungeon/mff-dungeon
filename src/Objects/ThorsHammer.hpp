@@ -19,7 +19,7 @@ namespace Dungeon {
 		
     private:
         
-    PERSISTENT_DECLARATION(ThorsHammer)
+    PERSISTENT_DECLARATION(ThorsHammer, "ThorsHammer")
 
     };
 }

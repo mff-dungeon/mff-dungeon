@@ -33,9 +33,8 @@ namespace Dungeon {
 		if(!openConnection()) return E_CONNECTION_ERROR;
 
 		// Count, to find out if we should delete or update
-		string scount = "SELECT COUNT(*) FROM objects WHERE id = " + oid + ";";
-		const char *countstate = scount.c_str();
-		sqlite3_prepare(dbConnection, countstate, 200, &dbStatement, 0);
+		const char *countstate = "SELECT COUNT(*) FROM objects WHERE id = ?;";
+		sqlite3_prepare_v2(dbConnection, countstate, (int)strlen(countstate), &dbStatement, 0);
 		sqlCode = sqlite3_step(dbStatement);
 		int count = 0;
 		if(sqlCode == SQLITE_ROW) {
@@ -73,9 +72,8 @@ namespace Dungeon {
 	int DatabaseHandler::loadObject(objId oid, string& cName, stringstream& sData) {
 		if(!openConnection()) return E_CONNECTION_ERROR;
 
-		string statestring = "SELECT * FROM objects WHERE id = " + oid + ";";
-		const char *state = statestring.c_str();
-		sqlite3_prepare(dbConnection, state, 200, &dbStatement, 0);
+		const char *state = "SELECT * FROM objects WHERE id = ?;";
+		sqlite3_prepare_v2(dbConnection, state, (int)strlen(state), &dbStatement, 0);
 		sqlCode = sqlite3_step(dbStatement);
 		if(sqlCode == SQLITE_ROW) {
 			cName = std::string((char *) sqlite3_column_text(dbStatement, 1));
