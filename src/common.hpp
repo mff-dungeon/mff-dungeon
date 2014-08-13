@@ -13,7 +13,7 @@
  *  defines a className() method for saving purposes.
  * Should be used in class declaration.
  */
-#define PERSISTENT_DECLARATION(cName) \
+#define PERSISTENT_DECLARATION(cName, cStringName) \
 public: \
 	virtual IObject* createObject() const \
 	{ \
@@ -22,7 +22,7 @@ public: \
 private: \
 	static AddIObject addIObject; \
 	virtual string className() const { \
-		return "cName"; \
+		return cStringName; \
 	};
 
 /*
