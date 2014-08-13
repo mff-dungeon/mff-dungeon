@@ -7,6 +7,7 @@
 #include <sstream>
 #include <fstream>
 #include <mutex>
+#include <map>
 
 using namespace std;
 
@@ -32,6 +33,12 @@ namespace Dungeon {
             return instance;
         }
         
+        /** Initializes logging
+         */
+        static void initialize() {
+            Logger::getInstance();
+        }
+        
         /** Outputs timestamp of a new message and locks the mutex.
          @param source      The section of application responsible for the message.
          @param severity    The importance of the message.
@@ -55,21 +62,24 @@ namespace Dungeon {
         
         class LogBuffer : public streambuf {
         public:
-            void addBuffer(streambuf* buf);
+            void addBuffer(streambuf* buf, Severity minSeverity);
             virtual int overflow(int c);
             
+            Severity currentSeverity;
+            
         private:
-            std::vector<streambuf*> bufs;
+            map<streambuf*, Severity> bufs;
         };
         
         LogBuffer buffer;
-        void linkStream(ostream& stream);
+        void linkStream(ostream& stream, Severity minSeverity);
         
         string currentTime(string format);
         
         string getTimestamp();
         mutex mutex;
-        ofstream logfile;
+        
+        ofstream stdoutFile, verboseFile, warningsFile;
     };
 }
 

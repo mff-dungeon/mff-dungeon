@@ -1,6 +1,9 @@
 #include <iostream>
+#include <sstream>
 #include <signal.h>		
 #include <cstring>		// strcmp
+#include <execinfo.h>
+#include <unistd.h>
 #include "common.hpp"
 #include "dynamic.hpp"
 #include "GameManager.hpp"
@@ -20,6 +23,28 @@ Alive* admin;
 JabberDriver* jabber;
 ConsoleDriver* console;
 
+/*
+ *  Attempts to get current backtrace
+ */
+string getStacktace() {
+    void* tracePtrs[100];
+    int count = backtrace(tracePtrs, 100);
+    
+    char** funcNames = backtrace_symbols(tracePtrs, count);
+    stringstream ss;
+    
+    // Print the stack trace
+    for (int i = 0; i < count; i++) {
+        string line(funcNames[i]);
+        ss << endl << '\t' << line;
+    }
+    
+    // Free the string pointers
+    free(funcNames);
+    
+    return ss.str();
+}
+
 /* 
  *	Sends stop signal to the ActionQueue
  */
@@ -31,6 +56,14 @@ void finish(int signal) {
 
 	jabber->stop();
 	gm->shutdown();
+}
+
+/*
+ *  Handles segfault.
+ */
+void crash_segv(int signal) {
+    LOGS("main", Fatal) << "Caught SIGSEGV (" << signal << "), crashing..." << getStacktace() << LOGF;
+    exit(signal);
 }
 
 /*
@@ -52,6 +85,7 @@ void start() {
 
 	signal(SIGTERM, finish);
 	signal(SIGINT, finish);
+    signal(SIGSEGV, crash_segv);
 	gm->getQueue()->loopToFinish();
 
 	LOG("main") << "Dungeon ends. Bye!" << LOGF;
@@ -65,10 +99,10 @@ void start() {
  *	zero otherwise.
  */
 int dbRestart() {
-	std::string answer;
+	string answer;
 	LOG("main") << "Database cleanup requested. Are you sure? [y/N]" << LOGF;
 
-	std::getline(std::cin, answer);
+	getline(cin, answer);
 	if (answer != "y") {
 		LOG("main") << "Cleanup canceled." << LOGF;
 	} else {
@@ -80,7 +114,7 @@ int dbRestart() {
 		LOG("main") << "Initialization completed." << LOGF;
 	}
 	LOG("main") << "Continue with startup? [Y/n]" << LOGF;
-	std::getline(std::cin, answer);
+	getline(cin, answer);
 	if (answer == "n") {
 		LOG("main") << "Shutting down" << LOGF;
 		return 1;
@@ -89,6 +123,8 @@ int dbRestart() {
 }
 
 int main(int argc, char** argv) {
+    Logger::initialize();
+    
 	/*
 	 *	Process command line parameters, if any found
 	 */

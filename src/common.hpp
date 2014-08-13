@@ -36,7 +36,7 @@ private: \
  */
 #include "Logger.hpp"
 #define LOG(source) ( Logger::getInstance().beginMessage(source), Logger::getInstance() )
-#define LOGS(source, severity) ( Logger::getInstance().beginMessage(source, severity), Logger::getInstance() )
+#define LOGS(source, severity) ( Logger::getInstance().beginMessage(source, Logger::Severity::severity), Logger::getInstance() )
 #define LOGH(headline) { Logger::getInstance().setHeadline(headline); } 
 #define LOGF ( Logger::getInstance().endMessage(), "" )
 
