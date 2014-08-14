@@ -1,4 +1,5 @@
 #include <netdb.h>
+#include <unistd.h>
 
 #include "JabberDriver.hpp"
 #include "ActionDescriptor.hpp"
@@ -9,7 +10,10 @@ namespace Dungeon {
     JabberDriver::JabberDriver(GameManager* gm, string jabberUsername, string jabberPassword) : TextDriver(gm->getQueue()), connected(false), gm(gm) {
         // initialize Jabber client with credentials
         JID jid(jabberUsername);
+		char hostname[1024];
         client = new Client(jid, jabberPassword);
+		gethostname(hostname, 1024);
+		client->setResource(hostname);
         
         client->disco()->setVersion("Dungeon", "1.0");
         client->disco()->setIdentity("client", "bot", "Dungeon");
