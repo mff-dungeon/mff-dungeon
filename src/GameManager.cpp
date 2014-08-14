@@ -1,6 +1,7 @@
 #include <stdexcept>
 
 #include "GameManager.hpp"
+#include "WorldCreator.hpp"
 
 namespace Dungeon {
 
@@ -40,27 +41,8 @@ namespace Dungeon {
 			LOGS("GameManager", Fatal) << "Create table database query failed with error code " << err << LOGF;
 			exit(1);
 		}
-		/*
-		 * Init Objects
-		 */
-		Room* baseRoom;
-		ThorsHammer* th;
-		Alive *aearsis, *asaru, *petr;
-		this->insertObject(baseRoom = new Room("room/baseRoom"));
-		this->insertObject(th = new ThorsHammer());
-		this->insertObject(aearsis = new Alive("human/aearsis@eideo.cz"));
-		this->insertObject(asaru = new Alive("human/asaru@jabbim.cz"));
-		this->insertObject(petr = new Alive("human/petr.manek@jabbim.com"));
 		
-		/*
-		 * Init relations
-		 */
-		this->createRelation(baseRoom, aearsis, R_INSIDE);
-		this->createRelation(baseRoom, asaru, R_INSIDE);
-		this->createRelation(baseRoom, petr, R_INSIDE);
-		this->createRelation(aearsis, th, R_INVENTORY);
-		this->createRelation(asaru, th, R_INVENTORY);
-		this->createRelation(petr, th, R_INVENTORY);
+		WorldCreator::bigBang(this);
 		
 		/*
 		 * Finish
@@ -182,7 +164,7 @@ namespace Dungeon {
      * @param slave Slave
      * @param relation Relation type
      */
-	inline void GameManager::createRelation(IObject* master, IObject* slave, string relation) {
+	void GameManager::createRelation(IObject* master, IObject* slave, string relation) {
 		this->createRelation(master->getId(), slave->getId(), typeid(master).name(), typeid(slave).name(), relation);
 	}
 }
