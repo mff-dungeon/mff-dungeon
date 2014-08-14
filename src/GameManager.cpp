@@ -101,7 +101,7 @@ namespace Dungeon {
 	
 	IObject* GameManager::loadObject(objId id) {
 		IObject* r = 0;
-		loader->loadObject(id);
+		r = loader->loadObject(id);
 		if(r == 0) return 0;
 		// Load the relations
 		Relation* ref_master = new Relation(id, "0", "0", "0", "0");

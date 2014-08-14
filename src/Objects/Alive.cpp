@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Alive.hpp"
 #include "../ActionDescriptor.hpp"
 
@@ -23,9 +25,14 @@ namespace Dungeon {
                         this->hitpoints = 0;
                 }));
 			// Get actions for the inventory items
-			map<objId, ObjectPointer*> inventory = getRelations(true).at("inventory");
-			for(auto& item: inventory) {
-				item.second->get()->getActions(list, callee);
+			try{
+				map<objId, ObjectPointer*> inventory = getRelations(true).at("inventory");
+				for(auto& item: inventory) {
+					item.second->get()->getActions(list, callee);
+				}
+			}
+			catch (const std::out_of_range& e) {
+			// Nothing needs to be done
 			}
         }        
     }
