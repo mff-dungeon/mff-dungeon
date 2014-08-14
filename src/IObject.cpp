@@ -48,7 +48,7 @@ namespace Dungeon {
 		}
 	}
 	
-	map<string, map<objId, ObjectPointer*>> IObject::getRelations(bool master) {
+	RelationList IObject::getRelations(bool master) {
 		if(master) {
 			return relation_master;
 		}

@@ -62,6 +62,7 @@ namespace Dungeon {
      */
     typedef string objId;
     typedef vector<Action *> ActionList;
+    typedef map<string, map<objId, ObjectPointer*>> RelationList;
 }
 
 #include "IObject.hpp"
