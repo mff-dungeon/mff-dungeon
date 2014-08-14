@@ -14,7 +14,7 @@ namespace Dungeon {
 		
 		// Get actions for the inventory items
 		try{
-			map<objId, ObjectPointer*> inventory = getRelations(true).at("inventory");
+			ObjectMap inventory = getRelations(true).at("inventory");
 			for(auto& item: inventory) {
 				item.second->get()->getActions(list, this);
 			}
@@ -30,6 +30,27 @@ namespace Dungeon {
 			[this] (ActionDescriptor * ad) {
 					ad->addMessage("You've killed yaself. Cool yeah?");
 					this->hitpoints = 0;
+			}));
+			
+		list->push_back(new CallbackAction("dump", "If you want to get some info...",
+			RegexMatcher::matcher("dump"),
+			[this] (ActionDescriptor * ad) {
+					ad->addMessage("So you want to know something? Relations which you master:\n");
+					RelationList r = this->getRelations(true);
+					for (auto& type : r) {
+						ad->addMessage(type.first + ":\n");
+						for(auto& obj : type.second) {
+							ad->addMessage("\t" + obj.first + "\n");
+						}
+					}
+					ad->addMessage("Slave:\n");
+					r = this->getRelations(false);
+					for (auto& type : r) {
+						ad->addMessage(type.first + ":\n");
+						for(auto& obj : type.second) {
+							ad->addMessage("\t" + obj.first + "\n");
+						}
+					}
 			}));
     }
 	
