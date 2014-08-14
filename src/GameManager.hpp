@@ -19,18 +19,20 @@ namespace Dungeon {
 
     public:
         GameManager(bool init = false);
-		void initWorld();
+        void initWorld();
         IObject* getObject(objId id);
         bool hasObject(objId id);
-		IObject* loadObject(objId id);
+        IObject* loadObject(objId id);
         void insertObject(IObject *object);
         ObjectPointer* getObjectPointer(objId id);
 		
-		void addRelation(Relation* rel);
+        void addRelation(Relation* rel);
         
         ActionQueue* getQueue();
         
         void addNewFigure(Alive *figure);
+        void createRelation(objId mid, objId sid, string mclass, string sclass, string relation);
+        void createRelation(IObject* master, IObject* slave, string relation);
         
         void shutdown();
     };

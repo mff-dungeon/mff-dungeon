@@ -77,6 +77,7 @@ void start() {
 	gm = new GameManager(initWorld);
 
 	admin = new Alive("human/admin@jabberdung");
+	admin->addRelation("inventory", gm->getObjectPointer("ThorsHammer"));
 	console = new ConsoleDriver(gm->getQueue(), admin);
 	console->run();
 

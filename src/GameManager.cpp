@@ -43,33 +43,25 @@ namespace Dungeon {
 		/*
 		 * Init Objects
 		 */
-		this->insertObject(new Room("room/baseRoom"));
-		this->insertObject(new ThorsHammer());
-		this->insertObject(new Alive("human/aearsis@eideo.cz"));
-		this->insertObject(new Alive("human/asaru@jabbim.cz"));
-		this->insertObject(new Alive("human/petr.manek@jabbim.com"));
+		Room* baseRoom;
+		ThorsHammer* th;
+		Alive *aearsis, *asaru, *petr;
+		this->insertObject(baseRoom = new Room("room/baseRoom"));
+		this->insertObject(th = new ThorsHammer());
+		this->insertObject(aearsis = new Alive("human/aearsis@eideo.cz"));
+		this->insertObject(asaru = new Alive("human/asaru@jabbim.cz"));
+		this->insertObject(petr = new Alive("human/petr.manek@jabbim.com"));
+		
 		/*
 		 * Init relations
 		 */
-		Relation* rel;
-		rel = new Relation("room/baseRoom", "human/aearsis@eideo.cz", "Room", "Alive", "inside");
-		this->addRelation(rel);
-		delete rel;
-		rel = new Relation("room/baseRoom", "human/asaru@jabbim.cz", "Room", "Alive", "inside");
-		this->addRelation(rel);
-		delete rel;
-		rel = new Relation("room/baseRoom", "human/petr.manek@jabbim.com", "Room", "Alive", "inside");
-		this->addRelation(rel);
-		delete rel;
-		rel = new Relation("human/aearsis@eideo.cz", "ThorsHammer", "Alive", "ThorsHammer", "inventory");
-		this->addRelation(rel);
-		delete rel;
-		rel = new Relation("human/asaru@jabbim.cz", "ThorsHammer", "Alive", "ThorsHammer", "inventory");
-		this->addRelation(rel);
-		delete rel;
-		rel = new Relation("human/petr.manek@jabbim.com", "ThorsHammer", "Alive", "ThorsHammer", "inventory");
-		this->addRelation(rel);
-		delete rel;
+		this->createRelation(baseRoom, aearsis, R_INSIDE);
+		this->createRelation(baseRoom, asaru, R_INSIDE);
+		this->createRelation(baseRoom, petr, R_INSIDE);
+		this->createRelation(aearsis, th, R_INVENTORY);
+		this->createRelation(asaru, th, R_INVENTORY);
+		this->createRelation(petr, th, R_INVENTORY);
+		
 		/*
 		 * Finish
 		 */
@@ -108,7 +100,7 @@ namespace Dungeon {
 		vector<Relation*> list_master;
 		DatabaseHandler::getInstance().getRelations(list_master, ref_master);
 		for(Relation* n : list_master) {
-			r->addRelation(n->relation, new ObjectPointer(this, n->sid), true);
+			r->addRelation(n->relation, getObjectPointer(n->sid), true);
 			delete n;
 		}
 		delete ref_master;
@@ -117,7 +109,7 @@ namespace Dungeon {
 		vector<Relation*> list_slave;
 		DatabaseHandler::getInstance().getRelations(list_slave, ref_slave);
 		for(Relation* n : list_slave) {
-			r->addRelation(n->relation, new ObjectPointer(this, n->pid), false);
+			r->addRelation(n->relation, getObjectPointer(n->pid), false);
 			delete n;
 		}
 		delete ref_slave;
@@ -143,12 +135,14 @@ namespace Dungeon {
 	}
 
 	void GameManager::insertObject(IObject* obj) {
+        LOGS("GameManager", Verbose) << "Inserting object " << obj->getId() << "." << LOGF;
 		objects.insert(obj);
 		loader->saveObject(obj);
 	}
 	
 	void GameManager::addRelation(Relation* rel) {
 		int err = DatabaseHandler::getInstance().addRelation(rel);
+        LOGS("GameManager", Verbose) << "Adding relation " << rel->pid << " --> " << rel->sid << "." << LOGF;
         if(err != DatabaseHandler::E_OK) {
 			LOGS("GameManager", Fatal) << "Error adding relation to database, error code " << err << LOGF;
 		}
@@ -167,4 +161,28 @@ namespace Dungeon {
         
         this->insertObject(figure);
     }
+	
+	/**
+	 * Shortcut for creating relations
+     * @param mid ID of the master
+     * @param sid ID of the slave
+     * @param mclass Class name of the master
+     * @param sclass Class name of the slave
+     * @param relation Relation type
+     */
+	void GameManager::createRelation(objId mid, objId sid, string mclass, string sclass, string relation) {
+		Relation* rel = new Relation(mid, sid, mclass, sclass, relation);
+		this->addRelation(rel);
+		delete rel;
+	}
+	
+	/**
+	 * Shortcut for shortcut - @see GameManager::createRelation
+     * @param master Master
+     * @param slave Slave
+     * @param relation Relation type
+     */
+	inline void GameManager::createRelation(IObject* master, IObject* slave, string relation) {
+		this->createRelation(master->getId(), slave->getId(), typeid(master).name(), typeid(slave).name(), relation);
+	}
 }
