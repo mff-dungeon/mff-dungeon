@@ -1,5 +1,4 @@
 #include <stdexcept>
-
 #include "Alive.hpp"
 #include "../ActionDescriptor.hpp"
 
@@ -10,31 +9,28 @@ namespace Dungeon {
 	}
 	
     void Alive::getAllActions(ActionList* list) {
-        // ask objects nearby for actions
-        
+        // Add some actions on myself
         this->getActions(list, this);
+		
+		// Get actions for the inventory items
+		try{
+			map<objId, ObjectPointer*> inventory = getRelations(true).at("inventory");
+			for(auto& item: inventory) {
+				item.second->get()->getActions(list, this);
+			}
+		}
+		catch (const std::out_of_range& e) {
+			// Nothing needs to be done
+		}
     }
     
     void Alive::getActions(ActionList* list, IObject *callee) {
-        if (callee == this) {
-            // And add some actions "on myself"
-            list->push_back(new CallbackAction("suicide", "If you just dont want to live on this planet anymore.",
-                RegexMatcher::matcher("commit( a)? suicide"),
-                [this] (ActionDescriptor * ad) {
-                        ad->addMessage("You've killed yaself. Cool yeah?");
-                        this->hitpoints = 0;
-                }));
-			// Get actions for the inventory items
-			try{
-				map<objId, ObjectPointer*> inventory = getRelations(true).at("inventory");
-				for(auto& item: inventory) {
-					item.second->get()->getActions(list, callee);
-				}
-			}
-			catch (const std::out_of_range& e) {
-			// Nothing needs to be done
-			}
-        }        
+		list->push_back(new CallbackAction("suicide", "If you just dont want to live on this planet anymore.",
+			RegexMatcher::matcher("commit( a)? suicide"),
+			[this] (ActionDescriptor * ad) {
+					ad->addMessage("You've killed yaself. Cool yeah?");
+					this->hitpoints = 0;
+			}));
     }
 	
 	void Alive::serialize(Archiver& stream) {	// Implementation of serialization
