@@ -25,14 +25,14 @@ namespace Dungeon {
     }
     
     void Alive::getActions(ActionList* list, IObject *callee) {
-		list->push_back(new CallbackAction("suicide", "If you just dont want to live on this planet anymore.",
+		list->push_back(new CallbackAction("suicide", "sucide - If you just dont want to live on this planet anymore.",
 			RegexMatcher::matcher("commit( a)? suicide"),
 			[this] (ActionDescriptor * ad) {
 					ad->addMessage("You've killed yaself. Cool yeah?");
 					this->hitpoints = 0;
 			}));
 			
-		list->push_back(new CallbackAction("dump", "If you want to get some info...",
+		list->push_back(new CallbackAction("dump", "dump - If you want to get some info...",
 			RegexMatcher::matcher("dump"),
 			[this] (ActionDescriptor * ad) {
 					ad->addMessage("So you want to know something? Relations which you master:\n");
@@ -50,6 +50,18 @@ namespace Dungeon {
 						for(auto& obj : type.second) {
 							ad->addMessage("\t" + obj.first + "\n");
 						}
+					}
+			}));
+			
+		list->push_back(new CallbackAction("help", "help - Well...",
+			RegexMatcher::matcher("help"),
+			[this] (ActionDescriptor * ad) {
+					ad->addMessage("This is an non-interactive help. You can do following actions:\n");
+					ActionList list;
+					this->getAllActions(&list);
+					for (auto& a : list) {
+						a->explain(ad);
+						ad->addMessage("\n");
 					}
 			}));
     }
