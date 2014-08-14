@@ -28,6 +28,26 @@ namespace Dungeon {
         virtual IObject* createObject() const = 0;
         static IObject* load(Archiver& stream, string className);
         void store(Archiver& stream, objId& id, string& className) const;
+		
+		/*
+		 * Relation Functions:
+		 *  master relations - this object acts as the master
+		 *  slave relations - this object acts as the slave
+		 */
+		
+		/**
+		 * Registers a new relation for this object
+         * @param type the type of the new relation
+         * @param other objectId of the other object
+         * @param master true, if the relation is master relation
+         */
+		void addRelation(string type, ObjectPointer* other, bool master=true);
+		
+		/**
+		 * Returns either master, or slave relations of the object
+         * @param master true, if the relation is master relation
+         */
+		map<string, map<objId, ObjectPointer*>> getRelations(bool master=true);
 
 	protected:
 		virtual string className() const = 0;
@@ -35,6 +55,8 @@ namespace Dungeon {
 		
     private:
         objId id;
+		map<string, map<objId, ObjectPointer*>> relation_master;
+		map<string, map<objId, ObjectPointer*>> relation_slave;
     };
 }
 

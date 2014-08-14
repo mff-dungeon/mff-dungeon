@@ -22,11 +22,11 @@ namespace Dungeon {
 		void initWorld();
         IObject* getObject(objId id);
         bool hasObject(objId id);
+		IObject* loadObject(objId id);
         void insertObject(IObject *object);
         ObjectPointer* getObjectPointer(objId id);
 		
 		void addRelation(Relation* rel);
-		vector<objId> getRelationIds(Relation* rel);
         
         ActionQueue* getQueue();
         

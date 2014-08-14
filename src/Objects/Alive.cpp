@@ -22,6 +22,11 @@ namespace Dungeon {
                         ad->addMessage("You've killed yaself. Cool yeah?");
                         this->hitpoints = 0;
                 }));
+			// Get actions for the inventory items
+			map<objId, ObjectPointer*> inventory = getRelations(true).at("inventory");
+			for(auto& item: inventory) {
+				item.second->get()->getActions(list, callee);
+			}
         }        
     }
 	

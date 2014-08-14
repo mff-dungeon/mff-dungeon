@@ -108,11 +108,11 @@ namespace Dungeon {
 		/**
 		 * Asks the database for the list of objects using 
 		 * supplied Relation object for the query
-         * @param result vector of matching objects
+         * @param result vector of matching relations
          * @param rel Relation required
          * @return DatabaseHandler state value
          */
-		int getRelations(vector<objId>& result, Relation* rel);
+		int getRelations(vector<Relation*>& result, Relation* rel);
 		
 		/**
 		 * Adds a new relation to the database

@@ -1,4 +1,5 @@
 #include "IObject.hpp"
+#include "ObjectPointer.hpp"
 #include <memory>
 
 namespace Dungeon {
@@ -36,5 +37,23 @@ namespace Dungeon {
 		object->serialize(stream);
 		holder.release();
 		return object;
+	}
+	
+	void IObject::addRelation(string type, ObjectPointer* other, bool master) {
+		if(master) {
+			relation_master[type][other->getId()] = other;
+		}
+		else {
+			relation_slave[type][other->getId()] = other;
+		}
+	}
+	
+	map<string, map<objId, ObjectPointer*>> IObject::getRelations(bool master) {
+		if(master) {
+			return relation_master;
+		}
+		else {
+			return relation_slave;
+		}
 	}
 }

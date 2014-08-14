@@ -89,7 +89,7 @@ namespace Dungeon {
 		IObject * r;
 		r = this->objects.find(id);
 		if (r == 0) {
-			r = loader->loadObject(id);
+			r = loadObject(id);
 			if (r != 0)
 				this->objects.insert(r);
 			else
@@ -98,12 +98,37 @@ namespace Dungeon {
         LOGS("GameManager", Verbose) << "Looking up object '" << id << "'." << LOGF;
 		return r;
 	}
+	
+	IObject* GameManager::loadObject(objId id) {
+		IObject* r = 0;
+		loader->loadObject(id);
+		if(r == 0) return 0;
+		// Load the relations
+		Relation* ref_master = new Relation(id, "0", "0", "0", "0");
+		vector<Relation*> list_master;
+		DatabaseHandler::getInstance().getRelations(list_master, ref_master);
+		for(Relation* n : list_master) {
+			r->addRelation(n->relation, new ObjectPointer(this, n->sid), true);
+			delete n;
+		}
+		delete ref_master;
+		
+		Relation* ref_slave = new Relation("0", id, "0", "0", "0");
+		vector<Relation*> list_slave;
+		DatabaseHandler::getInstance().getRelations(list_slave, ref_slave);
+		for(Relation* n : list_slave) {
+			r->addRelation(n->relation, new ObjectPointer(this, n->pid), false);
+			delete n;
+		}
+		delete ref_slave;
+		return r;
+	}
     
     bool GameManager::hasObject(objId id) {
 		IObject * r;
 		r = this->objects.find(id);
 		if (r == 0) {
-			r = loader->loadObject(id);
+			r = loadObject(id);
 			if (r != 0)
 				this->objects.insert(r);
 			else
@@ -127,15 +152,6 @@ namespace Dungeon {
         if(err != DatabaseHandler::E_OK) {
 			LOGS("GameManager", Fatal) << "Error adding relation to database, error code " << err << LOGF;
 		}
-	}
-	
-	vector<objId> GameManager::getRelationIds(Relation* rel) {
-		vector<objId> results;
-		int err = DatabaseHandler::getInstance().getRelations(results, rel);
-        if(err != DatabaseHandler::E_OK) {
-			LOGS("GameManager", Warning) << "Error adding relation to database, error code " << err << LOGF;
-		}
-		return results;
 	}
 	
 	ActionQueue* GameManager::getQueue() {

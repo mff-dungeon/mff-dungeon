@@ -119,7 +119,7 @@ namespace Dungeon {
 		return E_OK;
 	}
 
-	int DatabaseHandler::getRelations(vector<objId>& result, Relation* rel) {
+	int DatabaseHandler::getRelations(vector<Relation*>& result, Relation* rel) {
 		if(!openConnection()) return E_CONNECTION_ERROR;
 		const string qtmp = rel->getSelectQuery();
 		// None parameters were handed, that is weird...
@@ -133,8 +133,12 @@ namespace Dungeon {
 		sqlite3_prepare(dbConnection, cquery, strlen(cquery), &dbStatement, 0);
 		sqlCode = sqlite3_step(dbStatement);
 		while(sqlCode == SQLITE_ROW) {
-			string oid = std::string((char *) sqlite3_column_text(dbStatement, 0));
-			result.push_back(oid);
+			Relation* r = new Relation(objId((char *) sqlite3_column_text(dbStatement, 0)),
+					objId((char *) sqlite3_column_text(dbStatement, 2)),
+					string((char *) sqlite3_column_text(dbStatement, 1)),
+					string((char *) sqlite3_column_text(dbStatement, 3)),
+					string((char *) sqlite3_column_text(dbStatement, 4)));
+			result.push_back(r);
 			sqlCode = sqlite3_step(dbStatement);
 		}
 		finalizeAndClose();
