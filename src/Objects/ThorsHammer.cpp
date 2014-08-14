@@ -20,11 +20,11 @@ namespace Dungeon
 	}
 
 	void ThorsHammer::getActions(ActionList* list, IObject* callee) {
-		list->push_back(new CallbackAction("shutdown", "Shutdown's the server.",
+		list->push_back(new CallbackAction("shutdown", "server shutdown - Shutdown's the server.",
 				RegexMatcher::matcher("server shutdown"), 
 				[] (ActionDescriptor* ad) {
 					ad->getGM()->shutdown();
-					ad->addMessage("OK. I will just finish the queue. Bye!");
+					*ad << "OK. I will just finish the queue. Bye!";
 				}));
 	}
 	

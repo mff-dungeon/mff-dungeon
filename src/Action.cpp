@@ -4,7 +4,7 @@
 namespace Dungeon {
 
 	void Action::commit(ActionDescriptor* ad) {
-		ad->addMessage("Olala! The action was commited!");
+		*ad << "Olala! The action was commited!";
 	}
 	
 	bool Action::matchCommand(string command) {
@@ -12,7 +12,7 @@ namespace Dungeon {
 	}
 
 	void Action::explain(ActionDescriptor* ad) {
-		ad->addMessage("Sorry. Neither me does know what should that mean.");
+		*ad << "Sorry. Neither me does know what should that mean.";
 	}
 	
 }

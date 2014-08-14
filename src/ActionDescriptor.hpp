@@ -31,6 +31,11 @@ namespace Dungeon {
         
         bool isValid(Driver* driver);
         vector<string> messages;
+        
+        ActionDescriptor& operator<<(string msg) {
+            addMessage(msg);
+            return *this;
+        }
     private:
         Action* action;
         GameManager* gm;

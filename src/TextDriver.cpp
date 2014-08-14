@@ -33,7 +33,7 @@ namespace Dungeon {
 			// TODO - process results, create nice reply
 			return true;
 		} else {
-			ad->addMessage(getDontUnderstandResponse(ad->in_msg));
+			*ad << getDontUnderstandResponse(ad->in_msg);
 		}
         
         return false;

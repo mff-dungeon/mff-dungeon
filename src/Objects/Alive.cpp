@@ -28,27 +28,27 @@ namespace Dungeon {
 		list->push_back(new CallbackAction("suicide", "sucide - If you just dont want to live on this planet anymore.",
 			RegexMatcher::matcher("commit( a)? suicide"),
 			[this] (ActionDescriptor * ad) {
-					ad->addMessage("You've killed yaself. Cool yeah?");
+					*ad << "You've killed yaself. Cool yeah?";
 					this->hitpoints = 0;
 			}));
 			
 		list->push_back(new CallbackAction("dump", "dump - If you want to get some info...",
 			RegexMatcher::matcher("dump"),
 			[this] (ActionDescriptor * ad) {
-					ad->addMessage("So you want to know something? Relations which you master:\n");
+					*ad << "So you want to know something? Relations which you master:\n";
 					RelationList r = this->getRelations(true);
 					for (auto& type : r) {
-						ad->addMessage(type.first + ":\n");
+						*ad << type.first + ":\n";
 						for(auto& obj : type.second) {
-							ad->addMessage("\t" + obj.first + "\n");
+							*ad << "\t" + obj.first + "\n";
 						}
 					}
-					ad->addMessage("Slave:\n");
+					*ad << "Slave:\n";
 					r = this->getRelations(false);
 					for (auto& type : r) {
-						ad->addMessage(type.first + ":\n");
+						*ad << type.first + ":\n";
 						for(auto& obj : type.second) {
-							ad->addMessage("\t" + obj.first + "\n");
+							*ad << "\t" + obj.first + "\n";
 						}
 					}
 			}));
@@ -56,12 +56,12 @@ namespace Dungeon {
 		list->push_back(new CallbackAction("help", "help - Well...",
 			RegexMatcher::matcher("help"),
 			[this] (ActionDescriptor * ad) {
-					ad->addMessage("This is an non-interactive help. You can do following actions:\n");
+					*ad << "This is an non-interactive help. You can do following actions:\n";
 					ActionList list;
 					this->getAllActions(&list);
 					for (auto& a : list) {
 						a->explain(ad);
-						ad->addMessage("\n");
+						*ad << "\n";
 					}
 			}));
     }

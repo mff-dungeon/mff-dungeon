@@ -3,7 +3,7 @@
 
 namespace Dungeon {
 	void CallbackAction::explain(ActionDescriptor* ad) {
-		ad->addMessage(explanation);
+		*ad << explanation;
 	}
 
 	void CallbackAction::commit(ActionDescriptor* ad) {
