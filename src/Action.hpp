@@ -12,7 +12,7 @@ namespace Dungeon {
     class Action {
     public:
         Action(string type) : type(type) {}
-		virtual ~Action() { }
+        virtual ~Action() { }
         virtual bool matchCommand(string command);
         virtual void commit(ActionDescriptor *ad);
         virtual void explain(ActionDescriptor *ad);

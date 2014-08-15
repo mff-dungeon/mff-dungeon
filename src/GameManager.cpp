@@ -42,7 +42,8 @@ namespace Dungeon {
 			exit(1);
 		}
 		
-		WorldCreator::bigBang(this);
+		WorldCreator wc(this);
+		wc.bigBang();
 		
 		/*
 		 * Finish
@@ -74,6 +75,7 @@ namespace Dungeon {
 	}
 	
 	IObject* GameManager::loadObject(objId id) {
+        LOGS("GameManager", Info) << "Loading object '" << id << "'." << LOGF;
 		IObject* r = 0;
 		r = loader->loadObject(id);
 		if(r == 0) return 0;
@@ -145,7 +147,9 @@ namespace Dungeon {
     }
 	
 	/**
-	 * Shortcut for creating relations
+	 * Creates relation. 
+	 * CAUTION! It won't publish the change to already loaded objects.
+	 * Use the other version instead.
      * @param mid ID of the master
      * @param sid ID of the slave
      * @param mclass Class name of the master
@@ -159,12 +163,36 @@ namespace Dungeon {
 	}
 	
 	/**
-	 * Shortcut for shortcut - @see GameManager::createRelation
+	 * Creates relation on already loaded objects
      * @param master Master
      * @param slave Slave
      * @param relation Relation type
      */
 	void GameManager::createRelation(IObject* master, IObject* slave, string relation) {
-		this->createRelation(master->getId(), slave->getId(), typeid(master).name(), typeid(slave).name(), relation);
+		this->createRelation(master->getId(), slave->getId(), master->className(), slave->className(), relation);
+		master->addRelation(relation, this->getObjectPointer(slave->getId()));
+		slave->addRelation(relation, this->getObjectPointer(master->getId()), false);
 	}
+	
+	void GameManager::clearRelationsOfType(IObject* obj, string relation, bool master) {
+		Relation* ref_obj;
+		if (master)
+			ref_obj = new Relation(obj->getId(), "0", "0", "0", "0");
+		else ref_obj = new Relation("0", obj->getId(), "0", "0", "0");
+		vector<Relation*> list_obj;
+		DatabaseHandler::getInstance().getRelations(list_obj, ref_obj);
+		for(Relation* n : list_obj) {
+			if (n->relation == relation) DatabaseHandler::getInstance().deleteRelation(n);
+		}
+		delete ref_obj;
+		
+		obj->getRelations(master).erase("relation");
+	}
+	
+	void GameManager::moveAlive(Alive* alive, objId roomId) {
+		this->clearRelationsOfType(alive, R_INSIDE, false);
+		this->createRelation(this->getObject(roomId), alive, R_INSIDE);
+	}
+
+
 }

@@ -20,11 +20,11 @@ public: \
 	{ \
 		return new cName(); \
 	} \
-private: \
-	static AddIObject addIObject; \
 	virtual string className() const { \
 		return cStringName; \
-	};
+	}; \
+private: \
+	static AddIObject addIObject;
 
 /*
  *	Simple line of code registering the object
@@ -32,6 +32,13 @@ private: \
 #define PERSISTENT_IMPLEMENTATION(cName) \
 	AddIObject cName::addIObject(#cName, new cName());
 
+/**
+ * Relation types used a lot
+ */
+// Alive is in a room, doors are in the room
+#define R_INSIDE "inside"
+// Alive has backpack, backpack has potion
+#define R_INVENTORY "inventory"
 /*
  *  Logging
  */

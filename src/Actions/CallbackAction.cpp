@@ -13,4 +13,5 @@ namespace Dungeon {
 	bool CallbackAction::matchCommand(string command) {
 		return matchCallback(command);
 	}
+	
 }

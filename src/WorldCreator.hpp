@@ -2,6 +2,7 @@
 #define	WORLDCREATOR_HPP
 
 #include "common.hpp"
+#include "dynamic.hpp"
 
 namespace Dungeon {
     /**
@@ -9,8 +10,12 @@ namespace Dungeon {
      */
     class WorldCreator {
     public:
-        static void bigBang(GameManager* gm);
-
+        WorldCreator(GameManager* gm);
+        void bigBang();
+        
+    private:
+        GameManager* gm;
+        Door* createDoor(string name, Room* a, Room* b);
     };
 
 }

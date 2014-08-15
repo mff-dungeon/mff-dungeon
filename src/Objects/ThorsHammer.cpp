@@ -1,10 +1,3 @@
-/* 
- * File:   ThorsHammer.cpp
- * Author: aearsis
- * 
- * Created on 5. srpna 2014, 16:24
- */
-
 #include "ThorsHammer.hpp"
 #include "../GameManager.hpp"
 #include "../Actions/CallbackAction.hpp"

@@ -1,4 +1,4 @@
-/* 
+/** 
  * Allows it's bearer perform administrative tasks. Beware!
  */
 

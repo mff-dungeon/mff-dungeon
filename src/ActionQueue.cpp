@@ -1,10 +1,3 @@
-/*  
- * File:   ActionQueue.cpp
- * Author: aearsis
- * 
- * Created on 25. duben 2014, 13:34
- */
-
 #include "ActionQueue.hpp"
 #include "Driver.hpp"
 #include "Objects/Alive.hpp"

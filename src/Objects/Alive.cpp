@@ -9,10 +9,12 @@ namespace Dungeon {
 	}
 	
     void Alive::getAllActions(ActionList* list) {
+		LOGS("Alive", Verbose) << "Getting all actions on " << this->getId() << "." << LOGF;
         // Add some actions on myself
         this->getActions(list, this);
 		
 		// Get actions for the inventory items
+		LOGS("Alive", Verbose) << "Getting actions on inventory - " << this->getId() << "." << LOGF;
 		try{
 			ObjectMap inventory = getRelations(true).at("inventory");
 			for(auto& item: inventory) {
@@ -22,48 +24,78 @@ namespace Dungeon {
 		catch (const std::out_of_range& e) {
 			// Nothing needs to be done
 		}
+		
+		LOGS("Alive", Verbose) << "Getting actions in location - " << this->getId() << "." << LOGF;
+		// Find objects in current location
+		try{
+			ObjectMap room = getRelations(false).at("inside");
+			for(auto& item: room) {
+				item.second->get()->getActions(list, this);
+			}
+		}
+		catch (const std::out_of_range& e) {
+			// Nothing needs to be done
+		}
     }
     
     void Alive::getActions(ActionList* list, IObject *callee) {
-		list->push_back(new CallbackAction("suicide", "sucide - If you just dont want to live on this planet anymore.",
-			RegexMatcher::matcher("commit( a)? suicide"),
-			[this] (ActionDescriptor * ad) {
-					*ad << "You've killed yaself. Cool yeah?";
-					this->hitpoints = 0;
-			}));
-			
-		list->push_back(new CallbackAction("dump", "dump - If you want to get some info...",
-			RegexMatcher::matcher("dump"),
-			[this] (ActionDescriptor * ad) {
-					*ad << "So you want to know something? Relations which you master:\n";
-					RelationList r = this->getRelations(true);
-					for (auto& type : r) {
-						*ad << type.first + ":\n";
-						for(auto& obj : type.second) {
-							*ad << "\t" + obj.first + "\n";
+		LOGS("Alive", Verbose) << "Getting actions on " << this->getId() << "." << LOGF;
+		
+		if (callee == this) {
+			list->push_back(new CallbackAction("suicide", "sucide - If you just dont want to live on this planet anymore.",
+				RegexMatcher::matcher("commit( a)? suicide"),
+				[this] (ActionDescriptor * ad) {
+						*ad << "You've killed yaself. Cool yeah?";
+						this->hitpoints = 0;
+				}));
+
+			list->push_back(new CallbackAction("dump", "dump - If you want to get some info...",
+				RegexMatcher::matcher("dump"),
+				[this] (ActionDescriptor * ad) {
+						*ad << "So you want to know something? Relations which you master:\n";
+						RelationList r = this->getRelations(true);
+						for (auto& type : r) {
+							*ad << type.first + ":\n";
+							for(auto& obj : type.second) {
+								*ad << "\t" + obj.first + "\n";
+							}
 						}
-					}
-					*ad << "Slave:\n";
-					r = this->getRelations(false);
-					for (auto& type : r) {
-						*ad << type.first + ":\n";
-						for(auto& obj : type.second) {
-							*ad << "\t" + obj.first + "\n";
+						*ad << "Slave:\n";
+						r = this->getRelations(false);
+						for (auto& type : r) {
+							*ad << type.first + ":\n";
+							for(auto& obj : type.second) {
+								*ad << "\t" + obj.first + "\n";
+							}
 						}
-					}
-			}));
-			
-		list->push_back(new CallbackAction("help", "help - Well...",
-			RegexMatcher::matcher("help"),
-			[this] (ActionDescriptor * ad) {
-					*ad << "This is an non-interactive help. You can do following actions:\n";
-					ActionList list;
-					this->getAllActions(&list);
-					for (auto& a : list) {
-						a->explain(ad);
-						*ad << "\n";
-					}
-			}));
+				}));
+
+			list->push_back(new CallbackAction("help", "help - Well...",
+				RegexMatcher::matcher("help"),
+				[this] (ActionDescriptor * ad) {
+						*ad << "This is an non-interactive help. You can do following actions:\n";
+						ActionList list;
+						this->getAllActions(&list);
+						for (auto& a : list) {
+							a->explain(ad);
+							*ad << "\n";
+						}
+				}));
+
+			list->push_back(new CallbackAction("explore", "explore - List items you can see in yout location",
+				RegexMatcher::matcher("explore"),
+				[this] (ActionDescriptor * ad) {
+						ObjectMap rooms = this->getRelations(false).at(R_INSIDE);
+						for (auto& room : rooms) {
+							IObject* r = room.second->get();
+							*ad << "Location: " << r->getId() << "\n";
+							ObjectMap objects = r->getRelations(true).at(R_INSIDE);
+							for(auto& obj : objects) {
+								*ad << "\t" + obj.first + "\n";
+							}
+						}
+				}));
+		}
     }
 	
 	void Alive::serialize(Archiver& stream) {	// Implementation of serialization

@@ -56,4 +56,9 @@ namespace Dungeon {
 			return relation_slave;
 		}
 	}
+	
+	void IObject::serialize(Archiver& stream) {
+		// There can also be an object without internal variables
+	}
+
 }

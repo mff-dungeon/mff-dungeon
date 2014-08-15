@@ -48,10 +48,12 @@ namespace Dungeon {
          * @param master true, if the relation is master relation
          */
         RelationList getRelations(bool master=true);
+        
+        
+                virtual string className() const = 0;
 
 	protected:
-		virtual string className() const = 0;
-		virtual void serialize(Archiver& stream) = 0;
+		virtual void serialize(Archiver& stream);
 		
     private:
         objId id;

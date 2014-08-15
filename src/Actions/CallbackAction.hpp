@@ -1,4 +1,4 @@
-/* 
+/** 
  * This should be an easy way to create use-once actions.
  * Just kinda magic. Desired usage:
  * 
@@ -15,6 +15,7 @@
 #include "../RegexMatcher.hpp"
 #include "../Action.hpp"
 
+#define CALLBACK(className, methodName) std::bind(&className::methodName, this, std::placeholders::_1)
 namespace Dungeon {
 
     class CallbackAction : public Action {
@@ -31,6 +32,9 @@ namespace Dungeon {
         virtual void explain(ActionDescriptor* ad);
         virtual void commit(ActionDescriptor* ad);
         virtual bool matchCommand(string command);
+        
+        template<typename Method, typename Object>
+	static function<void (ActionDescriptor*)> mkCallback(Object* object, Method&& method);
 
     private:
         string explanation;

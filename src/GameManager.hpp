@@ -27,12 +27,14 @@ namespace Dungeon {
         ObjectPointer* getObjectPointer(objId id);
 		
         void addRelation(Relation* rel);
+        void createRelation(objId mid, objId sid, string mclass, string sclass, string relation);
+        void createRelation(IObject* master, IObject* slave, string relation);
+        void clearRelationsOfType(IObject* obj, string relation, bool master = true);
         
         ActionQueue* getQueue();
         
         void addNewFigure(Alive *figure);
-        void createRelation(objId mid, objId sid, string mclass, string sclass, string relation);
-        void createRelation(IObject* master, IObject* slave, string relation);
+        void moveAlive(Alive* alive, objId roomId);
         
         void shutdown();
     };

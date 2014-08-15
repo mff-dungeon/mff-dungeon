@@ -17,6 +17,7 @@ namespace Dungeon {
 		}
 		Archiver as(&cDataStream);
 		IObject* loaded = IObject::load(as, cName);
+		loaded->setId(oid);
 		return loaded;
 	}
 

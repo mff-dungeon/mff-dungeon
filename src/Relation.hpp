@@ -4,9 +4,6 @@
 #ifndef RELATION_HPP
 #define RELATION_HPP
 
-#define R_INSIDE "inside"
-#define R_INVENTORY "inventory"
-
 /**
  * Object representing a relation row in the DB.
  *
