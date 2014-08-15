@@ -3,7 +3,7 @@
 
 namespace Dungeon {
     Logger::Logger() : ostream(NULL) {
-        mutex.lock();
+        mutex_lock.lock();
 
         // link logger with log stream
         ostream::rdbuf(&buffer);
@@ -11,18 +11,18 @@ namespace Dungeon {
         // output all messages to stdout
         this->linkStream(cout, Severity::Info);
         // open file stream with "append at the end" flag and make it copy stdout
-        stdoutFile.open(this->currentTime("%Y-%m-%d_%H-%M-%S") + "_stdout.log", fstream::out | fstream::app | fstream::ate);
+        stdoutFile.open(this->currentTime("%Y-%m-%d") + "_stdout.log", fstream::out | fstream::app | fstream::ate);
         this->linkStream(stdoutFile, Severity::Info);
         
         // open file stream with "append at the end" flag and make it receive all messages
-        verboseFile.open(this->currentTime("%Y-%m-%d_%H-%M-%S") + "_verbose.log", fstream::out | fstream::app | fstream::ate);
+        verboseFile.open(this->currentTime("%Y-%m-%d") + "_verbose.log", fstream::out | fstream::app | fstream::ate);
         this->linkStream(verboseFile, Severity::Verbose);
         
         // open file stream with "append at the end" flag and make it receive warnings or worse
-        warningsFile.open(this->currentTime("%Y-%m-%d_%H-%M-%S") + "_warnings.log", fstream::out | fstream::app | fstream::ate);
+        warningsFile.open(this->currentTime("%Y-%m-%d") + "_warnings.log", fstream::out | fstream::app | fstream::ate);
         this->linkStream(warningsFile, Severity::Warning);
         
-        mutex.unlock();
+        mutex_lock.unlock();
     }
     
     Logger::~Logger() {
@@ -89,7 +89,7 @@ namespace Dungeon {
     
     void Logger::beginMessage(string source, Severity severity) {
         // atomic operation
-        mutex.lock();
+        mutex_lock.lock();
         this->flush();
         
         buffer.currentSeverity = severity;
@@ -132,7 +132,7 @@ namespace Dungeon {
         warningsFile.flush();
         
         // end atomic operation
-        mutex.unlock();
+        mutex_lock.unlock();
     }
     
     string Logger::getTimestamp() {

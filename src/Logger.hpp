@@ -77,7 +77,7 @@ namespace Dungeon {
         string currentTime(string format);
         
         string getTimestamp();
-        mutex mutex;
+        mutex mutex_lock;
         
         ofstream stdoutFile, verboseFile, warningsFile;
     };
