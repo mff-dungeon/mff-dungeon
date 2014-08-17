@@ -193,7 +193,7 @@ namespace Dungeon {
 		}
 		delete ref_obj;
 		
-		obj->getRelations(master).erase("relation");
+		obj->getRelations(master).erase(relation);
 	}
 	
 	void GameManager::moveAlive(Alive* alive, objId roomId) {
