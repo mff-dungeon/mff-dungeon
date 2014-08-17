@@ -45,7 +45,8 @@ namespace Dungeon {
         
         // TODO: think of something more creative
         
-        int rnd = rand() % 6;
+        rand_init(gen, dist, 0, 5);
+        int rnd = rand_next(gen, dist);
         switch (rnd) {
             case 0:
                 ss << "What do you mean \"" << input << "\"?";
@@ -75,7 +76,8 @@ namespace Dungeon {
         
         // TODO: think of something more creative
         
-        int rnd = rand() % 3;
+        rand_init(gen, dist, 0, 2);
+        int rnd = rand_next(gen, dist);
         switch (rnd) {
             case 0:
                 ss << "The Dungeon speaks to no strangers. Add me as a friend and then we'll talk!";
@@ -97,7 +99,8 @@ namespace Dungeon {
         
         // TODO: think of something more creative
         
-        int rnd = rand() % 3;
+        rand_init(gen, dist, 0, 2);
+        int rnd = rand_next(gen, dist);
         switch (rnd) {
             case 0:
                 ss << "Greetings, brave warrior! You may now begin your quest.";

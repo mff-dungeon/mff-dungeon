@@ -39,6 +39,7 @@ private: \
 #define R_INSIDE "inside"
 // Alive has backpack, backpack has potion
 #define R_INVENTORY "inventory"
+
 /*
  *  Logging
  */
@@ -47,6 +48,13 @@ private: \
 #define LOGS(source, severity) ( Logger::getInstance().beginMessage(source, Logger::Severity::severity), Logger::getInstance() )
 #define LOGH(headline) { Logger::getInstance().setHeadline(headline); } 
 #define LOGF ( Logger::getInstance().endMessage(), "" )
+
+/*
+ *  Random number generation
+ */
+#include <random>
+#define rand_init(var, dist, min, max) std::default_random_engine var(time(0)); std::uniform_int_distribution<int> dist(min, max);
+#define rand_next(var, dist) ( dist(var) )
 
 using namespace std;
 
