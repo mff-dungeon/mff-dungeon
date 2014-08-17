@@ -10,7 +10,7 @@ namespace Dungeon {
 		LOGS("Door", Verbose) << "Getting actions on " << this->getId() << "." << LOGF;		
 		// Add move actions to all rooms
 		try{
-			ObjectMap& targets = this->getRelations(false).at(R_INSIDE);
+			ObjectMap targets = this->getRelations(false).at(R_INSIDE);
 			for (auto& obj : targets) {
 				if (obj.first != callee->getId()) {
 					list->push_back(new CallbackAction("door", "You can go through door with 'go to <room>'.", 
