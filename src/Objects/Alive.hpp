@@ -17,6 +17,8 @@ namespace Dungeon
         void getAllActions(ActionList* list);
         virtual void getActions(ActionList* list, IObject *callee);
         int hitpoints;
+        
+        virtual string getDescriptionSentence();
 	
 	protected:
 		virtual void serialize(Archiver& stream);

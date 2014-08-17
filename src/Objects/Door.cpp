@@ -40,6 +40,27 @@ namespace Dungeon {
 		*ad << "You've gone through " << getLongName() << ".\n";
 		target->explore(ad);
 	}
+    
+    string Door::getDescriptionSentence() {
+        stringstream ss;
+        
+        rand_init(gen, dist, 0, 2);
+        int rnd = rand_next(gen, dist);
+        
+        switch (rnd) {
+            case 0:
+                ss << "There is a " << this->getName() << ".";
+                break;
+            case 1:
+                ss << "A " << this->getName() << " is casting a grimm shadow on the floor.";
+                break;
+            case 2:
+                ss << "You see the frame of a " << this->getName() << ".";
+                break;
+        }
+        
+        return ss.str();
+    }
 	
 	PERSISTENT_IMPLEMENTATION(Door)
 

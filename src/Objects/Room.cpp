@@ -38,7 +38,7 @@ namespace Dungeon {
                         // skip myself
                         continue;
                     } else {
-                        *ad << "There is " << ((IDescriptable*) obj)->getName() << ". ";
+                        *ad << ((IDescriptable*) obj)->getDescriptionSentence() << " ";
                     }
 				} else {				
 					*ad << "There is an object (" << item.second->getId() << "). ";

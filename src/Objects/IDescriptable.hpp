@@ -26,7 +26,9 @@ namespace Dungeon {
 	IDescriptable* setName(string name);
 
         virtual bool isDescriptable() const;
-
+        
+        virtual string getDescriptionSentence();
+        
         
         virtual void serialize(Archiver& stream);
 

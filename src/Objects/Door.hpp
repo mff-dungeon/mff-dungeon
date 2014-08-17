@@ -16,7 +16,7 @@ namespace Dungeon {
         virtual void getActions(ActionList* list, IObject* callee);
         
         void goThrough(ActionDescriptor* ad);
-        
+        virtual string getDescriptionSentence();
         
     PERSISTENT_DECLARATION(Door)
     }; 

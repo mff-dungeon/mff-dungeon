@@ -1,4 +1,5 @@
 #include "IDescriptable.hpp"
+#include <sstream>
 
 namespace Dungeon {
 	
@@ -49,6 +50,12 @@ namespace Dungeon {
 		}
 		IObject::serialize(stream);
 	}
+    
+    string IDescriptable::getDescriptionSentence() {
+        stringstream ss;
+        ss << "There is " << this->getName() << ".";
+        return ss.str();
+    }
 
 }
 

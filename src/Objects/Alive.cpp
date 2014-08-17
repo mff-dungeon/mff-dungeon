@@ -111,6 +111,30 @@ namespace Dungeon {
 			stream >> hitpoints;
 		}
 	}
+    
+    string Alive::getDescriptionSentence() {
+        stringstream ss;
+        
+        rand_init(gen, dist, 0, 3);
+        int rnd = rand_next(gen, dist);
+        
+        switch (rnd) {
+            case 0:
+                ss << "You recognize " << this->getName() << "'s figure.";
+                break;
+            case 1:
+                ss << this->getName() << " is there with you.";
+                break;
+            case 2:
+                ss << "You smell the presence of " << this->getName() << ".";
+                break;
+            case 3:
+                ss << this->getName() << " is nearby.";
+                break;
+        }
+        
+        return ss.str();
+    }
 
 
 	PERSISTENT_IMPLEMENTATION(Alive)
