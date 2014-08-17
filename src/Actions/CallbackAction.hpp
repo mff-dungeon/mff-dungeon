@@ -23,8 +23,9 @@ namespace Dungeon {
         CallbackAction(string type,
                 string explanation,
                 function<bool (string)> matchCallback,
-                function<void (ActionDescriptor*)> commitCallback) 
-            : Action(type), 
+                function<void (ActionDescriptor*)> commitCallback,
+                bool visible = true)
+            : Action(type, visible),
                 explanation(explanation), 
                 matchCallback(matchCallback), 
                 commitCallback(commitCallback) {};
