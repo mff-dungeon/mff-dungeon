@@ -36,6 +36,9 @@ clean:
 	$(RM) -r $(BUILDDIR) $(TARGET)
 	$(RM) *.log
 
+sedfix:
+	@git checkout src/dynamic.hpp
+
 tester:
 	$(CC) $(CFLAGS) test/tester.cpp $(INC) $(LIB) -o bin/tester
 	
