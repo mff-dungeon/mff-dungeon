@@ -121,9 +121,14 @@ namespace Dungeon {
 	void GameManager::insertObject(IObject* obj) {
         LOGS("GameManager", Verbose) << "Inserting object " << obj->getId() << "." << LOGF;
 		objects.insert(obj);
-		loader->saveObject(obj);
+		saveObject(obj);
 	}
 	
+	void GameManager::saveObject(IObject* obj) {
+        LOGS("GameManager", Verbose) << "Saving object " << obj->getId() << "." << LOGF;
+		loader->saveObject(obj);
+	}
+
 	void GameManager::addRelation(Relation* rel) {
 		int err = DatabaseHandler::getInstance().addRelation(rel);
         LOGS("GameManager", Verbose) << "Adding relation " << rel->pid << " --> " << rel->sid << "." << LOGF;
@@ -140,10 +145,12 @@ namespace Dungeon {
 		this->aqueue->stop();
 	}
     
-    void GameManager::addNewFigure(Alive *figure) {
+    Alive* GameManager::addNewFigure(Alive *figure) {
         // TODO: put the figure somewhere, initialize the inventory, and so on...
         
         this->insertObject(figure);
+		createRelation(getObject("room/baseRoom"), figure, R_INSIDE);
+		return figure;
     }
 	
 	/**

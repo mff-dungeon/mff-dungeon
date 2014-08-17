@@ -4,7 +4,7 @@
 
 namespace Dungeon {
     
-	Alive::Alive(objId id) : IObject(id) {
+	Alive::Alive(objId id) : IDescriptable(id) {
 		this->hitpoints = 1000;
 	}
 	
@@ -82,16 +82,21 @@ namespace Dungeon {
 						}
 				}));
 
-			list->push_back(new CallbackAction("explore", "explore - List items you can see in yout location",
+			list->push_back(new CallbackAction("explore", "explore - List items you can see in your current location",
 				RegexMatcher::matcher("explore"),
 				[this] (ActionDescriptor * ad) {
 						ObjectMap rooms = this->getRelations(false).at(R_INSIDE);
 						for (auto& room : rooms) {
-							IObject* r = room.second->get();
-							*ad << "Location: " << r->getId() << "\n";
-							ObjectMap objects = r->getRelations(true).at(R_INSIDE);
-							for(auto& obj : objects) {
-								*ad << "\t" + obj.first + "\n";
+							IObject* obj = room.second->get();
+							Room* r = (Room*) obj;
+							if (r) {
+								r->explore(ad);
+							} else {
+								*ad << "Non-room location: " << obj->getId() << "\n";
+								ObjectMap objects = obj->getRelations(true).at(R_INSIDE);
+								for(auto& o : objects) {
+									*ad << "\t" + o.first + "\n";
+								}
 							}
 						}
 				}));
@@ -106,7 +111,8 @@ namespace Dungeon {
 			stream >> hitpoints;
 		}
 	}
-    
+
+
 	PERSISTENT_IMPLEMENTATION(Alive)
 }
 

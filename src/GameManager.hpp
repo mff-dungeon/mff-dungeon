@@ -24,6 +24,7 @@ namespace Dungeon {
         bool hasObject(objId id);
         IObject* loadObject(objId id);
         void insertObject(IObject *object);
+        void saveObject(IObject *object);
         ObjectPointer* getObjectPointer(objId id);
 		
         void addRelation(Relation* rel);
@@ -33,7 +34,7 @@ namespace Dungeon {
         
         ActionQueue* getQueue();
         
-        void addNewFigure(Alive *figure);
+        Alive* addNewFigure(Alive *figure);
         void moveAlive(Alive* alive, objId roomId);
         
         void shutdown();

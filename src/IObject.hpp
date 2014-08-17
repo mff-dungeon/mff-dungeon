@@ -16,6 +16,9 @@ namespace Dungeon {
         virtual objId getId() const;
         virtual IObject * setId(objId id);
         virtual void getActions(ActionList * list, IObject *callee) = 0;
+        virtual bool isDescriptable() const {
+            return false;
+        }
        
         /*
          * Serializing functions: 
@@ -28,6 +31,12 @@ namespace Dungeon {
         virtual IObject* createObject() const = 0;
         static IObject* load(Archiver& stream, string className);
         void store(Archiver& stream, objId& id, string& className) const;
+        
+        /**
+         * Saves changes made to object. Must be called after changes.
+         * Shortcut for gm->saveObject(obj).
+         */
+        void save(GameManager* gm);
 		
         /*
          * Relation Functions:
@@ -49,8 +58,7 @@ namespace Dungeon {
          */
         RelationList getRelations(bool master=true);
         
-        
-                virtual string className() const = 0;
+        virtual string className() const = 0;
 
 	protected:
 		virtual void serialize(Archiver& stream);

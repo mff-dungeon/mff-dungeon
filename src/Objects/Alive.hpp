@@ -3,15 +3,16 @@
 
 #include "../common.hpp"
 #include "../Actions/CallbackAction.hpp"
+#include "IDescriptable.hpp"
 
 
 namespace Dungeon
 {
 
-    class Alive : public IObject
+    class Alive : public IDescriptable
     {
     public:
-        Alive() {};		// Constructor allowing to load class later
+        Alive() {}		// Constructor allowing to load class later
         Alive(objId id);
         void getAllActions(ActionList* list);
         virtual void getActions(ActionList* list, IObject *callee);

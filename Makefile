@@ -20,14 +20,14 @@ src/dynamic.hpp: $(DYNAMICS)
 	@printf "#ifndef DYNAMIC_HPP\n#define	DYNAMIC_HPP\n\n" > $@
 	@echo $(DYNAMICS) | sed -r 's~src/([[:alnum:]/.-]+)\s*~#include "\1"\n~g' >> $@
 	@printf "#endif\n" >> $@
-	@echo "[ .. ] Dynamic file generated."
+	@echo "[ .. ] Dynamic header file generated."
 
 build/main.o: src/main.cpp src/dynamic.hpp
 	@mkdir -p $(shell dirname $@)
 	@echo "[ CC ] " $< " --> " $@
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) src/dynamic.hpp
 	@mkdir -p $(shell dirname $@)
 	@echo "[ CC ] " $< " --> " $@
 	@$(CC) $(CFLAGS) -c -o $@ $<

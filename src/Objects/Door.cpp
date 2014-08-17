@@ -3,6 +3,7 @@
 #include "../Actions/CallbackAction.hpp"
 
 namespace Dungeon {
+	
 	Door::Door() {
 	}
 
@@ -13,7 +14,7 @@ namespace Dungeon {
 			ObjectMap targets = this->getRelations(false).at(R_INSIDE);
 			for (auto& obj : targets) {
 				if (obj.first != callee->getId()) {
-					list->push_back(new CallbackAction("door", "You can go through door with 'go to <room>'.", 
+					list->push_back(new CallbackAction("door", "You can go through " + getName() + " with 'go to <room>'.", 
 							RegexMatcher::matcher("go (through|to room)"),
 							CALLBACK(Door, goThrough)));
 				}
@@ -25,17 +26,19 @@ namespace Dungeon {
 	}
 	
 	void Door::goThrough(ActionDescriptor* ad) {
-		objId target;
-		ObjectMap& targets = this->getRelations(false).at(R_INSIDE);
+		Room* target;
+		ObjectMap targets = this->getRelations(false).at(R_INSIDE);
 		for (auto& obj : targets) {
 			// TODO: Implement object matching and use it (not only) here
 			
 			// FYI - this is NOT WORKING AS EXPECTED :)
-			target = obj.second->getId();
-			break;
+			
+			target = (Room*) obj.second->get();
 		}
 		
-		ad->getGM()->moveAlive(ad->getAlive(), target);
+		ad->getGM()->moveAlive(ad->getAlive(), target->getId());
+		*ad << "You've gone through " << getLongName() << ".\n";
+		target->explore(ad);
 	}
 	
 	PERSISTENT_IMPLEMENTATION(Door)

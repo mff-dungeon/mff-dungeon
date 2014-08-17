@@ -2,19 +2,18 @@
 #define	ROOM_HPP
 
 #include "../common.hpp"
+#include "IDescriptable.hpp"
 
 namespace Dungeon {
 	
-    class Room : public IObject{
+    class Room : public IDescriptable {
     public:
-            Room() {};		// Constructor allowing to load class later
-            Room(objId id);
-            virtual ~Room();
+        Room() {};		// Constructor allowing to load class later
+        Room(objId id);
+        virtual ~Room();
 
-            virtual void getActions(ActionList* list, IObject* calee);
-
-    protected:
-            virtual void serialize(Archiver& stream);
+        virtual void getActions(ActionList* list, IObject* calee);
+        virtual void explore(ActionDescriptor* ad);
 	
     PERSISTENT_DECLARATION(Room, "Room")
 			

@@ -12,25 +12,34 @@ namespace Dungeon {
 		 */
 		Room *baseRoom, *trapRoom;
 		ThorsHammer* th;
-		Alive *aearsis, *asaru, *petr;
-		gm->insertObject(baseRoom = new Room("room/baseRoom"));
-		gm->insertObject(trapRoom = new Room("room/trapRoom"));
+		Human *aearsis, *asaru, *petr;
+		
+		baseRoom = new Room("room/baseRoom");
+		baseRoom->setName("Base Camp")
+				->setDescription("Nothing much to be found here, but get familiar with basic commands - try to type 'help'.");
+		gm->insertObject(baseRoom);
+		
+		trapRoom = new Room("room/trapRoom");
+		trapRoom->setName("Equip room")
+				->setDescription("Looks like noone has been there for a long time.");
+		gm->insertObject(trapRoom);
+		
 		gm->insertObject(th = new ThorsHammer());
-		gm->insertObject(aearsis = new Alive("human/aearsis@eideo.cz"));
-		gm->insertObject(asaru = new Alive("human/asaru@jabbim.cz"));
-		gm->insertObject(petr = new Alive("human/petr.manek@jabbim.com"));
+		aearsis = (Human*) gm->addNewFigure(new Human("human/aearsis@eideo.cz", "Aearsis", "aearsis@eideo.cz"));
+		asaru = (Human*) gm->addNewFigure(new Human("human/asaru@jabbim.cz", "Asaru", "asaru@jabbim.cz"));
+		petr = (Human*) gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "Petr Mánek", "petr.manek@jabbim.com"));
 		
 		/*
 		 * Init relations
 		 */
-		gm->createRelation(baseRoom, aearsis, R_INSIDE);
-		gm->createRelation(baseRoom, asaru, R_INSIDE);
-		gm->createRelation(baseRoom, petr, R_INSIDE);
 		gm->createRelation(aearsis, th, R_INVENTORY);
 		gm->createRelation(asaru, th, R_INVENTORY);
 		gm->createRelation(petr, th, R_INVENTORY);
 		
-		this->createDoor("trap-base", baseRoom, trapRoom);
+		this->createDoor("trap-base", baseRoom, trapRoom)
+				->setName("wooden door")
+				->setLongName("wooden door with simple metal handle")
+				->save(gm);
 	}
 	
 	Door* WorldCreator::createDoor(string name, Room* a, Room* b) {
