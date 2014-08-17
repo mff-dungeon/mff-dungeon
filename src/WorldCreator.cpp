@@ -27,7 +27,7 @@ namespace Dungeon {
 		gm->insertObject(th = new ThorsHammer());
 		aearsis = (Human*) gm->addNewFigure(new Human("human/aearsis@eideo.cz", "Aearsis", "aearsis@eideo.cz"));
 		asaru = (Human*) gm->addNewFigure(new Human("human/asaru@jabbim.cz", "Asaru", "asaru@jabbim.cz"));
-		petr = (Human*) gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "Petr Mánek", "petr.manek@jabbim.com"));
+		petr = (Human*) gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"));
 		
 		/*
 		 * Init relations
