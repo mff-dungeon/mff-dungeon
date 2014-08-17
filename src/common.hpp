@@ -14,14 +14,14 @@
  *  defines a className() method for saving purposes.
  * Should be used in class declaration.
  */
-#define PERSISTENT_DECLARATION(cName, cStringName) \
+#define PERSISTENT_DECLARATION(cName) \
 public: \
 	virtual IObject* createObject() const \
 	{ \
 		return new cName(); \
 	} \
 	virtual string className() const { \
-		return cStringName; \
+		return #cName; \
 	}; \
 private: \
 	static AddIObject addIObject;

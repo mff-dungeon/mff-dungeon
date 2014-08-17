@@ -21,7 +21,7 @@ namespace Dungeon
 	protected:
 		virtual void serialize(Archiver& stream);
 	
-	PERSISTENT_DECLARATION(Alive, "Alive")		// Macro registering the object into list
+	PERSISTENT_DECLARATION(Alive)		// Macro registering the object into list
     };
 
 }
