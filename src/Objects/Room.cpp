@@ -34,7 +34,13 @@ namespace Dungeon {
 			for(auto& item: objects) {
 				IObject* obj = item.second->get();
 				if (obj->isDescriptable()) {
-					*ad << "There is " << ((IDescriptable*) obj)->getName() << ". ";	
+                    Human* human = dynamic_cast<Human*>(obj);
+                    if (human != 0 && human == ad->getAlive()) {
+                        // skip myself
+                        continue;
+                    } else {
+                        *ad << "There is " << ((IDescriptable*) obj)->getName() << ". ";
+                    }
 				} else {				
 					*ad << "There is an object (" << item.second->getId() << "). ";
 				}
