@@ -59,7 +59,5 @@ namespace Dungeon {
         // Napr. Vidis prase, prase, nuz, prase, nuz, nuz. Muzes hodit nuz, hodit nuz, hodit nuz...
 	}
 
-
-
 }
 

@@ -8,6 +8,7 @@
 #include "Action.hpp"
 #include "ActionQueue.hpp"
 #include "Objects/Alive.hpp"
+#include "ActionList.hpp"
 
 namespace Dungeon {
     

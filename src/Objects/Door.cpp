@@ -1,6 +1,6 @@
 #include "Door.hpp"
 #include "../ObjectPointer.hpp"
-#include "../Actions/CallbackAction.hpp"
+#include "../ActionList.hpp"
 
 namespace Dungeon {
 	
@@ -12,33 +12,22 @@ namespace Dungeon {
 		// Add move actions to all rooms
 		try{
 			ObjectMap targets = this->getRelations(false).at(R_INSIDE);
+			DoorwalkAction* action = new DoorwalkAction;
 			for (auto& obj : targets) {
 				if (obj.first != callee->getId()) {
-					list->push_back(new CallbackAction("door", "You can go through " + getName() + " with 'go to <room>'.", 
-							RegexMatcher::matcher("go (through|to room)"),
-							CALLBACK(Door, goThrough)));
+					action->addTarget(obj.second);
 				}
 			}
+			list->addAction(action);
 		}
 		catch (const std::out_of_range& e) {
 			// What a weird door pointing nowhere...
 		}
 	}
 	
-	void Door::goThrough(ActionDescriptor* ad) {
-		Room* target;
-		ObjectMap targets = this->getRelations(false).at(R_INSIDE);
-		for (auto& obj : targets) {
-			// TODO: Implement object matching and use it (not only) here
-			
-			// FYI - this is NOT WORKING AS EXPECTED :)
-			
-			target = (Room*) obj.second->get();
-		}
-		
+	void DoorwalkAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer* target) {		
 		ad->getGM()->moveAlive(ad->getAlive(), target->getId());
-		*ad << "You've gone through " << getLongName() << ".\n";
-		target->explore(ad);
+		((Room*) target->get())->explore(ad);
 	}
     
     string Door::getDescriptionSentence() {
@@ -56,6 +45,29 @@ namespace Dungeon {
         }
     }
 	
+	void DoorwalkAction::explain(ActionDescriptor* ad) {
+		*ad << "Use 'go to ...' to enter another room. Currently you can go to:\n";
+		for (auto& pair : targets) {
+			IObject* obj = pair.second->get();
+			if (obj->isDescriptable())
+				*ad << "- " << ((IDescriptable*) obj)->getLongName() << "\n"; // Todo - output as sentence
+		}
+	}
+	
+	void DoorwalkAction::commit(ActionDescriptor* ad) {
+		ObjectPointer* current = ad->getAlive()->getLocation();
+		for (auto& pair : targets) {
+			if (pair.second->getId() == current->getId()) continue;
+			commitOnTarget(ad, pair.second); // TODO Implement object matching...
+			return;
+		}
+		*ad << "No target good enough. Try again later.";
+	}
+	
+	bool DoorwalkAction::matchCommand(string command) {
+		return RegexMatcher::match("go to .+", command);
+	}
+
 	PERSISTENT_IMPLEMENTATION(Door)
 
 

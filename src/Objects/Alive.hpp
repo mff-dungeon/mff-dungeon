@@ -20,6 +20,8 @@ namespace Dungeon
         
         virtual string getDescriptionSentence();
 	
+        ObjectPointer* getLocation();
+        
 	protected:
 		virtual void serialize(Archiver& stream);
 	

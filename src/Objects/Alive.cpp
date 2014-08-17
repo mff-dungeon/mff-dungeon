@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include "Alive.hpp"
 #include "../ActionDescriptor.hpp"
+#include "../ActionList.hpp"
 
 namespace Dungeon {
     
@@ -42,14 +43,14 @@ namespace Dungeon {
 		LOGS("Alive", Verbose) << "Getting actions on " << this->getId() << "." << LOGF;
 		
 		if (callee == this) {
-			list->push_back(new CallbackAction("suicide", "commit suicide - If you just dont want to live on this planet anymore.",
+			list->addAction(new CallbackAction("suicide", "commit suicide - If you just dont want to live on this planet anymore.",
 				RegexMatcher::matcher("commit( a)? suicide|kill me( now)?"),
 				[this] (ActionDescriptor * ad) {
 						*ad << "You've killed yaself. Cool yeah?";
 						this->hitpoints = 0;
 				}));
 
-			list->push_back(new CallbackAction("dump", "dump - If you want to get some info...",
+			list->addAction(new CallbackAction("dump", "dump - If you want to get some info...",
 				RegexMatcher::matcher("dump( relations)?"),
 				[this] (ActionDescriptor * ad) {
 						*ad << "So you want to know something? Relations which you master:\n";
@@ -70,20 +71,20 @@ namespace Dungeon {
 						}
 				}));
 
-			list->push_back(new CallbackAction("help", "help - Well...",
+			list->addAction(new CallbackAction("help", "help - Well...",
 				RegexMatcher::matcher("help|what can i do|list actions"),
 				[this] (ActionDescriptor * ad) {
 						*ad << "This is an non-interactive help. You can do following actions:\n";
 						ActionList list;
 						this->getAllActions(&list);
 						for (auto& a : list) {
-                            if (!a->isVisibleInHelp) continue;
-							a->explain(ad);
+                            if (!a.second->isVisibleInHelp) continue;
+							a.second->explain(ad);
 							*ad << "\n";
 						}
 				}, false));
 
-			list->push_back(new CallbackAction("explore", "explore - List items you can see in your current location",
+			list->addAction(new CallbackAction("explore", "explore - List items you can see in your current location",
 				RegexMatcher::matcher("explore|where am i|locate me|tell me where i am|tell me my location"),
 				[this] (ActionDescriptor * ad) {
 						ObjectMap rooms = this->getRelations(false).at(R_INSIDE);
@@ -102,17 +103,17 @@ namespace Dungeon {
 						}
 				}));
             
-            list->push_back(new CallbackAction("hello", "hello - When you wanna be polite to your Dungeon",
+            list->addAction(new CallbackAction("hello", "hello - When you wanna be polite to your Dungeon",
                RegexMatcher::matcher("hello|hi|whats up|wazzup|yo"),
                [this] (ActionDescriptor * ad) {
                    *ad << "Hi!";
                }, false));
             
-            list->push_back(new CallbackAction("who am i", "who am i - In case you forget your identity",
-                                               RegexMatcher::matcher("who( )?am( )?i"),
-                                               [this] (ActionDescriptor * ad) {
-                                                   *ad << "You are " + ad->getAlive()->getName() + ".";
-                                               }, false));
+            list->addAction(new CallbackAction("who am i", "who am i - In case you forget your identity",
+				RegexMatcher::matcher("who( )?am( )?i"),
+				[this] (ActionDescriptor * ad) {
+					*ad << "You are " + ad->getAlive()->getName() + ".";
+				}, false));
 		}
     }
 	
@@ -141,6 +142,10 @@ namespace Dungeon {
                 return this->getName() + " is nearby.";
         }
     }
+
+	ObjectPointer* Alive::getLocation() {
+		return getRelations(false).at(R_INSIDE).begin()->second;
+	}
 
 
 	PERSISTENT_IMPLEMENTATION(Alive)

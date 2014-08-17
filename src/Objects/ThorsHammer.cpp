@@ -2,6 +2,7 @@
 #include "../GameManager.hpp"
 #include "../Actions/CallbackAction.hpp"
 #include "../ActionDescriptor.hpp"
+#include "../ActionList.hpp"
 
 namespace Dungeon
 {
@@ -13,7 +14,7 @@ namespace Dungeon
 	}
 
 	void ThorsHammer::getActions(ActionList* list, IObject* callee) {
-		list->push_back(new CallbackAction("shutdown", "server shutdown - Shutdown's the server.",
+		list->addAction(new CallbackAction("shutdown", "server shutdown - Shutdown's the server.",
 				RegexMatcher::matcher("server shutdown"), 
 				[] (ActionDescriptor* ad) {
 					ad->getGM()->shutdown();

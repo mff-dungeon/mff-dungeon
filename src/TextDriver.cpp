@@ -7,11 +7,7 @@ namespace Dungeon {
         this->alist = new ActionList();
     }
 
-    TextDriver::~TextDriver() {
-		for (size_t i = 0; i < alist->size(); i++) {
-            delete alist->at(i);
-		}
-        
+    TextDriver::~TextDriver() {        
 		delete alist;
     }
     
@@ -20,7 +16,9 @@ namespace Dungeon {
        
         ad->getAlive()->getAllActions(alist);
 		
-        for (Action* action : *alist) {
+        for (auto& pair: *alist) {
+			Action* action = pair.second;
+			LOGS("TD", Verbose) << "Matching action " << pair.first << LOGF;
             if (action->matchCommand(ad->in_msg)) {
 				ad->matched(action);
 				break;

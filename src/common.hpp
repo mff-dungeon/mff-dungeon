@@ -72,12 +72,12 @@ namespace Dungeon {
     class IObject;
     class Driver;
     class AddIObject;
+    class ActionList;
     
     /**
      * Should be value type (struct), comparable
      */
     typedef string objId;
-    typedef vector<Action *> ActionList;
     typedef map<objId, ObjectPointer*> ObjectMap;
     typedef map<string, ObjectMap> RelationList;
 }

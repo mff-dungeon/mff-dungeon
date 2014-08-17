@@ -10,7 +10,6 @@ namespace Dungeon
 
     void DummyObject::getActions(ActionList* list, IObject *callee)
     {
-        list->push_back(new Action("dummy"));
     }
 
 }

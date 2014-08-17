@@ -11,6 +11,10 @@ namespace Dungeon {
         ObjectPointer(GameManager *gm, objId id);
         IObject *get();
         objId getId();
+        
+        ObjectPointer* clone() {
+            return new ObjectPointer(gm, id);
+        }
 
     private:
         GameManager *gm;

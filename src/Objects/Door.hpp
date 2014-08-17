@@ -3,6 +3,7 @@
 
 #include "../common.hpp"
 #include "IDescriptable.hpp"
+#include "../Actions/MultiTargetAction.hpp"
 
 namespace Dungeon {
 
@@ -15,11 +16,20 @@ namespace Dungeon {
         Door(objId id) : IDescriptable(id) {}
         virtual void getActions(ActionList* list, IObject* callee);
         
-        void goThrough(ActionDescriptor* ad);
         virtual string getDescriptionSentence();
         
     PERSISTENT_DECLARATION(Door)
     }; 
+    
+    class DoorwalkAction : public MultiTargetAction {
+    public:
+        DoorwalkAction(string type = "door-walk") : MultiTargetAction(type) {}
+        
+        virtual void explain(ActionDescriptor* ad);
+        virtual bool matchCommand(string command);
+        virtual void commit(ActionDescriptor* ad);
+        virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer* target);
+    };
 }
 
 #endif	/* DOOR_HPP */

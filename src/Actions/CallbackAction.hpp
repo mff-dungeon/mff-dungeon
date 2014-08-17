@@ -33,9 +33,6 @@ namespace Dungeon {
         virtual void explain(ActionDescriptor* ad);
         virtual void commit(ActionDescriptor* ad);
         virtual bool matchCommand(string command);
-        
-        template<typename Method, typename Object>
-	static function<void (ActionDescriptor*)> mkCallback(Object* object, Method&& method);
 
     private:
         string explanation;
