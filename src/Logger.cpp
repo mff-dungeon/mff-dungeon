@@ -36,43 +36,98 @@ namespace Dungeon {
         warningsFile.close();
     }
     
-    void Logger::linkStream(std::ostream& stream, Severity minSeverity) {
-        stream.flush();
-        
-        stream << "[" << this->getTimestamp() << "] Logging began with minimal severity level: ";
-        switch (minSeverity) {
+    string Logger::getSeverityName(Severity severity) {
+        switch (severity) {
             case Severity::Verbose:
-                stream << "verbose";
-                break;
+                return "verbose";
                 
             case Severity::Info:
-                stream << "info";
-                break;
+                return "info";
                 
             case Severity::Warning:
-                stream << "warning";
-                break;
+                return "warning";
                 
             case Severity::Error:
-                stream << "error";
-                break;
+                return "error";
                 
             case Severity::Fatal:
-                stream << "fatal";
-                break;
+                return "fatal";
                 
             default:
-                stream << "unknown";
-                break;
+                return "unknown";
         }
-        stream << endl << endl;
+    }
+    
+    void Logger::linkStream(std::ostream& stream, Severity minSeverity) {
+        stream.flush();
+        stream << "[" << this->getTimestamp() << "] Logging began with minimal severity level: ";
+        stream << getSeverityName(minSeverity) << endl << endl;
         stream.flush();
         
         buffer.addBuffer(stream.rdbuf(), minSeverity);
     }
+
+    bool Logger::setMinSeverity(ostream& stream, Severity minSeverity) {
+        mutex_lock.lock();
+        bool result = false;
+        
+        if (buffer.setBufferSeverity(stream.rdbuf(), minSeverity)) {
+            stream.flush();
+            stream << "[" << this->getTimestamp() << "] Changed minimal log severity level to: ";
+            stream << getSeverityName(minSeverity) << endl << endl;
+            stream.flush();
+            
+            result = true;
+        }
+        
+        mutex_lock.unlock();
+        
+        if (stream.rdbuf() == cout.rdbuf()) {
+            // stdout file should reflect what is written into stdout
+            this->setMinSeverity(stdoutFile, minSeverity);
+        }
+        
+        return result;
+    }
+    
+    bool Logger::unlinkStream(ostream& stream) {
+        mutex_lock.lock();
+        bool result = false;
+        
+        if (buffer.removeBuffer(stream.rdbuf())) {
+            stream.flush();
+            stream << "[" << this->getTimestamp() << "] Logging ended." << endl << endl;
+            stream.flush();
+            
+            result = true;
+        }
+        
+        mutex_lock.unlock();
+        return result;
+    }
     
     void Logger::LogBuffer::addBuffer(streambuf* buf, Severity minSeverity) {
         bufs.insert(pair<streambuf*, Severity>(buf, minSeverity));
+    }
+    
+    bool Logger::LogBuffer::setBufferSeverity(streambuf* buf, Severity minSeverity) {
+        LogBufferList::iterator it = bufs.find(buf);
+        
+        if (it == bufs.end())
+            return false;
+        
+        it->second = minSeverity;
+        return true;
+    }
+    
+    bool Logger::LogBuffer::removeBuffer(streambuf* buf) {
+        LogBufferList::iterator it = bufs.find(buf);
+        
+        if (it == bufs.end())
+            return false;
+        
+        bufs.erase(it);
+        return true;
     }
     
     int Logger::LogBuffer::overflow(int c) {

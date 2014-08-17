@@ -54,26 +54,49 @@ namespace Dungeon {
          */
         void setHeadline(string title);
         
+        /** Starts outputting log messages into a new stream.
+         @param stream      Stream to which the log will be written.
+         @param minSeverity All messages below this severity level will be discarded.
+         */
+        void linkStream(ostream& stream, Severity minSeverity);
+        
+        /** Changes severity filter for log output stream.
+         @param stream      Log output stream added using {@link #linkStream} method.
+         @param minSeverity The new severity filter. All messages below this severity level will be discarded.
+         @return True if the operation succeeded.
+         */
+        bool setMinSeverity(ostream& stream, Severity minSeverity);
+        
+        /** Stops outputting log messages into the stream.
+         @param stream      Log output stream added using {@link #linkStream} method.
+         @return True if the operation succeeded.
+         */
+        bool unlinkStream(ostream& stream);
+        
     private:
         Logger();
         Logger(Logger const&);
         ~Logger();
         void operator=(Logger const&);
         
+        string getSeverityName(Severity severity);
+        
+        typedef map<streambuf*, Severity> LogBufferList;
+        
         class LogBuffer : public streambuf {
         public:
             void addBuffer(streambuf* buf, Severity minSeverity);
+            bool setBufferSeverity(streambuf* buf, Severity minSeverity);
+            bool removeBuffer(streambuf* buf);
             virtual int overflow(int c);
             
             Severity currentSeverity;
             
         private:
-            map<streambuf*, Severity> bufs;
+            LogBufferList bufs;
         };
         
         LogBuffer buffer;
-        void linkStream(ostream& stream, Severity minSeverity);
-        
         string currentTime(string format);
         
         string getTimestamp();
