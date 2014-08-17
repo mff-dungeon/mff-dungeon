@@ -34,8 +34,7 @@ namespace Dungeon {
 			for(auto& item: objects) {
 				IObject* obj = item.second->get();
 				if (obj->isDescriptable()) {
-                    Human* human = dynamic_cast<Human*>(obj);
-                    if (human != 0 && human == ad->getAlive()) {
+                    if (obj == ad->getAlive()) {
                         // skip myself
                         continue;
                     } else {
