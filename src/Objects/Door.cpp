@@ -42,24 +42,18 @@ namespace Dungeon {
 	}
     
     string Door::getDescriptionSentence() {
-        stringstream ss;
-        
         rand_init(gen, dist, 0, 2);
         int rnd = rand_next(gen, dist);
         
         switch (rnd) {
             case 0:
-                ss << "There is a " << this->getName() << ".";
-                break;
+                return "There is a " + this->getName() + ".";
             case 1:
-                ss << "A " << this->getName() << " is casting a grimm shadow on the floor.";
-                break;
+                return "A " + this->getName() + " is casting a grimm shadow on the floor.";
             case 2:
-                ss << "You see the frame of a " << this->getName() << ".";
-                break;
+            default:
+                return "You see the frame of a " + this->getName() + ".";
         }
-        
-        return ss.str();
     }
 	
 	PERSISTENT_IMPLEMENTATION(Door)

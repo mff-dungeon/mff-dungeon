@@ -1,5 +1,4 @@
 #include "IDescriptable.hpp"
-#include <sstream>
 
 namespace Dungeon {
 	
@@ -52,9 +51,7 @@ namespace Dungeon {
 	}
     
     string IDescriptable::getDescriptionSentence() {
-        stringstream ss;
-        ss << "There is " << this->getName() << ".";
-        return ss.str();
+        return "There is " + this->getName() + ".";
     }
 
 }

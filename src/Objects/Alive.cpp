@@ -113,27 +113,20 @@ namespace Dungeon {
 	}
     
     string Alive::getDescriptionSentence() {
-        stringstream ss;
-        
         rand_init(gen, dist, 0, 3);
         int rnd = rand_next(gen, dist);
         
         switch (rnd) {
             case 0:
-                ss << "You recognize " << this->getName() << "'s figure.";
-                break;
+                return "You recognize " + this->getName() + "'s figure.";
             case 1:
-                ss << this->getName() << " is there with you.";
-                break;
+                return this->getName() + " is there with you.";
             case 2:
-                ss << "You smell the presence of " << this->getName() << ".";
-                break;
+                return "You smell the presence of " + this->getName() + ".";
             case 3:
-                ss << this->getName() << " is nearby.";
-                break;
+            default:
+                return this->getName() + " is nearby.";
         }
-        
-        return ss.str();
     }
 
 
