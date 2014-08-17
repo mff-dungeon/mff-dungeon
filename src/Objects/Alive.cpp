@@ -42,7 +42,7 @@ namespace Dungeon {
 		LOGS("Alive", Verbose) << "Getting actions on " << this->getId() << "." << LOGF;
 		
 		if (callee == this) {
-			list->push_back(new CallbackAction("suicide", "sucide - If you just dont want to live on this planet anymore.",
+			list->push_back(new CallbackAction("suicide", "commit suicide - If you just dont want to live on this planet anymore.",
 				RegexMatcher::matcher("commit( a)? suicide"),
 				[this] (ActionDescriptor * ad) {
 						*ad << "You've killed yaself. Cool yeah?";
