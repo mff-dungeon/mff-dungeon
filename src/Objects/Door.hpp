@@ -18,7 +18,7 @@ namespace Dungeon {
         void goThrough(ActionDescriptor* ad);
         
         
-    PERSISTENT_DECLARATION(Door, "Door")
+    PERSISTENT_DECLARATION(Door)
     }; 
 }
 

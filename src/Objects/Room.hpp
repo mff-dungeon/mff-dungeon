@@ -15,7 +15,7 @@ namespace Dungeon {
         virtual void getActions(ActionList* list, IObject* calee);
         virtual void explore(ActionDescriptor* ad);
 	
-    PERSISTENT_DECLARATION(Room, "Room")
+    PERSISTENT_DECLARATION(Room)
 			
     };
 }
