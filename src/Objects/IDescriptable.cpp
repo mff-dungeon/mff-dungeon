@@ -53,6 +53,20 @@ namespace Dungeon {
     string IDescriptable::getDescriptionSentence() {
         return "There is " + this->getName() + ".";
     }
+    
+    string IDescriptable::getGroupDescriptionSentence(vector<IDescriptable *> others) {
+        if (others.size() == 0) return "";
+        else if (others.size() == 1) return getDescriptionSentence();
+        
+        string sentence = "There are ";
+        for (int i = 0; i < others.size() - 1; i++) {
+            if (i != 0) sentence += ", ";
+            sentence += others.at(i)->getName();
+        }
+        
+        sentence += " and " + others.at(others.size() - 1)->getName() + ".";
+        return sentence;
+    }
 
 }
 

@@ -19,6 +19,7 @@ namespace Dungeon
         int hitpoints;
         
         virtual string getDescriptionSentence();
+        virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
 	
         ObjectPointer* getLocation();
         

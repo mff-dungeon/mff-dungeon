@@ -28,7 +28,7 @@ namespace Dungeon {
         virtual bool isDescriptable() const;
         
         virtual string getDescriptionSentence();
-        
+        virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
         
         virtual void serialize(Archiver& stream);
 

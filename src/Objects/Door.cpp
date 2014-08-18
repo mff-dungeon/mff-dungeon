@@ -44,6 +44,45 @@ namespace Dungeon {
                 return "You see the frame of a " + this->getName() + ".";
         }
     }
+    
+    string Door::getGroupDescriptionSentence(vector<IDescriptable *> others) {
+        if (others.size() == 0) return "";
+        else if (others.size() == 1) return getDescriptionSentence();
+        
+        string sentence;
+        rand_init(gen, dist, 0, 2);
+        int rnd = rand_next(gen, dist);
+        
+        switch (rnd) {
+            case 0:
+                sentence = "There are ";
+                break;
+            case 1:
+                sentence = "Around you are ";
+                break;
+            case 2:
+                sentence = "You see ";
+                break;
+            default:
+                sentence = "";
+                break;
+        }
+        
+        for (int i = 0; i < others.size() - 1; i++) {
+            if (i != 0) sentence += ", ";
+            sentence += others.at(i)->getName();
+        }
+        
+        sentence += " and " + others.at(others.size() - 1)->getName();
+        
+        switch (rnd) {
+            default:
+                sentence += ".";
+                break;
+        }
+        
+        return sentence;
+    }
 	
 	void DoorwalkAction::explain(ActionDescriptor* ad) {
 		*ad << "Use 'go to ...' to enter another room. Currently you can go to:\n";

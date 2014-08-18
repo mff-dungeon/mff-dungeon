@@ -80,6 +80,22 @@ namespace Dungeon {
     typedef string objId;
     typedef map<objId, ObjectPointer*> ObjectMap;
     typedef map<string, ObjectMap> RelationList;
+    
+    /*
+     *  Fancy comparator for type-based object grouping
+     */
+#define objId_getType(id) ( id.substr(0, id.find("/")) )
+#define objId_getIdentifier(id) ( id.substr(id.find("/") + 1) )
+    struct objIdTypeComparator {
+        bool operator() (const objId& lhs, const objId& rhs) const {
+            // ignore stuff after the slash char
+            string ltype = objId_getType(lhs);
+            string rtype = objId_getType(rhs);
+            
+            return ltype < rtype;
+        }
+    };
+    typedef multimap<objId, ObjectPointer*, objIdTypeComparator> TypeGroupedObjectMap;
 }
 
 #include "IObject.hpp"

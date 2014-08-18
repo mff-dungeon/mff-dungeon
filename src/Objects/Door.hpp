@@ -17,6 +17,7 @@ namespace Dungeon {
         virtual void getActions(ActionList* list, IObject* callee);
         
         virtual string getDescriptionSentence();
+        virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
         
     PERSISTENT_DECLARATION(Door)
     }; 

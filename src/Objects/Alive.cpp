@@ -142,6 +142,48 @@ namespace Dungeon {
                 return this->getName() + " is nearby.";
         }
     }
+    
+    string Alive::getGroupDescriptionSentence(vector<IDescriptable *> others) {
+        if (others.size() == 0) return "";
+        else if (others.size() == 1) return getDescriptionSentence();
+        
+        string sentence;
+        rand_init(gen, dist, 0, 3);
+        int rnd = rand_next(gen, dist);
+        
+        switch (rnd) {
+            case 0:
+                sentence = "You recognize ";
+                break;
+            case 2:
+                sentence = "You smell the presence of ";
+                break;
+            default:
+                sentence = "";
+                break;
+        }
+        
+        for (int i = 0; i < others.size() - 1; i++) {
+            if (i != 0) sentence += ", ";
+            sentence += others.at(i)->getName();
+        }
+        
+        sentence += " and " + others.at(others.size() - 1)->getName();
+        
+        switch (rnd) {
+            case 1:
+                sentence += " are there with you.";
+                break;
+            case 3:
+                sentence += " are nearby.";
+                break;
+            default:
+                sentence += ".";
+                break;
+        }
+        
+        return sentence;
+    }
 
 	ObjectPointer* Alive::getLocation() {
 		return getRelations(false).at(R_INSIDE).begin()->second;
