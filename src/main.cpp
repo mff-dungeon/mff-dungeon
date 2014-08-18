@@ -23,6 +23,7 @@ Alive* admin;
 JabberDriver* jabber;
 ConsoleDriver* console;
 bool initWorld = false;
+bool finishing = false;
 
 /*
  *  Attempts to get current backtrace
@@ -50,10 +51,21 @@ string getStacktace() {
  *	Sends stop signal to the ActionQueue
  */
 void finish(int signal) {
+    if (finishing) {
+        LOGH("Hard shutdown");
+        if (signal == SIGINT) LOG("main") << "Caught another SIGINT, already in shutdown mode." << LOGF;
+        else if (signal == SIGTERM) LOG("main") << "Caught another SIGTERM, already in shutdown mode." << LOGF;
+        
+        LOGS("main", Fatal) << "Resolving potentially uncontrollable hang by voluntary suicide (SIGABRT)...";
+        abort();
+        return;
+    }
+    
 	LOGH("Finish");
-
 	if (signal == SIGINT) LOG("main") << "Caught SIGINT, terminating..." << LOGF;
 	else if (signal == SIGTERM) LOG("main") << "Caught SIGTERM, terminating..." << LOGF;
+    
+    finishing = true;
 
 	jabber->stop();
 	gm->shutdown();
