@@ -25,10 +25,25 @@ namespace Dungeon {
 		catch (const std::out_of_range& e) {
 		}
     }
+    
+    string Room::getDescriptionSentence() {
+        rand_init(gen, dist, 0, 2);
+        int rnd = rand_next(gen, dist);
+        
+        switch (rnd) {
+            case 0:
+                return "You are in " + this->getLongName() + ". " + this->getDescription();
+            case 1:
+                return "You find yourself in " + this->getLongName() + ". " + this->getDescription();
+            case 2:
+            default:
+                return "Seems like you are in " + this->getLongName() + ". " + this->getDescription();
+        }
+    }
 	
 	void Room::explore(ActionDescriptor* ad) {
 		LOGS("Room", Verbose) << "Exploring " << this->getName() << "." << LOGF;
-		*ad << "You are in " << getLongName() << ". " << getDescription() << " ";
+		*ad << this->getDescriptionSentence() << " ";
 		// Recursively search all items in this room
 		try{
 			ObjectMap objects = getRelations(true).at(R_INSIDE);
