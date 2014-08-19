@@ -1,5 +1,6 @@
 #include "Room.hpp"
 #include "../ObjectPointer.hpp"
+#include "../ObjectGroup.hpp"
 
 namespace Dungeon {
 
@@ -31,34 +32,17 @@ namespace Dungeon {
 		// Recursively search all items in this room
 		try{
 			ObjectMap objects = getRelations(true).at(R_INSIDE);
-            TypeGroupedObjectMap groupedObjects(objects.begin(), objects.end());
-            TypeGroupedObjectMap::iterator m_it, s_it;
+            ObjectGroup groupedObjects(objects);
             
-            for (m_it = groupedObjects.begin(); m_it != groupedObjects.end(); m_it = s_it) {
-                objId firstIdentifier = (*m_it).first;
-                string objectType = objId_getType(firstIdentifier);
-                
-                if ((*m_it).second->get()->isDescriptable()) {
-                    pair<TypeGroupedObjectMap::iterator, TypeGroupedObjectMap::iterator> keyRange = groupedObjects.equal_range(firstIdentifier);
-                    vector<IDescriptable *> sameTypeObjects;
-                    
-                    for (s_it = keyRange.first; s_it != keyRange.second; s_it++) {
-                        if ((*s_it).second->get() == ad->getAlive()) continue;
-                        
-                        sameTypeObjects.push_back((IDescriptable *)(*s_it).second->get());
-                    }
-                    
-                    if (sameTypeObjects.empty()) {
-                        continue;
-                    } else if (sameTypeObjects.size() == 1) {
-                        *ad << sameTypeObjects.front()->getDescriptionSentence() << " ";
-                    } else {
-                        *ad << sameTypeObjects.front()->getGroupDescriptionSentence(sameTypeObjects) << " ";
-                    }
-				} else {
-					*ad << "There is an object (" << (*m_it).second->getId() << "). ";
-				}
+            // remove myself from the exploration group
+            for (ObjectGroup::iterator it = groupedObjects.begin(); it != groupedObjects.end(); it++) {
+                if (it->second->get() == ad->getAlive()) {
+                    groupedObjects.erase(it);
+                    break;
+                }
             }
+            
+            *ad << groupedObjects.explore();
 		}
 		catch (const std::out_of_range& e) {
 		}

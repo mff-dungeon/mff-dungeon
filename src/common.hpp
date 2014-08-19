@@ -65,6 +65,7 @@ namespace Dungeon {
     class GameManager; 
     class ObjectLoader;
     class ObjectPointer;
+    class ObjectGroup;
     class Alive;
     class Action;
     class ActionDescriptor;
@@ -86,16 +87,6 @@ namespace Dungeon {
      */
 #define objId_getType(id) ( id.substr(0, id.find("/")) )
 #define objId_getIdentifier(id) ( id.substr(id.find("/") + 1) )
-    struct objIdTypeComparator {
-        bool operator() (const objId& lhs, const objId& rhs) const {
-            // ignore stuff after the slash char
-            string ltype = objId_getType(lhs);
-            string rtype = objId_getType(rhs);
-            
-            return ltype < rtype;
-        }
-    };
-    typedef multimap<objId, ObjectPointer*, objIdTypeComparator> TypeGroupedObjectMap;
 }
 
 #include "IObject.hpp"
