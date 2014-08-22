@@ -1,6 +1,8 @@
 #include <cstring>
 
 #include "Item.hpp"
+#include "../Actions/CallbackAction.hpp"
+#include "../ActionDescriptor.hpp"
 
 namespace Dungeon {
 	

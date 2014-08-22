@@ -1,4 +1,6 @@
-#include "Item.hpp"
+#include "Potion.hpp"
+#include "../Actions/CallbackAction.hpp"
+#include "../ActionDescriptor.hpp"
 
 namespace Dungeon {
 	

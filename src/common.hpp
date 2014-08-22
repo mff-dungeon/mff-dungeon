@@ -74,6 +74,8 @@ namespace Dungeon {
     class Driver;
     class AddIObject;
     class ActionList;
+    class Item;
+    class Potion;
     
     /**
      * Should be value type (struct), comparable
