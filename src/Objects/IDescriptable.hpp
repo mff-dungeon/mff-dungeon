@@ -16,14 +16,14 @@ namespace Dungeon {
         IDescriptable(objId id) : IObject(id) {}
         IDescriptable(const IDescriptable& other) : name(other.name), longName(other.longName), description(other.description) {}        
 
-	virtual string getDescription() const;
-	IDescriptable* setDescription(string description);
+		virtual string getDescription() const;
+		IDescriptable* setDescription(string description);
 
-	virtual string getLongName() const;
-	IDescriptable* setLongName(string longName);
+		virtual string getLongName() const;
+		IDescriptable* setLongName(string longName);
 
-	virtual string getName() const;
-	IDescriptable* setName(string name);
+		virtual string getName() const;
+		IDescriptable* setName(string name);
 
         virtual bool isDescriptable() const;
         

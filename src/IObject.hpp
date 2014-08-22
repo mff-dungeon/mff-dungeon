@@ -47,10 +47,18 @@ namespace Dungeon {
         /**
          * Registers a new relation for this object
          * @param type the type of the new relation
-         * @param other objectId of the other object
+         * @param other ObjectPointer of the other object
          * @param master true, if the relation is master relation
          */
-	void addRelation(string type, ObjectPointer* other, bool master=true);
+		void addRelation(string type, ObjectPointer* other, bool master=true);
+		
+        /**
+         * Erases a given relation of this object
+         * @param type the type of the erased relation
+         * @param other ObjectPointer of the other object
+         * @param master true, if the relation is master relation
+         */
+		void eraseRelation(string type, ObjectPointer* other, bool master=true);
 		
         /**
          * Returns either master, or slave relations of the object
@@ -58,6 +66,10 @@ namespace Dungeon {
          */
         RelationList getRelations(bool master=true);
         
+		/**
+		 * A special method used for serializing
+         * @return the name of this class
+         */
         virtual string className() const = 0;
 
 	protected:

@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <c++/4.9/stdexcept>
 
 #include "GameManager.hpp"
 #include "WorldCreator.hpp"
@@ -128,6 +129,13 @@ namespace Dungeon {
         LOGS("GameManager", Verbose) << "Saving object " << obj->getId() << "." << LOGF;
 		loader->saveObject(obj);
 	}
+	
+	void GameManager::deleteObject(IObject* obj) {
+		LOGS("GameManager", Verbose) << "Deleting object " << obj->getId() << "." << LOGF;
+		DatabaseHandler::getInstance().deleteObject(obj->getId());
+		this->objects.remove(obj->getId());
+		delete obj;
+	}
 
 	void GameManager::addRelation(Relation* rel) {
 		int err = DatabaseHandler::getInstance().addRelation(rel);
@@ -135,6 +143,12 @@ namespace Dungeon {
         if(err != DatabaseHandler::E_OK) {
 			LOGS("GameManager", Fatal) << "Error adding relation to database, error code " << err << LOGF;
 		}
+	}
+
+	void GameManager::addRelation(IObject* master, IObject* slave, string relation) {
+		Relation* ref = new Relation(master->getId(), slave->getId(), master->className(), slave->className(), relation);
+		this->addRelation(ref);
+		delete ref;
 	}
 	
 	ActionQueue* GameManager::getQueue() {
@@ -153,28 +167,12 @@ namespace Dungeon {
 		return figure;
     }
 	
-	/**
-	 * Creates relation. 
-	 * CAUTION! It won't publish the change to already loaded objects.
-	 * Use the other version instead.
-     * @param mid ID of the master
-     * @param sid ID of the slave
-     * @param mclass Class name of the master
-     * @param sclass Class name of the slave
-     * @param relation Relation type
-     */
 	void GameManager::createRelation(objId mid, objId sid, string mclass, string sclass, string relation) {
 		Relation* rel = new Relation(mid, sid, mclass, sclass, relation);
 		this->addRelation(rel);
 		delete rel;
 	}
 	
-	/**
-	 * Creates relation on already loaded objects
-     * @param master Master
-     * @param slave Slave
-     * @param relation Relation type
-     */
 	void GameManager::createRelation(IObject* master, IObject* slave, string relation) {
 		this->createRelation(master->getId(), slave->getId(), master->className(), slave->className(), relation);
 		master->addRelation(relation, this->getObjectPointer(slave->getId()));
@@ -184,20 +182,25 @@ namespace Dungeon {
 	void GameManager::clearRelationsOfType(IObject* obj, string relation, bool master) {
 		Relation* ref_obj;
 		if (master)
-			ref_obj = new Relation(obj->getId(), "0", "0", "0", "0");
-		else ref_obj = new Relation("0", obj->getId(), "0", "0", "0");
-		vector<Relation*> list_obj;
-		DatabaseHandler::getInstance().getRelations(list_obj, ref_obj);
-		for(Relation* n : list_obj) {
-			if (n->relation == relation) DatabaseHandler::getInstance().deleteRelation(n);
-		}
+			ref_obj = new Relation(obj->getId(), "0", "0", "0", relation);
+		else ref_obj = new Relation("0", obj->getId(), "0", "0", relation);
+		DatabaseHandler::getInstance().deleteRelation(ref_obj);
 		delete ref_obj;
 		
 		obj->getRelations(master).erase(relation);
 	}
 	
+	void GameManager::removeRelation(IObject* master, IObject* slave, string relation) {
+ 		master->eraseRelation(relation, this->getObjectPointer(slave->getId()));
+ 		slave->eraseRelation(relation, this->getObjectPointer(master->getId()), false);
+		
+		Relation* ref_obj = new Relation(master->getId(), slave->getId(), "0", "0", relation);
+		DatabaseHandler::getInstance().deleteRelation(ref_obj);
+		delete ref_obj;
+	}
+	
 	void GameManager::moveAlive(Alive* alive, objId roomId) {
-		this->clearRelationsOfType(alive, R_INSIDE, false);
+		this->removeRelation(alive->getLocation()->get(), alive, R_INSIDE);
 		this->createRelation(this->getObject(roomId), alive, R_INSIDE);
 	}
 

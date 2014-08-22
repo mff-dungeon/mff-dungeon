@@ -93,7 +93,7 @@ void start() {
 	console = new ConsoleDriver(gm->getQueue(), admin);
 	console->run();
 
-	jabber = new JabberDriver(gm, "dungeon@eideo.cz", "somemagicshit");
+	jabber = new JabberDriver(gm, "dungeon@salmelu-i5521", "somemagicshit");
 	jabber->run();
 	LOG("main") << "Drivers started, starting queue." << LOGF;
 

@@ -1,6 +1,7 @@
 #include "IObject.hpp"
 #include "ObjectPointer.hpp"
 #include <memory>
+#include <c++/4.9/stdexcept>
 
 namespace Dungeon {
 
@@ -54,6 +55,25 @@ namespace Dungeon {
 		}
 		else {
 			return relation_slave;
+		}
+	}
+	
+	void IObject::eraseRelation(string type, ObjectPointer* other, bool master) {
+		if(master) {
+			try {
+				relation_master.at(type).erase(other->getId());
+			}
+			catch (std::out_of_range& e) {
+				
+			}
+		}
+		else {
+			try { 
+				relation_slave.at(type).erase(other->getId());
+			}
+			catch (std::out_of_range& e) {
+				
+			}
 		}
 	}
 	

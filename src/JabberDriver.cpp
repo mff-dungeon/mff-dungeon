@@ -98,6 +98,8 @@ namespace Dungeon {
             
             TextActionDescriptor* ad = new TextActionDescriptor(this);
 			ad->from.assign(sender);
+			// We don't care, if user writes "Potion" or "potion"
+			transform(contents.begin(), contents.end(), contents.begin(), ::tolower);
 			ad->in_msg.assign(contents);
 			
 			queue->enqueue(ad);
