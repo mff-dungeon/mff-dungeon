@@ -1,6 +1,4 @@
 #include <stdexcept>
-#include <c++/4.9/stdexcept>
-
 #include "GameManager.hpp"
 #include "WorldCreator.hpp"
 

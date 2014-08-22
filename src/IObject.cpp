@@ -1,7 +1,8 @@
 #include "IObject.hpp"
 #include "ObjectPointer.hpp"
 #include <memory>
-#include <c++/4.9/stdexcept>
+
+#include <stdexcept>
 
 namespace Dungeon {
 
