@@ -89,7 +89,7 @@ namespace Dungeon {
                 sentence = "You see ";
                 break;
             case 1:
-                sentence = "There lies";
+                sentence = "There lies ";
                 break;
             default:
                 sentence = "";
