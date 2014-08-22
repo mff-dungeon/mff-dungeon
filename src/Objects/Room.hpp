@@ -12,6 +12,7 @@ namespace Dungeon {
         Room(objId id);
         virtual ~Room();
 
+        virtual string getDescriptionSentence();
         virtual void getActions(ActionList* list, IObject* calee);
         virtual void explore(ActionDescriptor* ad);
 	
