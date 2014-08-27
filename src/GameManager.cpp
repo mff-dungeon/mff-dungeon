@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include "GameManager.hpp"
 #include "WorldCreator.hpp"
+#include "dynamic.hpp"
 
 namespace Dungeon {
 
@@ -78,6 +79,8 @@ namespace Dungeon {
 		IObject* r = 0;
 		r = loader->loadObject(id);
 		if(r == 0) return 0;
+		r->setGameManager(this);
+		
 		// Load the relations
 		Relation* ref_master = new Relation(id, "0", "0", "0", "0");
 		vector<Relation*> list_master;
@@ -121,6 +124,7 @@ namespace Dungeon {
         LOGS("GameManager", Verbose) << "Inserting object " << obj->getId() << "." << LOGF;
 		objects.insert(obj);
 		saveObject(obj);
+		obj->setGameManager(this);
 	}
 	
 	void GameManager::saveObject(IObject* obj) {
@@ -130,6 +134,14 @@ namespace Dungeon {
 	
 	void GameManager::deleteObject(IObject* obj) {
 		LOGS("GameManager", Verbose) << "Deleting object " << obj->getId() << "." << LOGF;
+		Relation* ref_obj;
+		ref_obj = new Relation("0", obj->getId(), "0", "0", "0");
+		DatabaseHandler::getInstance().deleteRelation(ref_obj);
+		delete ref_obj;
+		ref_obj = new Relation(obj->getId(), "0", "0", "0", "0");
+		DatabaseHandler::getInstance().deleteRelation(ref_obj);
+		delete ref_obj;
+		
 		DatabaseHandler::getInstance().deleteObject(obj->getId());
 		this->objects.remove(obj->getId());
 		delete obj;

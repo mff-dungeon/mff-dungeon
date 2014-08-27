@@ -16,7 +16,7 @@ namespace Dungeon {
 
 	}
 	
-	Potion* Potion::setPotionType(PotionType type) {
+	Potion* Potion::setType(PotionType type) {
 		this->type = type;
 		return this;
 	}
@@ -28,36 +28,9 @@ namespace Dungeon {
 	
 	void Potion::getActions(ActionList* list, IObject* callee) {
 		Item::getActions(list, callee);
-		// Check if the callee hasn't this item and it lies in the current room
-		// FIX ME - find better way to check, if we can cast callee - we need its location
-		try{
-			if(strcmp(callee->className().c_str(),"Alive") == 0 || strcmp(callee->className().c_str(), "Human") == 0) {
-				ObjectMap objectsInv = getRelations(false).at(R_INVENTORY);
-				if(objectsInv.find(callee->getId()) != objectsInv.end()) {
-					//Great, let's drink it
-					string match = "Drink " + this->getName();
-					transform(match.begin(), match.end(), match.begin(), ::tolower);
-					list->addAction(new CallbackAction("drink", "Drink " + this->getName(), 
-						RegexMatcher::matcher(match),
-						[this, callee] (ActionDescriptor * ad) {
-							*ad << "You've drunk " + this->getName() + ". ";
-							switch(type) {
-								case PotionType::Healing:
-									((Alive*) callee)->hitpoints += strength;
-									*ad << "You've healed " + to_string(strength) + " hitpoints";
-									break;
-								case PotionType::NoEffect:
-								default:
-									*ad << "... and it did nothing.";
-							}
-							ad->getGM()->removeRelation(callee, this, R_INVENTORY);
-							ad->getGM()->deleteObject(this);
-						}));
-				}
-			}
-		} catch (const std::out_of_range& e) {
-			
-		}
+		DrinkPotionAction* action = new DrinkPotionAction;
+		action->addTarget(this->getObjectPointer());
+		list->addAction(action);
 	}
 	
 	void Potion::serialize(Archiver& stream) {
@@ -69,9 +42,41 @@ namespace Dungeon {
 			// To deal with enum
 			stream >> t;
 			stream >> strength;
-			this->setPotionType((PotionType) t);
+			this->setType((PotionType) t);
 		}
 		Item::serialize(stream);
+	}
+	
+	void DrinkPotionAction::explain(ActionDescriptor* ad) {
+		*ad << "Use 'drink ...' to drink a potion you have or see.\n";
+	}
+	
+	void DrinkPotionAction::commit(ActionDescriptor* ad) {
+		ObjectPointer* current = ad->getAlive()->getLocation();
+		for (auto& pair : targets) {
+			if (pair.second->getId() == current->getId()) continue;
+			commitOnTarget(ad, pair.second); // TODO Implement object matching...
+			return;
+		}
+	}
+	
+	bool DrinkPotionAction::matchCommand(string command) {
+		return RegexMatcher::match("drink .+", command);
+	}
+	
+	void DrinkPotionAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer* target) {	
+		Potion* potion = (Potion*) target->get();
+		*ad << "You've drunk " + potion->getName() + ". ";
+		switch(potion->getType()) {
+			case Potion::PotionType::Healing:
+				ad->getAlive()->hitpoints += potion->getStrength();
+				*ad << "You've healed " + to_string(potion->getStrength()) + " hitpoints";
+				break;
+			case Potion::PotionType::NoEffect:
+			default:
+				*ad << "... and it did nothing.";
+		}
+		ad->getGM()->deleteObject(potion);
 	}
 
 	PERSISTENT_IMPLEMENTATION(Potion)

@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include "Alive.hpp"
+#include "Room.hpp"
 #include "../ActionDescriptor.hpp"
 #include "../ActionList.hpp"
 

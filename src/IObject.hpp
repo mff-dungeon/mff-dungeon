@@ -8,6 +8,7 @@
 
 namespace Dungeon {
     class IObject {
+    friend class GameManager;
     public:
         IObject() {};
         IObject(objId id) : id(id) {};
@@ -72,10 +73,17 @@ namespace Dungeon {
          */
         virtual string className() const = 0;
 
+        
+            ObjectPointer* getObjectPointer();
+
 	protected:
-		virtual void serialize(Archiver& stream);
+            virtual void serialize(Archiver& stream);
+            GameManager* getGameManager() const;
+            void setGameManager(GameManager* gm);
+                
 		
     private:
+        GameManager* gm;
         objId id;
 	RelationList relation_master, relation_slave;
     };

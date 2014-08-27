@@ -1,5 +1,6 @@
 #include "IObject.hpp"
 #include "ObjectPointer.hpp"
+#include "GameManager.hpp"
 #include <memory>
 
 #include <stdexcept>
@@ -86,6 +87,16 @@ namespace Dungeon {
 	void IObject::save(GameManager* gm) {
 		gm->saveObject(this);
 	}
+	
+	ObjectPointer* IObject::getObjectPointer() {
+		return gm->getObjectPointer(this->id);
+	}
 
+	GameManager* IObject::getGameManager() const {
+		return gm;
+	}
+	void IObject::setGameManager(GameManager* gm) {
+		this->gm = gm;
+	}
 
 }

@@ -12,21 +12,30 @@ namespace Dungeon {
 	
     class Potion : public Item {
 	public:
-		enum PotionType {
-			NoEffect = 0,
-			Healing = 1
-		};
+            enum PotionType {
+                    NoEffect = 0,
+                    Healing = 1
+            };
+
+            Potion();
+            Potion(objId id);
+            virtual ~Potion();
 		
-		Potion();
-		Potion(objId id);
-		virtual ~Potion();
+            virtual void getActions(ActionList* list, IObject* callee);
 		
-        virtual void getActions(ActionList* list, IObject* callee);
-		
-		Potion* setPotionType(PotionType type);
-		Potion* setStrength(int strength);
-		
-		virtual void serialize(Archiver& stream);
+            Potion* setType(PotionType type);
+            Potion* setStrength(int strength);
+            
+            int getStrength() const {
+                return strength;
+            }
+
+            PotionType getType() const {
+                return type;
+            }
+
+            virtual void serialize(Archiver& stream);
+                
         
 	private:
 		PotionType type;
@@ -34,6 +43,16 @@ namespace Dungeon {
 		
         PERSISTENT_DECLARATION(Potion)
 	};	
+    
+    class DrinkPotionAction : public MultiTargetAction {
+    public:
+        DrinkPotionAction(string type = "potion-drink") : MultiTargetAction(type) {}
+        
+        virtual void explain(ActionDescriptor* ad);
+        virtual bool matchCommand(string command);
+        virtual void commit(ActionDescriptor* ad);
+        virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer* target);
+    };
     
 };
 

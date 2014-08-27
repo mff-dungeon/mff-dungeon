@@ -33,9 +33,8 @@ namespace Dungeon {
 		
 		pot = new Potion("item/potion/health1");
 		pot->setName("Healing potion")->setLongName("A red potion in glass vial.");
-		pot->setPotionType(Potion::PotionType::Healing)->setStrength(200);
+		pot->setType(Potion::PotionType::Healing)->setStrength(200);
 		gm->insertObject(pot);
-		pot->save(gm);
 		
 		/*
 		 * Init relations

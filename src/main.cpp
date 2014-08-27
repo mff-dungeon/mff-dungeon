@@ -21,7 +21,6 @@ using namespace Dungeon;
 GameManager *gm;
 Alive* admin;
 JabberDriver* jabber;
-ConsoleDriver* console;
 bool initWorld = false;
 bool finishing = false;
 
@@ -88,12 +87,7 @@ void start() {
 	LOG("main") << "This is Jabber Dungeon starting." << LOGF;
 	gm = new GameManager(initWorld);
 
-	admin = new Alive("human/admin@jabberdung");
-	admin->addRelation("inventory", gm->getObjectPointer("ThorsHammer"));
-	console = new ConsoleDriver(gm->getQueue(), admin);
-	console->run();
-
-	jabber = new JabberDriver(gm, "dungeon@salmelu-i5521", "somemagicshit");
+	jabber = new JabberDriver(gm, "dungeon@eideo.cz", "somemagicshit");
 	jabber->run();
 	LOG("main") << "Drivers started, starting queue." << LOGF;
 
