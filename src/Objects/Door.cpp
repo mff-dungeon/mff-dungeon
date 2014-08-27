@@ -1,4 +1,5 @@
 #include "Door.hpp"
+#include "Room.hpp"
 #include "../ObjectPointer.hpp"
 #include "../ActionList.hpp"
 
@@ -104,7 +105,7 @@ namespace Dungeon {
 	}
 	
 	bool DoorwalkAction::matchCommand(string command) {
-		return RegexMatcher::match("go to .+", command);
+		return RegexMatcher::match("(go to|cd) .+", command); // Common mistake :)
 	}
 
 	PERSISTENT_IMPLEMENTATION(Door)
