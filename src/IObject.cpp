@@ -42,13 +42,27 @@ namespace Dungeon {
 		return object;
 	}
 	
-	void IObject::addRelation(string type, ObjectPointer* other, bool master) {
+	bool IObject::hasRelation(string type, ObjectPointer other, bool master) {
 		if(master) {
-			relation_master[type][other->getId()] = other;
+			return relation_master[type].find(other.getId()) != relation_master[type].end();
+		} else {
+			return relation_slave[type].find(other.getId()) != relation_slave[type].end();
+		}
+	}
+	
+	void IObject::addRelation(string type, ObjectPointer other, bool master) {
+		if (hasRelation(type, other, master)) return;
+		
+		LOGS("IObject", Verbose) << "Adding relation " << getId() << (master ? "<--" : "-->") << other.getId() << " type " << type << LOGF;
+		if(master) {
+			relation_master[type][other.getId()] = other;
 		}
 		else {
-			relation_slave[type][other->getId()] = other;
+			relation_slave[type][other.getId()] = other;
 		}
+		
+		if (other.isLoaded())
+			other.get()->addRelation(type, getObjectPointer(), !master);
 	}
 	
 	RelationList IObject::getRelations(bool master) {
@@ -60,23 +74,19 @@ namespace Dungeon {
 		}
 	}
 	
-	void IObject::eraseRelation(string type, ObjectPointer* other, bool master) {
+	void IObject::eraseRelation(string type, ObjectPointer other, bool master) {
+		if (!hasRelation(type, other, master)) return;
+		
+		LOGS("IObject", Verbose) << "Erasing relation " << getId() << (master ? "<--" : "-->") << other.getId() << " type " << type << LOGF;
 		if(master) {
-			try {
-				relation_master.at(type).erase(other->getId());
-			}
-			catch (std::out_of_range& e) {
-				
-			}
+			relation_master.at(type).erase(other.getId());
 		}
 		else {
-			try { 
-				relation_slave.at(type).erase(other->getId());
-			}
-			catch (std::out_of_range& e) {
-				
-			}
+			relation_slave.at(type).erase(other.getId());
 		}
+		
+		if (other.isLoaded())
+			other.get()->eraseRelation(type, getObjectPointer(), !master);
 	}
 	
 	void IObject::serialize(Archiver& stream) {
@@ -88,7 +98,7 @@ namespace Dungeon {
 		gm->saveObject(this);
 	}
 	
-	ObjectPointer* IObject::getObjectPointer() {
+	ObjectPointer IObject::getObjectPointer() {
 		return gm->getObjectPointer(this->id);
 	}
 

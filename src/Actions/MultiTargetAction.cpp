@@ -4,16 +4,13 @@
 namespace Dungeon {
 
 	MultiTargetAction::~MultiTargetAction() {
-		for (auto& pair : targets) {
-			delete pair.second;
-		}
 	}
 
 	MultiTargetAction::MultiTargetAction(string type) : Action(type) {}
 
-	void MultiTargetAction::addTarget(ObjectPointer* op) {
-		if (targets.find(op->getId()) == targets.end())
-			targets[op->getId()] = op->clone();
+	void MultiTargetAction::addTarget(ObjectPointer op) {
+		if (targets.find(op.getId()) == targets.end())
+			targets[op.getId()] = op;
 	}
 	
 	void MultiTargetAction::merge(MultiTargetAction* second) {

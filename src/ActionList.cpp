@@ -22,6 +22,7 @@ namespace Dungeon {
 			insert(std::make_pair(action->type, action));
 			return action;
 		} else {
+			// DAFUCK? We need to check if it's MTA...
 			((MultiTargetAction*) it->second)->merge(action);
 			return it->second;
 		}

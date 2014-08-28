@@ -52,9 +52,9 @@ namespace Dungeon {
 	}
 	
 	void DrinkPotionAction::commit(ActionDescriptor* ad) {
-		ObjectPointer* current = ad->getAlive()->getLocation();
+		ObjectPointer current = ad->getAlive()->getLocation();
 		for (auto& pair : targets) {
-			if (pair.second->getId() == current->getId()) continue;
+			if (pair.second.getId() == current.getId()) continue;
 			commitOnTarget(ad, pair.second); // TODO Implement object matching...
 			return;
 		}
@@ -64,8 +64,8 @@ namespace Dungeon {
 		return RegexMatcher::match("drink .+", command);
 	}
 	
-	void DrinkPotionAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer* target) {	
-		Potion* potion = (Potion*) target->get();
+	void DrinkPotionAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {	
+		Potion* potion = (Potion*) target.get();
 		*ad << "You've drunk " + potion->getName() + ". ";
 		switch(potion->getType()) {
 			case Potion::PotionType::Healing:

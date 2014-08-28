@@ -20,7 +20,7 @@ namespace Dungeon {
 		try{
 			ObjectMap inventory = getRelations(true).at("inventory");
 			for(auto& item: inventory) {
-				item.second->get()->getActions(list, this);
+				item.second.get()->getActions(list, this);
 			}
 		}
 		catch (const std::out_of_range& e) {
@@ -32,7 +32,7 @@ namespace Dungeon {
 		try{
 			ObjectMap room = getRelations(false).at("inside");
 			for(auto& item: room) {
-				item.second->get()->getActions(list, this);
+				item.second.get()->getActions(list, this);
 			}
 		}
 		catch (const std::out_of_range& e) {
@@ -90,7 +90,7 @@ namespace Dungeon {
 				[this] (ActionDescriptor * ad) {
 						ObjectMap rooms = this->getRelations(false).at(R_INSIDE);
 						for (auto& room : rooms) {
-							IObject* obj = room.second->get();
+							IObject* obj = room.second.get();
 							Room* r = (Room*) obj;
 							if (r) {
 								r->explore(ad);
@@ -186,7 +186,7 @@ namespace Dungeon {
         return sentence;
     }
 
-	ObjectPointer* Alive::getLocation() {
+	ObjectPointer Alive::getLocation() {
 		return getRelations(false).at(R_INSIDE).begin()->second;
 	}
 

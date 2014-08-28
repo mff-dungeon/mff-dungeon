@@ -2,6 +2,8 @@
 #include "Room.hpp"
 #include "../ObjectPointer.hpp"
 #include "../ActionList.hpp"
+#include "../RegexMatcher.hpp"
+#include "../ActionDescriptor.hpp"
 
 namespace Dungeon {
 	
@@ -26,9 +28,9 @@ namespace Dungeon {
 		}
 	}
 	
-	void DoorwalkAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer* target) {		
-		ad->getGM()->moveAlive(ad->getAlive(), target->getId());
-		((Room*) target->get())->explore(ad);
+	void DoorwalkAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {		
+		ad->getGM()->moveAlive(ad->getAlive(), target.getId());
+		((Room*) target.get())->explore(ad);
 	}
     
     string Door::getDescriptionSentence() {
@@ -88,16 +90,16 @@ namespace Dungeon {
 	void DoorwalkAction::explain(ActionDescriptor* ad) {
 		*ad << "Use 'go to ...' to enter another room. Currently you can go to:\n";
 		for (auto& pair : targets) {
-			IObject* obj = pair.second->get();
+			IObject* obj = pair.second.get();
 			if (obj->isDescriptable())
 				*ad << "- " << ((IDescriptable*) obj)->getLongName() << "\n"; // Todo - output as sentence
 		}
 	}
 	
 	void DoorwalkAction::commit(ActionDescriptor* ad) {
-		ObjectPointer* current = ad->getAlive()->getLocation();
+		ObjectPointer current = ad->getAlive()->getLocation();
 		for (auto& pair : targets) {
-			if (pair.second->getId() == current->getId()) continue;
+			if (pair.second.getId() == current.getId()) continue;
 			commitOnTarget(ad, pair.second); // TODO Implement object matching...
 			return;
 		}

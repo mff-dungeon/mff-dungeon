@@ -56,6 +56,12 @@ private: \
 #define rand_init(var, dist, min, max) std::default_random_engine var(time(0)); std::uniform_int_distribution<int> dist(min, max);
 #define rand_next(var, dist) ( dist(var) )
 
+/*
+ *  Fancy comparator for type-based object grouping
+ */
+#define objId_getType(id) ( id.substr(0, id.find("/")) )
+#define objId_getIdentifier(id) ( id.substr(id.find("/") + 1) )
+
 using namespace std;
 
 namespace Dungeon {
@@ -64,7 +70,6 @@ namespace Dungeon {
      */
     class GameManager; 
     class ObjectLoader;
-    class ObjectPointer;
     class ObjectGroup;
     class Alive;
     class Action;
@@ -76,23 +81,22 @@ namespace Dungeon {
     class ActionList;
     class Item;
     class Potion;
+    struct ObjectPointer;
     
     /**
      * Should be value type (struct), comparable
      */
     typedef string objId;
-    typedef map<objId, ObjectPointer*> ObjectMap;
+    typedef map<objId, ObjectPointer> ObjectMap;
     typedef map<string, ObjectMap> RelationList;
     
-    /*
-     *  Fancy comparator for type-based object grouping
-     */
-#define objId_getType(id) ( id.substr(0, id.find("/")) )
-#define objId_getIdentifier(id) ( id.substr(id.find("/") + 1) )
 }
-
+    
+#include "ObjectPointer.hpp"
 #include "IObject.hpp"
 #include "AddIObject.hpp"
+
+
 
 #endif
 

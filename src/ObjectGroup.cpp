@@ -1,38 +1,38 @@
 #include "ObjectGroup.hpp"
-#include <sstream>
+#include "Objects/IDescriptable.hpp"
 
 namespace Dungeon
 {
-    ObjectGroup::ObjectGroup(GameManager *gm, IObject *obj) : multimap<objId, ObjectPointer*, objIdTypeComparator>() {
-        this->insert(getPair(gm, obj));
+    ObjectGroup::ObjectGroup(IObject *obj) : ObjectGroupMap() {
+        this->insert(getPair(obj));
     }
     
-    ObjectGroup::ObjectGroup(ObjectPointer *ptr) : multimap<objId, ObjectPointer*, objIdTypeComparator>() {
+    ObjectGroup::ObjectGroup(ObjectPointer ptr) : ObjectGroupMap() {
         this->insert(getPair(ptr));
     }
     
-    ObjectGroup::ObjectGroup(GameManager *gm, const vector<IObject *>& objects) : multimap<objId, ObjectPointer*, objIdTypeComparator>() {
+    ObjectGroup::ObjectGroup(const vector<IObject *>& objects) : ObjectGroupMap() {
         for (IObject *obj : objects) {
-            this->insert(getPair(gm, obj));
+            this->insert(getPair(obj));
         }
     }
     
-    ObjectGroup::ObjectGroup(const vector<ObjectPointer *>& pointers) : multimap<objId, ObjectPointer*, objIdTypeComparator>() {
-        for (ObjectPointer *ptr : pointers) {
+    ObjectGroup::ObjectGroup(const vector<ObjectPointer>& pointers) : ObjectGroupMap() {
+        for (ObjectPointer ptr : pointers) {
             this->insert(getPair(ptr));
         }
     }
     
-    ObjectGroup::ObjectGroup(ObjectMap map) : multimap<objId, ObjectPointer*, objIdTypeComparator>(map.begin(), map.end()) {
+    ObjectGroup::ObjectGroup(ObjectMap map) : ObjectGroupMap(map.begin(), map.end()) {
         
     }
     
-    pair<objId, ObjectPointer*> ObjectGroup::getPair(GameManager *gm, IObject *obj) {
-        return pair<objId, ObjectPointer*>(obj->getId(), new ObjectPointer(gm, obj->getId()));
+    ObjectGroupMap::value_type ObjectGroup::getPair(IObject *obj) {
+        return ObjectGroupMap::value_type(obj->getId(), obj->getObjectPointer());
     }
     
-    pair<objId, ObjectPointer*> ObjectGroup::getPair(ObjectPointer *ptr) {
-        return pair<objId, ObjectPointer*>(ptr->getId(), ptr);
+    ObjectGroupMap::value_type ObjectGroup::getPair(ObjectPointer ptr) {
+        return ObjectGroupMap::value_type(ptr.getId(), ptr);
     }
     
     string ObjectGroup::explore() {
@@ -40,15 +40,15 @@ namespace Dungeon
         ObjectGroup::iterator m_it, s_it;
         
         for (m_it = this->begin(); m_it != this->end(); m_it = s_it) {
-            objId firstIdentifier = (*m_it).first;
+            objId firstIdentifier = m_it->first;
             string objectType = objId_getType(firstIdentifier);
             
-            if ((*m_it).second->get()->isDescriptable()) {
+            if (m_it->second.get()->isDescriptable()) {
                 pair<ObjectGroup::iterator, ObjectGroup::iterator> keyRange = this->equal_range(firstIdentifier);
                 vector<IDescriptable *> sameTypeObjects;
                 
                 for (s_it = keyRange.first; s_it != keyRange.second; s_it++) {
-                    sameTypeObjects.push_back((IDescriptable *)(*s_it).second->get());
+                    sameTypeObjects.push_back((IDescriptable *)s_it->second.get());
                 }
                 
                 if (sameTypeObjects.empty()) {
@@ -59,7 +59,7 @@ namespace Dungeon
                     sentence += sameTypeObjects.front()->getGroupDescriptionSentence(sameTypeObjects) + " ";
                 }
             } else {
-                sentence += "There is an object (" + (*m_it).second->getId() + "). ";
+                sentence += "There is an object (" + m_it->second.getId() + "). ";
             }
         }
         

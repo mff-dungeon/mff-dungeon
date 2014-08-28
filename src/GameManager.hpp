@@ -6,7 +6,6 @@
 #include "ObjectLoader.hpp"
 #include "ObjectPointer.hpp"
 #include "DatabaseHandler.hpp"
-#include "ActionQueue.hpp"
 
 namespace Dungeon {
    
@@ -21,11 +20,12 @@ namespace Dungeon {
         void initWorld();
         IObject* getObject(objId id);
         bool hasObject(objId id);
+        bool hasObjectLoaded(objId id);
         IObject* loadObject(objId id);
         void insertObject(IObject *object);
         void saveObject(IObject *object);
-		void deleteObject(IObject *object);
-        ObjectPointer* getObjectPointer(objId id);
+        void deleteObject(IObject *object);
+        ObjectPointer getObjectPointer(objId id);
 		
 		/**
 		 * Adds a relation to the database

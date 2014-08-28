@@ -34,7 +34,7 @@ namespace Dungeon {
 						[this, callee] (ActionDescriptor * ad) {
 						*ad << "You've dropped " + this->getName();
 						ad->getGM()->removeRelation(callee, this, R_INVENTORY);
-						ad->getGM()->createRelation(((Alive*) callee)->getLocation()->get(), this, R_INSIDE);
+						ad->getGM()->createRelation(((Alive*) callee)->getLocation().get(), this, R_INSIDE);
 						}));
 				}
 			}
@@ -44,7 +44,7 @@ namespace Dungeon {
 		try {
 			if(strcmp(callee->className().c_str(),"Alive") == 0 || strcmp(callee->className().c_str(), "Human") == 0) {
 				ObjectMap objectsIns = getRelations(false).at(R_INSIDE);
-				if(objectsIns.find(((Alive*)callee)->getLocation()->getId()) != objectsIns.end()) {
+				if(objectsIns.find(((Alive*)callee)->getLocation().getId()) != objectsIns.end()) {
 					//Ok, It lies here, let's pick it up
 					string match = "(Pick up|Take) " + this->getName();
 					transform(match.begin(), match.end(), match.begin(), ::tolower);
@@ -52,7 +52,7 @@ namespace Dungeon {
 						RegexMatcher::matcher(match),
 						[this, callee] (ActionDescriptor * ad) {
 							// Assuming that we are picking an item in current location
-							ad->getGM()->removeRelation(((Alive*) callee)->getLocation()->get(), this, R_INSIDE);
+							ad->getGM()->removeRelation(((Alive*) callee)->getLocation().get(), this, R_INSIDE);
 							ad->getGM()->createRelation(callee, this, R_INVENTORY);
 							*ad << "You've picked up " + this->getName();
 						}));

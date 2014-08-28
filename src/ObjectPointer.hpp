@@ -6,15 +6,18 @@
 
 namespace Dungeon {
 
-    class ObjectPointer {
+    struct ObjectPointer {
     public:
+        ObjectPointer() {} // Needed for std functions, otherwise unusable
         ObjectPointer(GameManager *gm, objId id);
+        ObjectPointer(const ObjectPointer& other) : gm(other.gm), id(other.id) {}
+
+        virtual ~ObjectPointer() {}
+
         IObject *get();
         objId getId();
         
-        ObjectPointer* clone() {
-            return new ObjectPointer(gm, id);
-        }
+        bool isLoaded();
 
     private:
         GameManager *gm;

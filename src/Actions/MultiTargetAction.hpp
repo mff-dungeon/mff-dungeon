@@ -17,11 +17,11 @@ namespace Dungeon {
         virtual ~MultiTargetAction();
         
         virtual void merge(MultiTargetAction* second);
-        virtual void addTarget(ObjectPointer* op);
+        virtual void addTarget(ObjectPointer op);
 
         const ObjectMap& getTargets() const;
 
-        virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer* target) = 0;
+        virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target) = 0;
         
     protected:
         ObjectMap targets;

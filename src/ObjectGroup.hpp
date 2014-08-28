@@ -16,19 +16,22 @@ namespace Dungeon {
         }
     };
     
-    class ObjectGroup : public multimap<objId, ObjectPointer*, objIdTypeComparator> {
+               
+    typedef multimap<objId, ObjectPointer, objIdTypeComparator> ObjectGroupMap;
+        
+    class ObjectGroup : public ObjectGroupMap {
     public:
-        ObjectGroup(GameManager *gm, IObject *obj);
-        ObjectGroup(ObjectPointer *ptr);
-        ObjectGroup(GameManager *gm, const vector<IObject *>& objects);
-        ObjectGroup(const vector<ObjectPointer *>& pointers);
+        ObjectGroup(IObject *obj);
+        ObjectGroup(ObjectPointer ptr);
+        ObjectGroup(const vector<IObject *>& objects);
+        ObjectGroup(const vector<ObjectPointer>& pointers);
         ObjectGroup(ObjectMap map);
         
         string explore();
         
     private:
-        pair<objId, ObjectPointer*> getPair(GameManager *gm, IObject *obj);
-        pair<objId, ObjectPointer*> getPair(ObjectPointer *ptr);
+        ObjectGroupMap::value_type getPair(IObject *obj);
+        ObjectGroupMap::value_type getPair(ObjectPointer ptr);
 
     };
 }

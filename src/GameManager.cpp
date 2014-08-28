@@ -2,6 +2,7 @@
 #include "GameManager.hpp"
 #include "WorldCreator.hpp"
 #include "dynamic.hpp"
+#include "ActionQueue.hpp"
 
 namespace Dungeon {
 
@@ -115,9 +116,13 @@ namespace Dungeon {
         LOGS("GameManager", Verbose) << "Peeking object '" << id << "'." << LOGF;
 		return true;
 	}
+    
+    bool GameManager::hasObjectLoaded(objId id) {
+		return this->objects.find(id) != 0;
+	}
 
-	ObjectPointer* GameManager::getObjectPointer(objId id) {
-		return new ObjectPointer(this, id);
+	ObjectPointer GameManager::getObjectPointer(objId id) {
+		return ObjectPointer(this, id);
 	}
 
 	void GameManager::insertObject(IObject* obj) {
@@ -134,13 +139,10 @@ namespace Dungeon {
 	
 	void GameManager::deleteObject(IObject* obj) {
 		LOGS("GameManager", Verbose) << "Deleting object " << obj->getId() << "." << LOGF;
-		Relation* ref_obj;
-		ref_obj = new Relation("0", obj->getId(), "0", "0", "0");
-		DatabaseHandler::getInstance().deleteRelation(ref_obj);
-		delete ref_obj;
-		ref_obj = new Relation(obj->getId(), "0", "0", "0", "0");
-		DatabaseHandler::getInstance().deleteRelation(ref_obj);
-		delete ref_obj;
+		
+		for (RelationList::value_type& rel : obj->getRelations(true)) {
+			
+		}
 		
 		DatabaseHandler::getInstance().deleteObject(obj->getId());
 		this->objects.remove(obj->getId());
@@ -185,8 +187,8 @@ namespace Dungeon {
 	
 	void GameManager::createRelation(IObject* master, IObject* slave, string relation) {
 		this->createRelation(master->getId(), slave->getId(), master->className(), slave->className(), relation);
-		master->addRelation(relation, this->getObjectPointer(slave->getId()));
-		slave->addRelation(relation, this->getObjectPointer(master->getId()), false);
+		master->addRelation(relation, getObjectPointer(slave->getId()));
+		slave->addRelation(relation, getObjectPointer(master->getId()), false);
 	}
 	
 	void GameManager::clearRelationsOfType(IObject* obj, string relation, bool master) {
@@ -202,7 +204,6 @@ namespace Dungeon {
 	
 	void GameManager::removeRelation(IObject* master, IObject* slave, string relation) {
  		master->eraseRelation(relation, this->getObjectPointer(slave->getId()));
- 		slave->eraseRelation(relation, this->getObjectPointer(master->getId()), false);
 		
 		Relation* ref_obj = new Relation(master->getId(), slave->getId(), "0", "0", relation);
 		DatabaseHandler::getInstance().deleteRelation(ref_obj);
@@ -210,7 +211,7 @@ namespace Dungeon {
 	}
 	
 	void GameManager::moveAlive(Alive* alive, objId roomId) {
-		this->removeRelation(alive->getLocation()->get(), alive, R_INSIDE);
+		this->removeRelation(alive->getLocation().get(), alive, R_INSIDE);
 		this->createRelation(this->getObject(roomId), alive, R_INSIDE);
 	}
 

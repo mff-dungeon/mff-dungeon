@@ -21,7 +21,7 @@ namespace Dungeon
         virtual string getDescriptionSentence();
         virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
 	
-        ObjectPointer* getLocation();
+        ObjectPointer getLocation();
         
 	protected:
 		virtual void serialize(Archiver& stream);

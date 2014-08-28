@@ -18,5 +18,10 @@ namespace Dungeon
     {
         return this->id;
     }
+	
+	bool ObjectPointer::isLoaded() {
+		return gm->hasObjectLoaded(id);
+	}
+
 
 }

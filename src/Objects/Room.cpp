@@ -1,6 +1,7 @@
 #include "Room.hpp"
 #include "../ObjectPointer.hpp"
 #include "../ObjectGroup.hpp"
+#include "../ActionDescriptor.hpp"
 
 namespace Dungeon {
 
@@ -18,8 +19,8 @@ namespace Dungeon {
 		try{
 			ObjectMap objects = getRelations(true).at(R_INSIDE);
 			for(auto& item: objects) {
-				if (item.second->getId() != callee->getId())
-					item.second->get()->getActions(list, callee);
+				if (item.second.getId() != callee->getId())
+					item.second.get()->getActions(list, callee);
 			}
 		}
 		catch (const std::out_of_range& e) {
@@ -51,7 +52,7 @@ namespace Dungeon {
             
             // remove myself from the exploration group
             for (ObjectGroup::iterator it = groupedObjects.begin(); it != groupedObjects.end(); it++) {
-                if (it->second->get() == ad->getAlive()) {
+                if (it->second.get() == ad->getAlive()) {
                     groupedObjects.erase(it);
                     break;
                 }
