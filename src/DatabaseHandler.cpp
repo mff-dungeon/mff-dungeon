@@ -107,7 +107,7 @@ namespace Dungeon {
 	
 	int DatabaseHandler::deleteObject(objId oid) {
 		if(!openConnection()) return E_CONNECTION_ERROR;
-		const char* cquery = "DELETE FROM objects WHERE oid = ?;";
+		const char* cquery = "DELETE FROM objects WHERE id = ?;";
 
 		sqlite3_prepare_v2(dbConnection, cquery, strlen(cquery), &dbStatement, 0);
 		sqlite3_bind_text(dbStatement, 1, oid.c_str(), strlen(oid.c_str()), 0);
