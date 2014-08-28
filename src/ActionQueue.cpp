@@ -46,13 +46,6 @@ namespace Dungeon {
         }
         
         this->running = false;
-		/* TODO: check - how locks are implemented? can't notify_one 
-		 * in the middle of action processing start another processing?
-		 * Remove if not true, needed for safe finishing
-		 * 
-		 * Notify_one should only wake sleeping thread, waiting for this
-		 * condition. When there isn't any, it should pass.
-		 */ 
 		LOG("ActionQueue") << "Stopped." << LOGF;
         q_condvar.notify_one();
     }

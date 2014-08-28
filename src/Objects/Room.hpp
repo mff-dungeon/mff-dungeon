@@ -6,6 +6,11 @@
 
 namespace Dungeon {
 	
+    /**
+     * Technically not only room, but also any location.
+     * Every alive must be placed into some room.
+     * Room can be explored to see what's inside.
+     */
     class Room : public IDescriptable {
     public:
         Room() {};		// Constructor allowing to load class later

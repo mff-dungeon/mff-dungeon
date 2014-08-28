@@ -7,6 +7,10 @@
 #include "AddIObject.hpp"
 
 namespace Dungeon {
+    
+    /**
+     * Base clas of everything in the world.
+     */
     class IObject {
     friend class GameManager;
     public:
@@ -16,7 +20,16 @@ namespace Dungeon {
 
         virtual objId getId() const;
         virtual IObject * setId(objId id);
+        
+        /**
+         * Which actions can be performed by callee on this object?
+         */
         virtual void getActions(ActionList * list, IObject *callee) = 0;
+        
+        /**
+         * Simpler detection of IDesriptable inheritance.
+         * @return false
+         */
         virtual bool isDescriptable() const {
             return false;
         }

@@ -6,7 +6,13 @@
 
 namespace Dungeon {
     
-    
+    /**
+     * A player's representation in Dung world.
+     * Bears only contact information.
+     * 
+     * Can be overriden with another "human", this one 
+     * is to be driven by jabber.
+     */
     class Human : public Alive {
     public:
         Human();

@@ -9,14 +9,13 @@
 
 using namespace std;
 
-/*
- * This class is supposed to handle all the database connection.
- * It is implemented as a singleton class.
- * WARNING: The class is implemented considering only single thread access.
- */
-
 namespace Dungeon {
 	
+        /*
+         * This class is supposed to handle all the database connection.
+         * It is implemented as a singleton class.
+         * WARNING: The class is implemented considering only single thread access.
+         */
 	class DatabaseHandler {
 	private:
 		sqlite3* dbConnection;

@@ -1,10 +1,3 @@
-/* 
- * File:   splayTree.hpp
- * Author: salmelu
- *
- * Created on 3. duben 2014, 11:56
- */
-
 #ifndef SPLAYTREE_HPP
 #define	SPLAYTREE_HPP
 
@@ -13,6 +6,9 @@
 
 namespace Dungeon {
 
+    /**
+     * Generic implementation of Splay tree.
+     */
     class SplayTree {
     private:
         struct Node {

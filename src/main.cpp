@@ -121,9 +121,9 @@ int main(int argc, char** argv) {
 	 *	Process command line parameters, if any found
 	 */
 	for (int a = 1; a < argc; a++) {
-		if (strcmp(argv[a], "cleanDB") == 0) {
+		if (strcmp(argv[a], "cleanDB") == 0 || strcmp(argv[a], "--cleanDB") == 0) {
 			dbRestart();
-        } else if (strcmp(argv[a], "verbose") == 0) {
+        } else if (strcmp(argv[a], "--verbose") == 0 || strcmp(argv[a], "verbose") == 0 || strcmp(argv[a], "-v") == 0) {
             LOG("main") << "User has requested verbose logging on stdout by launch argument." << LOGF;
             Logger::getInstance().setMinSeverity(cout, Logger::Severity::Verbose);
 		} else

@@ -57,10 +57,10 @@ private: \
 #define rand_next(var, dist) ( dist(var) )
 
 /*
- *  Fancy comparator for type-based object grouping
+ *  Helper functions for accessing parts of id
  */
-#define objId_getType(id) ( id.substr(0, id.find("/")) )
-#define objId_getIdentifier(id) ( id.substr(id.find("/") + 1) )
+#define objId_getType(id) ( id.substr(0, id.rfind("/")) )
+#define objId_getIdentifier(id) ( id.substr(id.rfind("/") + 1) )
 
 using namespace std;
 

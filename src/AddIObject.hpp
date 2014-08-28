@@ -7,14 +7,15 @@
 
 using namespace std;
 
-/* 
- * This class is a simple class 
- *  for static registration of objects into ObjectList
- */
-
 namespace Dungeon {
 
-	class AddIObject { // Class for static registration
+        /* 
+         * @magic
+         * This class is a simple class 
+         * for static registration of objects into ObjectList
+         */
+
+	class AddIObject {
 	private:
 		AddIObject();
 		AddIObject(const AddIObject&);

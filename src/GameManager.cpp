@@ -207,7 +207,11 @@ namespace Dungeon {
 		DatabaseHandler::getInstance().deleteRelation(ref_obj);
 		delete ref_obj;
 		
-		obj->getRelations(master).erase(relation);
+		for (RelationList::value_type& rel : obj->getRelations(master)) {
+			for (ObjectMap::value_type& pair : rel.second) {
+				obj->eraseRelation(relation, pair.second, master);
+			}
+		}
 	}
 	
 	void GameManager::removeRelation(IObject* master, IObject* slave, string relation) {

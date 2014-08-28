@@ -8,6 +8,10 @@
 namespace Dungeon {
     typedef std::multimap<string, Action*> actionMap;
         
+    /**
+     * Sums up all actions that can be performed. 
+     * Takes care of merging actions of the same type.
+     */
     class ActionList : public actionMap {
     public:
         ActionList();

@@ -9,6 +9,11 @@
 namespace Dungeon
 {
 
+    /**
+     * Basic class for everything alive. Not only humans, but also NPCs.
+     * Basic property of alive is its health and location.
+     * This class should implement "the death".
+     */
     class Alive : public IDescriptable
     {
     public:
@@ -21,10 +26,13 @@ namespace Dungeon
         virtual string getDescriptionSentence();
         virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
 	
+        /**
+         * @return Current location of this being
+         */
         ObjectPointer getLocation();
         
 	protected:
-		virtual void serialize(Archiver& stream);
+            virtual void serialize(Archiver& stream);
 	
 	PERSISTENT_DECLARATION(Alive)		// Macro registering the object into list
     };

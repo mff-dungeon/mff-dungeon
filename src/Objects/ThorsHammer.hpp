@@ -1,6 +1,4 @@
-/** 
- * Allows it's bearer perform administrative tasks. Beware!
- */
+
 
 #ifndef THORSHAMMER_HPP
 #define	THORSHAMMER_HPP
@@ -8,6 +6,10 @@
 #include "../common.hpp"
 
 namespace Dungeon {
+    
+    /** 
+     * Allows it's bearer perform administrative tasks. Beware!
+     */
     class ThorsHammer : public IObject {
     public:
         ThorsHammer();

@@ -8,6 +8,9 @@
 
 namespace Dungeon {
     
+    /**
+     * Takes commands from stdin, outputs replies to stdout
+     */
     class ConsoleDriver : public TextDriver {
     public:
         ConsoleDriver(ActionQueue* queue, Alive* figure);

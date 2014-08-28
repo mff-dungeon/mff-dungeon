@@ -6,43 +6,43 @@
 
 namespace Dungeon {
 	
-	/**
-	 * IDrinkable ;)
-	 */
+    /**
+     * IDrinkable ;)
+     */
 	
     class Potion : public Item {
-	public:
-            enum PotionType {
-                    NoEffect = 0,
-                    Healing = 1
-            };
+    public:
+        enum PotionType {
+            NoEffect = 0,
+            Healing = 1
+        };
 
-            Potion();
-            Potion(objId id);
-            virtual ~Potion();
-		
-            virtual void getActions(ActionList* list, IObject* callee);
-		
-            Potion* setType(PotionType type);
-            Potion* setStrength(int strength);
-            
-            int getStrength() const {
-                return strength;
-            }
+        Potion();
+        Potion(objId id);
+        virtual ~Potion();
 
-            PotionType getType() const {
-                return type;
-            }
+        virtual void getActions(ActionList* list, IObject* callee);
 
-            virtual void serialize(Archiver& stream);
-                
-        
-	private:
-		PotionType type;
-		int strength;
-		
-        PERSISTENT_DECLARATION(Potion)
-	};	
+        Potion* setType(PotionType type);
+        Potion* setStrength(int strength);
+
+        int getStrength() const {
+            return strength;
+        }
+
+        PotionType getType() const {
+            return type;
+        }
+
+        virtual void serialize(Archiver& stream);
+
+
+    private:
+            PotionType type;
+            int strength;
+
+    PERSISTENT_DECLARATION(Potion)
+    };	
     
     class DrinkPotionAction : public MultiTargetAction {
     public:

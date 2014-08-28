@@ -12,14 +12,30 @@
 
 namespace Dungeon {
     
+    /**
+     * Common class for text-communicating drivers.
+     * Matches actions to strings, replies in string.
+     */
     class TextDriver : public Driver {
     public:
         TextDriver(ActionQueue* queue);
         virtual ~TextDriver();
         
         bool process(TextActionDescriptor* ad);
+        
+        /**
+         * Get some fancy response to unmatchable input
+         */
         string getDontUnderstandResponse(string input);
+        
+        /**
+         * Get some fancy response to unregistered user
+         */
         string getStrangerResponse(string input);
+        
+        /**
+         * Invite new user
+         */
         string getNewUserMessage();
     private:
 	ActionList* alist;

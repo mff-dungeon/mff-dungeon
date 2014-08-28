@@ -40,7 +40,7 @@ namespace Dungeon {
     string TextDriver::getDontUnderstandResponse(string input) {
         // TODO: think of something more creative
         
-        rand_init(gen, dist, 0, 5);
+        static rand_init(gen, dist, 0, 5);
         int rnd = rand_next(gen, dist);
         switch (rnd) {
             case 0:
@@ -61,11 +61,10 @@ namespace Dungeon {
     
     string TextDriver::getStrangerResponse(string input) {
         stringstream ss;
-		static
-        
+		
         // TODO: think of something more creative
         
-        rand_init(gen, dist, 0, 2);
+        static rand_init(gen, dist, 0, 2);
         int rnd = rand_next(gen, dist);
         switch (rnd) {
             case 0:
@@ -80,11 +79,10 @@ namespace Dungeon {
     
     string TextDriver::getNewUserMessage() {
         stringstream ss;
-		static
         
         // TODO: think of something more creative
         
-        rand_init(gen, dist, 0, 2);
+		static rand_init(gen, dist, 0, 2);
         int rnd = rand_next(gen, dist);
         switch (rnd) {
             case 0:

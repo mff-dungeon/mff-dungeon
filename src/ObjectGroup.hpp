@@ -8,7 +8,7 @@ namespace Dungeon {
     
     struct objIdTypeComparator {
         bool operator() (const objId& lhs, const objId& rhs) const {
-            // ignore stuff after the slash char
+            // ignore stuff after the last slash char
             string ltype = objId_getType(lhs);
             string rtype = objId_getType(rhs);
             
@@ -19,6 +19,12 @@ namespace Dungeon {
                
     typedef multimap<objId, ObjectPointer, objIdTypeComparator> ObjectGroupMap;
         
+    /**
+     * Helper class for grouping objects of the same type.
+     * 
+     * Implements exploring, and will implement searching for object
+     * best corresponding to given string.
+     */
     class ObjectGroup : public ObjectGroupMap {
     public:
         ObjectGroup(IObject *obj);
