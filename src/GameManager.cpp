@@ -141,7 +141,15 @@ namespace Dungeon {
 		LOGS("GameManager", Verbose) << "Deleting object " << obj->getId() << "." << LOGF;
 		
 		for (RelationList::value_type& rel : obj->getRelations(true)) {
-			
+			for (ObjectMap::value_type& pair : rel.second) {
+				removeRelation(obj, pair.second.get(), rel.first);
+			}
+		}
+		
+		for (RelationList::value_type& rel : obj->getRelations(false)) {
+			for (ObjectMap::value_type& pair : rel.second) {
+				removeRelation(pair.second.get(), obj, rel.first);
+			}
 		}
 		
 		DatabaseHandler::getInstance().deleteObject(obj->getId());

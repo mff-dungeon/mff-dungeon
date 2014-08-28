@@ -114,8 +114,10 @@ namespace Dungeon {
 		sqlCode = sqlite3_step(dbStatement);
 		
 		finalizeAndClose();
-		if(sqlCode != SQLITE_DONE)
+		if(sqlCode != SQLITE_DONE) {
+			LOGS("DB", Error) << "Deleting object " << oid << " failed!" << LOGF;
 			return E_DELETE_ERROR;
+		}
 		return E_OK;
 	}
 
