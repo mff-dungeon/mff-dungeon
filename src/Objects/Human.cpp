@@ -46,27 +46,6 @@ namespace Dungeon {
 	}
 	void Human::getActions(ActionList* list, IObject* callee) {
 		if (callee == this) {
-			list->addAction(new CallbackAction("dump", "dump - If you want to get some info...",
-				RegexMatcher::matcher("dump( relations)?"),
-				[this] (ActionDescriptor * ad) {
-						*ad << "So you want to know something? Relations which you master:\n";
-						RelationList r = this->getRelations(true);
-						for (auto& type : r) {
-							*ad << type.first + ":\n";
-							for(auto& obj : type.second) {
-								*ad << "\t" + obj.first + "\n";
-							}
-						}
-						*ad << "Slave:\n";
-						r = this->getRelations(false);
-						for (auto& type : r) {
-							*ad << type.first + ":\n";
-							for(auto& obj : type.second) {
-								*ad << "\t" + obj.first + "\n";
-							}
-						}
-				}));
-
 			list->addAction(new CallbackAction("help", "help - Well...",
 				RegexMatcher::matcher("help|what can i do|list actions"),
 				[this] (ActionDescriptor * ad) {

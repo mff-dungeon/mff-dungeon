@@ -74,8 +74,6 @@ namespace Dungeon {
 		if (ad->isFinished()) {
 			dialogs.erase(figureId);
 			delete ad;
-		} else {
-			LOG("JabberDriver") << "User " << figure->getName() << " kept in dialog mode." << LOGF;
 		}
 	}
 	

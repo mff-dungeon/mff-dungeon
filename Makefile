@@ -27,7 +27,7 @@ build/main.o: src/main.cpp src/dynamic.hpp
 	@echo "[ CC ] " $< " --> " $@
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) src/dynamic.hpp src/IPropertyStorage.hpp
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(shell dirname $@)
 	@echo "[ CC ] " $< " --> " $@
 	@$(CC) $(CFLAGS) -c -o $@ $<

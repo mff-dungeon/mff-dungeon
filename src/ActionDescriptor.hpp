@@ -49,10 +49,8 @@ namespace Dungeon {
         /**
          * Shortcut for addMessage.
          */
-        ActionDescriptor& operator<<(string msg) {
-            addMessage(msg);
-            return *this;
-        }
+        ActionDescriptor& operator<<(const string& msg);
+        ActionDescriptor& operator<<(const int& msg);
         
         bool isValid(Driver* driver);
         stringstream messages;

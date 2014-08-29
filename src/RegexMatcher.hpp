@@ -14,6 +14,7 @@ namespace Dungeon {
     class RegexMatcher {
     public:
         static bool match (string reg, string text);
+        static bool match (string reg, string text, smatch& matches);
         static function<bool (string)> matcher(string reg);
     };
 }

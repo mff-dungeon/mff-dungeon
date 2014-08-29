@@ -13,7 +13,6 @@ namespace Dungeon {
     
     bool TextDriver::process(TextActionDescriptor* ad) {
 		if (!ad->isFinished()) {
-			LOG("TextDriver") << "User " << ad->getAlive()->getName() << " replied to dialog with " << ad->in_msg << "." << LOGF;
 			ad->userReplied(ad->in_msg);
 			return true;
 		} 

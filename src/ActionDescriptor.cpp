@@ -42,6 +42,17 @@ namespace Dungeon {
 	void ActionDescriptor::addMessage(string msg) {
 		messages << msg;
 	}
+	
+	ActionDescriptor& ActionDescriptor::operator<< (const string& msg){
+		messages << msg;
+		return *this;
+	}
+	
+	ActionDescriptor& ActionDescriptor::operator<< (const int& msg){
+		messages << msg;
+		return *this;
+	}
+
 
 	TextActionDescriptor::TextActionDescriptor(Driver* driver) : ActionDescriptor(driver) {}
 
