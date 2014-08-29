@@ -2,6 +2,7 @@
 #define	IDESCRIPTABLE_HPP
 
 #include "../common.hpp"
+#include "../IObject.hpp"
 
 namespace Dungeon {
     
@@ -51,7 +52,7 @@ namespace Dungeon {
          */
         virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
         
-        virtual void serialize(Archiver& stream);
+        virtual void registerProperties(IPropertyStorage& storage);
 
         
     private:

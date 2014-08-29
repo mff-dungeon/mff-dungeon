@@ -1,5 +1,6 @@
 #include <string>
 #include <sstream>
+#include "IPropertyStorage.hpp"
 
 #ifndef ARCHIVER_HPP
 #define	ARCHIVER_HPP
@@ -19,9 +20,9 @@ namespace Dungeon {
      * 
      * TODO - rewrite it so directions aren't necessary using referenced parameters
      */
-    class Archiver {
+    class Archiver : public IPropertyStorage {
     private:
-            bool storing;
+            bool storing;  
             stringstream* stream;
     public:
             Archiver(stringstream* stream, bool isStoring=true);
@@ -38,6 +39,10 @@ namespace Dungeon {
 
             Archiver& operator<<(bool b);
             Archiver& operator>>(bool& b);
+            
+            virtual IPropertyStorage& have(int& prop, string desc, bool editable = true);
+            virtual IPropertyStorage& have(string& prop, string desc, bool editable = true);
+            virtual IPropertyStorage& have(bool& prop, string desc, bool editable = true);
 
             bool isStoring() const;
             void setDirection(bool isStoring);

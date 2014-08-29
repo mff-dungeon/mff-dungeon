@@ -22,9 +22,6 @@ namespace Dungeon
 				}));
 	}
 	
-	void ThorsHammer::serialize(Archiver &stream) {
-		
-	}
 	
     PERSISTENT_IMPLEMENTATION(ThorsHammer)
 			

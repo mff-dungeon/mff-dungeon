@@ -52,14 +52,11 @@ namespace Dungeon {
 		}
     }
 	
-	void Alive::serialize(Archiver& stream) {	// Implementation of serialization
-		if(stream.isStoring()) {
-			stream << hitpoints;
-		}
-		else {
-			stream >> hitpoints;
-		}
+	void Alive::registerProperties(IPropertyStorage& storage) {
+		storage.have(hitpoints, "Current hitpoints");
+		IDescriptable::registerProperties(storage);
 	}
+
     
     string Alive::getDescriptionSentence() {
         rand_init(gen, dist, 0, 3);

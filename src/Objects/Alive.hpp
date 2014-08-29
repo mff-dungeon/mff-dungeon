@@ -31,8 +31,7 @@ namespace Dungeon
          */
         ObjectPointer getLocation();
         
-	protected:
-            virtual void serialize(Archiver& stream);
+        virtual void registerProperties(IPropertyStorage& storage);
 	
 	PERSISTENT_DECLARATION(Alive)		// Macro registering the object into list
     };

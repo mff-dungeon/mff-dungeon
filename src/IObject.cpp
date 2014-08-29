@@ -21,7 +21,7 @@ namespace Dungeon {
 		oid = this->getId();
 
 		stream.setDirection(true);
-		const_cast<IObject*>(this)->serialize(stream);
+		const_cast<IObject*>(this)->registerProperties(stream);
 	}
 
 	IObject* IObject::load(Archiver& stream, string className) {
@@ -37,7 +37,7 @@ namespace Dungeon {
 
 		stream.setDirection(false);
 
-		object->serialize(stream);
+		object->registerProperties(stream);
 		holder.release();
 		return object;
 	}
@@ -90,6 +90,10 @@ namespace Dungeon {
 	}
 	
 	void IObject::serialize(Archiver& stream) {
+		this->registerProperties(stream);
+	}
+
+	void IObject::registerProperties(IPropertyStorage& storage) {
 		// There can also be an object without internal variables, 
 		// and serves as a base to recursion
 	}

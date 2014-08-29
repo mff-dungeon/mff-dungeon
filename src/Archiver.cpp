@@ -61,6 +61,27 @@ namespace Dungeon {
 		return *this;
 	}
 
+	IPropertyStorage& Archiver::have(int& prop, string desc, bool editable) {
+		if (storing) 
+			*this << prop;
+		else *this >> prop;
+		return *this;
+	}
+
+	IPropertyStorage& Archiver::have(string& prop, string desc, bool editable) {
+		if (storing) 
+			*this << prop;
+		else *this >> prop;
+		return *this;
+	}
+
+	IPropertyStorage& Archiver::have(bool& prop, string desc, bool editable) {
+		if (storing) 
+			*this << prop;
+		else *this >> prop;
+		return *this;
+	}
+
 	void Archiver::write(const void* buffer, size_t length) {
 		stream->write((const char*) buffer, length);
 		if(! *stream)

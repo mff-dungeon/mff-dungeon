@@ -34,7 +34,8 @@ namespace Dungeon {
             return type;
         }
 
-        virtual void serialize(Archiver& stream);
+        virtual void registerProperties(IPropertyStorage& storage);
+
 
 
     private:

@@ -33,18 +33,10 @@ namespace Dungeon {
 		list->addAction(action);
 	}
 	
-	void Potion::serialize(Archiver& stream) {
-		if (stream.isStoring()) {
-			stream << type;
-			stream << strength;
-		} else {
-			int t;
-			// To deal with enum
-			stream >> t;
-			stream >> strength;
-			this->setType((PotionType) t);
-		}
-		Item::serialize(stream);
+	void Potion::registerProperties(IPropertyStorage& storage) {
+		storage.have((int&) type, "Potion type (0 - ineffective, 1 - healing)")
+			.have(strength, "Potion strength");
+		Item::registerProperties(storage);
 	}
 	
 	void DrinkPotionAction::explain(ActionDescriptor* ad) {

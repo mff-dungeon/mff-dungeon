@@ -17,7 +17,6 @@ namespace Dungeon {
         virtual ~ThorsHammer();
 
         virtual void getActions(ActionList* list, IObject* calee);
-        virtual void serialize(Archiver &stream);
 		
     private:
         

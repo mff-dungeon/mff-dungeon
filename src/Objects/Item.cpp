@@ -117,9 +117,5 @@ namespace Dungeon {
         return sentence;
 	}
 	
-	void Item::serialize(Archiver& stream) {
-		IDescriptable::serialize(stream);
-	}
-
 	PERSISTENT_IMPLEMENTATION(Item)
 }

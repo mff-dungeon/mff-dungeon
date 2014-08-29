@@ -21,8 +21,6 @@ namespace Dungeon {
         virtual string getDescriptionSentence();
         virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
 
-        virtual void serialize(Archiver& stream);
-
     PERSISTENT_DECLARATION(Item)
     };
 };

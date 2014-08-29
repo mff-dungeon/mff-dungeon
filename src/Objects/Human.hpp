@@ -27,13 +27,12 @@ namespace Dungeon {
         virtual string getName() const;
         virtual string getLongName() const;
         
-        virtual void serialize(Archiver& stream);
+        virtual void registerProperties(IPropertyStorage& storage);
         
         Human* setContact(string contact);
         string getContact() const;
         Human* setUsername(string username);
         string getUsername() const;
-
 
     private:
         string username, contact;

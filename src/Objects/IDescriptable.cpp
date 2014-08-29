@@ -37,19 +37,13 @@ namespace Dungeon {
 		return getName() != "";
 	}
 	
-	void IDescriptable::serialize(Archiver& stream) {
-		if (stream.isStoring()) {
-			stream << name;
-			stream << longName;
-			stream << description;
-		} else {
-			stream >> name;
-			stream >> longName;
-			stream >> description;
-		}
-		IObject::serialize(stream);
+	void IDescriptable::registerProperties(IPropertyStorage& storage) {
+		storage.have(name, "Short name")
+			.have(longName, "Long name")
+			.have(description, "Full description");
+		IObject::registerProperties(storage);
 	}
-    
+
     string IDescriptable::getDescriptionSentence() {
         return "There is " + this->getName() + ".";
     }

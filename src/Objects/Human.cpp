@@ -39,15 +39,10 @@ namespace Dungeon {
     	return username;
     }
 	
-	void Human::serialize(Archiver& stream) {
-		if (stream.isStoring()) {
-			stream << username;
-			stream << contact;
-		} else {
-			stream >> username;
-			stream >> contact;
-		}
-		Alive::serialize(stream);
+	void Human::registerProperties(IPropertyStorage& storage) {
+		storage.have(username, "Username, public available")
+			.have(contact, "Contact JID", false);
+		Alive::registerProperties(storage);
 	}
 	void Human::getActions(ActionList* list, IObject* callee) {
 		if (callee == this) {

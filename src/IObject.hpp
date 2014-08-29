@@ -5,13 +5,14 @@
 #include "Archiver.hpp"
 #include "ObjectList.hpp"
 #include "AddIObject.hpp"
+#include "IPropertyStorage.hpp"
 
 namespace Dungeon {
     
     /**
      * Base clas of everything in the world.
      */
-    class IObject {
+    class IObject : public IStorable {
     friend class GameManager;
     public:
         IObject() {};
@@ -39,7 +40,7 @@ namespace Dungeon {
          *	createObject() returns a new blank object - class needs to define
          *   a constructor with no parameters
          *  load/store - not to be overwritten, handles saving/loading objects
-         *  serialize - must be overwritten, defines a way to serialize
+         *  serialize - (deprecated @see registerProperties) must be overwritten, defines a way to serialize
          *  className - method defines by macro, see common.hpp
          */
         virtual IObject* createObject() const = 0;
@@ -97,12 +98,21 @@ namespace Dungeon {
         
         ObjectPointer getObjectPointer();
 
+        /**
+         * Must be overwritten if there is some property 
+         * that we want to be configurable. Handles both load&store
+         * and in-game configuration.
+         */
+        virtual void registerProperties(IPropertyStorage& storage);
+        
 	protected:
-            virtual void serialize(Archiver& stream);
+            /**
+             * Kept as warning :)
+             */
+            void serialize(Archiver& stream);
             GameManager* getGameManager() const;
             void setGameManager(GameManager* gm);
-                
-		
+        	
     private:
         GameManager* gm;
         objId id;
