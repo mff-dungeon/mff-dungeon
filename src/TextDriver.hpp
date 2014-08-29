@@ -37,6 +37,13 @@ namespace Dungeon {
          * Invite new user
          */
         string getNewUserMessage();
+    protected:
+        map<objId, TextActionDescriptor*> dialogs;
+        
+        bool isInDialog(objId who) {
+            return dialogs.find(who) != dialogs.end();
+        }
+        
     private:
 	ActionList* alist;
     };

@@ -2,6 +2,8 @@
 #define	ACTIONDESCRIPTOR_HPP
 
 #include <sstream>
+#include <queue>
+#include <functional>
 #include "common.hpp"
 #include "Driver.hpp"
 
@@ -15,6 +17,8 @@ namespace Dungeon {
     */
     class ActionDescriptor {
     public:
+        typedef function<void (ActionDescriptor*, string)> dialogReply;
+        
         ActionDescriptor(Driver * driver);
         Action* getAction();
         Alive* getAlive();
@@ -53,11 +57,45 @@ namespace Dungeon {
         bool isValid(Driver* driver);
         stringstream messages;
         
+        /**
+         * Queries user for something. Givencallback will be called 
+         * on next user's message INSTEAD of regular action processing.
+         * @param callback Function receiving (AD*, string), where the string is user's reply.
+         */
+        void waitForReply(dialogReply callback) {
+            dialogReplies.push(callback);
+        }
+        
+        /**
+         * Driver should only dispose this AD if it's finished. 
+         * If it's not, i should keep it and call userReplied 
+         * on user's response.
+         * 
+         * Driver MUST NOT BLOCK until response. It must remember 
+         * this AD somewhere and load it later.
+         */
+        bool isFinished() {
+            return dialogReplies.empty();
+        }
+        
+        /**
+         * If this action isn't finished yet, driver should call this function
+         * whenever user types a message.
+         * @param reply User's response
+         */
+        void userReplied(string reply) {
+            dialogReply r = dialogReplies.front();
+            dialogReplies.pop();
+            r(this, reply);
+        }
+        
     private:
         Action* action;
         GameManager* gm;
         Alive* caller;
         int id;
+        
+        queue<dialogReply> dialogReplies;
 
     };
     
@@ -70,6 +108,7 @@ namespace Dungeon {
         string from, in_msg;
         
         string getReply();
+        void clearReply();
         
     };
 }

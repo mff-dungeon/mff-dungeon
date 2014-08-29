@@ -32,8 +32,10 @@ namespace Dungeon {
 		petr = (Human*) gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"));
 		
 		pot = new Potion("item/potion/health1");
-		pot->setName("Healing potion")->setLongName("A red potion in glass vial.");
-		pot->setType(Potion::PotionType::Healing)->setStrength(200);
+		pot->setType(Potion::PotionType::Healing)
+			->setStrength(200)
+			->setName("Healing potion")
+			->setLongName("A red potion in glass vial.");
 		gm->insertObject(pot);
 		
 		/*
@@ -48,7 +50,7 @@ namespace Dungeon {
 		this->createDoor("trap-base", baseRoom, trapRoom)
 				->setName("wooden door")
 				->setLongName("wooden door with simple metal handle")
-				->save(gm);
+				->save();
 	}
 	
 	Door* WorldCreator::createDoor(string name, Room* a, Room* b) {

@@ -12,14 +12,23 @@ namespace Dungeon {
     }
     
     bool TextDriver::process(TextActionDescriptor* ad) {
+		if (!ad->isFinished()) {
+			LOG("TextDriver") << "User " << ad->getAlive()->getName() << " replied to dialog with " << ad->in_msg << "." << LOGF;
+			ad->userReplied(ad->in_msg);
+			return true;
+		} 
+		
         alist->clear();
-       
         ad->getAlive()->getAllActions(alist);
+		
+		string message (ad->in_msg);
+		// We don't care, if user writes "Potion" or "potion"
+		transform(message.begin(), message.end(), message.begin(), ::tolower);
 		
         for (auto& pair: *alist) {
 			Action* action = pair.second;
 			LOGS("TD", Verbose) << "Matching action " << pair.first << LOGF;
-            if (action->matchCommand(ad->in_msg)) {
+            if (action->matchCommand(message)) {
 				ad->matched(action);
 				break;
             }
@@ -27,8 +36,6 @@ namespace Dungeon {
 		
 		if (ad->isValid(this)) {
 			ad->getAction()->commit(ad);
-			
-			// TODO - process results, create nice reply
 			return true;
 		} else {
 			*ad << getDontUnderstandResponse(ad->in_msg);

@@ -22,6 +22,8 @@ namespace Dungeon {
         Human(objId id, string username, string contact) :
         Alive(id), username(username), contact(contact) {}
 
+        virtual void getActions(ActionList* list, IObject* callee);
+
         virtual string getName() const;
         virtual string getLongName() const;
         

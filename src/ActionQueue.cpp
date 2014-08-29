@@ -29,8 +29,6 @@ namespace Dungeon {
 		actions.pop();
 
 		ad->driver->processDescriptor(ad);
-		
-		delete ad;
 	}
 
 	void ActionQueue::loopToFinish() {

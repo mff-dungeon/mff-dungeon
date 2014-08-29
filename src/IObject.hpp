@@ -50,7 +50,7 @@ namespace Dungeon {
          * Saves changes made to object. Must be called after changes.
          * Shortcut for gm->saveObject(obj).
          */
-        void save(GameManager* gm);
+        void save();
 		
         /*
          * Relation Functions:

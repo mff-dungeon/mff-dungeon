@@ -48,6 +48,12 @@ namespace Dungeon {
 	string TextActionDescriptor::getReply() {
 		return messages.str();
 	}
+	
+	void TextActionDescriptor::clearReply() {
+		messages.str("");
+		messages.clear();
+	}
+
 
 }
 

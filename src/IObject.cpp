@@ -91,10 +91,10 @@ namespace Dungeon {
 	
 	void IObject::serialize(Archiver& stream) {
 		// There can also be an object without internal variables, 
-		// and serves as a bese to recursion
+		// and serves as a base to recursion
 	}
 	
-	void IObject::save(GameManager* gm) {
+	void IObject::save() {
 		gm->saveObject(this);
 	}
 	

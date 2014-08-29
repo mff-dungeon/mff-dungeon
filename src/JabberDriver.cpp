@@ -62,12 +62,21 @@ namespace Dungeon {
 		TextActionDescriptor* ad = (TextActionDescriptor*) descriptor;
 		objId figureId = this->findFigureId(ad->from);
 		Alive* figure = (Alive*) gm->getObject(figureId);
+		// Really need to do it on every reply. Alive object could have been disposed in meantime...
 		ad->assigned(figure);
 		
 		this->process(ad);
 		
         Message msg(Message::Chat, ad->from, ad->getReply());
+		ad->clearReply();
         client->send(msg);
+		
+		if (ad->isFinished()) {
+			dialogs.erase(figureId);
+			delete ad;
+		} else {
+			LOG("JabberDriver") << "User " << figure->getName() << " kept in dialog mode." << LOGF;
+		}
 	}
 	
     void JabberDriver::handleMessage(const Message& message, MessageSession* session) {
@@ -95,11 +104,15 @@ namespace Dungeon {
             }
 			
             LOGS("JabberDriver", Verbose) << "User '" << figureId << "' sent a message: '" << contents << "'" << LOGF;
-            
-            TextActionDescriptor* ad = new TextActionDescriptor(this);
-			ad->from.assign(sender);
-			// We don't care, if user writes "Potion" or "potion"
-			transform(contents.begin(), contents.end(), contents.begin(), ::tolower);
+			
+            TextActionDescriptor* ad;
+			if (isInDialog(figureId)) {
+				ad = dialogs[figureId];
+			} else {
+                ad = new TextActionDescriptor(this);
+				dialogs[figureId] = ad;
+				ad->from.assign(sender);
+			}
 			ad->in_msg.assign(contents);
 			
 			queue->enqueue(ad);
