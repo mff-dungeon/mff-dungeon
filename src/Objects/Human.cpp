@@ -123,15 +123,15 @@ namespace Dungeon {
 					ad->waitForReply([] (ActionDescriptor *ad, string reply) {
 						((Human*) ad->getAlive())->setUsername(reply)
 								->save();
-						*ad << "OK. You should now be called " << ad->getAlive()->getName() << ". ";
-						*ad << "I'm just curious, why did you changed your name?";
+						*ad << "OK. You shall now be called " << ad->getAlive()->getName() << ". "; // A common mistake
+						*ad << "I'm just curious, why did you change your name?";
 					});
 					// Just to show how dialog can be longer :)
 					ad->waitForReply([] (ActionDescriptor *ad, string reply) {
 						*ad << "Interesting. Now, back to the dungeon!";
 					});
 					// Notice that both functions are prepared immediately. They 
-					// can alse be created after the reply in the closure, but 
+					// can else be created after the reply in the closure, but 
 					// that render long dialogs overindented and unreadable.
 					// 
 				}, false));
