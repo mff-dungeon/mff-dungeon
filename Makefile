@@ -6,15 +6,17 @@ BUILDDIR := build
 TARGET := bin/dungeon
 
 SRCEXT := cpp
+HEADEREXT := hpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 DYNAMICS := $(shell echo $(DYNDIR))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -std=c++11 -g -O2 -Wall -I/usr/local/include
+LDFLAGS := -lstdc++ -lsqlite3 -L/usr/local/lib -lgloox
 
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(shell dirname $@)
 	@echo "[ LD ] " $(TARGET)
-	@$(CC) $^ -o $(TARGET) -lsqlite3 -lstdc++ -L/usr/local/lib -lgloox
+	@$(CC) $^ -o $(TARGET) $(LDFLAGS)
 
 src/dynamic.hpp: $(DYNAMICS)
 	@printf "#ifndef DYNAMIC_HPP\n#define	DYNAMIC_HPP\n\n" > $@
@@ -27,7 +29,7 @@ build/main.o: src/main.cpp src/dynamic.hpp
 	@echo "[ CC ] " $< " --> " $@
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) $(SRCDIR)/%.$(HEADEREXT)
 	@mkdir -p $(shell dirname $@)
 	@echo "[ CC ] " $< " --> " $@
 	@$(CC) $(CFLAGS) -c -o $@ $<
@@ -39,8 +41,8 @@ clean:
 sedfix:
 	@git checkout src/dynamic.hpp
 
-tester:
-	$(CC) $(CFLAGS) test/tester.cpp $(INC) $(LIB) -o bin/tester
+tester: test/tester.cpp
+	$(CC) $(CFLAGS) $(LDFLAGS) -o bin/tester $<
 	
 all: $(TARGET)
 
