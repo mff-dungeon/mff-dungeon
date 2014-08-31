@@ -1,7 +1,8 @@
+#include "common.hpp"
+
 #ifndef OBJECTPOINTER_HPP
 #define	OBJECTPOINTER_HPP
 
-#include "common.hpp"
 #include "GameManager.hpp"
 
 namespace Dungeon {
