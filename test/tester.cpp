@@ -39,7 +39,10 @@ void testFSMatcher() {
     assertEqual(matcher.find("n"), 0, "True/false will fail");
 
     matcher.clear();
-	
+    matcher.add("Red potion", 1);
+    matcher.add("Blue potion", 2);
+    matcher.add("Green potion", 2);
+    assert(matcher.find("blue") == 2, "Potion selection failed");
 }
 
 int main(int argc, char** argv) {

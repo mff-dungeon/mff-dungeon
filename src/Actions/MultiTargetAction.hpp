@@ -38,13 +38,11 @@ namespace Dungeon {
          */
         virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target) = 0;
         
-        /*
-         * Once we implement the object matching, we should probably use it here
-         * and override the commit function. Probably we would need to strip 
-         * the beginning of the command string and pass only the rest.
-         */
+        virtual void commit(ActionDescriptor* ad);
+
         
     protected:
+        void commitOnBestTarget(ActionDescriptor* ad, string str);
         ObjectMap targets;
     };
 }

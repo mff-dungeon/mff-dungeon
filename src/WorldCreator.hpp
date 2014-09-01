@@ -11,11 +11,20 @@ namespace Dungeon {
     class WorldCreator {
     public:
         WorldCreator(GameManager* gm);
-        void bigBang();
+        void initAdmins();
+        virtual void bigBang();
         
-    private:
+    protected:
         GameManager* gm;
-        Door* createDoor(string name, Room* a, Room* b);
+        Door* createDoor(string name, Room* a, Room* b, bool two_way = true);
+        
+        template<typename T>
+        T* createObject(string id, IObject* location = NULL) {
+            T* ptr = new T(id);
+            gm->insertObject(ptr);
+            if (location) gm->createRelation(location, ptr, R_INSIDE);
+            return ptr;
+        }
     };
 
 }

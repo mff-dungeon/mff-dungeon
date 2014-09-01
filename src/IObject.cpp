@@ -98,8 +98,9 @@ namespace Dungeon {
 		// and serves as a base to recursion
 	}
 	
-	void IObject::save() {
+	IObject* IObject::save() {
 		gm->saveObject(this);
+		return this;
 	}
 	
 	ObjectPointer IObject::getObjectPointer() {

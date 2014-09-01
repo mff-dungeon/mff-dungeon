@@ -16,31 +16,35 @@ namespace Dungeon
 
 	void ThorsHammer::getActions(ActionList* list, IObject* callee) {list->addAction(new CallbackAction("dump", "dump - If you want to get some info...",
 		RegexMatcher::matcher("^dump( relations)?( of)?(.*)$"),
-		[this] (ActionDescriptor * descriptor) {
-				// FIXME running on non-text driver would explode
-				TextActionDescriptor* ad = (TextActionDescriptor*) descriptor;
+		[this] (ActionDescriptor * ad) {
 				smatch matches;
-				RegexMatcher::match("^dump( relations)?( of)?(.*)$", ad->in_msg, matches);
+				RegexMatcher::match("^dump (relations )?(of )?(.*)$", ad->in_msg, matches);
 				IObject* target;
 				if (matches[3] == "") {
 					target = ad->getAlive();
 				} else {
+					if (!ad->getGM()->hasObject(matches[3])) {
+						*ad << "404: Object not found :)";
+						return;
+					}
 					target = ad->getGM()->getObject(matches[3]);
 				}
 				*ad << "So you want to know something? Relations which " << target->getId() << " master:\n";
 				RelationList r = target->getRelations(true);
 				for (auto& type : r) {
-					*ad << type.first + ":\n";
+					*ad << "=== " << type.first + ":\n";
 					for(auto& obj : type.second) {
-						*ad << "\t" + obj.first + "\n";
+						IDescriptable* objptr = (IDescriptable*) obj.second.get();
+						*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
 					}
 				}
 				*ad << "Slave:\n";
 				r = target->getRelations(false);
 				for (auto& type : r) {
-					*ad << type.first + ":\n";
+					*ad << "=== " << type.first + ":\n";
 					for(auto& obj : type.second) {
-						*ad << "\t" + obj.first + "\n";
+						IDescriptable* objptr = (IDescriptable*) obj.second.get();
+						*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
 					}
 				}
 		}));
@@ -51,6 +55,27 @@ namespace Dungeon
 					ad->getGM()->shutdown();
 					*ad << "OK. I will just finish the queue. Bye!";
 				}));
+		
+		list->addAction(new CallbackAction("bigBang", "server initialize - Delete & recreate tables.",
+				RegexMatcher::matcher("server initialize"), 
+				[] (ActionDescriptor* ad) {
+					*ad << "Cross your fingers! ";
+					ad->getGM()->initWorld(false);
+					*ad << "... can you hear me? Yes? It worked!";
+				}));
+		
+		list->addAction(new CallbackAction("teleport", "teleport <id> - teleport yourself everywhere.",
+				RegexMatcher::matcher("teleport .+"), 
+				[] (ActionDescriptor* ad) {
+					smatch matches;
+					RegexMatcher::match("^teleport (.*)$", ad->in_msg, matches);
+					if (!ad->getGM()->hasObject(matches[3])) {
+						*ad << "404: Object not found :)";
+						return;
+					}
+					
+					ad->getGM()->moveAlive(ad->getAlive(), matches[3]);
+				}));
 				
 		list->addAction(new PropertyEditor);
 	}
@@ -59,9 +84,7 @@ namespace Dungeon
 		return RegexMatcher::match("edit .+", command);
 	}
 	
-	void ThorsHammer::PropertyEditor::commit(ActionDescriptor* descriptor) {
-		// FIXME running on non-text driver would explode
-		ad = (TextActionDescriptor*) descriptor;
+	void ThorsHammer::PropertyEditor::commit(ActionDescriptor* ad) {
 		smatch matches;
 		RegexMatcher::match("^edit (properties (of )?)?(.+)$", ad->in_msg, matches);
 		

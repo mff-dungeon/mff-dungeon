@@ -5,47 +5,60 @@ namespace Dungeon {
 	WorldCreator::WorldCreator(GameManager* gm) {
 		this->gm = gm;
 	}
+	
+	void WorldCreator::initAdmins() {
+		Human *aearsis, *asaru, *petr;
+		ThorsHammer* th;
+		gm->insertObject(th = new ThorsHammer());
+		aearsis = (Human*) gm->addNewFigure(new Human("human/aearsis@eideo.cz", "Aearsis", "aearsis@eideo.cz"));
+		gm->createRelation(aearsis, th, R_INVENTORY);
+		asaru = (Human*) gm->addNewFigure(new Human("human/salmelu@salmelu-i5521", "Asaru", "salmelu@salmelu-i5521"));
+		gm->createRelation(asaru, th, R_INVENTORY);
+		petr = (Human*) gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"));
+		gm->createRelation(petr, th, R_INVENTORY);
+	}
 
 	void WorldCreator::bigBang() {
 		/**
 		 * Init Objects
 		 */
 		Room *baseRoom, *trapRoom;
-		ThorsHammer* th;
-		Human *aearsis, *asaru, *petr;
-		Potion *pot;
 		
 		baseRoom = new Room("room/baseRoom");
 		baseRoom->setName("Base Camp")
 				->setDescription("Nothing much to be found here, but get familiar with basic commands - try to type 'help'.");
 		gm->insertObject(baseRoom);
 		
+		initAdmins();
+		
 		trapRoom = new Room("room/trapRoom");
 		trapRoom->setName("Equip room")
 				->setDescription("Looks like noone has been there for a long time.");
 		gm->insertObject(trapRoom);
 		
-		gm->insertObject(th = new ThorsHammer());
-		aearsis = (Human*) gm->addNewFigure(new Human("human/aearsis@eideo.cz", "Aearsis", "aearsis@eideo.cz"));
-		//asaru = (Human*) gm->addNewFigure(new Human("human/asaru@jabbim.cz", "Asaru", "asaru@jabbim.cz"));
-		asaru = (Human*) gm->addNewFigure(new Human("human/salmelu@salmelu-i5521", "Asaru", "salmelu@salmelu-i5521"));
-		petr = (Human*) gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"));
-		
-		pot = new Potion("item/potion/health1");
-		pot->setType(Potion::PotionType::Healing)
+		createObject<Potion>("item/potion/" + RANDID, trapRoom)
+			->setType(Potion::PotionType::Healing)
+			->setStrength(100)
+			->setName("Blue potion")
+			->setLongName("A blue potion in glass vial.")
+			->save();
+
+		createObject<Potion>("item/potion/" + RANDID, trapRoom)
+			->setType(Potion::PotionType::Healing)
+			->setStrength(100)
+			->setName("Green potion")
+			->setLongName("A green potion in gold vial.")
+			->save();
+
+		createObject<Potion>("item/potion/" + RANDID, trapRoom)
+			->setType(Potion::PotionType::Healing)
 			->setStrength(200)
-			->setName("Healing potion")
-			->setLongName("A red potion in glass vial.");
-		gm->insertObject(pot);
-		
+			->setName("Red potion")
+			->setLongName("A red potion in silver vial.")
+			->save();
 		/*
 		 * Init relations
 		 */
-		gm->createRelation(aearsis, th, R_INVENTORY);
-		gm->createRelation(asaru, th, R_INVENTORY);
-		gm->createRelation(petr, th, R_INVENTORY);
-		
-		gm->createRelation(trapRoom, pot, R_INSIDE);
 		
 		this->createDoor("trap-base", baseRoom, trapRoom)
 				->setName("wooden door")
@@ -53,11 +66,15 @@ namespace Dungeon {
 				->save();
 	}
 	
-	Door* WorldCreator::createDoor(string name, Room* a, Room* b) {
+	Door* WorldCreator::createDoor(string name, Room* a, Room* b, bool two_way) {
 		Door* d = new Door("door/" + name);
 		gm->insertObject(d);
 		gm->createRelation(a, d, R_INSIDE);
-		gm->createRelation(b, d, R_INSIDE);
+		gm->createRelation(d, b, R_TARGET);
+		if (two_way) {
+			gm->createRelation(b, d, R_INSIDE);
+			gm->createRelation(d, a, R_TARGET);
+		}
 		return d;
 	}
 

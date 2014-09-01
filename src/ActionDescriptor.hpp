@@ -26,6 +26,8 @@ namespace Dungeon {
         
         Driver* driver;
         
+        string in_msg;
+        
         /**
          * Id called after receiving a message.
          */
@@ -103,7 +105,7 @@ namespace Dungeon {
     class TextActionDescriptor : public ActionDescriptor {
     public:
         TextActionDescriptor(Driver * driver);
-        string from, in_msg;
+        string from;
         
         string getReply();
         void clearReply();

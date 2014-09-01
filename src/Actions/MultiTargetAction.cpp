@@ -1,5 +1,8 @@
 #include "MultiTargetAction.hpp"
 #include "../ObjectPointer.hpp"
+#include "../ObjectGroup.hpp"
+#include "../FuzzyStringMatcher.hpp"
+#include "../ActionDescriptor.hpp"
 
 namespace Dungeon {
 
@@ -24,4 +27,30 @@ namespace Dungeon {
 		return targets;
 	}
 	
+        void MultiTargetAction::commit(ActionDescriptor* ad) {
+            commitOnBestTarget(ad, ad->in_msg);
+        }
+        
+        void MultiTargetAction::commitOnBestTarget(ActionDescriptor* ad, string str) {
+            ObjectGroup group (targets);
+            ObjectPointer target;
+            try {
+                target = group.match(str);
+                IDescriptable* obj = (IDescriptable*) target.get();
+                LOGS("MTA", Verbose) << "Selected " << obj->getLongName() << LOGF;
+                commitOnTarget(ad, target);
+            } catch (const StringMatcher::Uncertain& e) {
+                *ad << "I'm sorry, did you say \"" << "\"?";
+                ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
+                    bool repl = StringMatcher::matchTrueFalse(reply);
+                    if (repl) {
+                        // commitOnTarget(ad, target);
+                    } else {
+                        *ad << "Sorry, i'm sort of dumb last few days. Please say it again.";
+                    }
+                });
+            } catch (const StringMatcher::NoCandidate& e) {
+                *ad << "No such thing found. Really.";
+            }
+        }
 }

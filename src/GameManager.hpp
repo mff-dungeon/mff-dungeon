@@ -17,7 +17,7 @@ namespace Dungeon {
 
     public:
         GameManager(bool init = false);
-        void initWorld();
+        void initWorld(bool askOnConsole = true);
         IObject* getObject(objId id);
         bool hasObject(objId id);
         bool hasObjectLoaded(objId id);

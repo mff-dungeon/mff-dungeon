@@ -39,6 +39,8 @@ private: \
 #define R_INSIDE "inside"
 // Alive has backpack, backpack has potion
 #define R_INVENTORY "inventory"
+// Door targets somewhere
+#define R_TARGET "target"
 
 /*
  *  Logging
@@ -55,6 +57,9 @@ private: \
 #include <random>
 #define rand_init(var, dist, min, max) std::default_random_engine var(time(0)); std::uniform_int_distribution<int> dist(min, max);
 #define rand_next(var, dist) ( dist(var) )
+#define RAND_ALNUM "qwertyuiopasdfghjklzxcvbnm0123456789"
+#define RAND_ALNUM_LEN 36
+#define RANDID Dungeon::Utils::getRandomString(6)
 
 /*
  *  Helper functions for accessing parts of id
@@ -89,6 +94,17 @@ namespace Dungeon {
     typedef string objId;
     typedef map<objId, ObjectPointer> ObjectMap;
     typedef map<string, ObjectMap> RelationList;
+    
+    class Utils {
+    public:
+        static string getRandomString(int len) {
+            char ret [len + 1];
+            ret[len] = 0;
+            static rand_init(r, d, 0, RAND_ALNUM_LEN);
+            for (int i = 0; i < len; ++i) ret[i] = RAND_ALNUM[rand_next(r, d)];
+            return ret;
+        }
+    };
     
 }
     

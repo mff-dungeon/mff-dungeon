@@ -3,6 +3,8 @@
 
 #include "common.hpp"
 #include "GameManager.hpp"
+#include "FuzzyStringMatcher.hpp"
+#include "Objects/IDescriptable.hpp"
 
 namespace Dungeon {
     
@@ -34,6 +36,21 @@ namespace Dungeon {
         ObjectGroup(ObjectMap map);
         
         string explore();
+        
+        ObjectPointer match(string name) {
+            FuzzyStringMatcher<ObjectPointer> matcher;
+            ObjectGroup::iterator it;
+            for (it = this->begin(); it != this->end(); it++) {
+                IObject* obj = it->second.get();
+                if (obj->isDescriptable()) {
+                    IDescriptable* dobj = (IDescriptable*) obj;
+                     matcher.add(dobj->getLongName(), it->second);
+                     matcher.add(dobj->getName(), it->second);
+                }
+            }
+            
+            return matcher.find(name);
+        }
         
     private:
         ObjectGroupMap::value_type getPair(IObject *obj);

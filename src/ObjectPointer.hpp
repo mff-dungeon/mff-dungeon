@@ -20,6 +20,14 @@ namespace Dungeon {
         
         bool isLoaded();
 
+        bool operator==(const ObjectPointer& other) const {
+            return other.id == id;
+        }
+        
+        bool operator!=(const ObjectPointer& other) const {
+            return other.id != id;
+        }
+
     private:
         GameManager *gm;
         objId id;

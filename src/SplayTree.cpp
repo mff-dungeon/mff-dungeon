@@ -179,7 +179,7 @@ namespace Dungeon {
 
 		delete f;
 	};
-	
+        
 	/*
 	 * Print blank Vertex
 	 */

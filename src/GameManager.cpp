@@ -27,7 +27,7 @@ namespace Dungeon {
 		aqueue = new ActionQueue(this);
 	}
 
-	void GameManager::initWorld() {
+	void GameManager::initWorld(bool askOnConsole) {
 		int err = 0;
 		LOGH("Database cleanup");
 		LOG("GameManager") << "Dropping all tables." << LOGF;
@@ -42,6 +42,8 @@ namespace Dungeon {
 			LOGS("GameManager", Fatal) << "Create table database query failed with error code " << err << LOGF;
 			exit(1);
 		}
+                
+        // FIXME reload relations on existing objects
 		
 		WorldCreator wc(this);
 		wc.bigBang();
@@ -50,14 +52,16 @@ namespace Dungeon {
 		 * Finish
 		 */
 		LOG("GameManager") << "Initialization completed." << LOGF;
-		cout << "Continue with startup? [Y/n]" << std::endl;
+		if (askOnConsole) {
+                    cout << "Continue with startup? [Y/n]" << std::endl;
 		
-		string answer;
-		getline(cin, answer);
-		if (answer == "n") {
-			LOG("GameManager") << "Shutting down" << LOGF;
-			exit(0);
-		}
+                    string answer;
+                    getline(cin, answer);
+                    if (answer == "n") {
+                            LOG("GameManager") << "Shutting down" << LOGF;
+                            exit(0);
+                    }
+                }
 		LOGH("Database cleanup finished");
 	}
 	

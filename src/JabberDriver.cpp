@@ -3,6 +3,7 @@
 
 #include "JabberDriver.hpp"
 #include "ActionDescriptor.hpp"
+#include "Objects/Human.hpp"
 
 using namespace gloox;
 
@@ -58,24 +59,24 @@ namespace Dungeon {
         this->workerThread = new thread(&JabberDriver::worker, this);
     }
     
-	void JabberDriver::processDescriptor(ActionDescriptor* descriptor) {
-		TextActionDescriptor* ad = (TextActionDescriptor*) descriptor;
-		objId figureId = this->findFigureId(ad->from);
-		Alive* figure = (Alive*) gm->getObject(figureId);
-		// Really need to do it on every reply. Alive object could have been disposed in meantime...
-		ad->assigned(figure);
-		
-		this->process(ad);
-		
+    void JabberDriver::processDescriptor(ActionDescriptor* descriptor) {
+        TextActionDescriptor* ad = (TextActionDescriptor*) descriptor;
+        objId figureId = this->findFigureId(ad->from);
+        Alive* figure = (Alive*) gm->getObject(figureId);
+        // Really need to do it on every reply. Alive object could have been disposed in meantime...
+        ad->assigned(figure);
+
+        this->process(ad);
+
         Message msg(Message::Chat, ad->from, ad->getReply());
-		ad->clearReply();
+        ad->clearReply();
         client->send(msg);
-		
-		if (ad->isFinished()) {
-			dialogs.erase(figureId);
-			delete ad;
-		}
-	}
+
+        if (ad->isFinished()) {
+            dialogs.erase(figureId);
+            delete ad;
+        }
+    }
 	
     void JabberDriver::handleMessage(const Message& message, MessageSession* session) {
         Message::MessageType type = message.subtype();
@@ -263,7 +264,7 @@ namespace Dungeon {
                 objId figureId = this->findFigureId(subscription.from());
                 
                 if (!this->gm->hasObject(figureId)) {
-                    Alive *figure = new Alive(figureId);
+                    Alive *figure = new Human(figureId, subscription.from().username(), subscription.from().bare());
                     this->gm->addNewFigure(figure);
                     
                     Message msg(Message::Chat, subscription.from(), this->getNewUserMessage());

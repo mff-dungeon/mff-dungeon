@@ -43,19 +43,14 @@ namespace Dungeon {
 		*ad << "Use 'drink ...' to drink a potion you have or see.\n";
 	}
 	
-	void DrinkPotionAction::commit(ActionDescriptor* ad) {
-		ObjectPointer current = ad->getAlive()->getLocation();
-		for (auto& pair : targets) {
-			if (pair.second.getId() == current.getId()) continue;
-			commitOnTarget(ad, pair.second); // TODO Implement object matching...
-			return;
-		}
-	}
-	
 	bool DrinkPotionAction::matchCommand(string command) {
 		return RegexMatcher::match("drink .+", command);
 	}
-	
+        
+	void DrinkPotionAction::commit(ActionDescriptor* ad) {	
+		commitOnBestTarget(ad, ad->in_msg.substr(6));
+	}
+        
 	void DrinkPotionAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {	
 		Potion* potion = (Potion*) target.get();
 		*ad << "You've drunk " + potion->getName() + ". ";

@@ -51,8 +51,10 @@ namespace Dungeon {
         
         virtual void explain(ActionDescriptor* ad);
         virtual bool matchCommand(string command);
-        virtual void commit(ActionDescriptor* ad);
         virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
+
+        virtual void commit(ActionDescriptor* ad);
+
     };
     
 };
