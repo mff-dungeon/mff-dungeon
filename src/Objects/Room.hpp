@@ -3,6 +3,7 @@
 
 #include "../common.hpp"
 #include "IDescriptable.hpp"
+#include "../Actions/MultiTargetAction.hpp"
 
 namespace Dungeon {
 	
@@ -24,6 +25,17 @@ namespace Dungeon {
     PERSISTENT_DECLARATION(Room)
 			
     };
+	
+	class PickupAction : public MultiTargetAction {
+	public:
+		PickupAction(string type = "room-pickup") : MultiTargetAction(type) {}
+        
+        virtual void explain(ActionDescriptor* ad);
+        virtual bool matchCommand(string command);
+        virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
+
+        virtual void commit(ActionDescriptor* ad);
+	};
 }
 
 #endif	/* ROOM_HPP */

@@ -34,8 +34,13 @@ namespace Dungeon
 				for (auto& type : r) {
 					*ad << "=== " << type.first + ":\n";
 					for(auto& obj : type.second) {
-						IDescriptable* objptr = (IDescriptable*) obj.second.get();
-						*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
+						if(obj.second.get()->isDescriptable()) {
+							IDescriptable* objptr = (IDescriptable*) obj.second.get();
+							*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
+						}
+						else {
+							*ad << "\t" << obj.first << "\n";
+						}
 					}
 				}
 				*ad << "Slave:\n";
@@ -43,8 +48,13 @@ namespace Dungeon
 				for (auto& type : r) {
 					*ad << "=== " << type.first + ":\n";
 					for(auto& obj : type.second) {
-						IDescriptable* objptr = (IDescriptable*) obj.second.get();
-						*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
+						if(obj.second.get()->isDescriptable()) {
+							IDescriptable* objptr = (IDescriptable*) obj.second.get();
+							*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
+						}
+						else {
+							*ad << "\t" << obj.first << "\n";
+						}
 					}
 				}
 		}));

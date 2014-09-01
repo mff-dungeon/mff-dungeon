@@ -1,7 +1,11 @@
+#include <c++/4.9/stdexcept>
+
 #include "Room.hpp"
 #include "../ObjectPointer.hpp"
 #include "../ObjectGroup.hpp"
 #include "../ActionDescriptor.hpp"
+#include "Item.hpp"
+#include "Backpack.hpp"
 
 namespace Dungeon {
 
@@ -16,7 +20,7 @@ namespace Dungeon {
 	void Room::getActions(ActionList* list, IObject *callee) {
 		LOGS("Room", Verbose) << "Getting actions on " << this->getName() << "." << LOGF;
 		// Recursively search all items in this room
-		try{
+		try {
 			ObjectMap objects = getRelations(true).at(R_INSIDE);
 			for(auto& item: objects) {
 				if (item.second.getId() != callee->getId())
@@ -24,6 +28,25 @@ namespace Dungeon {
 			}
 		}
 		catch (const std::out_of_range& e) {
+			
+		}
+		
+		// Add pickup for items
+		PickupAction* pickAction = new PickupAction;
+		try {
+			ObjectMap itemsIn = getRelations(true).at(R_INSIDE);
+			for(auto& itemObj: itemsIn) {
+				// TODO: implement something nicer
+				if(itemObj.second.get()->className() == "Item" || itemObj.second.get()->className() == "Potion") {
+					pickAction->addTarget(itemObj.second);
+				}
+			}
+		}
+		catch (const std::out_of_range& e) {
+			
+		}
+		if(pickAction->getTargets().size() > 0) {
+			list->addAction(pickAction);
 		}
     }
     
@@ -61,9 +84,82 @@ namespace Dungeon {
             *ad << groupedObjects.explore();
 		}
 		catch (const std::out_of_range& e) {
+			
 		}
     }
 
 	PERSISTENT_IMPLEMENTATION(Room)
 
+
+	void PickupAction::explain(ActionDescriptor* ad) {
+		*ad << "Use 'pick up ...' to pick the items you see.";
+	}
+	
+	bool PickupAction::matchCommand(string command) {
+		return RegexMatcher::match("(pick( up)?|take) .+", command);
+	}
+
+	void PickupAction::commit(ActionDescriptor* ad) {
+		if(ad->in_msg.find("pick up ") == 0) {
+			commitOnBestTarget(ad, ad->in_msg.substr(8));
+		}
+		else { // take | pick 
+			commitOnBestTarget(ad, ad->in_msg.substr(5));
+		}
+	}
+
+	void PickupAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
+		// Presumes the target is an item, as it was checked when adding
+		Item* item = (Item*) target.get();
+		if(!item->isPickable()) {
+			*ad << "You cannot pick this item. \n";
+			return;
+		}
+		
+		// Let's get the backpack, supposes only one for now
+		Backpack* backpack = 0;
+		try {
+			ObjectMap inv = ad->getAlive()->getRelations(true).at(R_INVENTORY);
+			for(auto& item : inv) {
+				if(item.second.get()->className() == "Backpack") {
+					backpack = (Backpack*) item.second.get();
+				}
+			}
+		}
+		catch (const std::out_of_range& e) {
+			cout << "Fuck";
+		}
+		if(backpack == 0) {
+			*ad << "You have no backpack to put this item in. \n";
+			return;
+		}
+		
+		if(backpack->getFreeWeight() < item->getWeight()) {
+			*ad << "Your backpack would be too heavy with this item. \n";
+			return;
+		}
+		
+		if(backpack->getFreeSpace() < item->getSize()) {
+			*ad << "There is no space left in your backpack. \n";
+			return;
+		}
+		// Everything is allright, let's add it
+		Room* current = 0;
+		try {
+			ObjectMap rooms = item->getRelations(false).at(R_INSIDE);
+			if(rooms.size() != 1) {
+				LOGS("PickupAction", Error) << "The item is nowhere?!" << LOGF;
+				return;
+			}
+			for(auto& room : rooms) {
+				current = (Room*) room.second.get();
+			}
+		}
+		catch (const std::out_of_range& e) {
+			
+		}
+		ad->getGM()->removeRelation(current, item, R_INSIDE);
+		backpack->addItem(item);
+		*ad << "You've picked up " + item->getName() + ".";
+	}
 }

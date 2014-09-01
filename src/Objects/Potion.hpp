@@ -36,8 +36,6 @@ namespace Dungeon {
 
         virtual void registerProperties(IPropertyStorage& storage);
 
-
-
     private:
             PotionType type;
             int strength;

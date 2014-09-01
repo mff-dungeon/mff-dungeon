@@ -48,6 +48,11 @@ namespace Dungeon {
 		return *this;
 	}
 	
+	ActionDescriptor& ActionDescriptor::operator<< (char const* msg){
+		messages << msg;
+		return *this;
+	}
+	
 	ActionDescriptor& ActionDescriptor::operator<< (const int& msg){
 		messages << msg;
 		return *this;

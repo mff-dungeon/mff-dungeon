@@ -76,6 +76,16 @@ namespace Dungeon {
 								}
 							}
 						}
+						try {
+							ObjectMap backpacks = this->getRelations(true).at(R_INVENTORY);
+							for(auto& item : backpacks) {
+								if(item.second.get()->className() != "Backpack") continue;
+								*ad << ((IDescriptable*) item.second.get())->getDescriptionSentence();
+							}
+						}
+						catch (const std::out_of_range& e) {
+							
+						}
 				}));
             
             list->addAction(new CallbackAction("hello", "hello - When you wanna be polite to your Dungeon",

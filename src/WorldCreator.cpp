@@ -12,10 +12,32 @@ namespace Dungeon {
 		gm->insertObject(th = new ThorsHammer());
 		aearsis = (Human*) gm->addNewFigure(new Human("human/aearsis@eideo.cz", "Aearsis", "aearsis@eideo.cz"));
 		gm->createRelation(aearsis, th, R_INVENTORY);
-		asaru = (Human*) gm->addNewFigure(new Human("human/salmelu@salmelu-i5521", "Asaru", "salmelu@salmelu-i5521"));
+		asaru = (Human*) gm->addNewFigure(new Human("human/asaru@jabbim.cz", "Salmelu", "asaru@jabbim.cz"));
 		gm->createRelation(asaru, th, R_INVENTORY);
 		petr = (Human*) gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"));
 		gm->createRelation(petr, th, R_INVENTORY);
+		
+		Backpack* aearsisPack = new Backpack("item/backpack/" + RANDID);
+		aearsisPack->setDropable(false)
+			->setPickable(false)
+			->setName("Leather backpack")
+			->setLongName("A nice and new leather backpack")
+			->save();
+		Backpack* asaruPack = new Backpack("item/backpack/" + RANDID);
+		asaruPack->setDropable(false)
+			->setPickable(false)
+			->setName("Leather backpack")
+			->setLongName("A nice and new leather backpack")
+			->save();
+		Backpack* petrPack = new Backpack("item/backpack/" + RANDID);
+		petrPack->setDropable(false)
+			->setPickable(false)
+			->setName("Leather backpack")
+			->setLongName("A nice and new leather backpack")
+			->save();
+		gm->createRelation(aearsis, aearsisPack, R_INVENTORY);
+		gm->createRelation(asaru, asaruPack, R_INVENTORY);
+		gm->createRelation(petr, petrPack, R_INVENTORY);
 	}
 
 	void WorldCreator::bigBang() {

@@ -15,10 +15,10 @@ namespace Dungeon {
         // Add some actions on myself
         this->getActions(list, this);
 		
-		// Get actions for the inventory items
+		// Get actions for the inventory items - now searches backpacks + thors hammer
 		LOGS("Alive", Verbose) << "Getting actions on inventory - " << this->getId() << "." << LOGF;
 		try{
-			ObjectMap inventory = getRelations(true).at("inventory");
+			ObjectMap inventory = getRelations(true).at(R_INVENTORY);
 			for(auto& item: inventory) {
 				item.second.get()->getActions(list, this);
 			}
@@ -30,7 +30,7 @@ namespace Dungeon {
 		LOGS("Alive", Verbose) << "Getting actions in location - " << this->getId() << "." << LOGF;
 		// Find objects in current location
 		try{
-			ObjectMap room = getRelations(false).at("inside");
+			ObjectMap room = getRelations(false).at(R_INSIDE);
 			for(auto& item: room) {
 				item.second.get()->getActions(list, this);
 			}

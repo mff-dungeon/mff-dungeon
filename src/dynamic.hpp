@@ -2,6 +2,7 @@
 #define	DYNAMIC_HPP
 
 #include "Objects/Alive.hpp"
+#include "Objects/Backpack.hpp"
 #include "Objects/Door.hpp"
 #include "Objects/Dummy.hpp"
 #include "Objects/Human.hpp"
