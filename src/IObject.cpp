@@ -110,8 +110,18 @@ namespace Dungeon {
 	GameManager* IObject::getGameManager() const {
 		return gm;
 	}
+	
 	void IObject::setGameManager(GameManager* gm) {
 		this->gm = gm;
+	}
+
+	bool IObject::instanceOf(string cname) const {
+		if(cname == "IObject") {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 }

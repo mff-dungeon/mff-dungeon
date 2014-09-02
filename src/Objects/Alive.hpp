@@ -34,6 +34,7 @@ namespace Dungeon
         virtual void registerProperties(IPropertyStorage& storage);
 	
 	PERSISTENT_DECLARATION(Alive)		// Macro registering the object into list
+	INSTANCEOF(Alive, IDescriptable)
     };
 
 }

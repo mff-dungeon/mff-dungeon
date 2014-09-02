@@ -27,13 +27,12 @@ namespace Dungeon {
          */
         virtual void getActions(ActionList * list, IObject *callee) = 0;
         
-        /**
-         * Simpler detection of IDesriptable inheritance.
-         * @return false
+		/**
+		 * Returns, whether the current class is an instance of desired class
+         * @param cname name of the desired class
+         * @return true, if the class is instance of cname
          */
-        virtual bool isDescriptable() const {
-            return false;
-        }
+		virtual bool instanceOf(string cname) const;
        
         /*
          * Serializing functions: 
@@ -93,7 +92,9 @@ namespace Dungeon {
          * A special method used for serializing
          * @return the name of this class
          */
-        virtual string className() const = 0;
+        virtual string className() const {
+			return "IObject";
+		};
 
         
         ObjectPointer getObjectPointer();

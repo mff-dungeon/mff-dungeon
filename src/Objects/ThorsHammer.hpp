@@ -44,6 +44,7 @@ namespace Dungeon {
         };
         
     PERSISTENT_DECLARATION(ThorsHammer)
+	INSTANCEOF(ThorsHammer, IObject)
     };
 }
 #endif	/* THORSHAMMER_HPP */

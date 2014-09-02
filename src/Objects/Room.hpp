@@ -23,6 +23,7 @@ namespace Dungeon {
         virtual void explore(ActionDescriptor* ad);
 	
     PERSISTENT_DECLARATION(Room)
+	INSTANCEOF(Room, IDescriptable)
 			
     };
 	

@@ -40,6 +40,7 @@ namespace Dungeon {
 		int usedWeight;
 		
 	PERSISTENT_DECLARATION(Backpack)
+	INSTANCEOF(Backpack, Item)
 	};
 	
 	class DropAction : public MultiTargetAction {

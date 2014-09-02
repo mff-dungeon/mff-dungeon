@@ -35,11 +35,10 @@ namespace Dungeon {
          */
         virtual string getName() const;
         IDescriptable* setName(string name);
-
-        /**
-         * Simpler "instanceof" detection
-         */
-        virtual bool isDescriptable() const;
+		
+        virtual string className() const {
+			return "IDescriptable";
+		};
         
         /**
          * Describes this item in explore reply
@@ -53,8 +52,9 @@ namespace Dungeon {
         virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
         
         virtual void registerProperties(IPropertyStorage& storage);
-
-        
+		
+		INSTANCEOF(IDescriptable, IObject)
+   
     private:
         string name, longName;
         string description;

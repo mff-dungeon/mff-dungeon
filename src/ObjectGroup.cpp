@@ -43,7 +43,7 @@ namespace Dungeon
             objId firstIdentifier = m_it->first;
             string objectType = objId_getType(firstIdentifier);
             
-            if (m_it->second.get()->isDescriptable()) {
+            if (m_it->second.get()->instanceOf("IDescriptable")) {
                 pair<ObjectGroup::iterator, ObjectGroup::iterator> keyRange = this->equal_range(firstIdentifier);
                 vector<IDescriptable *> sameTypeObjects;
                 

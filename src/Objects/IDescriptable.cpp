@@ -33,10 +33,6 @@ namespace Dungeon {
 		return this;
 	}
 	
-	bool IDescriptable::isDescriptable() const {
-		return getName() != "";
-	}
-	
 	void IDescriptable::registerProperties(IPropertyStorage& storage) {
 		storage.have(name, "Short name")
 			.have(longName, "Long name")

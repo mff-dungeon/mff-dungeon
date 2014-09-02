@@ -34,7 +34,7 @@ namespace Dungeon
 				for (auto& type : r) {
 					*ad << "=== " << type.first + ":\n";
 					for(auto& obj : type.second) {
-						if(obj.second.get()->isDescriptable()) {
+						if(obj.second.get()->instanceOf("IDescriptable")) {
 							IDescriptable* objptr = (IDescriptable*) obj.second.get();
 							*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
 						}
@@ -48,7 +48,7 @@ namespace Dungeon
 				for (auto& type : r) {
 					*ad << "=== " << type.first + ":\n";
 					for(auto& obj : type.second) {
-						if(obj.second.get()->isDescriptable()) {
+						if(obj.second.get()->instanceOf("IDescriptable")) {
 							IDescriptable* objptr = (IDescriptable*) obj.second.get();
 							*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
 						}

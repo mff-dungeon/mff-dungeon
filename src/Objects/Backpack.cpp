@@ -85,7 +85,7 @@ namespace Dungeon {
 						sentence += " and ";
 					}
 					count++;
-					if(item.second.get()->isDescriptable()) {
+					if(item.second.get()->instanceOf("IDescriptable")) {
 						IDescriptable* itemDesc = (IDescriptable*) item.second.get();
 						sentence += itemDesc->getName();
 					}
@@ -98,7 +98,7 @@ namespace Dungeon {
 			else if(items.size() == 1) {
 				for(auto& item : items) {
 					sentence += " There is ";
-					if(item.second.get()->isDescriptable()) {
+					if(item.second.get()->instanceOf("IDescriptable")) {
 						IDescriptable* itemDesc = (IDescriptable*) item.second.get();
 						sentence += itemDesc->getName();
 					}
@@ -194,6 +194,6 @@ namespace Dungeon {
 		backpack->removeItem(item);
 		ad->getGM()->createRelation(ad->getAlive()->getLocation().get(), item, R_INSIDE);
 		
-		*ad << "You've dropped " + item->getName() + ". \n";
+		*ad << "You've dropped " + item->getName() + ".";
 	}
 }

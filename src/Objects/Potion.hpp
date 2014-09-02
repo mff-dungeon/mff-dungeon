@@ -54,6 +54,7 @@ namespace Dungeon {
             int strength;
 
     PERSISTENT_DECLARATION(Potion)
+	INSTANCEOF(Potion, Item)
     };	
     
     class DrinkPotionAction : public MultiTargetAction {

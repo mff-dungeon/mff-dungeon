@@ -32,6 +32,19 @@ private: \
 #define PERSISTENT_IMPLEMENTATION(cName) \
 	AddIObject cName::addIObject(#cName, new cName());
 
+/*
+ *	Simple macro for overloading instanceOf
+ */
+#define INSTANCEOF(cName, pName) \
+public: \
+	virtual bool instanceOf(std::string cname) const { \
+		if(cname.compare(#cName) == 0) { \
+			return true; \
+		} else { \
+			return pName::instanceOf(cname); \
+		} \
+	};
+
 /**
  * Relation types used a lot
  */
