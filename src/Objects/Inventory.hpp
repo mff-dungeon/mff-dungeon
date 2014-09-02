@@ -1,20 +1,20 @@
-#ifndef BACKPACK_HPP
-#define	BACKPACK_HPP
+#ifndef INVENTORY_HPP
+#define	INVENTORY_HPP
 
 #include "../common.hpp"
 #include "../ActionDescriptor.hpp"
 #include "../Actions/MultiTargetAction.hpp"
-#include "Item.hpp"
+#include "Wearable.hpp"
 
 namespace Dungeon {
 	
-	class Backpack : public Item {
+	class Inventory : public Wearable {
 	public:
             const int DEFAULT_SPACE = 20000; // 20 litres
             const int DEFAULT_WEIGHT = 20000; // 20 kg
-		Backpack();
-		Backpack(objId id);
-		virtual ~Backpack();
+		Inventory();
+		Inventory(objId id);
+		virtual ~Inventory();
 		
 		void setMaxSpace(int maxSpace);
 		int getMaxSpace();
@@ -26,6 +26,7 @@ namespace Dungeon {
 		
 		void addItem(Item* item);
 		void removeItem(Item* item);
+		bool contains(Item* item);
 		
 		virtual string getDescriptionSentence();
 		virtual string getGroupDescriptionSentence(vector<IDescriptable*> others);
@@ -39,12 +40,12 @@ namespace Dungeon {
 		int usedSpace;
 		int usedWeight;
 		
-	PERSISTENT_DECLARATION(Backpack, Item)
+	PERSISTENT_DECLARATION(Inventory, Wearable)
 	};
 	
 	class DropAction : public MultiTargetAction {
 	public:
-		DropAction(string type = "backpack-drop") : MultiTargetAction(type) {}
+		DropAction(string type = "inventory-drop") : MultiTargetAction(type) {}
         
         virtual void explain(ActionDescriptor* ad);
         virtual bool matchCommand(string command);
@@ -54,5 +55,5 @@ namespace Dungeon {
 	};
 }
 
-#endif	/* BACKPACK_HPP */
+#endif	/* INVENTORY_HPP */
 

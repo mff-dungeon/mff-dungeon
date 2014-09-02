@@ -62,6 +62,7 @@ namespace Dungeon {
     class ActionList;
     class Item;
     class Potion;
+	class Inventory;
     struct ObjectPointer;
     
     /**

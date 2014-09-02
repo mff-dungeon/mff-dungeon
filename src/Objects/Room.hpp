@@ -21,6 +21,8 @@ namespace Dungeon {
         virtual string getDescriptionSentence();
         virtual void getActions(ActionList* list, IObject* calee);
         virtual void explore(ActionDescriptor* ad);
+		
+		bool contains(IObject* object);
 	
     PERSISTENT_DECLARATION(Room, IDescriptable)
 			

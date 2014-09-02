@@ -2,7 +2,7 @@
 #include "../ActionList.hpp"
 #include "../ActionDescriptor.hpp"
 #include "Room.hpp"
-#include "Backpack.hpp"
+#include "Inventory.hpp"
 
 namespace Dungeon {
 	Human::Human() {
@@ -80,7 +80,7 @@ namespace Dungeon {
 						try {
 							ObjectMap backpacks = this->getRelations(Relation::Master, R_INVENTORY);
 							for(auto& item : backpacks) {
-								if(!item.second.get()->instanceOf(Backpack)) continue;
+								if(!item.second.get()->instanceOf(Inventory)) continue;
 								*ad << ((IDescriptable*) item.second.get())->getDescriptionSentence();
 							}
 						}
@@ -99,6 +99,20 @@ namespace Dungeon {
 				RegexMatcher::matcher("who( )?am( )?i"),
 				[this] (ActionDescriptor * ad) {
 					*ad << "You are " + ad->getAlive()->getName() + ".";
+				}, false));
+				
+			// TODO - redo to a MTA. add equiped relations and other inventories
+			list->addAction(new CallbackAction("what i own", "what i own - A list of items in backpack",
+				RegexMatcher::matcher("what i (have|own)"),
+				[this] (ActionDescriptor* ad) {
+					try {
+						ObjectMap backpacks = this->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Backpack]);
+						Inventory* backpack = (Inventory*) backpacks.begin()->second.get();
+						*ad << backpack->getDescriptionSentence();
+					}
+					catch (const std::out_of_range& e) {
+						
+					}
 				}, false));
             
             list->addAction(new CallbackAction("self-rename", "",

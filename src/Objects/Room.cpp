@@ -5,8 +5,9 @@
 #include "../ObjectGroup.hpp"
 #include "../ActionDescriptor.hpp"
 #include "Item.hpp"
-#include "Backpack.hpp"
+#include "Inventory.hpp"
 #include "../RandomString.hpp"
+#include "Wearable.hpp"
 
 namespace Dungeon {
 
@@ -18,6 +19,19 @@ namespace Dungeon {
 		
 	}
 	
+	bool Room::contains(IObject* object) {
+		// If it throws an error, it's because there is nothing, so it should be safe to return false
+		try {
+			ObjectMap inside = getRelations(Relation::Master).at(R_INSIDE);
+			if(inside.find(object->getId()) != inside.end())
+				return true;
+		}
+		catch (const std::out_of_range& e) {
+			
+		}
+		return false;
+	}
+
 	void Room::getActions(ActionList* list, IObject *callee) {
 		LOGS("Room", Verbose) << "Getting actions on " << this->getName() << "." << LOGF;
 		// Recursively search all items in this room
@@ -110,30 +124,30 @@ namespace Dungeon {
 		}
 		
 		// Let's get the backpack, supposes only one for now
-		Backpack* backpack = 0;
+		Inventory* inventory = 0;
 		try {
-			ObjectMap inv = ad->getAlive()->getRelations(Relation::Master, R_INVENTORY);
+			ObjectMap inv = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Slot::Backpack]);
 			for(auto& item : inv) {
-				if(item.second.get()->instanceOf(Backpack)) {
-					backpack = (Backpack*) item.second.get();
+				if(item.second.get()->instanceOf(Inventory)) {
+					inventory = (Inventory*) item.second.get();
 				}
 			}
 		}
 		catch (const std::out_of_range& e) {
-			cout << "Fuck";
+			
 		}
-		if(backpack == 0) {
-			*ad << "You have no backpack to put " << item->getName() << " in. \n";
+		if(inventory == 0) {
+			*ad << "You have no inventory to put " << item->getName() << " in. \n";
 			return;
 		}
 		
-		if(backpack->getFreeWeight() < item->getWeight()) {
-			*ad << "Your backpack would be too heavy with " << item->getName() << ".";
+		if(inventory->getFreeWeight() < item->getWeight()) {
+			*ad << "Your inventory would be too heavy with " << item->getName() << ".";
 			return;
 		}
 		
-		if(backpack->getFreeSpace() < item->getSize()) {
-			*ad << "There is no space left for " << item->getName() << " in your backpack. \n";
+		if(inventory->getFreeSpace() < item->getSize()) {
+			*ad << "There is no space left for " << item->getName() << " in your inventory. \n";
 			return;
 		}
 		// Everything is allright, let's add it
@@ -152,7 +166,7 @@ namespace Dungeon {
 			
 		}
 		ad->getGM()->removeRelation(current, item, R_INSIDE);
-		backpack->addItem(item);
+		inventory->addItem(item);
 		*ad << "You've picked up " + item->getName() + ".";
 	}
 }

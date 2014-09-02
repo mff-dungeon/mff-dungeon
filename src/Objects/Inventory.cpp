@@ -1,17 +1,16 @@
-
-#include "Backpack.hpp"
+#include "Inventory.hpp"
 #include "Alive.hpp"
 #include "../RandomString.hpp"
 
 namespace Dungeon {
-	Backpack::Backpack() {
+	Inventory::Inventory() {
 		this->maxSpace = DEFAULT_SPACE;
 		this->maxWeight = DEFAULT_WEIGHT;
 		this->usedSpace = 0;
 		this->usedWeight = 0;
 	}
 	
-	Backpack::Backpack(objId id) {
+	Inventory::Inventory(objId id) {
 		this->setId(id);
 		this->maxSpace = DEFAULT_SPACE;
 		this->maxWeight = DEFAULT_WEIGHT;
@@ -19,49 +18,62 @@ namespace Dungeon {
 		this->usedWeight = 0;
 	}
 
-	Backpack::~Backpack() {
+	Inventory::~Inventory() {
 
 	}
 	
-	void Backpack::setMaxSpace(int maxSpace) {
+	void Inventory::setMaxSpace(int maxSpace) {
 		this->maxSpace = maxSpace;
 	}
 	
-	int Backpack::getMaxSpace() {
+	int Inventory::getMaxSpace() {
 		return this->maxSpace;
 	}
 	
-	int Backpack::getFreeSpace() {
+	int Inventory::getFreeSpace() {
 		return (this->maxSpace - this->usedSpace);
 	}
 	
-	void Backpack::setMaxWeight(int maxWeight) {
+	void Inventory::setMaxWeight(int maxWeight) {
 		this->maxWeight = maxWeight;
 	}
 	
-	int Backpack::getMaxWeight() {
+	int Inventory::getMaxWeight() {
 		return this->maxWeight;
 	}
 	
-	int Backpack::getFreeWeight() {
+	int Inventory::getFreeWeight() {
 		return (this->maxWeight - this->usedWeight);
 	}
 	
-	void Backpack::addItem(Item* item) {
+	void Inventory::addItem(Item* item) {
 		this->usedWeight += item->getWeight();
 		this->usedSpace += item->getSize();
 		this->getGameManager()->createRelation(this, item, R_INVENTORY);
 		save();
 	}
 	
-	void Backpack::removeItem(Item* item) {
+	void Inventory::removeItem(Item* item) {
 		this->usedWeight -= item->getWeight();
 		this->usedSpace -= item->getSize();
 		this->getGameManager()->removeRelation(this, item, R_INVENTORY);
 		save();
 	}
+
+	bool Inventory::contains(Item* item) {
+		// If it throws an error, it's because there is nothing, so it should be safe to return false
+		try {
+			ObjectMap inside = this->getRelations(Relation::Master, R_INVENTORY);
+			if(inside.find(item->getId()) != inside.end())
+				return true;
+		}
+		catch (const std::out_of_range& e) {
+			
+		}
+		return false;
+	}
 	
-	string Backpack::getDescriptionSentence() {
+	string Inventory::getDescriptionSentence() {
 		string sentence;
         
 		sentence = RandomString::get()
@@ -111,7 +123,7 @@ namespace Dungeon {
 		return sentence;
 	}
 	
-	string Backpack::getGroupDescriptionSentence(vector<IDescriptable*> others) {
+	string Inventory::getGroupDescriptionSentence(vector<IDescriptable*> others) {
 		if (others.size() == 0) return "";
         else if (others.size() == 1) return getDescriptionSentence();
         
@@ -122,8 +134,12 @@ namespace Dungeon {
         return sentence;
 	}
 	
-	void Backpack::getActions(ActionList* list, IObject* callee) {
+	void Inventory::getActions(ActionList* list, IObject* callee) {
 		Item::getActions(list, callee);
+		/*
+		 * TODO: Should call actually Wearable::getActions for equip/unequip, but need to
+		 * work on backpack shifting (items in it, ...)
+		 */
 		
 		// Drop action, adding only if there is anything to drop
 		DropAction* action = new DropAction;
@@ -142,7 +158,7 @@ namespace Dungeon {
 		}
 	}
 	
-	void Backpack::registerProperties(IPropertyStorage& storage) {
+	void Inventory::registerProperties(IPropertyStorage& storage) {
 		storage.have(maxSpace, "Maximum space of backpack").
 				have(maxWeight, "Maximum weight of backpack").
 				have(usedSpace, "Space currently used").
@@ -150,7 +166,7 @@ namespace Dungeon {
 		Item::registerProperties(storage);
 	}
 	
-	PERSISTENT_IMPLEMENTATION(Backpack)
+	PERSISTENT_IMPLEMENTATION(Inventory)
 	
 	void DropAction::explain(ActionDescriptor* ad) {
 		*ad << "Use 'drop ...' to drop items from your backpack. \n";
@@ -174,14 +190,14 @@ namespace Dungeon {
 		}
 		
 		// Get the backpack
-		Backpack* backpack;
+		Inventory* backpack;
 		try {
 			ObjectMap backpacks = item->getRelations(Relation::Slave, R_INVENTORY);
 			if(backpacks.size() == 0) {
 				*ad << "You cannot drop this item.\n";
 				return;
 			}
-			backpack = (Backpack*) backpacks.begin()->second.get();
+			backpack = (Inventory*) backpacks.begin()->second.get();
 		}
 		catch (const std::out_of_range& e) {
 			

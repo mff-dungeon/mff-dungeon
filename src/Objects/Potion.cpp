@@ -55,10 +55,15 @@ namespace Dungeon {
 		Potion* potion = (Potion*) target.get();
 		*ad << "You've drunk " + potion->getName() + ". ";
 		switch(potion->getType()) {
-			case Potion::PotionType::Healing:
-				ad->getAlive()->hitpoints += potion->getStrength();
-				*ad << "You've healed " + to_string(potion->getStrength()) + " hitpoints";
-				break;
+			case Potion::PotionType::Healing: {
+				int healed = potion->getStrength();	// Need to do this to write correct reply
+				if(healed > (ad->getAlive()->getMaxHp() - ad->getAlive()->getCurrentHp())) {
+					healed = (ad->getAlive()->getMaxHp() - ad->getAlive()->getCurrentHp());
+				}
+				ad->getAlive()->changeHp(healed);
+				*ad << "You've healed " + to_string(healed) + " hitpoints";
+				break; 
+			}
 			case Potion::PotionType::NoEffect:
 			default:
 				*ad << "... and it did nothing.";

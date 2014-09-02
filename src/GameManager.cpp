@@ -188,14 +188,15 @@ namespace Dungeon {
         
         this->insertObject(figure);
 		
-		Backpack* pack = new Backpack("item/backpack/" + RANDID);
-		pack->setDropable(false)
+		Inventory* pack = new Inventory("item/backpack/" + RANDID);
+		pack->setSlot(Wearable::Slot::Backpack)
+			->setDropable(false)
 			->setPickable(false)
 			->setName("Leather backpack")
 			->setLongName("A common leather backpack. Not so big and comfortable, but what would you expect?")
 			->save();
 		createRelation(getObject("room/baseRoom"), figure, R_INSIDE);
-		createRelation(figure, pack, R_INVENTORY);
+		createRelation(figure, pack, "equip-backpack");
 		
 		return figure;
     }

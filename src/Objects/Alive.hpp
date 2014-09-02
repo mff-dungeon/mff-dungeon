@@ -21,17 +21,51 @@ namespace Dungeon
         Alive(objId id);
         void getAllActions(ActionList* list);
         virtual void getActions(ActionList* list, IObject *callee);
-        int hitpoints;
         
         virtual string getDescriptionSentence();
         virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
 	
+		virtual int getCurrentHp() const;
+		virtual Alive* setCurrentHp(int hp);
+		virtual int getMaxHp() const;
+		virtual Alive* setMaxHp(int hp);
+		virtual int getAttack() const;
+		virtual Alive* setAttack(int attack);
+		virtual int getDefense() const;
+		virtual Alive* setDefense(int defense);
+		
+		/**
+		 * Calls method to damage alive. Calculates the actual damage and calls reduceHp
+         * @param amount The attacker's attack value
+         */
+		virtual Alive* damageAlive(int amount);
+		
+		/**
+		 * Adds (or removes) hitpoints. Checks for death or full hitpoints.
+         * @param amount The amount to increase (reduce, if negative)
+         */
+		virtual Alive* changeHp(int amount);
+		
+		/**
+		 * Implements the dying procedures
+         */
+		virtual Alive* die();
+		
         /**
          * @return Current location of this being
          */
         ObjectPointer getLocation();
         
         virtual void registerProperties(IPropertyStorage& storage);
+		
+	private:
+		/*
+		 *	Defaults for persistence
+		 */
+        int maxHp = 1000;
+		int currentHp = 1000;
+		int defense = 1;
+		int attack = 1;
 	
 	PERSISTENT_DECLARATION(Alive, IDescriptable)
     };
