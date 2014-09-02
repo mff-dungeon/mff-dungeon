@@ -3,23 +3,54 @@
 #ifndef OBJECTPOINTER_HPP
 #define	OBJECTPOINTER_HPP
 
-#include "GameManager.hpp"
-
 namespace Dungeon {
 
     struct ObjectPointer {
     public:
-        ObjectPointer() {} // Needed for std functions, otherwise unusable
-        ObjectPointer(GameManager *gm, objId id);
+        ObjectPointer() : gm(NULL), id("") {} // "Null OP"
+        ObjectPointer(GameManager *gm, objId id)  : gm(gm), id(id) {}
         ObjectPointer(const ObjectPointer& other) : gm(other.gm), id(other.id) {}
 
         virtual ~ObjectPointer() {}
 
-        IObject *get();
-        objId getId();
+        IObject *get() const;
         
-        bool isLoaded();
+        objId getId() const
+        {
+            return this->id;
+        }
+        
+        bool isLoaded() const;
 
+        /**
+         * You can use it either as an IObject*...
+         */
+        operator IObject* () const {
+            return get();
+        }
+        
+        /**
+         * ... or as id ...
+         */
+        operator const char * () {
+            return getId().c_str();
+        }
+        
+        /**
+         * .. or as a pointer.
+         */
+        IObject* operator->() const {
+            return get();
+        }
+        
+        IObject* operator*() const {
+            return get();
+        }
+        
+        bool operator!() const {
+            return gm == NULL;
+        }
+        
         bool operator==(const ObjectPointer& other) const {
             return other.id == id;
         }

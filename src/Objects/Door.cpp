@@ -17,8 +17,8 @@ namespace Dungeon {
 			ObjectMap targets = this->getRelations(true).at(R_TARGET);
 			DoorwalkAction* action = new DoorwalkAction;
 			for (auto& obj : targets) {
-				if (obj.first != callee->getId()) {
-					action->addTarget(obj.second);
+				if (obj.second != ((Alive*) callee)->getLocation()) {
+					action->addTarget(this->getObjectPointer());
 				}
 			}
 			list->addAction(action);
@@ -28,9 +28,22 @@ namespace Dungeon {
 		}
 	}
 	
-	void DoorwalkAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {	
-            if (ad->getAlive()->getLocation() == target) {
-                *ad << "Well, that wasn't too far. You were already here.";
+	void DoorwalkAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer door) {	
+			ObjectPointer target;
+			try {
+				ObjectMap targets = door.get()->getRelations(true).at(R_TARGET);
+				for (auto& obj : targets) {
+					if (obj.second != ad->getAlive()->getLocation()) {
+						target = obj.second;
+					}
+				}
+			}
+			catch (const std::out_of_range& e) {
+				// What a weird door pointing nowhere...
+			}
+			
+            if (!target) {
+                *ad << "That seems to head nowhere. You've decided not to go there.";
                 return;
             }
             ad->getGM()->moveAlive(ad->getAlive(), target.getId());
@@ -103,6 +116,7 @@ namespace Dungeon {
 	bool DoorwalkAction::matchCommand(string command) {
 		return RegexMatcher::match("(go to|cd) .+", command); // Common mistake :)
 	}
+
 
 	PERSISTENT_IMPLEMENTATION(Door)
 

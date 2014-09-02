@@ -60,7 +60,7 @@ namespace Dungeon {
 				}, false));
 
 			list->addAction(new CallbackAction("explore", "explore - List items you can see in your current location",
-				RegexMatcher::matcher("explore|where (the fuck )?am i|locate me|tell me where (the fuck )?am i|tell me my location"),
+				RegexMatcher::matcher("explore|(tell me )?where (the fuck )?am i|locate me|tell me my location"),
 				[this] (ActionDescriptor * ad) {
 						ObjectMap rooms = this->getRelations(false).at(R_INSIDE);
 						for (auto& room : rooms) {

@@ -17,27 +17,7 @@ namespace Dungeon {
 		petr = (Human*) gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"));
 		gm->createRelation(petr, th, R_INVENTORY);
 		
-		Backpack* aearsisPack = new Backpack("item/backpack/" + RANDID);
-		aearsisPack->setDropable(false)
-			->setPickable(false)
-			->setName("Leather backpack")
-			->setLongName("A nice and new leather backpack")
-			->save();
-		Backpack* asaruPack = new Backpack("item/backpack/" + RANDID);
-		asaruPack->setDropable(false)
-			->setPickable(false)
-			->setName("Leather backpack")
-			->setLongName("A nice and new leather backpack")
-			->save();
-		Backpack* petrPack = new Backpack("item/backpack/" + RANDID);
-		petrPack->setDropable(false)
-			->setPickable(false)
-			->setName("Leather backpack")
-			->setLongName("A nice and new leather backpack")
-			->save();
-		gm->createRelation(aearsis, aearsisPack, R_INVENTORY);
-		gm->createRelation(asaru, asaruPack, R_INVENTORY);
-		gm->createRelation(petr, petrPack, R_INVENTORY);
+		// TODO - zvetsit batohy
 	}
 
 	void WorldCreator::bigBang() {
@@ -78,6 +58,7 @@ namespace Dungeon {
 			->setName("Red potion")
 			->setLongName("A red potion in silver vial.")
 			->save();
+		
 		/*
 		 * Init relations
 		 */

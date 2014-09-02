@@ -1,4 +1,4 @@
-#include <c++/4.9/stdexcept>
+#include <exception>
 
 #include "Room.hpp"
 #include "../ObjectPointer.hpp"
@@ -112,7 +112,7 @@ namespace Dungeon {
 		// Presumes the target is an item, as it was checked when adding
 		Item* item = (Item*) target.get();
 		if(!item->isPickable()) {
-			*ad << "You cannot pick this item. \n";
+			*ad << "You cannot pick " << item->getName() << ". \n";
 			return;
 		}
 		
@@ -130,17 +130,17 @@ namespace Dungeon {
 			cout << "Fuck";
 		}
 		if(backpack == 0) {
-			*ad << "You have no backpack to put this item in. \n";
+			*ad << "You have no backpack to put " << item->getName() << " in. \n";
 			return;
 		}
 		
 		if(backpack->getFreeWeight() < item->getWeight()) {
-			*ad << "Your backpack would be too heavy with this item. \n";
+			*ad << "Your backpack would be too heavy with " << item->getName() << ".";
 			return;
 		}
 		
 		if(backpack->getFreeSpace() < item->getSize()) {
-			*ad << "There is no space left in your backpack. \n";
+			*ad << "There is no space left for " << item->getName() << " in your backpack. \n";
 			return;
 		}
 		// Everything is allright, let's add it

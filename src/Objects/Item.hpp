@@ -16,15 +16,22 @@ namespace Dungeon {
         Item(objId id);
         virtual ~Item();
 		
-		virtual Item* setSize(int size);
-		virtual int getSize();
-		virtual Item* setWeight(int weight);
-		virtual int getWeight();
-		
-		virtual bool isPickable();
-		virtual Item* setPickable(bool pickable);
-		virtual bool isDropable();
-		virtual Item* setDropable(bool dropable);
+        /**
+         * Approximate size in litres/1000 
+         */
+        virtual Item* setSize(int size);
+        virtual int getSize();
+        
+        /**
+         * Approximate weight in kg/1000
+         */
+        virtual Item* setWeight(int weight);
+        virtual int getWeight();
+
+        virtual bool isPickable();
+        virtual Item* setPickable(bool pickable);
+        virtual bool isDropable();
+        virtual Item* setDropable(bool dropable);
 
         virtual void getActions(ActionList* list, IObject* callee);
 

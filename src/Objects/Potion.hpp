@@ -34,6 +34,19 @@ namespace Dungeon {
             return type;
         }
 
+        virtual int getSize() {
+            int s = Item::getSize();
+            if (s != 0) return s;
+            return 100 + getStrength(); // 100 for vial :)
+        }
+        
+        virtual int getWeight() {
+            int s = Item::getSize();
+            if (s != 0) return s;
+            return 100 + getStrength() * 2; // Potions are heavier than water
+        }
+
+
         virtual void registerProperties(IPropertyStorage& storage);
 
     private:

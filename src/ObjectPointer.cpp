@@ -1,27 +1,15 @@
 #include "ObjectPointer.hpp"
+#include "GameManager.hpp"
 
 namespace Dungeon
 {
 
-    ObjectPointer::ObjectPointer(GameManager *gm, objId id)
-    {
-        this->gm = gm;
-        this->id = id;
-    }
-
-    IObject* ObjectPointer::get()
-    {
-        return gm->getObject(this->id);
-    }
-
-    objId ObjectPointer::getId()
-    {
-        return this->id;
-    }
-	
-	bool ObjectPointer::isLoaded() {
+	bool ObjectPointer::isLoaded() const {
 		return gm->hasObjectLoaded(id);
 	}
-
+	
+	IObject* ObjectPointer::get() const {
+		return gm->getObject(this->id);
+	}
 
 }

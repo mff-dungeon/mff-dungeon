@@ -1,9 +1,3 @@
-/* 
- * File:   Backpack.cpp
- * Author: salmelu
- * 
- * Created on September 1, 2014, 10:11 PM
- */
 
 #include "Backpack.hpp"
 #include "Alive.hpp"
@@ -56,12 +50,14 @@ namespace Dungeon {
 		this->usedWeight += item->getWeight();
 		this->usedSpace += item->getSize();
 		this->getGameManager()->createRelation(this, item, R_INVENTORY);
+		save();
 	}
 	
 	void Backpack::removeItem(Item* item) {
 		this->usedWeight -= item->getWeight();
 		this->usedSpace -= item->getSize();
 		this->getGameManager()->removeRelation(this, item, R_INVENTORY);
+		save();
 	}
 	
 	string Backpack::getDescriptionSentence() {

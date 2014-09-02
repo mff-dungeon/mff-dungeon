@@ -6,13 +6,12 @@
 #include "../Actions/MultiTargetAction.hpp"
 #include "Item.hpp"
 
-#define DEFAULT_SPACE 500
-#define DEFAULT_WEIGHT 5000
-
 namespace Dungeon {
 	
 	class Backpack : public Item {
 	public:
+            const int DEFAULT_SPACE = 20000; // 20 litres
+            const int DEFAULT_WEIGHT = 20000; // 20 kg
 		Backpack();
 		Backpack(objId id);
 		virtual ~Backpack();
