@@ -15,7 +15,7 @@ namespace Dungeon {
 		LOGS("Door", Verbose) << "Getting actions on " << this->getId() << "." << LOGF;		
 		// Add move actions to all rooms
 		try{
-			ObjectMap targets = this->getRelations(true).at(R_TARGET);
+			ObjectMap targets = this->getRelations(Relation::Master, R_TARGET);
 			DoorwalkAction* action = new DoorwalkAction;
 			for (auto& obj : targets) {
 				if (obj.second != ((Alive*) callee)->getLocation()) {
@@ -32,7 +32,7 @@ namespace Dungeon {
 	void DoorwalkAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer door) {	
 			ObjectPointer target;
 			try {
-				ObjectMap targets = door.get()->getRelations(true).at(R_TARGET);
+				ObjectMap targets = door.get()->getRelations(Relation::Master, R_TARGET);
 				for (auto& obj : targets) {
 					if (obj.second != ad->getAlive()->getLocation()) {
 						target = obj.second;

@@ -30,7 +30,7 @@ namespace Dungeon
 					target = ad->getGM()->getObject(matches[3]);
 				}
 				*ad << "So you want to know something? Relations which " << target->getId() << " master:\n";
-				RelationList r = target->getRelations(true);
+				RelationList r = target->getRelations(Relation::Master);
 				for (auto& type : r) {
 					*ad << "=== " << type.first + ":\n";
 					for(auto& obj : type.second) {
@@ -44,7 +44,7 @@ namespace Dungeon
 					}
 				}
 				*ad << "Slave:\n";
-				r = target->getRelations(false);
+				r = target->getRelations(Relation::Slave);
 				for (auto& type : r) {
 					*ad << "=== " << type.first + ":\n";
 					for(auto& obj : type.second) {

@@ -22,6 +22,11 @@ namespace Dungeon {
 	public:
             objId pid, sid;
             string pclass, sclass, relation;
+            
+            enum Dir {
+                Slave = 0,
+                Master = 1
+            };
 
             /**
              * Constructs a new relation. May be supplied with empty string 

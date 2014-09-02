@@ -144,13 +144,13 @@ namespace Dungeon {
 	void GameManager::deleteObject(IObject* obj) {
 		LOGS("GameManager", Verbose) << "Deleting object " << obj->getId() << "." << LOGF;
 		
-		for (RelationList::value_type& rel : obj->getRelations(true)) {
+		for (RelationList::value_type& rel : obj->getRelations(Relation::Master)) {
 			for (ObjectMap::value_type& pair : rel.second) {
 				removeRelation(obj, pair.second.get(), rel.first);
 			}
 		}
 		
-		for (RelationList::value_type& rel : obj->getRelations(false)) {
+		for (RelationList::value_type& rel : obj->getRelations(Relation::Slave)) {
 			for (ObjectMap::value_type& pair : rel.second) {
 				removeRelation(pair.second.get(), obj, rel.first);
 			}
@@ -212,7 +212,7 @@ namespace Dungeon {
 		slave->addRelation(relation, getObjectPointer(master->getId()), false);
 	}
 	
-	void GameManager::clearRelationsOfType(IObject* obj, string relation, bool master) {
+	void GameManager::clearRelationsOfType(IObject* obj, string relation, Relation::Dir master) {
 		Relation* ref_obj;
 		if (master)
 			ref_obj = new Relation(obj->getId(), "0", "0", "0", relation);

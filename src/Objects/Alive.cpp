@@ -19,7 +19,7 @@ namespace Dungeon {
 		// Get actions for the inventory items - now searches backpacks + thors hammer
 		LOGS("Alive", Verbose) << "Getting actions on inventory - " << this->getId() << "." << LOGF;
 		try{
-			ObjectMap inventory = getRelations(true).at(R_INVENTORY);
+			ObjectMap inventory = getRelations(Relation::Master, R_INVENTORY);
 			for(auto& item: inventory) {
 				item.second.get()->getActions(list, this);
 			}
@@ -31,7 +31,7 @@ namespace Dungeon {
 		LOGS("Alive", Verbose) << "Getting actions in location - " << this->getId() << "." << LOGF;
 		// Find objects in current location
 		try{
-			ObjectMap room = getRelations(false).at(R_INSIDE);
+			ObjectMap room = getRelations(Relation::Slave, R_INSIDE);
 			for(auto& item: room) {
 				item.second.get()->getActions(list, this);
 			}
@@ -87,7 +87,7 @@ namespace Dungeon {
     }
 
 	ObjectPointer Alive::getLocation() {
-		return getRelations(false).at(R_INSIDE).begin()->second;
+		return getRelations(Relation::Slave, R_INSIDE).begin()->second;
 	}
 
 

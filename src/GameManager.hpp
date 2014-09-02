@@ -85,7 +85,7 @@ namespace Dungeon {
          * @param relation relations to be removed
          * @param master true, if the relation is a master relation
          */
-        void clearRelationsOfType(IObject* obj, string relation, bool master = true);
+        void clearRelationsOfType(IObject* obj, string relation, Relation::Dir master = Relation::Master);
 		
         /**
          * Removes a relation from the object and from storage

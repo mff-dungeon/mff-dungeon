@@ -6,6 +6,7 @@
 #include "ObjectList.hpp"
 #include "AddIObject.hpp"
 #include "IPropertyStorage.hpp"
+#include "Relation.hpp"
 
 /*
  * Macro for each saveable object - defines a function returning a new blank 
@@ -122,7 +123,13 @@ namespace Dungeon {
          * Returns either master, or slave relations of the object
          * @param master true, if the relation is master relation
          */
-        RelationList getRelations(bool master=true);
+        RelationList& getRelations(Relation::Dir dir);
+        
+        /**
+         * Returns objects with given relation to this object
+         * @param master true, if the relation is master relation
+         */
+        ObjectMap& getRelations(Relation::Dir dir, string type);
         
         /**
          * A special method used for some magic

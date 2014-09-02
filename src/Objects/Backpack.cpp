@@ -69,7 +69,7 @@ namespace Dungeon {
             << "You have a " + this->getName() + " with you." << endr;
 		
 		try {
-			ObjectMap items = this->getRelations(true).at(R_INVENTORY);
+			ObjectMap items = this->getRelations(Relation::Master, R_INVENTORY);
 			if(items.size() >= 2) {
 				int count = 0;
 				sentence += " There are ";
@@ -128,7 +128,7 @@ namespace Dungeon {
 		// Drop action, adding only if there is anything to drop
 		DropAction* action = new DropAction;
 		try {
-			ObjectMap itemsIn = this->getRelations(true).at(R_INVENTORY);
+			ObjectMap itemsIn = this->getRelations(Relation::Master, R_INVENTORY);
 			for(auto& item : itemsIn) {
 				item.second.get()->getActions(list, callee);
 				action->addTarget(item.second);
@@ -176,7 +176,7 @@ namespace Dungeon {
 		// Get the backpack
 		Backpack* backpack;
 		try {
-			ObjectMap backpacks = item->getRelations(false).at(R_INVENTORY);
+			ObjectMap backpacks = item->getRelations(Relation::Slave, R_INVENTORY);
 			if(backpacks.size() == 0) {
 				*ad << "You cannot drop this item.\n";
 				return;

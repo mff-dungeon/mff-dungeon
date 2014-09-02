@@ -22,7 +22,7 @@ namespace Dungeon {
 		LOGS("Room", Verbose) << "Getting actions on " << this->getName() << "." << LOGF;
 		// Recursively search all items in this room
 		try {
-			ObjectMap objects = getRelations(true).at(R_INSIDE);
+			ObjectMap objects = getRelations(Relation::Master, R_INSIDE);
 			for(auto& item: objects) {
 				if (item.second.getId() != callee->getId())
 					item.second.get()->getActions(list, callee);
@@ -35,7 +35,7 @@ namespace Dungeon {
 		// Add pickup for items
 		PickupAction* pickAction = new PickupAction;
 		try {
-			ObjectMap itemsIn = getRelations(true).at(R_INSIDE);
+			ObjectMap itemsIn = getRelations(Relation::Master, R_INSIDE);
 			for(auto& itemObj: itemsIn) {
 				if(itemObj.second.get()->instanceOf(Item)) {
 					pickAction->addTarget(itemObj.second);
@@ -63,7 +63,7 @@ namespace Dungeon {
 		*ad << this->getDescriptionSentence() << " ";
 		// Recursively search all items in this room
 		try{
-			ObjectMap objects = getRelations(true).at(R_INSIDE);
+			ObjectMap objects = getRelations(Relation::Master, R_INSIDE);
             ObjectGroup groupedObjects(objects);
             
             // remove myself from the exploration group
@@ -112,7 +112,7 @@ namespace Dungeon {
 		// Let's get the backpack, supposes only one for now
 		Backpack* backpack = 0;
 		try {
-			ObjectMap inv = ad->getAlive()->getRelations(true).at(R_INVENTORY);
+			ObjectMap inv = ad->getAlive()->getRelations(Relation::Master, R_INVENTORY);
 			for(auto& item : inv) {
 				if(item.second.get()->instanceOf(Backpack)) {
 					backpack = (Backpack*) item.second.get();
@@ -139,7 +139,7 @@ namespace Dungeon {
 		// Everything is allright, let's add it
 		Room* current = 0;
 		try {
-			ObjectMap rooms = item->getRelations(false).at(R_INSIDE);
+			ObjectMap rooms = item->getRelations(Relation::Slave, R_INSIDE);
 			if(rooms.size() != 1) {
 				LOGS("PickupAction", Error) << "The item is nowhere?!" << LOGF;
 				return;

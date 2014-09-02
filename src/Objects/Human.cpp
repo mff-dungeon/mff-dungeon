@@ -63,7 +63,7 @@ namespace Dungeon {
 			list->addAction(new CallbackAction("explore", "explore - List items you can see in your current location",
 				RegexMatcher::matcher("explore|(tell me )?where (the fuck )?am i|locate me|tell me my location"),
 				[this] (ActionDescriptor * ad) {
-						ObjectMap rooms = this->getRelations(false).at(R_INSIDE);
+						ObjectMap rooms = getRelations(Relation::Slave, R_INSIDE);
 						for (auto& room : rooms) {
 							IObject* obj = room.second.get();
 							Room* r = (Room*) obj;
@@ -71,14 +71,14 @@ namespace Dungeon {
 								r->explore(ad);
 							} else {
 								*ad << "Non-room location: " << obj->getId() << "\n";
-								ObjectMap objects = obj->getRelations(true).at(R_INSIDE);
+								ObjectMap objects = obj->getRelations(Relation::Master, R_INSIDE);
 								for(auto& o : objects) {
 									*ad << "\t" + o.first + "\n";
 								}
 							}
 						}
 						try {
-							ObjectMap backpacks = this->getRelations(true).at(R_INVENTORY);
+							ObjectMap backpacks = this->getRelations(Relation::Master, R_INVENTORY);
 							for(auto& item : backpacks) {
 								if(!item.second.get()->instanceOf(Backpack)) continue;
 								*ad << ((IDescriptable*) item.second.get())->getDescriptionSentence();

@@ -64,15 +64,15 @@ namespace Dungeon {
 		if (other.isLoaded())
 			other.get()->addRelation(type, getObjectPointer(), !master);
 	}
-	
-	RelationList IObject::getRelations(bool master) {
-		if(master) {
-			return relation_master;
-		}
-		else {
-			return relation_slave;
-		}
+
+	RelationList& IObject::getRelations(Relation::Dir dir) {
+		return dir == Relation::Dir::Master ? relation_master : relation_slave;
 	}
+	
+	ObjectMap& IObject::getRelations(Relation::Dir dir, string type) {
+		return getRelations(dir).at(type);
+	}
+
 	
 	void IObject::eraseRelation(string type, ObjectPointer other, bool master) {
 		if (!hasRelation(type, other, master)) return;
