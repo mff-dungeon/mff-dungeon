@@ -3,6 +3,7 @@
 #include "Room.hpp"
 #include "../ActionDescriptor.hpp"
 #include "../ActionList.hpp"
+#include "../RandomString.hpp"
 
 namespace Dungeon {
     
@@ -59,20 +60,11 @@ namespace Dungeon {
 
     
     string Alive::getDescriptionSentence() {
-        rand_init(gen, dist, 0, 3);
-        int rnd = rand_next(gen, dist);
-        
-        switch (rnd) {
-            case 0:
-                return "You recognize " + this->getName() + "'s figure.";
-            case 1:
-                return this->getName() + " is there with you.";
-            case 2:
-                return "You smell the presence of " + this->getName() + ".";
-            case 3:
-            default:
-                return this->getName() + " is nearby.";
-        }
+        return RandomString::get()
+				<< "You recognize " + this->getName() + "'s figure." << endr
+				<< this->getName() + " is there with you." << endr
+				<< "You smell the presence of " + this->getName() + "." << endr
+				<< this->getName() + " is nearby." << endr;
     }
     
     string Alive::getGroupDescriptionSentence(vector<IDescriptable *> others) {
@@ -80,41 +72,18 @@ namespace Dungeon {
         else if (others.size() == 1) return getDescriptionSentence();
         
         string sentence;
-        rand_init(gen, dist, 0, 3);
-        int rnd = rand_next(gen, dist);
-        
-        switch (rnd) {
-            case 0:
-                sentence = "You recognize ";
-                break;
-            case 2:
-                sentence = "You smell the presence of ";
-                break;
-            default:
-                sentence = "";
-                break;
-        }
-        
         for (int i = 0; i < others.size() - 1; i++) {
             if (i != 0) sentence += ", ";
             sentence += others.at(i)->getName();
         }
         
         sentence += " and " + others.at(others.size() - 1)->getName();
-        
-        switch (rnd) {
-            case 1:
-                sentence += " are there with you.";
-                break;
-            case 3:
-                sentence += " are nearby.";
-                break;
-            default:
-                sentence += ".";
-                break;
-        }
-        
-        return sentence;
+		
+        return RandomString::get()
+				<< "You recognize " + sentence + "." << endr
+				<< sentence + " are there with you." << endr
+				<< "You smell the presence of " + sentence + "." << endr
+				<< sentence + " are nearby." << endr;
     }
 
 	ObjectPointer Alive::getLocation() {

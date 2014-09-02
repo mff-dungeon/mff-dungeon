@@ -6,6 +6,7 @@
 #include "../ActionDescriptor.hpp"
 #include "Item.hpp"
 #include "Backpack.hpp"
+#include "../RandomString.hpp"
 
 namespace Dungeon {
 
@@ -50,18 +51,11 @@ namespace Dungeon {
     }
     
     string Room::getDescriptionSentence() {
-        rand_init(gen, dist, 0, 2);
-        int rnd = rand_next(gen, dist);
-        
-        switch (rnd) {
-            case 0:
-                return "You are in " + this->getLongName() + ". " + this->getDescription();
-            case 1:
-                return "You find yourself in " + this->getLongName() + ". " + this->getDescription();
-            case 2:
-            default:
-                return "Seems like you are in " + this->getLongName() + ". " + this->getDescription();
-        }
+		string common = this->getLongName() + ". " + this->getDescription();
+        return RandomString::get()
+                << "You are in " + common << endr
+				<< "You find yourself in " + common << endr
+				<< "Seems like you are in " + common << endr;
     }
 	
 	void Room::explore(ActionDescriptor* ad) {

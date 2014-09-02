@@ -3,6 +3,7 @@
 #include "Item.hpp"
 #include "../Actions/CallbackAction.hpp"
 #include "../ActionDescriptor.hpp"
+#include "../RandomString.hpp"
 
 namespace Dungeon {
 	
@@ -60,17 +61,10 @@ namespace Dungeon {
 	}
 	
 	string Item::getDescriptionSentence() {
-		rand_init(gen, dist, 0, 1);
-        int rnd = rand_next(gen, dist);
-        
-        switch (rnd) {
-            case 0:
-				return "You see " + this->getName() + " lying on the ground.";
-            case 1:
-                return "There lies " + this->getName() + ".";
-            default:
-                return this->getName() + " is nearby.";
-        }
+		return RandomString::get()
+				<< "You see " + this->getName() + " lying on the ground." << endr
+				<< "There lies " + this->getName() + "." << endr
+				<< this->getName() + " is nearby." << endr;
 	}
 	
 	string Item::getGroupDescriptionSentence(vector<IDescriptable*> others) {
@@ -78,38 +72,17 @@ namespace Dungeon {
         else if (others.size() == 1) return getDescriptionSentence();
         
         string sentence;
-        rand_init(gen, dist, 0, 1);
-        int rnd = rand_next(gen, dist);
-        
-        switch (rnd) {
-            case 0:
-                sentence = "You see ";
-                break;
-            case 1:
-                sentence = "There lies ";
-                break;
-            default:
-                sentence = "";
-                break;
-        }
-        
-        for (int i = 0; i < others.size() - 1; i++) {
+		for (int i = 0; i < others.size() - 1; i++) {
             if (i != 0) sentence += ", ";
             sentence += others.at(i)->getName();
         }
         
         sentence += " and " + others.at(others.size() - 1)->getName();
-        
-        switch (rnd) {
-            case 1:
-                sentence += " on the ground.";
-                break;
-            default:
-                sentence += ".";
-                break;
-        }
-        
-        return sentence;
+		
+		return RandomString::get()
+				<< "You see " + sentence + "." << endr
+				<< "There lies " + sentence + " on the ground." << endr
+				<< "On the ground there " << (others.size() > 1 ? "are " : "is ") << sentence + "." << endr;
 	}
 	
 	void Item::registerProperties(IPropertyStorage& storage) {

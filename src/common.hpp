@@ -31,7 +31,7 @@
  *  Random number generation
  */
 #include <random>
-#define rand_init(var, dist, min, max) std::default_random_engine var(time(0)); std::uniform_int_distribution<int> dist(min, max);
+#define rand_init(var, dist, min, max) std::default_random_engine var(Dungeon::hw_random()); std::uniform_int_distribution<int> dist(min, max);
 #define rand_next(var, dist) ( dist(var) )
 #define RAND_ALNUM "qwertyuiopasdfghjklzxcvbnm0123456789"
 #define RAND_ALNUM_LEN 36
@@ -70,6 +70,8 @@ namespace Dungeon {
     typedef string objId;
     typedef map<objId, ObjectPointer> ObjectMap;
     typedef map<string, ObjectMap> RelationList;
+    
+    static random_device hw_random;
     
     class Utils {
     public:

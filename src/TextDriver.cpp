@@ -1,5 +1,6 @@
 #include "TextDriver.hpp"
 #include "ActionDescriptor.hpp"
+#include "RandomString.hpp"
 
 namespace Dungeon {
     
@@ -45,59 +46,28 @@ namespace Dungeon {
     
     string TextDriver::getDontUnderstandResponse(string input) {
         // TODO: think of something more creative
-        
-        static rand_init(gen, dist, 0, 5);
-        int rnd = rand_next(gen, dist);
-        switch (rnd) {
-            case 0:
-                return "What do you mean \"" + input + "\"?";
-            case 1:
-                return "The day may come when I understand \"" + input + "\" but it's not this day.";
-            case 2:
-                return "You just don't get it, do you? I do not understand \"" + input + "\"!";
-            case 3:
-                return "One does not simply ask me to \"" + input + "\".";
-            case 4:
-                return "I wouldn't do that if I were you. Besides, I can't do that.";
-			case 5:
-            default:
-				return "This is not the thing you are trying to do.";
-        }
+        return RandomString::get()
+                << "What do you mean \"" + input + "\"?" << endr
+                << "The day may come when I understand \"" + input + "\" but it's not this day." << endr
+                << "You just don't get it, do you? I do not understand \"" + input + "\"!" << endr
+                << "One does not simply ask me to \"" + input + "\"." << endr
+                << "I wouldn't do that if I were you. Besides, I can't do that." << endr
+				<< "This is not the thing you are trying to do." << endr;
     }
     
     string TextDriver::getStrangerResponse(string input) {
-        stringstream ss;
-		
         // TODO: think of something more creative
-        
-        static rand_init(gen, dist, 0, 2);
-        int rnd = rand_next(gen, dist);
-        switch (rnd) {
-            case 0:
-                return "The Dungeon speaks to no strangers. Add me as a friend and then we'll talk!";
-            case 1:
-                return "Who are you, puny human? Prove yourself to me and add me as a friend!";
-            case 2:
-            default:
-                return "Do not disturb my peace, stranger. We can parley later upon you befriending me!";
-        }
+        return RandomString::get()
+                << "The Dungeon speaks to no strangers. Add me as a friend and then we'll talk!" << endr
+				<< "Who are you, puny human? Prove yourself to me and add me as a friend!" << endr
+				<< "Do not disturb my peace, stranger. We can parley later upon you befriending me!" << endr;
     }
     
     string TextDriver::getNewUserMessage() {
-        stringstream ss;
-        
         // TODO: think of something more creative
-        
-		static rand_init(gen, dist, 0, 2);
-        int rnd = rand_next(gen, dist);
-        switch (rnd) {
-            case 0:
-                return "Greetings, brave warrior! You may now begin your quest.";
-            case 1:
-                return "You have discovered the mighty Dungeon. Choose your words wisely!";
-            case 2:
-            default:
-                return "Beware of the great Dungeon! Ask me a question and I shall answer you.";
-        }
+        return RandomString::get()
+				<< "Greetings, brave warrior! You may now begin your quest."  << endr
+				<< "You have discovered the mighty Dungeon. Choose your words wisely!" << endr
+                << "Beware of the great Dungeon! Ask me a question and I shall answer you." << endr;
     }
 }

@@ -7,21 +7,26 @@ static string ns = "";
 
 void assert(bool cond, string msg) {
     if (!cond) {
-        LOGS("Tester", Error) << "[E] " << ns << ":" << msg << LOGF;
+        LOGS("Tester", Error) << "[ F ] " << ns << ":" << msg << LOGF;
         failedTests++;
-    }
+    } else {
+        LOGS("Tester", Verbose) << "[ . ] " << ns << ":" << msg << LOGF;
+	}
 }
 
 template<typename T>
 void assertEqual(T a, T b, string msg) {
     if (a != b) {
-        LOGS("Tester", Error) << "[E] " << ns << ":" << msg << " expected (" << b << ") got (" << a << ")" << LOGF;
+        LOGS("Tester", Error) << "[ F ] " << ns << ":" << msg << " expected (" << b << ") got (" << a << ")" << LOGF;
         failedTests++;
-    }
+    } else {
+        LOGS("Tester", Verbose) << "[ . ] " << ns << ":" << msg << LOGF;
+	}
 }
 
 void testing(string _namespace) {
     ns = _namespace;
+	LOGS("Tester", Info) << "[---] " << ns << LOGF;
 }
 
 void testStart() {

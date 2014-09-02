@@ -1,6 +1,7 @@
 
 #include "Backpack.hpp"
 #include "Alive.hpp"
+#include "../RandomString.hpp"
 
 namespace Dungeon {
 	Backpack::Backpack() {
@@ -61,16 +62,11 @@ namespace Dungeon {
 	}
 	
 	string Backpack::getDescriptionSentence() {
-		rand_init(gen, dist, 0, 1);
-        int rnd = rand_next(gen, dist);
 		string sentence;
         
-        switch (rnd) {
-            case 0:
-				sentence = "You own a " + this->getName() + ".";
-            default:
-                sentence = "You have a " + this->getName() + " with you.";
-        }
+		sentence = RandomString::get()
+			<< "You own a " + this->getName() + "." << endr
+            << "You have a " + this->getName() + " with you." << endr;
 		
 		try {
 			ObjectMap items = this->getRelations(true).at(R_INVENTORY);

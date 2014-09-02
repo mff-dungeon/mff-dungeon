@@ -10,7 +10,7 @@ HEADEREXT := hpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT) -not -name "main.cpp")
 DYNAMICS := $(shell echo $(DYNDIR))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -std=c++11 -g -O2 -Wall -I/usr/local/include
+CFLAGS := -std=c++11 -g -Wall -I/usr/local/include
 LDFLAGS := -lstdc++ -lsqlite3 -L/usr/local/lib -lgloox
 
 $(TARGET): $(OBJECTS) build/main.o
@@ -47,7 +47,8 @@ sedfix:
 	@git checkout src/dynamic.hpp
 
 tester: test/tester.cpp $(OBJECTS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o bin/tester $<
+	@echo "[ CC ]  test/tester.cpp --> bin/tester"
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o bin/tester $<
 	
 all: $(TARGET) doc
 

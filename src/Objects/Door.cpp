@@ -4,6 +4,7 @@
 #include "../ActionList.hpp"
 #include "../RegexMatcher.hpp"
 #include "../ActionDescriptor.hpp"
+#include "../RandomString.hpp"
 
 namespace Dungeon {
 	
@@ -51,18 +52,10 @@ namespace Dungeon {
 	}
     
     string Door::getDescriptionSentence() {
-        rand_init(gen, dist, 0, 2);
-        int rnd = rand_next(gen, dist);
-        
-        switch (rnd) {
-            case 0:
-                return "There is a " + this->getName() + ".";
-            case 1:
-                return "A " + this->getName() + " is casting a grimm shadow on the floor.";
-            case 2:
-            default:
-                return "You see the frame of a " + this->getName() + ".";
-        }
+        return RandomString::get()
+                << "There is a " + this->getName() + "." << endr
+				<< "A " + this->getName() + " is casting a grimm shadow on the floor." << endr
+				<< "You see the frame of a " + this->getName() + "." << endr;
     }
     
     string Door::getGroupDescriptionSentence(vector<IDescriptable *> others) {
@@ -70,38 +63,18 @@ namespace Dungeon {
         else if (others.size() == 1) return getDescriptionSentence();
         
         string sentence;
-        rand_init(gen, dist, 0, 2);
-        int rnd = rand_next(gen, dist);
-        
-        switch (rnd) {
-            case 0:
-                sentence = "There are ";
-                break;
-            case 1:
-                sentence = "Around you are ";
-                break;
-            case 2:
-                sentence = "You see ";
-                break;
-            default:
-                sentence = "";
-                break;
-        }
-        
+		
         for (int i = 0; i < others.size() - 1; i++) {
             if (i != 0) sentence += ", ";
             sentence += others.at(i)->getName();
         }
         
         sentence += " and " + others.at(others.size() - 1)->getName();
-        
-        switch (rnd) {
-            default:
-                sentence += ".";
-                break;
-        }
-        
-        return sentence;
+		
+        return RandomString::get()
+				<< "There are " + sentence + "." << endr
+				<< "Around you are " + sentence + "." << endr
+				<< "You see " + sentence + "." << endr;
     }
 	
 	void DoorwalkAction::explain(ActionDescriptor* ad) {
