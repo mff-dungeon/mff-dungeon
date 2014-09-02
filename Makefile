@@ -34,6 +34,11 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) $(SRCDIR)/%.$(HEADEREXT)
 	@echo "[ CC ] " $< " --> " $@
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
+doc/Documentation.pdf: $(shell find doc/ -type f -not -iname "Documentation.pdf")
+	@echo [ TeX ] Generating documentation...
+	@cd doc && pdflatex main.tex
+	@mv doc/main.pdf doc/Documentation.pdf
+
 clean:
 	$(RM) -r $(BUILDDIR) $(TARGET)
 	$(RM) *.log
@@ -44,6 +49,9 @@ sedfix:
 tester: test/tester.cpp
 	$(CC) $(CFLAGS) $(LDFLAGS) -o bin/tester $<
 	
-all: $(TARGET)
+all: $(TARGET) doc
 
-.PHONY: clean all
+doc: doc/Documentation.pdf
+
+
+.PHONY: clean all doc
