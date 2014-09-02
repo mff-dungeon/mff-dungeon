@@ -3,3 +3,5 @@ bin/*
 .DS_Store
 Dungeon.xcodeproj
 doc/Documentation.pdf
+doc/main.aux
+doc/main.log

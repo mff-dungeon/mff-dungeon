@@ -1,7 +1,7 @@
 \documentclass[11pt, a4paper]{article}
 \usepackage[czech]{babel}
 \usepackage[utf8]{inputenc}
-\usepackage{a4wide,color,graphicx}
+\usepackage{a4wide,color,graphicx,listings}
 
 \title{\textbf{Jabber dungeon}}
 \author{Michal Staruch\\
@@ -18,6 +18,14 @@
 
 \def\user{\textcolor{blue}{$<$user$>$ }}
 \def\dung{\textcolor{red}{$<$dungeon$>$ }}
+\lstset{
+  keepspaces=true,
+  basicstyle=\footnotesize,
+  language=C++,
+  tabsize=4,
+  showspaces=false,
+  showstringspaces=false
+}
 
 \begin{document}
 
@@ -103,12 +111,6 @@ Zároveň, pokud je v místnosti pouze jeden lektvar, pak spuštění akce vypij
 
 Při výběru objektů se porovnává editační vzdálenost (Damerau-Levenshteinova) názvu objektu od zadaného textu. Při počítání vzdálenosti je změna znaku pocítána jako větší úprava, než přidání či odebrání. Proto je větší šance, že přidání neurčujících slov (členů, zájmen) a naopak nespecifikování částí názvu (bližší popisy) tolik neovlivní volbu.
 
-\section{Logování}
-
-Další částí systému, na kterou jsme patřičně hrdí, je logovací mechanismus.
-
-% TODO Petře, vyvětrej svou chlubnou plíci :)
-
 \section{Další (nejen) herní mechanismy}
 
 \subsection{Skupinový popis}
@@ -121,7 +123,7 @@ potion and Blue potion.
 \end{example}
 
 \subsection{Dialogy}
-
+\label{dialogs}
 Zpočátku vypadal hra striktně podle režimu příkaz -- odpověď, a hra připomínala spíše příkazový řádek\footnote{Z čehož vznikly aliasy pro akce, např. \texttt{cd} pro průchod dveřmi :)}. Toto schéma rozbíjí mechanismus dialogu:
 
 \begin{example}
@@ -145,6 +147,89 @@ you change your name?
 \subsection{Pasti}
 
 % TODO Napsat to a zadokumentovat
+
+\section{Programová část}
+
+V této kapitole bychom chtěli vypíchnout některé části kódu, které se nám líbí, jsou zajímavé, nebo se k nim váže nějaká příhoda.
+
+\subsection{Logování}
+
+Podstatnou částí systému, na kterou jsme patřičně hrdí, je logovací mechanismus.
+
+% TODO Petře, vyvětrej svou chlubnou plíci :)
+
+\subsection{Výběr náhodné zprávy}
+
+Pro ozvláštnění komunikace je dobré nemít všude stejné statické texty, ale výpis trochu měnit.
+
+\begin{example}
+\user something
+\dung One does not simply ask me to "something".
+\user something
+\dung I wouldn't do that if I were you. Besides, I can't do that.
+\user something
+\dung The day may come when I understand "something"{} but it's not 
+this day.
+\end{example}
+
+\noindent Pro tento účel jsme si napsali utilitku \class{RandomString}, která se používá takto:
+
+\begin{lstlisting}
+	return RandomString::get()
+		    << "What do you mean \"" + input + "\"?" << endr
+		    << "One does not simply ask me to \"" + input + "\"." << endr
+		    ...
+			<< "This is not the thing you are trying to do." << endr;
+\end{lstlisting}
+
+\noindent Třída využívá přetížení operátoru \texttt{<<} a přetypovaní na string.
+
+\subsection{InstanceOf}
+
+Potřeba použití nečeho takového signalizuje chybu v návrhu, ale pokud chceme mít obecný mechanismus práce s objekty, je občas potřeba o obecném \texttt{IObject*} zjistit něco více. Proto se hodí tento operátor. Použití:
+
+\begin{lstlisting}
+	Alive* A;
+	A->instanceOf(Backpack); // true / false
+\end{lstlisting}
+
+\noindent Celá věc funguje trochu magicky, ale hlavně rychle. Pomocí preprocesorových maker se v každém objektu vytvoří virtuální inline funkce \texttt{className} a \texttt{isInstanceOf}. ClassName vrací konstantní řetězec obsahující název třídy -- ten se používá například pro serializaci do databáze. Pro použití s instanceOf se ale počítá jen s ukazatelem na tento řetězec. Pomocí dalších maker se ukázka přepíše takto (s využitím konstanty):
+
+\begin{lstlisting}
+	A->isInstanceOf(Backpack::BackpackClassName); // true / false
+\end{lstlisting}
+
+\noindent A protože je funkce inline, kompilátor ukázku přepíše například takto:
+
+\begin{lstlisting}
+	Alive::AliveClassName == Backpack::BackpackClassName 
+		|| IDescriptable::IDescriptableClassName == Backpack::BackpackClassName 
+		|| IObject::IObjectClassName == Backpack::BackpackClassName;
+\end{lstlisting}
+
+\noindent Celý operátor tedy pouze projde hiearchii volané třídy a porovná ukazatele na tento konstantní řetězec.
+
+\subsection{Dialogy}
+
+O tom jak vypadají dialogy v praxi bylo již psáno v části \ref{dialogs}. Jak se ale dialogy používají? Příklad je celý kód akce na přejmenování uživatele:
+
+\begin{lstlisting}
+	*ad << "Well then, what do you want your new name to be?";
+	ad->waitForReply([] (ActionDescriptor *ad, string reply) {
+		((Human*) ad->getAlive())->setUsername(reply)
+				->save();
+		*ad << "OK. You shall now be called " 
+			<< ad->getAlive()->getName() << ". "
+		    << "I'm just curious, why did you change your name?";
+	});
+	ad->waitForReply([] (ActionDescriptor *ad, string reply) {
+		*ad << "Interesting. Now, back to the dungeon!";
+	});
+\end{lstlisting}
+
+\noindent ActionDescriptor umožňuje zařadit do své vnitřní fronty lambda funkci, která bude reagovat na odpověď uživatele. Pokud AD nemá frontu prázdnou, musí si jej Driver někde zapamatovat a vrátit se k němu při přijetí další zprávy.
+
+Všechny lambda funkce nemusí být vytvořeny hned, dají se vytvářet postupně. Tento zápis je však přehledný, a z kódu je hned vidět jak dialog probíhá. Zároveň je ale možno udělat dialog, který není lineární, nebo třeba není předem známý - například boj.
 
 \section{Ukázky}
 

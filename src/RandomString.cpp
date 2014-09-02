@@ -9,7 +9,7 @@ namespace Dungeon {
 	}
 
 	RandomString::EndOfMessage* endr () {
-        return 0;
+        throw "Method endr is not callable.";
 	}
 	
 	RandomString& RandomString::get() {
