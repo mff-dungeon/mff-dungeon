@@ -7,6 +7,53 @@
 #include "AddIObject.hpp"
 #include "IPropertyStorage.hpp"
 
+/*
+ * Macro for each saveable object - defines a function returning a new blank 
+ *  object, defines static AddIObject (which registers the object) and 
+ *  defines a className() method for saving purposes.
+ * Should be used in class declaration.
+ */
+#define PERSISTENT_DECLARATION(cName, pName) \
+public: \
+	virtual IObject* createObject() const \
+	{ \
+		return new cName(); \
+	} \
+private: \
+	static AddIObject addIObject; \
+        NONPERSISTENT_DECLARATION(cName, pName)
+        
+
+/*
+ *	Simple line of code registering the object
+ */
+#define PERSISTENT_IMPLEMENTATION(cName) \
+	AddIObject cName::addIObject(#cName, new cName()); \
+        NONPERSISTENT_IMPLEMENTATION(cName)
+
+#define NONPERSISTENT_DECLARATION(cName, pName) \
+public: \
+	virtual const char * className() const { \
+		return cName::cName##ClassName; \
+	}; \
+        const static char * cName##ClassName; \
+	virtual bool isInstanceOf(char const * cname) const { \
+		if(cName::className() == cname) { \
+			return true; \
+		} else { \
+			return pName::isInstanceOf(cname); \
+		} \
+	};
+
+#define NONPERSISTENT_IMPLEMENTATION(cName) \
+        const char * cName::cName##ClassName = #cName;
+
+/**
+ * This way we can call obj->instanceOf(IDescriptable) and it will work
+ */
+#define instanceOf(cName) isInstanceOf(cName::cName##ClassName)
+
+
 namespace Dungeon {
     
     /**
@@ -27,13 +74,6 @@ namespace Dungeon {
          */
         virtual void getActions(ActionList * list, IObject *callee) = 0;
         
-		/**
-		 * Returns, whether the current class is an instance of desired class
-         * @param cname name of the desired class
-         * @return true, if the class is instance of cname
-         */
-		virtual bool instanceOf(string cname) const;
-       
         /*
          * Serializing functions: 
          *	createObject() returns a new blank object - class needs to define
@@ -89,12 +129,24 @@ namespace Dungeon {
         RelationList getRelations(bool master=true);
         
         /**
-         * A special method used for serializing
+         * A special method used for some magic
          * @return the name of this class
          */
-        virtual string className() const {
-			return "IObject";
-		};
+	virtual const char * className() const {
+		return IObject::IObjectClassName;
+	};
+        
+        const static char * IObjectClassName;
+        
+        /**
+         * Returns, whether the current class is an instance of desired class
+         * See cname limitations because of fast implementation.
+         * @param cname MUST be pointer to <class>::<class>ClassName constant
+         * @return true, if the class is instance of cname
+         */
+	virtual bool isInstanceOf(char const * cname) const {
+		return IObjectClassName == cname;
+	};
 
         
         ObjectPointer getObjectPointer();

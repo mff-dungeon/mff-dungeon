@@ -4,7 +4,8 @@
 
 #include "../src/common.hpp"
 #include "testutils.cpp"
-#include "../src/FuzzyStringMatcher.cpp"
+#include "../src/dynamic.hpp"
+#include "../src/FuzzyStringMatcher.hpp"
 
 void testFSMatcher() {
     testing("FuzzyMatcher");
@@ -43,6 +44,16 @@ void testFSMatcher() {
     matcher.add("Blue potion", 2);
     matcher.add("Green potion", 2);
     assert(matcher.find("blue") == 2, "Potion selection failed");
+}
+
+void testInstanceOf() {
+	Human* h = new Human();
+	
+	testing("InstanceOf");
+	assertEqual(h->instanceOf(Human), true, "Same class does not work");
+	assertEqual(h->instanceOf(Alive), true, "Inherited class does not work");
+	assertEqual(h->instanceOf(IObject), true, "Base class does not work");
+	assertEqual(h->instanceOf(Backpack), false, "Different class does not work");
 }
 
 int main(int argc, char** argv) {

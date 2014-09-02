@@ -8,43 +8,6 @@
 
 #define DB_NAME "dungeon.db"
 
-/*
- * Macro for each saveable object - defines a function returning a new blank 
- *  object, defines static AddIObject (which registers the object) and 
- *  defines a className() method for saving purposes.
- * Should be used in class declaration.
- */
-#define PERSISTENT_DECLARATION(cName) \
-public: \
-	virtual IObject* createObject() const \
-	{ \
-		return new cName(); \
-	} \
-	virtual string className() const { \
-		return #cName; \
-	}; \
-private: \
-	static AddIObject addIObject;
-
-/*
- *	Simple line of code registering the object
- */
-#define PERSISTENT_IMPLEMENTATION(cName) \
-	AddIObject cName::addIObject(#cName, new cName());
-
-/*
- *	Simple macro for overloading instanceOf
- */
-#define INSTANCEOF(cName, pName) \
-public: \
-	virtual bool instanceOf(std::string cname) const { \
-		if(cname.compare(#cName) == 0) { \
-			return true; \
-		} else { \
-			return pName::instanceOf(cname); \
-		} \
-	};
-
 /**
  * Relation types used a lot
  */

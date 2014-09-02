@@ -108,7 +108,7 @@ namespace Dungeon {
 		*ad << "Use 'go to ...' to enter another room. Currently you can go to:\n";
 		for (auto& pair : targets) {
 			IObject* obj = pair.second.get();
-			if (obj->instanceOf("IDescriptable"))
+			if (obj->instanceOf(IDescriptable))
 				*ad << "- " << ((IDescriptable*) obj)->getLongName() << "\n"; // Todo - output as sentence
 		}
 	}

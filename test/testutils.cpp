@@ -1,5 +1,5 @@
 
-#include "../src/Logger.cpp"
+#include "../src/Logger.hpp"
 
 using namespace Dungeon;
 static int failedTests = 0;

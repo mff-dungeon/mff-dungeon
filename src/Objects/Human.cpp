@@ -2,6 +2,7 @@
 #include "../ActionList.hpp"
 #include "../ActionDescriptor.hpp"
 #include "Room.hpp"
+#include "Backpack.hpp"
 
 namespace Dungeon {
 	Human::Human() {
@@ -79,7 +80,7 @@ namespace Dungeon {
 						try {
 							ObjectMap backpacks = this->getRelations(true).at(R_INVENTORY);
 							for(auto& item : backpacks) {
-								if(!item.second.get()->instanceOf("Backpack")) continue;
+								if(!item.second.get()->instanceOf(Backpack)) continue;
 								*ad << ((IDescriptable*) item.second.get())->getDescriptionSentence();
 							}
 						}

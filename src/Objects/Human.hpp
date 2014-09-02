@@ -37,8 +37,7 @@ namespace Dungeon {
     private:
         string username, contact;
         
-    PERSISTENT_DECLARATION(Human)
-	INSTANCEOF(Human, Alive)
+    PERSISTENT_DECLARATION(Human, Alive)
 
     };
 }

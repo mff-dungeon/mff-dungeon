@@ -19,8 +19,7 @@ namespace Dungeon {
         virtual string getDescriptionSentence();
         virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
         
-    PERSISTENT_DECLARATION(Door)
-	INSTANCEOF(Door, IDescriptable)
+    PERSISTENT_DECLARATION(Door, IDescriptable)
     }; 
     
     /**

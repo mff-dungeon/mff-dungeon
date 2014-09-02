@@ -22,8 +22,7 @@ namespace Dungeon {
         virtual void getActions(ActionList* list, IObject* calee);
         virtual void explore(ActionDescriptor* ad);
 	
-    PERSISTENT_DECLARATION(Room)
-	INSTANCEOF(Room, IDescriptable)
+    PERSISTENT_DECLARATION(Room, IDescriptable)
 			
     };
 	

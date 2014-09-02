@@ -7,13 +7,13 @@ TARGET := bin/dungeon
 
 SRCEXT := cpp
 HEADEREXT := hpp
-SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
+SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT) -not -name "main.cpp")
 DYNAMICS := $(shell echo $(DYNDIR))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -std=c++11 -g -O2 -Wall -I/usr/local/include
 LDFLAGS := -lstdc++ -lsqlite3 -L/usr/local/lib -lgloox
 
-$(TARGET): $(OBJECTS)
+$(TARGET): $(OBJECTS) build/main.o
 	@mkdir -p $(shell dirname $@)
 	@echo "[ LD ] " $(TARGET)
 	@$(CC) $^ -o $(TARGET) $(LDFLAGS)
@@ -46,8 +46,8 @@ clean:
 sedfix:
 	@git checkout src/dynamic.hpp
 
-tester: test/tester.cpp
-	$(CC) $(CFLAGS) $(LDFLAGS) -o bin/tester $<
+tester: test/tester.cpp $(OBJECTS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o bin/tester $<
 	
 all: $(TARGET) doc
 

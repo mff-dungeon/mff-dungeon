@@ -35,10 +35,6 @@ namespace Dungeon {
          */
         virtual string getName() const;
         IDescriptable* setName(string name);
-		
-        virtual string className() const {
-			return "IDescriptable";
-		};
         
         /**
          * Describes this item in explore reply
@@ -52,8 +48,8 @@ namespace Dungeon {
         virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
         
         virtual void registerProperties(IPropertyStorage& storage);
-		
-		INSTANCEOF(IDescriptable, IObject)
+	
+        NONPERSISTENT_DECLARATION(IDescriptable, IObject)	
    
     private:
         string name, longName;

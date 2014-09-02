@@ -47,8 +47,7 @@ namespace Dungeon {
 		bool pickable;
 		bool dropable;
 
-    PERSISTENT_DECLARATION(Item)
-	INSTANCEOF(Item, IDescriptable)
+    PERSISTENT_DECLARATION(Item, IDescriptable)
     };
 };
 

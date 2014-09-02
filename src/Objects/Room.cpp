@@ -36,8 +36,7 @@ namespace Dungeon {
 		try {
 			ObjectMap itemsIn = getRelations(true).at(R_INSIDE);
 			for(auto& itemObj: itemsIn) {
-				// TODO: implement something nicer
-				if(itemObj.second.get()->instanceOf("Item")) {
+				if(itemObj.second.get()->instanceOf(Item)) {
 					pickAction->addTarget(itemObj.second);
 				}
 			}
@@ -121,7 +120,7 @@ namespace Dungeon {
 		try {
 			ObjectMap inv = ad->getAlive()->getRelations(true).at(R_INVENTORY);
 			for(auto& item : inv) {
-				if(item.second.get()->instanceOf("Backpack")) {
+				if(item.second.get()->instanceOf(Backpack)) {
 					backpack = (Backpack*) item.second.get();
 				}
 			}

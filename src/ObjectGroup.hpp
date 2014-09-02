@@ -42,7 +42,7 @@ namespace Dungeon {
             ObjectGroup::iterator it;
             for (it = this->begin(); it != this->end(); it++) {
                 IObject* obj = it->second.get();
-                if (obj->instanceOf("IDescriptable")) {
+                if (obj->instanceOf(IDescriptable)) {
                     IDescriptable* dobj = (IDescriptable*) obj;
                      matcher.add(dobj->getLongName(), it->second);
                      matcher.add(dobj->getName(), it->second);

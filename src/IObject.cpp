@@ -115,13 +115,6 @@ namespace Dungeon {
 		this->gm = gm;
 	}
 
-	bool IObject::instanceOf(string cname) const {
-		if(cname == "IObject") {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+	NONPERSISTENT_IMPLEMENTATION(IObject)
 
 }

@@ -58,5 +58,7 @@ namespace Dungeon {
         return sentence;
     }
 
+	NONPERSISTENT_IMPLEMENTATION(IDescriptable)
+	
 }
 
