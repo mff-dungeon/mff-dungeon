@@ -54,10 +54,10 @@ namespace Dungeon {
     }
 	
 	void Alive::registerProperties(IPropertyStorage& storage) {
-		storage.have(currentHp, "Current hitpoints")
-			.have(maxHp, "Maximum hitpoints")
-			.have(attack, "Attack value")
-			.have(defense, "Defense value");
+		storage.have(currentHp, "alive-currenthp", "Current hitpoints")
+			.have(maxHp, "alive-maxhp", "Maximum hitpoints")
+			.have(attack, "alive-attack", "Attack value")
+			.have(defense, "alive-defense", "Defense value");
 		IDescriptable::registerProperties(storage);
 	}
 

@@ -38,4 +38,11 @@ namespace Dungeon {
 			LOGS("Loader", Fatal) << "Error saving object " << id << ", error code " << err << LOGF;
 		}
 	}
+	
+	vector<objId> ObjectLoader::getObjectList() {
+		vector<objId> list;
+		DatabaseHandler::getInstance().getObjectList(list);
+		return list;
+	}
+
 }

@@ -34,8 +34,8 @@ namespace Dungeon {
 	}
 	
 	void Potion::registerProperties(IPropertyStorage& storage) {
-		storage.have((int&) type, "Potion type (0 - ineffective, 1 - healing)")
-			.have(strength, "Potion strength");
+		storage.have((int&) type, "potion-type", "Potion type (0 - ineffective, 1 - healing)")
+			.have(strength, "potion-strength", "Potion strength");
 		Item::registerProperties(storage);
 	}
 	

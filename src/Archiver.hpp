@@ -40,9 +40,9 @@ namespace Dungeon {
             Archiver& operator<<(bool b);
             Archiver& operator>>(bool& b);
             
-            virtual IPropertyStorage& have(int& prop, string desc, bool editable = true);
-            virtual IPropertyStorage& have(string& prop, string desc, bool editable = true);
-            virtual IPropertyStorage& have(bool& prop, string desc, bool editable = true);
+            virtual IPropertyStorage& have(int& prop, string id, string desc, bool editable = true);
+            virtual IPropertyStorage& have(string& prop, string id, string desc, bool editable = true);
+            virtual IPropertyStorage& have(bool& prop, string id, string desc, bool editable = true);
 
             bool isStoring() const;
             void setDirection(bool isStoring);

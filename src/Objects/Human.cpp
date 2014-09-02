@@ -41,8 +41,8 @@ namespace Dungeon {
     }
 	
 	void Human::registerProperties(IPropertyStorage& storage) {
-		storage.have(username, "Username, public available")
-			.have(contact, "Contact JID", false);
+		storage.have(username, "human-username", "Username, public available")
+			.have(contact, "human-jid", "Contact JID", false);
 		Alive::registerProperties(storage);
 	}
 	void Human::getActions(ActionList* list, IObject* callee) {

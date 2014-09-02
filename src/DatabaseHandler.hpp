@@ -84,6 +84,13 @@ namespace Dungeon {
          */
 		int deleteObject(objId oid);
 		
+        /**
+         * Fetches list of all IDs
+         * @param list empty list to fill
+         * @return DatabaseHandler 
+         */
+        int getObjectList(vector<objId>& list);
+        
 		/**
 		 * Checks whether the database has correct table count. 
 		 * If not, something may be wrong / database is not set -> signal to 

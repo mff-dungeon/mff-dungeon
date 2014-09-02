@@ -22,6 +22,7 @@ namespace Dungeon {
         bool hasObject(objId id);
         bool hasObjectLoaded(objId id);
         IObject* loadObject(objId id);
+        vector<objId> getObjectList();
         
         /**
          * Inserts an object into world.

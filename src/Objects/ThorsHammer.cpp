@@ -4,6 +4,7 @@
 #include "../Actions/CallbackAction.hpp"
 #include "../ActionDescriptor.hpp"
 #include "../ActionList.hpp"
+#include "../WorldDumper.hpp"
 
 namespace Dungeon
 {
@@ -66,6 +67,20 @@ namespace Dungeon
 					*ad << "OK. I will just finish the queue. Bye!";
 				}));
 		
+		list->addAction(new CallbackAction("dot-dump", "server dump dot - generate game graph in dot format.",
+				RegexMatcher::matcher("server dump dot"), 
+				[] (ActionDescriptor* ad) {
+					DotDumper dd;
+					*ad << "You can find the dump at " << dd.startDump() << ".";
+					
+					for (vector<objId>::value_type& id : ad->getGM()->getObjectList()) {
+						IObject* obj = ad->getGM()->getObject(id);
+						dd.dumpObject(obj);
+					}
+
+					dd.endDump();
+				}));
+		
 		list->addAction(new CallbackAction("bigBang", "server initialize - Delete & recreate tables.",
 				RegexMatcher::matcher("server initialize"), 
 				[] (ActionDescriptor* ad) {
@@ -126,7 +141,7 @@ namespace Dungeon
 		*ad << "Enter value for " << descr << ". ('.' = skip)";
 	}
 	
-	IPropertyStorage& ThorsHammer::PropertyEditor::have(string& prop, string desc, bool editable) {
+	IPropertyStorage& ThorsHammer::PropertyEditor::have(string& prop, string id, string desc, bool editable) {
 		if (!editable) return *this;
 		descriptions.push(desc + "(" + prop + ")");
 		ad->waitForReply([&] (ActionDescriptor* ad, string reply) {
@@ -139,7 +154,7 @@ namespace Dungeon
 		return *this;
 	}
 	
-	IPropertyStorage& ThorsHammer::PropertyEditor::have(int& prop, string desc, bool editable) {
+	IPropertyStorage& ThorsHammer::PropertyEditor::have(int& prop, string id, string desc, bool editable) {
 		if (!editable) return *this;
 		std::stringstream ss;
 		ss << desc << "(" << prop << ")";
@@ -155,7 +170,7 @@ namespace Dungeon
 		return *this;
 	}
 	
-	IPropertyStorage& ThorsHammer::PropertyEditor::have(bool& prop, string desc, bool editable) {
+	IPropertyStorage& ThorsHammer::PropertyEditor::have(bool& prop, string id, string desc, bool editable) {
 		if (!editable) return *this;
 		descriptions.push(desc + "(" + (prop ? "True" : "False") + "). 1/true for true, 0/false for false");
 		ad->waitForReply([&] (ActionDescriptor* ad, string reply) {

@@ -120,6 +120,11 @@ namespace Dungeon {
         LOGS("GameManager", Verbose) << "Peeking object '" << id << "'." << LOGF;
 		return true;
 	}
+	
+	vector<objId> GameManager::getObjectList() {
+		return loader->getObjectList();
+	}
+
     
     bool GameManager::hasObjectLoaded(objId id) {
 		return this->objects.find(id) != 0;

@@ -34,9 +34,9 @@ namespace Dungeon {
 	}
 	
 	void IDescriptable::registerProperties(IPropertyStorage& storage) {
-		storage.have(name, "Short name")
-			.have(longName, "Long name")
-			.have(description, "Full description");
+		storage.have(name, "descriptable-name", "Short name")
+			.have(longName, "descriptable-longName", "Long name")
+			.have(description, "descriptable-description", "Full description");
 		IObject::registerProperties(storage);
 	}
 

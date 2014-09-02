@@ -159,10 +159,10 @@ namespace Dungeon {
 	}
 	
 	void Inventory::registerProperties(IPropertyStorage& storage) {
-		storage.have(maxSpace, "Maximum space of backpack").
-				have(maxWeight, "Maximum weight of backpack").
-				have(usedSpace, "Space currently used").
-				have(usedWeight, "Weight currently used");
+		storage.have(maxSpace, "backpack-maxspace", "Maximum space of backpack").
+				have(maxWeight, "backpack-maxweight", "Maximum weight of backpack").
+				have(usedSpace, "backpack-curspace", "Space currently used", false).
+				have(usedWeight, "backpack-curweight", "Weight currently used", false);
 		Item::registerProperties(storage);
 	}
 	

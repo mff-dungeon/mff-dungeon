@@ -31,9 +31,9 @@ namespace Dungeon {
             virtual bool matchCommand(string command);
             
             // Property Storage
-            virtual IPropertyStorage& have(string& prop, string desc, bool editable);
-            virtual IPropertyStorage& have(int& prop, string desc, bool editable);
-            virtual IPropertyStorage& have(bool& prop, string desc, bool editable);
+            virtual IPropertyStorage& have(string& prop, string id, string desc, bool editable);
+            virtual IPropertyStorage& have(int& prop, string id, string desc, bool editable);
+            virtual IPropertyStorage& have(bool& prop, string id, string desc, bool editable);
             
             void askForNextOne(ActionDescriptor* ad);
 

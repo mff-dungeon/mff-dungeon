@@ -105,6 +105,23 @@ namespace Dungeon {
 		return E_OK;
 	}
 	
+	
+	// Loading object into a stringstream, returns 0 if loaded successfuly
+	int DatabaseHandler::getObjectList(vector<objId>& list) {
+		if(!openConnection()) return E_CONNECTION_ERROR;
+
+		const char *state = "SELECT id FROM objects;";
+		sqlite3_prepare_v2(dbConnection, state, (int)strlen(state), &dbStatement, 0);
+		sqlCode = sqlite3_step(dbStatement);
+		while(sqlCode == SQLITE_ROW) {
+			list.push_back(objId((char *) sqlite3_column_text(dbStatement, 0)));
+			sqlCode = sqlite3_step(dbStatement);
+		}
+		
+		finalizeAndClose();
+		return E_OK;
+	}
+	
 	int DatabaseHandler::deleteObject(objId oid) {
 		if(!openConnection()) return E_CONNECTION_ERROR;
 		const char* cquery = "DELETE FROM objects WHERE id = ?;";

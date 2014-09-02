@@ -16,6 +16,7 @@ namespace Dungeon {
     public:
         IObject* loadObject(objId oid);
         void saveObject(IObject *obj);
+        vector<objId> getObjectList();
     };
 }
 
