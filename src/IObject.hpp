@@ -33,16 +33,12 @@ private: \
 
 #define NONPERSISTENT_DECLARATION(cName, pName) \
 public: \
-	virtual const char * className() const { \
+	inline virtual const char * className() const { \
 		return cName::cName##ClassName; \
 	}; \
         const static char * cName##ClassName; \
-	virtual bool isInstanceOf(char const * cname) const { \
-		if(cName::className() == cname) { \
-			return true; \
-		} else { \
-			return pName::isInstanceOf(cname); \
-		} \
+	inline virtual bool isInstanceOf(char const * cname) const { \
+		return cName##ClassName == cname || pName::isInstanceOf(cname); \
 	};
 
 #define NONPERSISTENT_IMPLEMENTATION(cName) \
@@ -132,8 +128,8 @@ namespace Dungeon {
          * A special method used for some magic
          * @return the name of this class
          */
-	virtual const char * className() const {
-		return IObject::IObjectClassName;
+	inline virtual const char * className() const {
+		return IObjectClassName;
 	};
         
         const static char * IObjectClassName;
@@ -144,7 +140,7 @@ namespace Dungeon {
          * @param cname MUST be pointer to <class>::<class>ClassName constant
          * @return true, if the class is instance of cname
          */
-	virtual bool isInstanceOf(char const * cname) const {
+	inline virtual bool isInstanceOf(char const * cname) const {
 		return IObjectClassName == cname;
 	};
 
