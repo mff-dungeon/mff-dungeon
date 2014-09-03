@@ -112,7 +112,10 @@ namespace Dungeon {
 		return attack;
 	}
 
-	Alive* Alive::setAttack(int attack) {
+	Alive* Alive::setAttack(int attack, ActionDescriptor* ad) {
+		if(ad != 0 && this->attack != attack && this->getId() == ad->getAlive()->getId()) {
+			*ad << "Your attack value has changed to " + to_string(attack) + ". ";
+		}
 		this->attack = attack;
 		return this;
 	}
@@ -121,7 +124,10 @@ namespace Dungeon {
 		return defense;
 	}
 
-	Alive* Alive::setDefense(int defense) {
+	Alive* Alive::setDefense(int defense, ActionDescriptor* ad) {
+		if(ad != 0 && this->defense != defense && this->getId() == ad->getAlive()->getId()) {
+			*ad << "Your defense value has changed to " + to_string(defense) + ". ";
+		}
 		this->defense = defense;
 		return this;
 	}
@@ -130,7 +136,10 @@ namespace Dungeon {
 		return currentHp;
 	}
 
-	Alive* Alive::setCurrentHp(int hp) {
+	Alive* Alive::setCurrentHp(int hp, ActionDescriptor* ad) {
+		if(ad != 0 && this->currentHp != currentHp && this->getId() == ad->getAlive()->getId()) {
+			*ad << "Your current hitpoints have changed to " + to_string(currentHp) + ". ";
+		}
 		this->currentHp = hp;
 		return this;
 	}
@@ -139,7 +148,10 @@ namespace Dungeon {
 		return maxHp;
 	}
 
-	Alive* Alive::setMaxHp(int hp) {
+	Alive* Alive::setMaxHp(int hp, ActionDescriptor* ad) {
+		if(ad != 0 && this->maxHp != maxHp && this->getId() == ad->getAlive()->getId()) {
+			*ad << "Your maximum hitpoints have changed to " + to_string(maxHp) + ". ";
+		}
 		this->maxHp = hp;
 		return this;
 	}
@@ -168,7 +180,7 @@ namespace Dungeon {
 		return this;
 	}
 
-	Alive* Alive::damageAlive(int amount) {
+	Alive* Alive::damageAlive(Alive* attacker, int amount, ActionDescriptor* ad) {
 		double multiplier = 10;
 		if(getDefense() != 0) { // Division by zero
 			multiplier = (double) amount / getDefense();
@@ -179,11 +191,19 @@ namespace Dungeon {
         int rnd = rand_next(gen, dist);
 		
 		int damage = (int) (multiplier * rnd / 100 *(amount - getDefense() * 0.33));
+		if(ad != 0) {
+			if(this->getId() == ad->getAlive()->getId()) {
+				*ad << "You have received " + to_string(damage) + " damage from " + attacker->getName() + ". ";
+			}
+			else {
+				*ad << "You have dealt " + to_string(damage) + " to " + this->getName() + ". ";
+			}
+		}
 		changeHp(-damage);
 		return this;
 	}
 
-	Alive* Alive::changeHp(int amount) {
+	Alive* Alive::changeHp(int amount, ActionDescriptor* ad) {
 		this->currentHp += amount;
 		if(this->currentHp > this->maxHp) {
 			this->currentHp = this->maxHp;

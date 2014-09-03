@@ -26,25 +26,25 @@ namespace Dungeon
         virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
 	
 		virtual int getCurrentHp() const;
-		virtual Alive* setCurrentHp(int hp);
+		virtual Alive* setCurrentHp(int hp, ActionDescriptor* ad = 0);
 		virtual int getMaxHp() const;
-		virtual Alive* setMaxHp(int hp);
+		virtual Alive* setMaxHp(int hp, ActionDescriptor* ad = 0);
 		virtual int getAttack() const;
-		virtual Alive* setAttack(int attack);
+		virtual Alive* setAttack(int attack, ActionDescriptor* ad = 0);
 		virtual int getDefense() const;
-		virtual Alive* setDefense(int defense);
+		virtual Alive* setDefense(int defense, ActionDescriptor* ad = 0);
 		
 		/**
 		 * Calls method to damage alive. Calculates the actual damage and calls reduceHp
          * @param amount The attacker's attack value
          */
-		virtual Alive* damageAlive(int amount);
+		virtual Alive* damageAlive(Alive* attacker, int amount, ActionDescriptor* ad = 0);
 		
 		/**
 		 * Adds (or removes) hitpoints. Checks for death or full hitpoints.
          * @param amount The amount to increase (reduce, if negative)
          */
-		virtual Alive* changeHp(int amount);
+		virtual Alive* changeHp(int amount, ActionDescriptor* ad = 0);
 		
 		/**
 		 * Implements the dying procedures
