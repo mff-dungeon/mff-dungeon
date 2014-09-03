@@ -64,7 +64,7 @@ namespace Dungeon {
 		return RandomString::get()
 				<< "You see " + this->getName() + " lying on the ground." << endr
 				<< "There lies " + this->getName() + "." << endr
-				<< this->getName() + " is nearby." << endr;
+				<< this->getName() + " lies nearby." << endr;
 	}
 	
 	string Item::getGroupDescriptionSentence(vector<IDescriptable*> others) {

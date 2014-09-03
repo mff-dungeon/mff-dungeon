@@ -16,7 +16,7 @@ namespace Dungeon {
         // Add some actions on myself
         this->getActions(list, this);
 		
-		// Get actions for the inventory items - now searches backpacks + thors hammer
+		// Get actions for the inventory items - thors hammer
 		LOGS("Alive", Verbose) << "Getting actions on inventory - " << this->getId() << "." << LOGF;
 		try{
 			RelationList mastering = getRelations(Relation::Master);
@@ -27,6 +27,20 @@ namespace Dungeon {
 		}
 		catch (const std::out_of_range& e) {
 			// Nothing needs to be done
+		}
+		
+		LOGS("Alive", Verbose) << "Getting actions on equiped items" << LOGF;
+		for(int i = Wearable::Slot::BodyArmor; i != Wearable::Slot::Invalid; i--) {
+			try {
+				ObjectMap equips = this->getRelations(Relation::Master, Wearable::SlotRelations[i]);
+				if(equips.size() != 0) {
+					Wearable* worn = (Wearable*) equips.begin()->second.get();
+					worn->getActions(list, this);
+				}
+			}
+			catch (const std::out_of_range& e) {
+				
+			}
 		}
 		
 		LOGS("Alive", Verbose) << "Getting actions in location - " << this->getId() << "." << LOGF;
@@ -130,13 +144,41 @@ namespace Dungeon {
 		return this;
 	}
 
+	Alive* Alive::calculateBonuses() {
+		// Base Values
+		int attack = 1; 
+		int defense = 1;
+		
+		for(int slot = Wearable::Slot::BodyArmor; slot != Wearable::Slot::Invalid; slot--) {
+			try {
+				ObjectMap worn = this->getRelations(Relation::Master, Wearable::SlotRelations[slot]);
+				if(worn.size() > 0) {
+					Wearable* wornItem = (Wearable*) worn.begin()->second.get();
+					attack += wornItem->getAttackBonus();
+					defense += wornItem->getDefenseBonus();
+				}
+			}
+			catch (const std::out_of_range& e) {
+				
+			}
+		}
+		
+		this->setAttack(attack);
+		this->setDefense(defense);
+		return this;
+	}
+
 	Alive* Alive::damageAlive(int amount) {
 		double multiplier = 10;
 		if(getDefense() != 0) { // Division by zero
 			multiplier = (double) amount / getDefense();
 			if(multiplier > 10) multiplier = 10;
 		}
-		int damage = (int) (multiplier * (amount - getDefense() * 0.33));
+		// Random part
+		rand_init(gen, dist, 90, 110);
+        int rnd = rand_next(gen, dist);
+		
+		int damage = (int) (multiplier * rnd / 100 *(amount - getDefense() * 0.33));
 		changeHp(-damage);
 		return this;
 	}

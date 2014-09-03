@@ -105,14 +105,30 @@ namespace Dungeon {
 			list->addAction(new CallbackAction("what i own", "what i own - A list of items in backpack",
 				RegexMatcher::matcher("what i (have|own)"),
 				[this] (ActionDescriptor* ad) {
+					bool found = false;
 					try {
 						ObjectMap backpacks = this->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Backpack]);
-						Inventory* backpack = (Inventory*) backpacks.begin()->second.get();
-						*ad << backpack->getDescriptionSentence();
+						if(backpacks.size() > 0) {
+							Inventory* backpack = (Inventory*) backpacks.begin()->second.get();
+							*ad << backpack->getContainingSentence();
+							found = true;
+						}
 					}
 					catch (const std::out_of_range& e) {
 						
 					}
+					if(!found) {
+						*ad << "Nothing was found. ";
+					}
+				}, false));
+				
+			list->addAction(new CallbackAction("combat stats", "Prints all your combat stats",
+				RegexMatcher::matcher(".*combat stats.*"),
+				[this] (ActionDescriptor* ad) {
+					Alive* me = ad->getAlive();
+					*ad << "Hitpoints: " + to_string(me->getCurrentHp()) + "/" + to_string(me->getMaxHp()) + "\n";
+					*ad << "Attack value: " + to_string(me->getAttack()) + "\n";
+					*ad << "Defense value: " + to_string(me->getDefense());
 				}, false));
             
             list->addAction(new CallbackAction("self-rename", "",

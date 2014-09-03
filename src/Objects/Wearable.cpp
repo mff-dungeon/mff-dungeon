@@ -3,7 +3,7 @@
 
 namespace Dungeon {
 
-	const char* Wearable::SlotRelations[] = { "equip-backpack", "equip-weapon", "equip-bodyarmor" };
+	const char* Wearable::SlotRelations[] = { "invalid", "equip-weapon", "equip-backpack", "equip-bodyarmor" };
 	
 	Wearable::Wearable() {
 		
@@ -26,13 +26,70 @@ namespace Dungeon {
 		return this;
 	}
 
+	int Wearable::getAttackBonus() const {
+		return attackBonus;
+	}
+
+	Wearable* Wearable::setAttackBonus(int bonus) {
+		this->attackBonus = bonus;
+		return this;
+	}
+
+	int Wearable::getDefenseBonus() const {
+		return defenseBonus;
+	}
+
+	Wearable* Wearable::setDefenseBonus(int bonus) {
+		this->defenseBonus = bonus;
+		return this;
+	}
+	
+	bool Wearable::unequip(ActionDescriptor* ad, Wearable* item, int desiredAction) {
+		if(desiredAction == 1) {
+			ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
+			ad->getGM()->createRelation(ad->getAlive()->getLocation(), item, R_INSIDE);
+			*ad << "You have dropped " + item->getName() + ". ";
+			return true;
+		}
+		else if (desiredAction == 2) {
+			try {
+				ObjectMap inventories = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Slot::Backpack]);
+				if(inventories.size() == 0) {
+					*ad << "You have no backpack to put the item to. ";
+					return false;
+				}
+				Inventory* backpack = (Inventory*) inventories.begin()->second.get();
+				if(backpack->getFreeSpace() < item->getSize() 
+						|| backpack->getFreeWeight() < item->getWeight()) {
+					*ad << "You have no free space in your " + backpack->getName() + ". ";
+					return false;
+				}
+				if(backpack->getId() == item->getId()) {
+					*ad << "You cannot put " + item->getName() + " into itself! ";
+					return false;
+				}
+				ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
+				backpack->addItem(item);
+				*ad << "You have unequiped " + item->getName() + " and put it into your " + backpack->getName() + ". ";
+				return true;
+			}
+			catch (const std::out_of_range& e) {
+			
+			}
+			return false;
+		}
+		return false;
+	}
+
 	void Wearable::getActions(ActionList* list, IObject* callee) {
 		Item::getActions(list, callee);
 		// Do I see this equipped or not?
 		try {
 			ObjectMap equipped = this->getRelations(Relation::Slave, Wearable::SlotRelations[this->getSlot()]);
 			if(equipped.find(callee->getId()) != equipped.end()) {
-				// Add unequip action
+				UnequipAction* action = new UnequipAction;
+				action->addTarget(this->getObjectPointer());
+				list->addAction(action);
 			}
 			else {
 				EquipAction* action = new EquipAction;
@@ -48,7 +105,9 @@ namespace Dungeon {
 	}
 
 	void Wearable::registerProperties(IPropertyStorage& storage) {
-		storage.have((int&) slot, "wearable-slot", "Slot where to wear this item: 1 - Backpack, 2 - Weapon, 3 - Body armor");
+		storage.have((int&) slot, "wearable-slot", "Slot where to wear this item: 1 - Weapon, 2 - Backpack, 3 - Body armor");
+		storage.have(attackBonus, "wearable-attack", "Attack bonus of this item");
+		storage.have(defenseBonus, "wearable-defense", "Defense bonus of this item");
 		Item::registerProperties(storage);
 	}
 	
@@ -69,52 +128,129 @@ namespace Dungeon {
 		}
 	}
 	
-	bool EquipAction::unequip(ActionDescriptor* ad, Wearable* item) {
-		// Drop / backpack?
-		*ad << "Do you want to drop " + item->getName() + ", or do you want to put it into your backpack?";
-		ad->waitForReply([item] (ActionDescriptor *ad, string reply) {
-			// TODO: better matching the answer
-			if(reply.compare("drop") == 0) {
-				ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
-				ad->getGM()->createRelation(ad->getAlive()->getLocation(), item, R_INSIDE);
-				*ad << "You have dropped " + item->getName() + ".";
-				return;
-			}
-			else {
-				try {
-					ObjectMap inventories = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Slot::Backpack]);
-					if(inventories.size() == 0) {
-						*ad << "You have no backpack to put the item to.";
-						return;
-					}
-					Inventory* backpack = (Inventory*) inventories.begin()->second.get();
-					if(backpack->getFreeSpace() < item->getSize() 
-							|| backpack->getFreeWeight() < item->getWeight()) {
-						*ad << "You have no free space in your " + backpack->getName() + ".";
-						return;
-					}
-					ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
-					backpack->addItem(item);
-					*ad << "You have unequiped " + item->getName() + " and put it into your " + backpack->getName() + ".";
+	void EquipAction::equipItem(ActionDescriptor* ad, Wearable* item, Wearable* equipedItem, int desiredAction) {
+		if(equipedItem != 0) {
+				if(!Wearable::unequip(ad, equipedItem, desiredAction)) {
+					*ad << equipedItem->getName() + " couldn't be unequiped, so you cannot wear " + item->getName() + " now.";
 					return;
 				}
-				catch (const std::out_of_range& e) {
-
-				}
-			}
-		});
-		// Check if the slot is empty now, otherwise unequip failed
+		}
+		// Let's equip the item.
+		Room* currentRoom = (Room*) ad->getAlive()->getLocation().get();
+		if(currentRoom->contains(item)) {
+			ad->getGM()->removeRelation(currentRoom, item, R_INSIDE);
+			ad->getGM()->createRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
+			*ad << "You have equipped " + item->getName() + ".";
+			ad->getAlive()->calculateBonuses();
+			return;
+		}
+		// Let's try backpack
+		
 		try {
-			ObjectMap equiped = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[item->getSlot()]);
-			if(equiped.size() != 0) {
-				return false;
+			ObjectMap inventories = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Slot::Backpack]);
+			if(inventories.size() > 0) {
+				Inventory* backpack = (Inventory*) inventories.begin()->second.get();
+				if(backpack->contains(item)) {
+					// It is in the backpack, let's remove it
+					backpack->removeItem(item);
+					ad->getGM()->createRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
+					*ad << "You have equipped " + item->getName() + ".";
+					ad->getAlive()->calculateBonuses();
+					return;
+				}
 			}
 		}
 		catch(const std::out_of_range& e) {
 			
 		}
-		// Correct, no item in slot found
-		return true;
+		*ad << item->getName() + " cannot be found so nothing is equipped.";
+		return;
+	}
+	
+	void EquipAction::equipBackpack(ActionDescriptor* ad, Inventory* newPack, Inventory* currentPack) {
+		*ad << "Would you like to move your items to a " + newPack->getName() + " and keep " 
+				+ currentPack->getName() + ", move items and drop " + currentPack->getName() 
+				+ " or leave all items in " + currentPack->getName()+ " and drop it?";
+		ad->waitForReply([currentPack, newPack] (ActionDescriptor *ad, string reply) {
+			int drop;
+			// FIXME: Use String Matcher
+			if(reply.compare("drop") == 0) {
+				drop = 3;
+			}
+			else if(reply.compare("drop and keep") == 0) {
+				drop = 2;
+			}
+			else {
+				drop = 1;
+			}
+			LOG("Wear") << to_string(drop) << LOGF;
+			// Move items to new backpack
+			if(drop == 3) {
+				Wearable::unequip(ad, currentPack, 1); // drop it
+				if(currentPack->contains(newPack)) {
+					currentPack->removeItem(newPack);
+				}
+			}
+			else 
+			{
+				int requiredSize = currentPack->getMaxSpace() - currentPack->getFreeSpace();
+				int requiredWeight = currentPack->getMaxWeight() - currentPack->getFreeWeight();
+				// Check, if drop the old one
+				if(drop == 1) {
+					requiredSize += currentPack->getSize();
+					requiredWeight += currentPack->getWeight();
+				}
+				if(currentPack->contains(newPack)) {
+					requiredSize -= newPack->getSize();
+					requiredSize -= newPack->getWeight();
+				}
+
+				if(newPack->getFreeSpace() < requiredSize) {
+					*ad << "You cannot switch backpacks because " + newPack->getName() + " isn't big enough.";
+					return;
+				}
+				if(newPack->getFreeWeight() < requiredWeight) {
+					*ad << "You cannot switch backpacks because " + newPack->getName() + " cannot hold that much weight.";
+					return;
+				}
+				// Replace the items
+				try {
+					ObjectMap inventory = currentPack->getRelations(Relation::Master, R_INVENTORY);
+					for(auto& i : inventory) {
+						if(!i.second.get()->isInstanceOf("Item")) continue;
+						Item* it = (Item*) i.second.get();
+						if(it->getId() != newPack->getId()) {
+							currentPack->removeItem(it);
+							newPack->addItem(it);
+						}
+						else {
+							currentPack->removeItem(it);
+						}
+					}
+				}
+				catch (const std::out_of_range& e) {
+
+				}
+				// Remove the old backpack
+				if(drop == 2) {
+					Wearable::unequip(ad, currentPack, 1);
+				} 
+				else {
+					ad->getGM()->removeRelation(ad->getAlive(), currentPack, Wearable::SlotRelations[Wearable::Slot::Backpack]);
+					newPack->addItem(currentPack);
+					*ad << "You have unequiped " + currentPack->getName() + " and put it into your " + newPack->getName() + ". ";
+				}
+			}
+					
+			//add the new one
+			Room* currentLoc = (Room*) ad->getAlive()->getLocation().get();
+			if(currentLoc->contains(newPack)) {
+				ad->getGM()->removeRelation(currentLoc, newPack, R_INSIDE);
+			}
+			ad->getGM()->createRelation(ad->getAlive(), newPack, Wearable::SlotRelations[newPack->getSlot()]);
+			*ad << "You have equipped " + newPack->getName() + ".";
+			ad->getAlive()->calculateBonuses();	
+		});
 	}
 
 	void EquipAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
@@ -131,38 +267,27 @@ namespace Dungeon {
 			
 		}
 		
-		if(!unequip(ad, equipedItem)) {
-			*ad << equipedItem->getName() + " couldn't be unequiped, so you cannot wear " + item->getName() + " now.";
-			return;
+		// Needs special treatment
+		if(item->getSlot() == Wearable::Slot::Backpack && equipedItem != 0) {
+			Inventory* currentPack = (Inventory*) equipedItem;
+			Inventory* newPack = (Inventory*) item;
+			this->equipBackpack(ad, newPack, currentPack);
 		}
-		
-		// Let's equip the item. Where is it though? Because we can equip the things on the ground
-		Room* currentRoom = (Room*) ad->getAlive()->getLocation().get();
-		if(currentRoom->contains(item)) {
-			ad->getGM()->removeRelation(currentRoom, item, R_INSIDE);
-			ad->getGM()->createRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
-			*ad << "You have equipped " + item->getName() + ".";
-			return;
-		}
-		// Let's try backpack
-		
-		try {
-			ObjectMap inventories = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Slot::Backpack]);
-			if(inventories.size() > 0) {
-				Inventory* backpack = (Inventory*) inventories.begin()->second.get();
-				if(backpack->contains(item)) {
-					// It is in the backpack, let's remove it
-					backpack->removeItem(item);
-					ad->getGM()->createRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
-					*ad << "You have equipped " + item->getName() + ".";
+		else if (equipedItem != 0) {
+			*ad << "Do you want to drop " + equipedItem->getName() + ", or do you want to put it into your backpack?";
+			ad->waitForReply([this, item, equipedItem] (ActionDescriptor *ad, string reply) {
+				// FIXME: Use StringMatcher to match drop/put...
+				if(reply.compare("drop") == 0) {
+					this->equipItem(ad, item, equipedItem, 1);
 				}
-			}
+				else {
+					this->equipItem(ad, item, equipedItem, 2);
+				}
+			});	
 		}
-		catch(const std::out_of_range& e) {
-			
+		else {
+			this->equipItem(ad, item);
 		}
-		*ad << item->getName() + " cannot be found so nothing is equipped.";
-		return;
 	}
 	
 	void UnequipAction::explain(ActionDescriptor* ad) {
@@ -182,59 +307,25 @@ namespace Dungeon {
 		}
 	}
 	
-	bool UnequipAction::unequip(ActionDescriptor* ad, Wearable* item) {
-		// Drop / backpack?
-		*ad << "Do you want to drop " + item->getName() + ", or do you want to put it into your backpack?";
-		ad->waitForReply([item] (ActionDescriptor *ad, string reply) {
-			// TODO: better matching the answer
-			if(reply.compare("drop") == 0) {
-				ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
-				ad->getGM()->createRelation(ad->getAlive()->getLocation(), item, R_INSIDE);
-				*ad << "You have dropped " + item->getName() + ".";
-				return;
-			}
-			else {
-				try {
-					ObjectMap inventories = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Slot::Backpack]);
-					if(inventories.size() == 0) {
-						*ad << "You have no backpack to put the item to.";
-						return;
-					}
-					Inventory* backpack = (Inventory*) inventories.begin()->second.get();
-					if(backpack->getFreeSpace() < item->getSize() 
-							|| backpack->getFreeWeight() < item->getWeight()) {
-						*ad << "You have no free space in your " + backpack->getName() + ".";
-						return;
-					}
-					ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
-					backpack->addItem(item);
-					*ad << "You have unequiped " + item->getName() + " and put it into your " + backpack->getName() + ".";
-					return;
-				}
-				catch (const std::out_of_range& e) {
-
-				}
-			}
-		});
-		// Check if the slot is empty now, otherwise unequip failed
-		try {
-			ObjectMap equiped = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[item->getSlot()]);
-			if(equiped.size() != 0) {
-				return false;
-			}
-		}
-		catch(const std::out_of_range& e) {
-			
-		}
-		// Correct, no item in slot found
-		return true;
-	}
-	
 	void UnequipAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		Wearable* item = (Wearable*) target.get();
-		if(!this->unequip(ad, item)) {
-			*ad << item->getName() + " couldn't be unequiped.";
-		}
+		*ad << "Do you want to drop " + item->getName() + ", or do you want to put it into your backpack?";
+			ad->waitForReply([this, item] (ActionDescriptor *ad, string reply) {
+				// FIXME: Use StringMatcher to match drop/put...
+				int act;
+				if(reply.compare("drop") == 0) {
+					act = 1;
+				}
+				else {
+					act = 2;
+				}
+				if(!Wearable::unequip(ad, item, act)) {
+					*ad << item->getName() + " couldn't be unequiped.";
+				}
+				else {
+					ad->getAlive()->calculateBonuses();
+				}
+			});	
 	}
 
 	

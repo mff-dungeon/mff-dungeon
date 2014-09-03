@@ -36,15 +36,17 @@ namespace Dungeon {
 			LOGS("GameManager", Fatal) << "Drop database query failed with error code " << err << LOGF;
 			exit(1);
 		}
-		LOG("GameManager") << "All tables dropped, creating and initializing tables." << LOGF;
+		LOG("GameManager") << "All tables dropped. " << LOGF;
 		err = DatabaseHandler::getInstance().initDatabase();
 		if(err != DatabaseHandler::E_OK) {
 			LOGS("GameManager", Fatal) << "Create table database query failed with error code " << err << LOGF;
 			exit(1);
 		}
                 
-        // FIXME reload relations on existing objects
+		LOG("GameManager") << "Cleaning object tree." << LOGF;
+        this->objects.clearTree();
 		
+		LOG("GameManager") << "Creating and initializing tables." << LOGF;
 		WorldCreator wc(this);
 		wc.bigBang();
 		
@@ -197,13 +199,16 @@ namespace Dungeon {
 		
 		Inventory* pack = new Inventory("item/backpack/" + RANDID);
 		pack->setSlot(Wearable::Slot::Backpack)
-			->setDropable(false)
-			->setPickable(false)
+			->setDropable(true)
+			->setPickable(true)
 			->setName("Leather backpack")
 			->setLongName("A common leather backpack. Not so big and comfortable, but what would you expect?")
 			->save();
 		createRelation(getObject("room/baseRoom"), figure, R_INSIDE);
-		createRelation(figure, pack, "equip-backpack");
+		createRelation(figure, pack, Wearable::SlotRelations[Wearable::Slot::Backpack]);
+		
+		// Warning: loads user's backpack
+		figure->calculateBonuses();
 		
 		return figure;
     }

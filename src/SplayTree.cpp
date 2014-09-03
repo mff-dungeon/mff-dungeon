@@ -179,6 +179,27 @@ namespace Dungeon {
 
 		delete f;
 	};
+	
+	void SplayTree::clearTree() {
+		Node *f = this->mroot;
+		while(f != 0) {
+			if(f->left != 0) {
+				f = f->left;
+			} 
+			else if (f->right != 0) {
+				f = f->right;
+			}
+			else {
+				Node *p = f->parent;
+				if(f->value != 0) {
+					delete f->value;
+				}
+				delete f;
+				f = p;
+			}
+		}
+		this->mroot = 0;
+	}
         
 	/*
 	 * Print blank Vertex

@@ -7,15 +7,17 @@ namespace Dungeon {
 	}
 	
 	void WorldCreator::initAdmins() {
+		// Thor's hammer should have special relation, as it is not wearable. It would ruin the world.
+		// Also, the admin won't be able to test the game then
 		Human *aearsis, *asaru, *petr;
 		ThorsHammer* th;
 		gm->insertObject(th = new ThorsHammer());
 		aearsis = (Human*) gm->addNewFigure(new Human("human/aearsis@eideo.cz", "Aearsis", "aearsis@eideo.cz"));
-		gm->createRelation(aearsis, th, Wearable::SlotRelations[Wearable::Weapon]);
+		gm->createRelation(aearsis, th, "special-th");
 		asaru = (Human*) gm->addNewFigure(new Human("human/asaru@jabbim.cz", "Salmelu", "asaru@jabbim.cz"));
-		gm->createRelation(asaru, th, Wearable::SlotRelations[Wearable::Weapon]);
+		gm->createRelation(asaru, th, "special-th");
 		petr = (Human*) gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"));
-		gm->createRelation(petr, th, Wearable::SlotRelations[Wearable::Weapon]);
+		gm->createRelation(petr, th, "special-th");
 		
 		// TODO - zvetsit batohy
 	}
@@ -59,6 +61,25 @@ namespace Dungeon {
 			->setLongName("A red potion in silver vial.")
 			->save();
 		
+		createObject<Inventory>("item/backpack/" + RANDID, trapRoom)
+			->setMaxSpace(30000)
+			->setMaxWeight(50000)
+			->setSlot(Wearable::Backpack)
+			->setDefenseBonus(2)
+			->setSize(5000)
+			->setWeight(2500)
+			->setName("Hard leather backpack")
+			->setLongName("A more solid leather backpack.")
+			->save();
+		
+		createObject<Wearable>("item/weapon/" + RANDID, trapRoom)
+			->setAttackBonus(20)
+			->setSlot(Wearable::Weapon)
+			->setSize(10000)
+			->setWeight(25000)
+			->setName("Iron club")
+			->setLongName("A rusty old iron club.")
+			->save();
 		/*
 		 * Init relations
 		 */

@@ -16,11 +16,11 @@ namespace Dungeon {
 		Inventory(objId id);
 		virtual ~Inventory();
 		
-		void setMaxSpace(int maxSpace);
+		Inventory* setMaxSpace(int maxSpace);
 		int getMaxSpace();
 		int getFreeSpace();
 		
-		void setMaxWeight(int maxWeight);
+		Inventory* setMaxWeight(int maxWeight);
 		int getMaxWeight();
 		int getFreeWeight();
 		
@@ -28,8 +28,11 @@ namespace Dungeon {
 		void removeItem(Item* item);
 		bool contains(Item* item);
 		
-		virtual string getDescriptionSentence();
-		virtual string getGroupDescriptionSentence(vector<IDescriptable*> others);
+		/**
+		 * Makes a string describing what is inside
+         * @return a string for AD
+         */
+		virtual string getContainingSentence();
 		
 		virtual void getActions(ActionList* list, IObject* callee);
 		

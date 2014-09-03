@@ -33,7 +33,7 @@ namespace Dungeon {
         string getContact() const;
         Human* setUsername(string username);
         string getUsername() const;
-
+		
     private:
         string username, contact;
         

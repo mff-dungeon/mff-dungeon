@@ -137,17 +137,17 @@ namespace Dungeon {
 			
 		}
 		if(inventory == 0) {
-			*ad << "You have no inventory to put " << item->getName() << " in. \n";
+			*ad << "You have no inventory to put " << item->getName() << " in. ";
 			return;
 		}
 		
 		if(inventory->getFreeWeight() < item->getWeight()) {
-			*ad << "Your inventory would be too heavy with " << item->getName() << ".";
+			*ad << "Your inventory would be too heavy with " << item->getName() << ". ";
 			return;
 		}
 		
 		if(inventory->getFreeSpace() < item->getSize()) {
-			*ad << "There is no space left for " << item->getName() << " in your inventory. \n";
+			*ad << "There is no space left for " << item->getName() << " in your inventory. ";
 			return;
 		}
 		// Everything is allright, let's add it

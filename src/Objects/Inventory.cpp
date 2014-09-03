@@ -22,8 +22,9 @@ namespace Dungeon {
 
 	}
 	
-	void Inventory::setMaxSpace(int maxSpace) {
+	Inventory* Inventory::setMaxSpace(int maxSpace) {
 		this->maxSpace = maxSpace;
+		return this;
 	}
 	
 	int Inventory::getMaxSpace() {
@@ -34,8 +35,9 @@ namespace Dungeon {
 		return (this->maxSpace - this->usedSpace);
 	}
 	
-	void Inventory::setMaxWeight(int maxWeight) {
+	Inventory* Inventory::setMaxWeight(int maxWeight) {
 		this->maxWeight = maxWeight;
+		return this;
 	}
 	
 	int Inventory::getMaxWeight() {
@@ -73,18 +75,18 @@ namespace Dungeon {
 		return false;
 	}
 	
-	string Inventory::getDescriptionSentence() {
+	string Inventory::getContainingSentence() {
 		string sentence;
         
 		sentence = RandomString::get()
-			<< "You own a " + this->getName() + "." << endr
-            << "You have a " + this->getName() + " with you." << endr;
+			<< "You own a " + this->getName() + ". " << endr
+            << "You have a " + this->getName() + " with you. " << endr;
 		
 		try {
 			ObjectMap items = this->getRelations(Relation::Master, R_INVENTORY);
 			if(items.size() >= 2) {
 				int count = 0;
-				sentence += " There are ";
+				sentence += "There are ";
 				for(auto& item : items) {
 					if(count > 0 && count < items.size() - 1) {
 						sentence += ", ";
@@ -105,7 +107,7 @@ namespace Dungeon {
 			}
 			else if(items.size() == 1) {
 				for(auto& item : items) {
-					sentence += " There is ";
+					sentence += "There is ";
 					if(item.second.get()->instanceOf(IDescriptable)) {
 						IDescriptable* itemDesc = (IDescriptable*) item.second.get();
 						sentence += itemDesc->getName();
@@ -116,6 +118,9 @@ namespace Dungeon {
 					sentence += ".";
 				}
 			}
+			else {
+				sentence += "It is empty. ";
+			}
 		}
 		catch(const std::out_of_range& e) {
 			
@@ -123,23 +128,8 @@ namespace Dungeon {
 		return sentence;
 	}
 	
-	string Inventory::getGroupDescriptionSentence(vector<IDescriptable*> others) {
-		if (others.size() == 0) return "";
-        else if (others.size() == 1) return getDescriptionSentence();
-        
-        string sentence = "";
-        
-		//TODO: Write this
-        
-        return sentence;
-	}
-	
 	void Inventory::getActions(ActionList* list, IObject* callee) {
-		Item::getActions(list, callee);
-		/*
-		 * TODO: Should call actually Wearable::getActions for equip/unequip, but need to
-		 * work on backpack shifting (items in it, ...)
-		 */
+		Wearable::getActions(list, callee);
 		
 		// Drop action, adding only if there is anything to drop
 		DropAction* action = new DropAction;
@@ -163,7 +153,7 @@ namespace Dungeon {
 				have(maxWeight, "backpack-maxweight", "Maximum weight of backpack").
 				have(usedSpace, "backpack-curspace", "Space currently used", false).
 				have(usedWeight, "backpack-curweight", "Weight currently used", false);
-		Item::registerProperties(storage);
+		Wearable::registerProperties(storage);
 	}
 	
 	PERSISTENT_IMPLEMENTATION(Inventory)

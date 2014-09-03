@@ -95,6 +95,13 @@ namespace Dungeon
 					ad->getGM()->initWorld(false);
 					*ad << "... can you hear me? Yes? It worked!";
 				}));
+				
+		list->addAction(new CallbackAction("heal", "heal yourself - heals you to full hp.",
+				RegexMatcher::matcher("heal"),
+				[] (ActionDescriptor* ad) {
+					ad->getAlive()->setCurrentHp(ad->getAlive()->getMaxHp());
+					*ad << "You have fully healed yourself. ";
+				}));
 		
 		list->addAction(new CallbackAction("teleport", "teleport <id> - teleport yourself everywhere.",
 				RegexMatcher::matcher("teleport .+"), 

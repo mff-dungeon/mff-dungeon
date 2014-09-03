@@ -4,7 +4,7 @@
 #include "../common.hpp"
 #include "../Actions/CallbackAction.hpp"
 #include "IDescriptable.hpp"
-
+#include "Wearable.hpp"
 
 namespace Dungeon
 {
@@ -49,7 +49,15 @@ namespace Dungeon
 		/**
 		 * Implements the dying procedures
          */
-		virtual Alive* die();
+		virtual Alive* die();		
+		
+		/**
+		 * Recalculates this alive's attack and defense values due to equip changes
+		 * Probably only important for humans, but to avoid casting to Human*
+		 * implemented here
+         */
+		Alive* calculateBonuses();
+
 		
         /**
          * @return Current location of this being

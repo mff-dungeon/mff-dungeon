@@ -11,10 +11,14 @@ namespace Dungeon {
 	
 	class Wearable : public Item {
 	public:
+		/**
+		 *	Holds the slot for the wearable. Should be grouped logically for easier printing,
+		 *  e.g. for(Slot::BodyArmor -> Slot::Helmet): group & print
+		 */
 		enum Slot {
                     Invalid = 0,
-                    Backpack = 1,
-                    Weapon = 2,
+                    Weapon = 1,
+                    Backpack = 2,
                     BodyArmor = 3
                 };
 		static const char* SlotRelations[];
@@ -25,14 +29,23 @@ namespace Dungeon {
 		
 		Slot getSlot() const;
 		Wearable* setSlot(Slot slot);
+		int getAttackBonus() const;
+		Wearable* setAttackBonus(int bonus);
+		int getDefenseBonus() const;
+		Wearable* setDefenseBonus(int bonus);
+		
+		static bool unequip(ActionDescriptor* ad, Wearable* item, int desiredAction = 0);
 		
 		virtual void getActions(ActionList* list, IObject* callee);
                 
-                virtual void registerProperties(IPropertyStorage& storage);
+		virtual void registerProperties(IPropertyStorage& storage);
 
 		
 	private:
 		Slot slot = Invalid;
+		
+		int attackBonus = 0;
+		int defenseBonus = 0;
 		
 	PERSISTENT_DECLARATION(Wearable, Item)
 	};
@@ -49,8 +62,23 @@ namespace Dungeon {
 		virtual void explain(ActionDescriptor* ad);
 		virtual bool matchCommand(string command);
 		
-		// TODO: Any idea how to now use same code twice? make the other static?*
-		bool unequip(ActionDescriptor* ad, Wearable* item);
+		/**
+		 * Equips any general not-backpack item
+         * @param ad ActionDescriptor
+         * @param item the new item to be equiped
+         * @param equipedItem currently equiped item, 0 if none is
+		 * @param desiredAction desired action for the unequip, 1 if drop, 2 if put to backpack
+         */
+		void equipItem(ActionDescriptor* ad, Wearable* item, Wearable* equipedItem = 0, int desiredAction = 0);
+		
+		/**
+		 * Provides special treatment to backpacks. Handles item switching, backpack switching, 
+		 * weight checking and more.
+         * @param ad ActionDescriptor
+         * @param newPack The newly equiped backpack
+         * @param currentPack The rusty old backpack
+         */
+		void equipBackpack(ActionDescriptor* ad, Inventory* newPack, Inventory* currentPack);
 	};
 	
 	class UnequipAction : public MultiTargetAction {
@@ -61,8 +89,6 @@ namespace Dungeon {
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 		virtual void explain(ActionDescriptor* ad);
 		virtual bool matchCommand(string command);
-		
-		bool unequip(ActionDescriptor* ad, Wearable* item);
 	};
 
 }
