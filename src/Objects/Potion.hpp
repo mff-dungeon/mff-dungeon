@@ -50,8 +50,8 @@ namespace Dungeon {
         virtual void registerProperties(IPropertyStorage& storage);
 
     private:
-            PotionType type;
-            int strength;
+            PotionType type = NoEffect;
+            int strength = 0;
 
     PERSISTENT_DECLARATION(Potion, Item)
     };	

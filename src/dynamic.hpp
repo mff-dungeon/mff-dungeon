@@ -4,7 +4,6 @@
 #include "Objects/Alive.hpp"
 #include "Objects/Creature.hpp"
 #include "Objects/Door.hpp"
-#include "Objects/Dummy.hpp"
 #include "Objects/Human.hpp"
 #include "Objects/IDescriptable.hpp"
 #include "Objects/Inventory.hpp"

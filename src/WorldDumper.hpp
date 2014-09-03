@@ -34,9 +34,9 @@ namespace Dungeon {
         virtual string startDump();
         virtual void endDump();
         
-        virtual IPropertyStorage& have(int& prop, string id, string desc, bool editable) { return *this; }
-        virtual IPropertyStorage& have(string& prop, string id, string desc, bool editable) { return *this; }
-        virtual IPropertyStorage& have(bool& prop, string id, string desc, bool editable) { return *this; }
+        virtual IPropertyStorage& have(int& prop, string id, string desc, bool editable);
+        virtual IPropertyStorage& have(string& prop, string id, string desc, bool editable);
+        virtual IPropertyStorage& have(bool& prop, string id, string desc, bool editable);
 
     private:
         ofstream file;

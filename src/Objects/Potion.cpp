@@ -51,17 +51,16 @@ namespace Dungeon {
 		commitOnBestTarget(ad, ad->in_msg.substr(6));
 	}
         
-	void DrinkPotionAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {	
+	void DrinkPotionAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
+		if (!target->instanceOf(Potion))
+			return;
 		Potion* potion = (Potion*) target.get();
 		*ad << "You've drunk " + potion->getName() + ". ";
 		switch(potion->getType()) {
 			case Potion::PotionType::Healing: {
-				int healed = potion->getStrength();	// Need to do this to write correct reply
-				if(healed > (ad->getAlive()->getMaxHp() - ad->getAlive()->getCurrentHp())) {
-					healed = (ad->getAlive()->getMaxHp() - ad->getAlive()->getCurrentHp());
-				}
-				ad->getAlive()->changeHp(healed);
-				*ad << "You've healed " + to_string(healed) + " hitpoints";
+				int lastHp = ad->getAlive()->getCurrentHp();
+				ad->getAlive()->changeHp(potion->getStrength());
+				*ad << "You've healed " << lastHp - ad->getAlive()->getCurrentHp() << " hitpoints";
 				break; 
 			}
 			case Potion::PotionType::NoEffect:

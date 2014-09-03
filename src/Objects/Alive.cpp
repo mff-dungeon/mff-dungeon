@@ -19,10 +19,11 @@ namespace Dungeon {
 		// Get actions for the inventory items - now searches backpacks + thors hammer
 		LOGS("Alive", Verbose) << "Getting actions on inventory - " << this->getId() << "." << LOGF;
 		try{
-			ObjectMap inventory = getRelations(Relation::Master, R_INVENTORY);
-			for(auto& item: inventory) {
-				item.second.get()->getActions(list, this);
-			}
+			RelationList mastering = getRelations(Relation::Master);
+			for (auto& pair : mastering)
+				for(auto& item: pair.second) {
+					item.second.get()->getActions(list, this);
+				}
 		}
 		catch (const std::out_of_range& e) {
 			// Nothing needs to be done

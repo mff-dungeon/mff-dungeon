@@ -1,5 +1,6 @@
 #include "WorldDumper.hpp"
 #include "Objects/IDescriptable.hpp"
+#include "dynamic.hpp"
 #include <sstream>
 #include <unistd.h>
 
@@ -26,7 +27,31 @@ namespace Dungeon {
 		ss << "n" << objects.size();
 		string node = ss.str();
 		objects[obj->getId()] = node;
-		file << node << " [label=\"" << obj->getId() << "\"];\n";
+		string shape = "box";
+		if (obj->instanceOf(Human)) {
+			shape = "ellipse";
+		} else if (obj->instanceOf(Item)) {
+			shape = "hexagon";
+		} else if (obj->instanceOf(Alive)) {
+			shape = "octagon";
+		} else if (obj->instanceOf(Room)) {
+			shape = "house";
+		} else if (obj->instanceOf(Door)) {
+			shape = "rarrow";
+		}
+		file << node << " [label=";
+		if (obj->instanceOf(IDescriptable)) {
+			IDescriptable* desc = (IDescriptable*) obj;
+			file <<  "<<b>" << desc->getName() << "</b><br/>id: " << obj->getId() << "<br/>";
+			obj->beforeStore(*this);
+			obj->registerProperties(*this);
+			obj->afterStore(*this);
+			file << ">";
+		} else {
+			
+			file << "\"" << obj->getId() << "\"";
+		}
+		file << ", shape=" + shape + "];\n";
 		
 		for (RelationList::value_type& relPair : obj->getRelations(Relation::Master)) {
 			for (ObjectMap::value_type& objPair : relPair.second) {
@@ -46,6 +71,23 @@ namespace Dungeon {
 			}
 		}
 	}
+	
+	IPropertyStorage& DotDumper::have(int& prop, string id, string desc, bool editable) {
+		file << "<b>" << id << "</b>: " << prop << "<br/>";
+		return *this;
+	}
+	
+	IPropertyStorage& DotDumper::have(string& prop, string id, string desc, bool editable) {
+		file << "<b>" << id << "</b>: " << prop << "<br/>";
+		return *this;
+	}
+	
+	IPropertyStorage& DotDumper::have(bool& prop, string id, string desc, bool editable) {
+		file << "<b>" << id << "</b>: " << (prop ? "yes" : "no") << "<br/>";
+		return *this;
+	}
+
+
 	
 	void DotDumper::endDump() {
 		file << "}\n" << endl;

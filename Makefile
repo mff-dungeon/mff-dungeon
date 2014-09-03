@@ -55,10 +55,10 @@ all: $(TARGET) doc
 doc: doc/Documentation.pdf
 
 worldgraph: dumps/world-last.dot
-	@echo "[ DOT ]  dumps/world-last.dot --> dumps/world.svg"
-	@dot -Tsvg <dumps/world-last.dot >dumps/world.svg
+	@echo "[ DOT ]  dumps/world-last.dot --> dumps/world.pdf"
+	@dot -Tpdf <dumps/world-last.dot >dumps/world.pdf
 	@echo "[ DOT ]  dumps/world-last.dot --> dumps/world.png"
-	@dot -Tsvg <dumps/world-last.dot >dumps/world.png
+	@dot -Tpng <dumps/world-last.dot >dumps/world.png
 
 
 .PHONY: clean all doc worldgraph

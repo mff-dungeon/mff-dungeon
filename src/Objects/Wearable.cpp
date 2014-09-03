@@ -6,7 +6,7 @@ namespace Dungeon {
 	const char* Wearable::SlotRelations[] = { "equip-backpack", "equip-weapon", "equip-bodyarmor" };
 	
 	Wearable::Wearable() {
-	
+		
 	}
 	
 	Wearable::Wearable(objId id) {
@@ -47,6 +47,11 @@ namespace Dungeon {
 		}
 	}
 
+	void Wearable::registerProperties(IPropertyStorage& storage) {
+		storage.have((int&) slot, "wearable-slot", "Slot where to wear this item: 1 - Backpack, 2 - Weapon, 3 - Body armor");
+		Item::registerProperties(storage);
+	}
+	
 	void EquipAction::explain(ActionDescriptor* ad) {
 		*ad << "Use 'wear ...' or 'equip ...' to equip chosen item.";
 	}
@@ -231,6 +236,7 @@ namespace Dungeon {
 			*ad << item->getName() + " couldn't be unequiped.";
 		}
 	}
+
 	
 	PERSISTENT_IMPLEMENTATION(Wearable)
 }

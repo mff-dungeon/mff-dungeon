@@ -11,11 +11,11 @@ namespace Dungeon {
 		ThorsHammer* th;
 		gm->insertObject(th = new ThorsHammer());
 		aearsis = (Human*) gm->addNewFigure(new Human("human/aearsis@eideo.cz", "Aearsis", "aearsis@eideo.cz"));
-		gm->createRelation(aearsis, th, R_INVENTORY);
+		gm->createRelation(aearsis, th, Wearable::SlotRelations[Wearable::Weapon]);
 		asaru = (Human*) gm->addNewFigure(new Human("human/asaru@jabbim.cz", "Salmelu", "asaru@jabbim.cz"));
-		gm->createRelation(asaru, th, R_INVENTORY);
+		gm->createRelation(asaru, th, Wearable::SlotRelations[Wearable::Weapon]);
 		petr = (Human*) gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"));
-		gm->createRelation(petr, th, R_INVENTORY);
+		gm->createRelation(petr, th, Wearable::SlotRelations[Wearable::Weapon]);
 		
 		// TODO - zvetsit batohy
 	}

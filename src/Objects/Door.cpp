@@ -78,12 +78,7 @@ namespace Dungeon {
     }
 	
 	void DoorwalkAction::explain(ActionDescriptor* ad) {
-		*ad << "Use 'go to ...' to enter another room. Currently you can go to:\n";
-		for (auto& pair : targets) {
-			IObject* obj = pair.second.get();
-			if (obj->instanceOf(IDescriptable))
-				*ad << "- " << ((IDescriptable*) obj)->getLongName() << "\n"; // Todo - output as sentence
-		}
+		*ad << "Use 'go to ...' to enter another room.";
 	}
 	
 	bool DoorwalkAction::matchCommand(string command) {

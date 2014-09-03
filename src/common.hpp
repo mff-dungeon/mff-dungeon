@@ -79,7 +79,7 @@ namespace Dungeon {
         static string getRandomString(int len) {
             char ret [len + 1];
             ret[len] = 0;
-            static rand_init(r, d, 0, RAND_ALNUM_LEN);
+            static rand_init(r, d, 0, RAND_ALNUM_LEN - 1);
             for (int i = 0; i < len; ++i) ret[i] = RAND_ALNUM[rand_next(r, d)];
             return ret;
         }

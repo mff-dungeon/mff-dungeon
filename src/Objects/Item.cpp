@@ -87,7 +87,9 @@ namespace Dungeon {
 	
 	void Item::registerProperties(IPropertyStorage& storage) {
 		storage.have(size, "item-size", "Item size")
-			.have(weight, "item-weight", "Item weight");
+			.have(weight, "item-weight", "Item weight")
+			.have(pickable, "item-pickable", "Item Pick-ability")
+			.have(dropable, "item-dropable", "Item Drop-ability");
 		IDescriptable::registerProperties(storage);
 	}
 	

@@ -12,10 +12,11 @@ namespace Dungeon {
 	class Wearable : public Item {
 	public:
 		enum Slot {
-            Backpack = 0,
-            Weapon = 1,
-			BodyArmor = 2
-        };
+                    Invalid = 0,
+                    Backpack = 1,
+                    Weapon = 2,
+                    BodyArmor = 3
+                };
 		static const char* SlotRelations[];
 		
 		Wearable();
@@ -26,9 +27,12 @@ namespace Dungeon {
 		Wearable* setSlot(Slot slot);
 		
 		virtual void getActions(ActionList* list, IObject* callee);
+                
+                virtual void registerProperties(IPropertyStorage& storage);
+
 		
 	private:
-		Slot slot;
+		Slot slot = Invalid;
 		
 	PERSISTENT_DECLARATION(Wearable, Item)
 	};

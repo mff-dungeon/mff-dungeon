@@ -149,13 +149,15 @@ namespace Dungeon {
 	void GameManager::deleteObject(IObject* obj) {
 		LOGS("GameManager", Verbose) << "Deleting object " << obj->getId() << "." << LOGF;
 		
-		for (RelationList::value_type& rel : obj->getRelations(Relation::Master)) {
+		RelationList copy = obj->getRelations(Relation::Master);
+		for (RelationList::value_type& rel : copy) {
 			for (ObjectMap::value_type& pair : rel.second) {
 				removeRelation(obj, pair.second.get(), rel.first);
 			}
 		}
 		
-		for (RelationList::value_type& rel : obj->getRelations(Relation::Slave)) {
+		copy = obj->getRelations(Relation::Slave);
+		for (RelationList::value_type& rel : copy) {
 			for (ObjectMap::value_type& pair : rel.second) {
 				removeRelation(pair.second.get(), obj, rel.first);
 			}

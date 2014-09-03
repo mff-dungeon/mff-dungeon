@@ -9,7 +9,14 @@
 namespace Dungeon
 {
 	ThorsHammer::ThorsHammer() {
-		this->setId("ThorsHammer");
+		setId("special/thorshammer");
+		setName("Thor's Hammer");
+		setLongName("The most horrifying item in the world.");
+		setDescription("It reflect's so much light that it cannot be explored further.");
+		setPickable(false);
+		setDropable(false);
+		setWeight(0);
+		setSize(0);
 	}
 	
 	ThorsHammer::~ThorsHammer() {

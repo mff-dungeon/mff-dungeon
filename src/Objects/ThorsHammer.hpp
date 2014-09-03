@@ -7,15 +7,17 @@
 #include "../common.hpp"
 #include "../Action.hpp"
 #include "../ActionDescriptor.hpp"
+#include "Wearable.hpp"
 
 namespace Dungeon {
     
     /** 
      * Allows it's bearer perform administrative tasks. Beware!
      */
-    class ThorsHammer : public IObject {
+    class ThorsHammer : public Item {
     public:
         ThorsHammer();
+        
         virtual ~ThorsHammer();
 
         virtual void getActions(ActionList* list, IObject* calee);
