@@ -11,15 +11,7 @@
 
 namespace Dungeon {
 
-	Room::Room(objId id) {
-		this->setId(id);
-	}
-
-	Room::~Room() {
-		
-	}
-	
-	bool Room::contains(IObject* object) {
+	bool Room::contains(ObjectPointer object) {
 		// If it throws an error, it's because there is nothing, so it should be safe to return false
 		try {
 			ObjectMap inside = getRelations(Relation::Master).at(R_INSIDE);
@@ -32,14 +24,14 @@ namespace Dungeon {
 		return false;
 	}
 
-	void Room::getActions(ActionList* list, IObject *callee) {
+	void Room::getActions(ActionList* list, ObjectPointer callee) {
 		LOGS("Room", Verbose) << "Getting actions on " << this->getName() << "." << LOGF;
 		// Recursively search all items in this room
 		try {
 			ObjectMap objects = getRelations(Relation::Master, R_INSIDE);
 			for(auto& item: objects) {
 				if (item.second.getId() != callee->getId())
-					item.second.get()->getActions(list, callee);
+					item.second->getActions(list, callee);
 			}
 		}
 		catch (const std::out_of_range& e) {
@@ -51,7 +43,7 @@ namespace Dungeon {
 		try {
 			ObjectMap itemsIn = getRelations(Relation::Master, R_INSIDE);
 			for(auto& itemObj: itemsIn) {
-				if(itemObj.second.get()->instanceOf(Item)) {
+				if(itemObj.second->instanceOf(Item)) {
 					pickAction->addTarget(itemObj.second);
 				}
 			}
@@ -82,7 +74,7 @@ namespace Dungeon {
             
             // remove myself from the exploration group
             for (ObjectGroup::iterator it = groupedObjects.begin(); it != groupedObjects.end(); it++) {
-                if (it->second.get() == ad->getAlive()) {
+                if (it->second.operator==(ad->getAlive())) {
                     groupedObjects.erase(it);
                     break;
                 }
@@ -116,9 +108,8 @@ namespace Dungeon {
 	}
 
 	void PickupAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
-		// Presumes the target is an item, as it was checked when adding
-		Item* item = (Item*) target.get();
-		if(!item->isPickable()) {
+		Item* item = target.safeCast<Item>();
+		if(!item || !item->isPickable()) {
 			*ad << "You cannot pick " << item->getName() << ". \n";
 			return;
 		}
@@ -127,11 +118,7 @@ namespace Dungeon {
 		Inventory* inventory = 0;
 		try {
 			ObjectMap inv = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Slot::Backpack]);
-			for(auto& item : inv) {
-				if(item.second.get()->instanceOf(Inventory)) {
-					inventory = (Inventory*) item.second.get();
-				}
-			}
+			inventory = inv.begin()->second.safeCast<Inventory>();
 		}
 		catch (const std::out_of_range& e) {
 			
@@ -158,9 +145,7 @@ namespace Dungeon {
 				LOGS("PickupAction", Error) << "The item is nowhere?!" << LOGF;
 				return;
 			}
-			for(auto& room : rooms) {
-				current = (Room*) room.second.get();
-			}
+			current = rooms.begin()->second.safeCast<Room>();
 		}
 		catch (const std::out_of_range& e) {
 			

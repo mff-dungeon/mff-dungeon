@@ -10,8 +10,7 @@ namespace Dungeon {
 		this->usedWeight = 0;
 	}
 	
-	Inventory::Inventory(objId id) {
-		this->setId(id);
+	Inventory::Inventory(objId id) : Wearable(id) {
 		this->maxSpace = DEFAULT_SPACE;
 		this->maxWeight = DEFAULT_WEIGHT;
 		this->usedSpace = 0;
@@ -95,9 +94,8 @@ namespace Dungeon {
 						sentence += " and ";
 					}
 					count++;
-					if(item.second.get()->instanceOf(IDescriptable)) {
-						IDescriptable* itemDesc = (IDescriptable*) item.second.get();
-						sentence += itemDesc->getName();
+					if(item.second->instanceOf(IDescriptable)) {
+						sentence += item.second.unsafeCast<IDescriptable>()->getName();
 					}
 					else {
 						sentence += item.second.getId();
@@ -108,9 +106,8 @@ namespace Dungeon {
 			else if(items.size() == 1) {
 				for(auto& item : items) {
 					sentence += "There is ";
-					if(item.second.get()->instanceOf(IDescriptable)) {
-						IDescriptable* itemDesc = (IDescriptable*) item.second.get();
-						sentence += itemDesc->getName();
+					if(item.second->instanceOf(IDescriptable)) {
+						sentence += item.second.unsafeCast<IDescriptable>()->getName();
 					}
 					else {
 						sentence += item.second.getId();
@@ -128,7 +125,7 @@ namespace Dungeon {
 		return sentence;
 	}
 	
-	void Inventory::getActions(ActionList* list, IObject* callee) {
+	void Inventory::getActions(ActionList* list, ObjectPointer callee) {
 		Wearable::getActions(list, callee);
 		
 		// Drop action, adding only if there is anything to drop
@@ -136,7 +133,7 @@ namespace Dungeon {
 		try {
 			ObjectMap itemsIn = this->getRelations(Relation::Master, R_INVENTORY);
 			for(auto& item : itemsIn) {
-				item.second.get()->getActions(list, callee);
+				item.second->getActions(list, callee);
 				action->addTarget(item.second);
 			}
 		}
@@ -171,10 +168,9 @@ namespace Dungeon {
 	}
         
 	void DropAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {	
-		// Presumes the target is instance of item
-		Item* item = (Item*) target.get();
+		Item* item = target.safeCast<Item>();
 		
-		if(!item->isDropable()) {
+		if(!item || !item->isDropable()) {
 			*ad << "You cannot drop this item.\n";
 			return;
 		}
@@ -187,14 +183,14 @@ namespace Dungeon {
 				*ad << "You cannot drop this item.\n";
 				return;
 			}
-			backpack = (Inventory*) backpacks.begin()->second.get();
+			backpack = backpacks.begin()->second.safeCast<Inventory>();
 		}
 		catch (const std::out_of_range& e) {
 			
 		}
 		
 		backpack->removeItem(item);
-		ad->getGM()->createRelation(ad->getAlive()->getLocation().get(), item, R_INSIDE);
+		ad->getGM()->createRelation(ad->getAlive()->getLocation(), item, R_INSIDE);
 		
 		*ad << "You've dropped " + item->getName() + ".";
 	}

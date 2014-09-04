@@ -17,12 +17,15 @@ namespace Dungeon {
     class ThorsHammer : public Item {
     public:
         ThorsHammer();
-        
         virtual ~ThorsHammer();
 
-        virtual void getActions(ActionList* list, IObject* calee);
+        virtual void getActions(ActionList* list, ObjectPointer calee);
 		
     private:
+        /**
+         * TODO his really needs to prevent target from unloading in Splay tree,
+         * otherwise it could do terrible things!
+         */
         class PropertyEditor : public Action, public IPropertyStorage {
         public:
             PropertyEditor() : Action("property-editor", true) {}
@@ -41,7 +44,7 @@ namespace Dungeon {
 
         private:
             TextActionDescriptor* ad;
-            IObject* target;
+            ObjectPointer target;
             std::queue<string> descriptions;
         };
         

@@ -22,7 +22,7 @@ namespace Dungeon {
 			RelationList mastering = getRelations(Relation::Master);
 			for (auto& pair : mastering)
 				for(auto& item: pair.second) {
-					item.second.get()->getActions(list, this);
+					item.second->getActions(list, this);
 				}
 		}
 		catch (const std::out_of_range& e) {
@@ -34,7 +34,7 @@ namespace Dungeon {
 			try {
 				ObjectMap equips = this->getRelations(Relation::Master, Wearable::SlotRelations[i]);
 				if(equips.size() != 0) {
-					Wearable* worn = (Wearable*) equips.begin()->second.get();
+					Wearable* worn = equips.begin()->second.safeCast<Wearable>();
 					worn->getActions(list, this);
 				}
 			}
@@ -48,7 +48,7 @@ namespace Dungeon {
 		try{
 			ObjectMap room = getRelations(Relation::Slave, R_INSIDE);
 			for(auto& item: room) {
-				item.second.get()->getActions(list, this);
+				item.second->getActions(list, this);
 			}
 		}
 		catch (const std::out_of_range& e) {
@@ -56,9 +56,9 @@ namespace Dungeon {
 		}
     }
     
-    void Alive::getActions(ActionList* list, IObject *callee) {
+    void Alive::getActions(ActionList* list, ObjectPointer callee) {
 		LOGS("Alive", Verbose) << "Getting actions on " << this->getId() << "." << LOGF;
-		if (callee == this) {
+		if (this == callee) {
 			list->addAction(new CallbackAction("suicide", "commit suicide - If you just dont want to live on this planet anymore.",
 				RegexMatcher::matcher("commit( a)? suicide|kill me( now)?"),
 				[this] (ActionDescriptor * ad) {
@@ -85,17 +85,17 @@ namespace Dungeon {
 				<< this->getName() + " is nearby." << endr;
     }
     
-    string Alive::getGroupDescriptionSentence(vector<IDescriptable *> others) {
+    string Alive::getGroupDescriptionSentence(vector<ObjectPointer> others) {
         if (others.size() == 0) return "";
         else if (others.size() == 1) return getDescriptionSentence();
         
         string sentence;
         for (int i = 0; i < others.size() - 1; i++) {
             if (i != 0) sentence += ", ";
-            sentence += others.at(i)->getName();
+            sentence += others.at(i).safeCast<Alive>()->getName();
         }
         
-        sentence += " and " + others.at(others.size() - 1)->getName();
+        sentence += " and " + others.back().safeCast<Alive>()->getName();
 		
         return RandomString::get()
 				<< "You recognize " + sentence + "." << endr
@@ -165,7 +165,7 @@ namespace Dungeon {
 			try {
 				ObjectMap worn = this->getRelations(Relation::Master, Wearable::SlotRelations[slot]);
 				if(worn.size() > 0) {
-					Wearable* wornItem = (Wearable*) worn.begin()->second.get();
+					Wearable* wornItem = worn.begin()->second.safeCast<Wearable>();
 					attack += wornItem->getAttackBonus();
 					defense += wornItem->getDefenseBonus();
 				}

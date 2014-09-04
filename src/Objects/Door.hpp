@@ -14,10 +14,10 @@ namespace Dungeon {
     public:
         Door();
         Door(objId id) : IDescriptable(id) {}
-        virtual void getActions(ActionList* list, IObject* callee);
+        virtual void getActions(ActionList* list, ObjectPointer callee);
         
         virtual string getDescriptionSentence();
-        virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
+        virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
         
     PERSISTENT_DECLARATION(Door, IDescriptable)
     }; 

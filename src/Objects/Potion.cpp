@@ -26,7 +26,7 @@ namespace Dungeon {
 		return this;
 	}
 	
-	void Potion::getActions(ActionList* list, IObject* callee) {
+	void Potion::getActions(ActionList* list, ObjectPointer callee) {
 		Item::getActions(list, callee);
 		DrinkPotionAction* action = new DrinkPotionAction;
 		action->addTarget(this->getObjectPointer());
@@ -54,7 +54,7 @@ namespace Dungeon {
 	void DrinkPotionAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		if (!target->instanceOf(Potion))
 			return;
-		Potion* potion = (Potion*) target.get();
+		Potion* potion = target.safeCast<Potion>();
 		*ad << "You've drunk " + potion->getName() + ". ";
 		switch(potion->getType()) {
 			case Potion::PotionType::Healing: {

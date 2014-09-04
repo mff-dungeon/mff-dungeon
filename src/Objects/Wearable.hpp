@@ -23,9 +23,9 @@ namespace Dungeon {
                 };
 		static const char* SlotRelations[];
 		
-		Wearable();
-		Wearable(objId id);
-		virtual ~Wearable();
+		Wearable() {}
+		Wearable(objId id) : Item(id) {}
+		virtual ~Wearable() {}
 		
 		Slot getSlot() const;
 		Wearable* setSlot(Slot slot);
@@ -34,9 +34,9 @@ namespace Dungeon {
 		int getDefenseBonus() const;
 		Wearable* setDefenseBonus(int bonus);
 		
-		static bool unequip(ActionDescriptor* ad, Wearable* item, int desiredAction = 0);
+		static bool unequip(ActionDescriptor* ad, ObjectPointer item, int desiredAction = 0);
 		
-		virtual void getActions(ActionList* list, IObject* callee);
+		virtual void getActions(ActionList* list, ObjectPointer callee);
                 
 		virtual void registerProperties(IPropertyStorage& storage);
 
@@ -69,7 +69,7 @@ namespace Dungeon {
          * @param equipedItem currently equiped item, 0 if none is
 		 * @param desiredAction desired action for the unequip, 1 if drop, 2 if put to backpack
          */
-		void equipItem(ActionDescriptor* ad, Wearable* item, Wearable* equipedItem = 0, int desiredAction = 0);
+		void equipItem(ActionDescriptor* ad, ObjectPointer item, ObjectPointer equipedItem = nullptr, int desiredAction = 0);
 		
 		/**
 		 * Provides special treatment to backpacks. Handles item switching, backpack switching, 
@@ -78,7 +78,7 @@ namespace Dungeon {
          * @param newPack The newly equiped backpack
          * @param currentPack The rusty old backpack
          */
-		void equipBackpack(ActionDescriptor* ad, Inventory* newPack, Inventory* currentPack);
+		void equipBackpack(ActionDescriptor* ad, ObjectPointer newPack, ObjectPointer currentPack);
 	};
 	
 	class UnequipAction : public MultiTargetAction {

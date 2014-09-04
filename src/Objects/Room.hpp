@@ -14,15 +14,15 @@ namespace Dungeon {
      */
     class Room : public IDescriptable {
     public:
-        Room() {};		// Constructor allowing to load class later
-        Room(objId id);
-        virtual ~Room();
+        Room() {}		// Constructor allowing to load class later
+        Room(objId id) : IDescriptable(id) {}
+        virtual ~Room() {}
 
         virtual string getDescriptionSentence();
-        virtual void getActions(ActionList* list, IObject* calee);
+        virtual void getActions(ActionList* list, ObjectPointer calee);
         virtual void explore(ActionDescriptor* ad);
 		
-		bool contains(IObject* object);
+		bool contains(ObjectPointer object);
 	
     PERSISTENT_DECLARATION(Room, IDescriptable)
 			

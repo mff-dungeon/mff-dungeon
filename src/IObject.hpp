@@ -1,7 +1,8 @@
+#include "common.hpp"
+
 #ifndef IOBJECT_HPP
 #define	IOBJECT_HPP
 
-#include "common.hpp"
 #include "Archiver.hpp"
 #include "ObjectList.hpp"
 #include "AddIObject.hpp"
@@ -57,19 +58,20 @@ namespace Dungeon {
      * Base clas of everything in the world.
      */
     class IObject : public IStorable {
-    friend class GameManager;
+    friend class GameManager; // Injecting GM
+    friend struct ObjectPointer; // Access to GM when cloning
+    friend class ObjectLoader; // Setting ID
     public:
         IObject() {};
         IObject(objId id) : id(id) {};
         virtual ~IObject() {};
 
         virtual objId getId() const;
-        virtual IObject * setId(objId id);
         
         /**
          * Which actions can be performed by callee on this object?
          */
-        virtual void getActions(ActionList * list, IObject *callee) = 0;
+        virtual void getActions(ActionList * list, ObjectPointer callee) = 0;
         
         /*
          * Serializing functions: 
@@ -94,14 +96,6 @@ namespace Dungeon {
          *  master relations - this object acts as the master
          *  slave relations - this object acts as the slave
          */
-
-        /**
-         * Registers a new relation for this object
-         * @param type the type of the new relation
-         * @param other ObjectPointer of the other object
-         * @param master true, if the relation is master relation
-         */
-        void addRelation(string type, ObjectPointer other, bool master=true);
                 
         /**
          * Checks whether this relation exists
@@ -110,14 +104,6 @@ namespace Dungeon {
          * @param master true, if the relation is master relation
          */
         bool hasRelation(string type, ObjectPointer other, bool master=true);
-		
-        /**
-         * Erases a given relation of this object
-         * @param type the type of the erased relation
-         * @param other ObjectPointer of the other object
-         * @param master true, if the relation is master relation
-         */
-        void eraseRelation(string type, ObjectPointer other, bool master=true);
 		
         /**
          * Returns either master, or slave relations of the object
@@ -173,6 +159,27 @@ namespace Dungeon {
         GameManager* gm;
         objId id;
 	RelationList relation_master, relation_slave;
+        
+        /**
+         * Only GM can set id
+         */
+        virtual IObject * setId(objId id);
+		
+        /**
+         * Erases a given relation of this object
+         * @param type the type of the erased relation
+         * @param other ObjectPointer of the other object
+         * @param master true, if the relation is master relation
+         */
+        void eraseRelation(string type, ObjectPointer other, bool master=true);
+
+        /**
+         * Registers a new relation for this object
+         * @param type the type of the new relation
+         * @param other ObjectPointer of the other object
+         * @param master true, if the relation is master relation
+         */
+        void addRelation(string type, ObjectPointer other, bool master=true);
     };
 }
 

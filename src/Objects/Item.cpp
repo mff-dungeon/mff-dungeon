@@ -11,8 +11,7 @@ namespace Dungeon {
 		this->setDropable(true)->setPickable(true)->setSize(0)->setWeight(0);
 	}
 	
-	Item::Item(objId id) {
-		this->setId(id);
+	Item::Item(objId id) : IDescriptable(id) {
 		this->setDropable(true)->setPickable(true)->setSize(0)->setWeight(0);
 	}
 
@@ -56,7 +55,7 @@ namespace Dungeon {
 		return this;
 	}
 
-	void Item::getActions(ActionList* list, IObject* callee) {
+	void Item::getActions(ActionList* list, ObjectPointer callee) {
 		
 	}
 	
@@ -67,17 +66,17 @@ namespace Dungeon {
 				<< this->getName() + " lies nearby." << endr;
 	}
 	
-	string Item::getGroupDescriptionSentence(vector<IDescriptable*> others) {
+	string Item::getGroupDescriptionSentence(vector<ObjectPointer> others) {
 		if (others.size() == 0) return "";
         else if (others.size() == 1) return getDescriptionSentence();
         
         string sentence;
 		for (int i = 0; i < others.size() - 1; i++) {
             if (i != 0) sentence += ", ";
-            sentence += others.at(i)->getName();
+            sentence += others.at(i).safeCast<Item>()->getName();
         }
         
-        sentence += " and " + others.at(others.size() - 1)->getName();
+        sentence += " and " + others.at(others.size() - 1).safeCast<Item>()->getName();
 		
 		return RandomString::get()
 				<< "You see " + sentence + "." << endr

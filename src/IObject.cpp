@@ -11,7 +11,7 @@ namespace Dungeon {
 		return id;
 	}
 
-	IObject * IObject::setId(objId id) {
+	IObject* IObject::setId(objId id) {
 		this->id = id;
 		return this;
 	}
@@ -62,7 +62,7 @@ namespace Dungeon {
 		}
 		
 		if (other.isLoaded())
-			other.get()->addRelation(type, getObjectPointer(), !master);
+			other->addRelation(type, getObjectPointer(), !master);
 	}
 
 	RelationList& IObject::getRelations(Relation::Dir dir) {
@@ -86,7 +86,7 @@ namespace Dungeon {
 		}
 		
 		if (other.isLoaded())
-			other.get()->eraseRelation(type, getObjectPointer(), !master);
+			other->eraseRelation(type, getObjectPointer(), !master);
 	}
 	
 	void IObject::serialize(Archiver& stream) {

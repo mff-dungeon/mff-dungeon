@@ -45,8 +45,8 @@ namespace Dungeon {
 			.have(contact, "human-jid", "Contact JID", false);
 		Alive::registerProperties(storage);
 	}
-	void Human::getActions(ActionList* list, IObject* callee) {
-		if (callee == this) {
+	void Human::getActions(ActionList* list, ObjectPointer callee) {
+		if (this == callee) {
 			list->addAction(new CallbackAction("help", "help - Well...",
 				RegexMatcher::matcher("help|what can i do|list actions"),
 				[this] (ActionDescriptor * ad) {
@@ -65,8 +65,8 @@ namespace Dungeon {
 				[this] (ActionDescriptor * ad) {
 						ObjectMap rooms = getRelations(Relation::Slave, R_INSIDE);
 						for (auto& room : rooms) {
-							IObject* obj = room.second.get();
-							Room* r = (Room*) obj;
+							ObjectPointer obj = room.second;
+							Room* r = obj.safeCast<Room>();
 							if (r) {
 								r->explore(ad);
 							} else {
@@ -80,8 +80,8 @@ namespace Dungeon {
 						try {
 							ObjectMap backpacks = this->getRelations(Relation::Master, R_INVENTORY);
 							for(auto& item : backpacks) {
-								if(!item.second.get()->instanceOf(Inventory)) continue;
-								*ad << ((IDescriptable*) item.second.get())->getDescriptionSentence();
+								if(!item.second->instanceOf(Inventory)) continue;
+								*ad << item.second.safeCast<IDescriptable>()->getDescriptionSentence();
 							}
 						}
 						catch (const std::out_of_range& e) {
@@ -109,7 +109,7 @@ namespace Dungeon {
 					try {
 						ObjectMap backpacks = this->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Backpack]);
 						if(backpacks.size() > 0) {
-							Inventory* backpack = (Inventory*) backpacks.begin()->second.get();
+							Inventory* backpack = backpacks.begin()->second.safeCast<Inventory>();
 							*ad << backpack->getContainingSentence();
 							found = true;
 						}

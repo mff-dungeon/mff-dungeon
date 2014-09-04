@@ -29,11 +29,15 @@ namespace Dungeon {
      */
     class ObjectGroup : public ObjectGroupMap {
     public:
-        ObjectGroup(IObject *obj);
         ObjectGroup(ObjectPointer ptr);
-        ObjectGroup(const vector<IObject *>& objects);
         ObjectGroup(const vector<ObjectPointer>& pointers);
         ObjectGroup(ObjectMap map);
+        
+        /** @deprecated */
+        ObjectGroup(IObject *obj);
+        
+        /** @deprecated */
+        ObjectGroup(const vector<IObject *>& objects);
         
         string explore();
         
@@ -41,11 +45,10 @@ namespace Dungeon {
             FuzzyStringMatcher<ObjectPointer> matcher;
             ObjectGroup::iterator it;
             for (it = this->begin(); it != this->end(); it++) {
-                IObject* obj = it->second.get();
-                if (obj->instanceOf(IDescriptable)) {
-                    IDescriptable* dobj = (IDescriptable*) obj;
-                     matcher.add(dobj->getLongName(), it->second);
-                     matcher.add(dobj->getName(), it->second);
+                IDescriptable* obj = it->second.safeCast<IDescriptable>();
+                if (obj) {
+                    matcher.add(obj->getLongName(), it->second);
+                    matcher.add(obj->getName(), it->second);
                 }
             }
             

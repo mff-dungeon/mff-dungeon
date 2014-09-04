@@ -20,10 +20,10 @@ namespace Dungeon
         Alive() {}		// Constructor allowing to load class later
         Alive(objId id);
         void getAllActions(ActionList* list);
-        virtual void getActions(ActionList* list, IObject *callee);
+        virtual void getActions(ActionList* list, ObjectPointer callee);
         
         virtual string getDescriptionSentence();
-        virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
+        virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
 	
 		virtual int getCurrentHp() const;
 		virtual Alive* setCurrentHp(int hp, ActionDescriptor* ad = 0);

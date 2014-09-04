@@ -21,7 +21,7 @@ namespace Dungeon {
         Potion(objId id);
         virtual ~Potion();
 
-        virtual void getActions(ActionList* list, IObject* callee);
+        virtual void getActions(ActionList* list, ObjectPointer callee);
 
         Potion* setType(PotionType type);
         Potion* setStrength(int strength);

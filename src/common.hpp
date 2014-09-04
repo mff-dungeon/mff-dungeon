@@ -52,18 +52,20 @@ namespace Dungeon {
     class GameManager; 
     class ObjectLoader;
     class ObjectGroup;
-    class Alive;
     class Action;
     class ActionDescriptor;
     class ActionQueue;
-    class IObject;
     class Driver;
     class AddIObject;
     class ActionList;
+    class Inventory;
+    struct ObjectPointer;
+    
+    class IObject;
+    class IDescriptable;
+    class Alive;
     class Item;
     class Potion;
-	class Inventory;
-    struct ObjectPointer;
     
     /**
      * Should be value type (struct), comparable
@@ -87,8 +89,8 @@ namespace Dungeon {
     
 }
     
-#include "ObjectPointer.hpp"
 #include "IObject.hpp"
+#include "ObjectPointer.hpp"
 #include "AddIObject.hpp"
 
 

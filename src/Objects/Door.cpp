@@ -11,14 +11,14 @@ namespace Dungeon {
 	Door::Door() {
 	}
 
-	void Door::getActions(ActionList* list, IObject* callee) {
+	void Door::getActions(ActionList* list, ObjectPointer callee) {
 		LOGS("Door", Verbose) << "Getting actions on " << this->getId() << "." << LOGF;		
 		// Add move actions to all rooms
 		try{
 			ObjectMap targets = this->getRelations(Relation::Master, R_TARGET);
 			DoorwalkAction* action = new DoorwalkAction;
 			for (auto& obj : targets) {
-				if (obj.second != ((Alive*) callee)->getLocation()) {
+				if (obj.second != callee.safeCast<Alive>()->getLocation()) {
 					action->addTarget(this->getObjectPointer());
 				}
 			}
@@ -32,7 +32,7 @@ namespace Dungeon {
 	void DoorwalkAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer door) {	
 			ObjectPointer target;
 			try {
-				ObjectMap targets = door.get()->getRelations(Relation::Master, R_TARGET);
+				ObjectMap targets = door->getRelations(Relation::Master, R_TARGET);
 				for (auto& obj : targets) {
 					if (obj.second != ad->getAlive()->getLocation()) {
 						target = obj.second;
@@ -48,7 +48,7 @@ namespace Dungeon {
                 return;
             }
             ad->getGM()->moveAlive(ad->getAlive(), target.getId());
-            ((Room*) target.get())->explore(ad);
+            target.safeCast<Room>()->explore(ad);
 	}
     
     string Door::getDescriptionSentence() {
@@ -58,7 +58,7 @@ namespace Dungeon {
 				<< "You see the frame of a " + this->getName() + "." << endr;
     }
     
-    string Door::getGroupDescriptionSentence(vector<IDescriptable *> others) {
+    string Door::getGroupDescriptionSentence(vector<ObjectPointer> others) {
         if (others.size() == 0) return "";
         else if (others.size() == 1) return getDescriptionSentence();
         
@@ -66,10 +66,10 @@ namespace Dungeon {
 		
         for (int i = 0; i < others.size() - 1; i++) {
             if (i != 0) sentence += ", ";
-            sentence += others.at(i)->getName();
+            sentence += others.at(i).safeCast<Door>()->getName();
         }
         
-        sentence += " and " + others.at(others.size() - 1)->getName();
+        sentence += " and " + others.back().safeCast<Door>()->getName();
 		
         return RandomString::get()
 				<< "There are " + sentence + "." << endr

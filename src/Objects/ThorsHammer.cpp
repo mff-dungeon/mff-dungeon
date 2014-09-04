@@ -8,8 +8,7 @@
 
 namespace Dungeon
 {
-	ThorsHammer::ThorsHammer() {
-		setId("special/thorshammer");
+	ThorsHammer::ThorsHammer() : Item("special/thorshammer") {
 		setName("Thor's Hammer");
 		setLongName("The most horrifying item in the world.");
 		setDescription("It reflect's so much light that it cannot be explored further.");
@@ -22,12 +21,13 @@ namespace Dungeon
 	ThorsHammer::~ThorsHammer() {
 	}
 
-	void ThorsHammer::getActions(ActionList* list, IObject* callee) {list->addAction(new CallbackAction("dump", "dump - If you want to get some info...",
+	void ThorsHammer::getActions(ActionList* list, ObjectPointer callee) {
+		list->addAction(new CallbackAction("dump", "dump - If you want to get some info...",
 		RegexMatcher::matcher("^dump( relations)?( of)?(.*)$"),
 		[this] (ActionDescriptor * ad) {
 				smatch matches;
 				RegexMatcher::match("^dump (relations )?(of )?(.*)$", ad->in_msg, matches);
-				IObject* target;
+				ObjectPointer target;
 				if (matches[3] == "") {
 					target = ad->getAlive();
 				} else {
@@ -35,15 +35,15 @@ namespace Dungeon
 						*ad << "404: Object not found :)";
 						return;
 					}
-					target = ad->getGM()->getObject(matches[3]);
+					target = ad->getGM()->getObjectPointer(matches[3]);
 				}
 				*ad << "So you want to know something? Relations which " << target->getId() << " master:\n";
 				RelationList r = target->getRelations(Relation::Master);
 				for (auto& type : r) {
 					*ad << "=== " << type.first + ":\n";
 					for(auto& obj : type.second) {
-						if(obj.second.get()->instanceOf(IDescriptable)) {
-							IDescriptable* objptr = (IDescriptable*) obj.second.get();
+						if(obj.second->instanceOf(IDescriptable)) {
+							IDescriptable* objptr = obj.second.unsafeCast<IDescriptable>();
 							*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
 						}
 						else {
@@ -56,8 +56,8 @@ namespace Dungeon
 				for (auto& type : r) {
 					*ad << "=== " << type.first + ":\n";
 					for(auto& obj : type.second) {
-						if(obj.second.get()->instanceOf(IDescriptable)) {
-							IDescriptable* objptr = (IDescriptable*) obj.second.get();
+						if(obj.second->instanceOf(IDescriptable)) {
+							IDescriptable* objptr = obj.second.unsafeCast<IDescriptable>();
 							*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
 						}
 						else {
@@ -81,7 +81,7 @@ namespace Dungeon
 					*ad << "You can find the dump at " << dd.startDump() << ".";
 					
 					for (vector<objId>::value_type& id : ad->getGM()->getObjectList()) {
-						IObject* obj = ad->getGM()->getObject(id);
+						ObjectPointer obj = ad->getGM()->getObjectPointer(id);
 						dd.dumpObject(obj);
 					}
 
@@ -133,7 +133,7 @@ namespace Dungeon
 			*ad << "404: Object not found :)";
 			return;
 		}
-		target  = gm->getObject(matches[3]);
+		target = gm->getObjectPointer(matches[3]);
 		
 		target->beforeLoad(*this);
 		target->beforeStore(*this);

@@ -22,14 +22,14 @@ namespace Dungeon {
         virtual string startDump() = 0;
         virtual void endDump() = 0; 
         
-        virtual void dumpObject(IObject* obj) = 0;
+        virtual void dumpObject(ObjectPointer obj) = 0;
         
         virtual string getTimestamp() const;
     };
     
     class DotDumper : public WorldDumper {
     public:
-        virtual void dumpObject(IObject* obj);
+        virtual void dumpObject(ObjectPointer obj);
 
         virtual string startDump();
         virtual void endDump();

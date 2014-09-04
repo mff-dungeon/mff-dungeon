@@ -62,7 +62,7 @@ namespace Dungeon {
     void JabberDriver::processDescriptor(ActionDescriptor* descriptor) {
         TextActionDescriptor* ad = (TextActionDescriptor*) descriptor;
         objId figureId = this->findFigureId(ad->from);
-        Alive* figure = (Alive*) gm->getObject(figureId);
+        Alive* figure = gm->getObjectPointer(figureId).safeCast<Alive>();
         // Really need to do it on every reply. Alive object could have been disposed in meantime...
         ad->assigned(figure);
 

@@ -33,10 +33,10 @@ namespace Dungeon {
         virtual bool isDropable();
         virtual Item* setDropable(bool dropable);
 
-        virtual void getActions(ActionList* list, IObject* callee);
+        virtual void getActions(ActionList* list, ObjectPointer callee);
 
         virtual string getDescriptionSentence();
-        virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
+        virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
 		
 		virtual void registerProperties(IPropertyStorage& storage);
 		

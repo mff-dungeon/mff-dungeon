@@ -1,7 +1,8 @@
+#include "common.hpp"
+
 #ifndef LOGGER_HPP
 #define	LOGGER_HPP
 
-#include "common.hpp"
 #include <iomanip>
 #include <ctime>
 #include <sstream>

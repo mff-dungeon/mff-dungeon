@@ -30,11 +30,12 @@ namespace Dungeon {
 		
 		/**
 		 * Makes a string describing what is inside
-         * @return a string for AD
-         */
+                * 
+                 * @return a string for AD
+                */
 		virtual string getContainingSentence();
 		
-		virtual void getActions(ActionList* list, IObject* callee);
+		virtual void getActions(ActionList* list, ObjectPointer callee);
 		
 		virtual void registerProperties(IPropertyStorage& storage);
 	private:

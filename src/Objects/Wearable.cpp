@@ -4,19 +4,7 @@
 namespace Dungeon {
 
 	const char* Wearable::SlotRelations[] = { "invalid", "equip-weapon", "equip-backpack", "equip-bodyarmor" };
-	
-	Wearable::Wearable() {
-		
-	}
-	
-	Wearable::Wearable(objId id) {
-		this->setId(id);
-	}
 
-	Wearable::~Wearable() {
-
-	}
-	
 	Wearable::Slot Wearable::getSlot() const {
 		return slot;
 	}
@@ -44,7 +32,13 @@ namespace Dungeon {
 		return this;
 	}
 	
-	bool Wearable::unequip(ActionDescriptor* ad, Wearable* item, int desiredAction) {
+	bool Wearable::unequip(ActionDescriptor* ad, ObjectPointer itemPtr, int desiredAction) {
+		Wearable* item = itemPtr.safeCast<Wearable>();
+		if (!item) {
+			*ad << itemPtr.safeCast<IDescriptable>()->getName() << " could not be unequiped.";
+			return false;
+		}
+		
 		if(desiredAction == 1) {
 			ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
 			ad->getGM()->createRelation(ad->getAlive()->getLocation(), item, R_INSIDE);
@@ -58,7 +52,7 @@ namespace Dungeon {
 					*ad << "You have no backpack to put the item to. ";
 					return false;
 				}
-				Inventory* backpack = (Inventory*) inventories.begin()->second.get();
+				Inventory* backpack = inventories.begin()->second.safeCast<Inventory>();
 				if(backpack->getFreeSpace() < item->getSize() 
 						|| backpack->getFreeWeight() < item->getWeight()) {
 					*ad << "You have no free space in your " + backpack->getName() + ". ";
@@ -81,7 +75,7 @@ namespace Dungeon {
 		return false;
 	}
 
-	void Wearable::getActions(ActionList* list, IObject* callee) {
+	void Wearable::getActions(ActionList* list, ObjectPointer callee) {
 		Item::getActions(list, callee);
 		// Do I see this equipped or not?
 		try {
@@ -128,7 +122,14 @@ namespace Dungeon {
 		}
 	}
 	
-	void EquipAction::equipItem(ActionDescriptor* ad, Wearable* item, Wearable* equipedItem, int desiredAction) {
+	void EquipAction::equipItem(ActionDescriptor* ad, ObjectPointer itemPtr, ObjectPointer equipedItemPtr, int desiredAction) {
+		Wearable* item = itemPtr.safeCast<Wearable>();
+		Wearable* equipedItem = equipedItemPtr.safeCast<Wearable>();
+		if (!item || !equipedItem) {
+			*ad << itemPtr.safeCast<IDescriptable>()->getName() << " could not be equiped.";
+			return;
+		}
+		
 		if(equipedItem != 0) {
 				if(!Wearable::unequip(ad, equipedItem, desiredAction)) {
 					*ad << equipedItem->getName() + " couldn't be unequiped, so you cannot wear " + item->getName() + " now.";
@@ -136,7 +137,7 @@ namespace Dungeon {
 				}
 		}
 		// Let's equip the item.
-		Room* currentRoom = (Room*) ad->getAlive()->getLocation().get();
+		Room* currentRoom = ad->getAlive()->getLocation().safeCast<Room>();
 		if(currentRoom->contains(item)) {
 			ad->getGM()->removeRelation(currentRoom, item, R_INSIDE);
 			ad->getGM()->createRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
@@ -149,7 +150,7 @@ namespace Dungeon {
 		try {
 			ObjectMap inventories = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Slot::Backpack]);
 			if(inventories.size() > 0) {
-				Inventory* backpack = (Inventory*) inventories.begin()->second.get();
+				Inventory* backpack = inventories.begin()->second.safeCast<Inventory>();
 				if(backpack->contains(item)) {
 					// It is in the backpack, let's remove it
 					backpack->removeItem(item);
@@ -167,7 +168,14 @@ namespace Dungeon {
 		return;
 	}
 	
-	void EquipAction::equipBackpack(ActionDescriptor* ad, Inventory* newPack, Inventory* currentPack) {
+	void EquipAction::equipBackpack(ActionDescriptor* ad, ObjectPointer newPackPtr, ObjectPointer currentPackPtr) {
+		Inventory* newPack = newPackPtr.safeCast<Inventory>();
+		Inventory* currentPack = currentPackPtr.safeCast<Inventory>();
+		if (!newPack || !currentPack) {
+			*ad << newPackPtr.safeCast<IDescriptable>()->getName() << " could not be equipped because of internal error.";
+			return;
+		}
+		
 		*ad << "Would you like to move your items to a " + newPack->getName() + " and keep " 
 				+ currentPack->getName() + ", move items and drop " + currentPack->getName() 
 				+ " or leave all items in " + currentPack->getName()+ " and drop it?";
@@ -217,8 +225,8 @@ namespace Dungeon {
 				try {
 					ObjectMap inventory = currentPack->getRelations(Relation::Master, R_INVENTORY);
 					for(auto& i : inventory) {
-						if(!i.second.get()->isInstanceOf("Item")) continue;
-						Item* it = (Item*) i.second.get();
+						if(!i.second->isInstanceOf("Item")) continue;
+						Item* it = i.second.unsafeCast<Item>();
 						if(it->getId() != newPack->getId()) {
 							currentPack->removeItem(it);
 							newPack->addItem(it);
@@ -243,7 +251,7 @@ namespace Dungeon {
 			}
 					
 			//add the new one
-			Room* currentLoc = (Room*) ad->getAlive()->getLocation().get();
+			Room* currentLoc = ad->getAlive()->getLocation().safeCast<Room>();
 			if(currentLoc->contains(newPack)) {
 				ad->getGM()->removeRelation(currentLoc, newPack, R_INSIDE);
 			}
@@ -254,13 +262,13 @@ namespace Dungeon {
 	}
 
 	void EquipAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
-		Wearable* item = (Wearable*) target.get();
+		Wearable* item = target.safeCast<Wearable>();
 		Wearable* equipedItem = 0;
 		// Get current equiped item
 		try {
 			ObjectMap equiped = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[item->getSlot()]);
 			if(equiped.size() == 1) {
-				equipedItem = (Wearable*) equiped.begin()->second.get();
+				equipedItem = equiped.begin()->second.safeCast<Wearable>();
 			}
 		}
 		catch(const std::out_of_range& e) {
@@ -308,7 +316,7 @@ namespace Dungeon {
 	}
 	
 	void UnequipAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
-		Wearable* item = (Wearable*) target.get();
+		Wearable* item = target.safeCast<Wearable>();
 		*ad << "Do you want to drop " + item->getName() + ", or do you want to put it into your backpack?";
 			ad->waitForReply([this, item] (ActionDescriptor *ad, string reply) {
 				// FIXME: Use StringMatcher to match drop/put...

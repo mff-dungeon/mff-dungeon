@@ -43,20 +43,20 @@ namespace Dungeon
             objId firstIdentifier = m_it->first;
             string objectType = objId_getType(firstIdentifier);
             
-            if (m_it->second.get()->instanceOf(IDescriptable)) {
+            if (m_it->second->instanceOf(IDescriptable)) {
                 pair<ObjectGroup::iterator, ObjectGroup::iterator> keyRange = this->equal_range(firstIdentifier);
-                vector<IDescriptable *> sameTypeObjects;
+                vector<ObjectPointer> sameTypeObjects;
                 
                 for (s_it = keyRange.first; s_it != keyRange.second; s_it++) {
-                    sameTypeObjects.push_back((IDescriptable *)s_it->second.get());
+                    sameTypeObjects.push_back(s_it->second);
                 }
                 
                 if (sameTypeObjects.empty()) {
                     continue;
                 } else if (sameTypeObjects.size() == 1) {
-                    sentence += sameTypeObjects.front()->getDescriptionSentence() + " ";
+                    sentence += sameTypeObjects.front().unsafeCast<IDescriptable>()->getDescriptionSentence() + " ";
                 } else {
-                    sentence += sameTypeObjects.front()->getGroupDescriptionSentence(sameTypeObjects) + " ";
+                    sentence += sameTypeObjects.front().unsafeCast<IDescriptable>()->getGroupDescriptionSentence(sameTypeObjects) + " ";
                 }
             } else {
                 sentence += "There is an object (" + m_it->second.getId() + "). ";

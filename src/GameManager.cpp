@@ -154,14 +154,14 @@ namespace Dungeon {
 		RelationList copy = obj->getRelations(Relation::Master);
 		for (RelationList::value_type& rel : copy) {
 			for (ObjectMap::value_type& pair : rel.second) {
-				removeRelation(obj, pair.second.get(), rel.first);
+				removeRelation(obj, pair.second, rel.first);
 			}
 		}
 		
 		copy = obj->getRelations(Relation::Slave);
 		for (RelationList::value_type& rel : copy) {
 			for (ObjectMap::value_type& pair : rel.second) {
-				removeRelation(pair.second.get(), obj, rel.first);
+				removeRelation(pair.second, obj, rel.first);
 			}
 		}
 		
@@ -178,7 +178,7 @@ namespace Dungeon {
 		}
 	}
 
-	void GameManager::addRelation(IObject* master, IObject* slave, string relation) {
+	void GameManager::addRelation(ObjectPointer master, ObjectPointer slave, string relation) {
 		Relation* ref = new Relation(master->getId(), slave->getId(), master->className(), slave->className(), relation);
 		this->addRelation(ref);
 		delete ref;
@@ -213,19 +213,16 @@ namespace Dungeon {
 		return figure;
     }
 	
-	void GameManager::createRelation(objId mid, objId sid, string mclass, string sclass, string relation) {
-		Relation* rel = new Relation(mid, sid, mclass, sclass, relation);
-		this->addRelation(rel);
-		delete rel;
+	void GameManager::createRelation(ObjectPointer master, ObjectPointer slave, string relation) {
+		Relation rel (master->getId(), slave->getId(), master->className(), slave->className(), relation);
+		this->addRelation(&rel);
+		if (master.isLoaded())
+			master->addRelation(relation, getObjectPointer(slave->getId()));
+		if (slave.isLoaded())
+			slave->addRelation(relation, getObjectPointer(master->getId()), false);
 	}
 	
-	void GameManager::createRelation(IObject* master, IObject* slave, string relation) {
-		this->createRelation(master->getId(), slave->getId(), master->className(), slave->className(), relation);
-		master->addRelation(relation, getObjectPointer(slave->getId()));
-		slave->addRelation(relation, getObjectPointer(master->getId()), false);
-	}
-	
-	void GameManager::clearRelationsOfType(IObject* obj, string relation, Relation::Dir master) {
+	void GameManager::clearRelationsOfType(ObjectPointer obj, string relation, Relation::Dir master) {
 		Relation* ref_obj;
 		if (master)
 			ref_obj = new Relation(obj->getId(), "0", "0", "0", relation);
@@ -240,7 +237,7 @@ namespace Dungeon {
 		}
 	}
 	
-	void GameManager::removeRelation(IObject* master, IObject* slave, string relation) {
+	void GameManager::removeRelation(ObjectPointer master, ObjectPointer slave, string relation) {
  		master->eraseRelation(relation, this->getObjectPointer(slave->getId()));
 		
 		Relation* ref_obj = new Relation(master->getId(), slave->getId(), "0", "0", relation);
@@ -249,7 +246,7 @@ namespace Dungeon {
 	}
 	
 	void GameManager::moveAlive(Alive* alive, objId roomId) {
-		this->removeRelation(alive->getLocation().get(), alive, R_INSIDE);
+		this->removeRelation(alive->getLocation(), alive, R_INSIDE);
 		this->createRelation(this->getObject(roomId), alive, R_INSIDE);
 	}
 

@@ -22,7 +22,7 @@ namespace Dungeon {
 		return path;
 	}
 	
-	void DotDumper::dumpObject(IObject* obj) {
+	void DotDumper::dumpObject(ObjectPointer obj) {
 		stringstream ss;
 		ss << "n" << objects.size();
 		string node = ss.str();
@@ -41,7 +41,7 @@ namespace Dungeon {
 		}
 		file << node << " [label=";
 		if (obj->instanceOf(IDescriptable)) {
-			IDescriptable* desc = (IDescriptable*) obj;
+			IDescriptable* desc = obj.unsafeCast<IDescriptable>();
 			file <<  "<<b>" << desc->getName() << "</b><br/>id: " << obj->getId() << "<br/>";
 			obj->beforeStore(*this);
 			obj->registerProperties(*this);

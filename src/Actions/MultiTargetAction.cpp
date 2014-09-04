@@ -36,7 +36,7 @@ namespace Dungeon {
             ObjectPointer target;
             try {
                 target = group.match(str);
-                IDescriptable* obj = (IDescriptable*) target.get();
+                IDescriptable* obj = target.safeCast<IDescriptable>();
                 LOGS("MTA", Verbose) << "Selected " << obj->getLongName() << LOGF;
                 commitOnTarget(ad, target);
             } catch (const StringMatcher::Uncertain& e) {

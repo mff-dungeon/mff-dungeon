@@ -45,7 +45,7 @@ namespace Dungeon {
          * When there are more instances of this class, 
          * we can produce better summary.
          */
-        virtual string getGroupDescriptionSentence(vector<IDescriptable *> others);
+        virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
         
         virtual void registerProperties(IPropertyStorage& storage);
 	

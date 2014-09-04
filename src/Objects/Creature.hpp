@@ -12,9 +12,9 @@ namespace Dungeon {
      */
 	class Creature : public Alive {
 	public:
-		Creature();
-		Creature(objId id);
-		virtual ~Creature();
+		Creature() {}
+		Creature(objId id) : Alive(id) {};
+		virtual ~Creature() {}
 	private:
 
 	PERSISTENT_DECLARATION(Creature, Alive)

@@ -10,6 +10,7 @@
 namespace Dungeon {
    
     class GameManager {
+        friend struct ObjectPointer;
     private:
         SplayTree objects;
         ObjectLoader *loader;
@@ -18,7 +19,6 @@ namespace Dungeon {
     public:
         GameManager(bool init = false);
         void initWorld(bool askOnConsole = true);
-        IObject* getObject(objId id);
         bool hasObject(objId id);
         bool hasObjectLoaded(objId id);
         IObject* loadObject(objId id);
@@ -58,27 +58,15 @@ namespace Dungeon {
          * @param slave Pointer to the slave object
          * @param relation type of the relation
          */
-        void addRelation(IObject* master, IObject* slave, string relation);
-		
-        /**
-         * Creates relation. 
-         * CAUTION! It won't propagate the change to already loaded objects.
-         * Use the other version instead.
-         * @param mid ID of the master
-         * @param sid ID of the slave
-         * @param mclass Class name of the master
-         * @param sclass Class name of the slave
-         * @param relation Relation type
-         */
-        void createRelation(objId mid, objId sid, string mclass, string sclass, string relation);
-		
+        void addRelation(ObjectPointer master, ObjectPointer slave, string relation);
+	
         /**
          * Creates relation on already loaded objects
          * @param master Master
          * @param slave Slave
          * @param relation Relation type
          */
-        void createRelation(IObject* master, IObject* slave, string relation);
+        void createRelation(ObjectPointer master, ObjectPointer slave, string relation);
 		
         /**
          * Removes all the relations of given type.
@@ -86,7 +74,7 @@ namespace Dungeon {
          * @param relation relations to be removed
          * @param master true, if the relation is a master relation
          */
-        void clearRelationsOfType(IObject* obj, string relation, Relation::Dir master = Relation::Master);
+        void clearRelationsOfType(ObjectPointer obj, string relation, Relation::Dir master = Relation::Master);
 		
         /**
          * Removes a relation from the object and from storage
@@ -94,7 +82,7 @@ namespace Dungeon {
          * @param slave Pointer to the slave object
          * @param relation type of removed relation
          */
-        void removeRelation(IObject* master, IObject* slave, string relation);
+        void removeRelation(ObjectPointer master, ObjectPointer slave, string relation);
         
         ActionQueue* getQueue();
         
@@ -116,6 +104,9 @@ namespace Dungeon {
          * TODO: Get reason, message active users...
          */
         void shutdown();
+    protected:
+        
+        IObject* getObject(objId id);
     };
 }
 
