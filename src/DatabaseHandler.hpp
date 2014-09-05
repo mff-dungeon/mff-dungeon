@@ -24,19 +24,24 @@ namespace Dungeon {
 		
 		/**
 		 * Establishes a database connection
-         * @return true if connection was established, false otherwise
-         */
+                 * @return true if connection was established, false otherwise
+                 */
 		bool openConnection();
 		
 		/**
-		 * Finalizes currently opened dbStatement and closes the connection
-         */
-		void finalizeAndClose();
+		 * Closes a database connection
+                 * @return true
+                 */
+		bool closeConnection();
 		
-		DatabaseHandler() { }		// Private constructor
-		DatabaseHandler(const DatabaseHandler&);
+		/**
+		 * Finalizes currently opened dbStatement
+                 */
+		void finalize();
+		
+		DatabaseHandler();		// Private constructor
 		DatabaseHandler& operator=(const DatabaseHandler&);
-		~DatabaseHandler() {};
+		~DatabaseHandler();;
 	public:
 		/**
 		 * Returns the current opened instance of DatabaseHandler, opens a new 

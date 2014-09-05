@@ -19,19 +19,30 @@ namespace Dungeon {
 		sqlCode = sqlite3_open(DB_NAME, &dbConnection);
 		if(sqlCode != SQLITE_OK) { 
 			sqlite3_close(dbConnection);
-			return false;
+			return true;
 		}
 		return true;
 	}
+
+	DatabaseHandler::DatabaseHandler() { 
+		openConnection();
+	}
 	
-	void DatabaseHandler::finalizeAndClose() {
+	bool DatabaseHandler::closeConnection() {
+		sqlCode = sqlite3_close(dbConnection);
+		return true;
+	}
+	
+	DatabaseHandler::~DatabaseHandler() {
+		closeConnection();
+	}
+	
+	void DatabaseHandler::finalize() {
 		sqlite3_finalize(dbStatement);
-		sqlite3_close(dbConnection);
 	}
 
 	// Saves object from stringstream into DB, returns 0 if successful
 	int DatabaseHandler::saveObject(objId oid, string cName, string cData) {
-		if(!openConnection()) return E_CONNECTION_ERROR;
 
 		// Count, to find out if we should delete or update
 		const char *countstate = "SELECT COUNT(*) FROM objects WHERE id = ?;";
@@ -42,10 +53,10 @@ namespace Dungeon {
 		int count = 0;
 		if(sqlCode == SQLITE_ROW) {
 			count = sqlite3_column_int(dbStatement, 0);
-			sqlite3_finalize(dbStatement);
+			finalize();
 		}
 		else {
-			finalizeAndClose();
+			finalize();
 			return E_COUNT_ERROR;
 		}
 		if(count == 0) {
@@ -63,18 +74,16 @@ namespace Dungeon {
 
 		sqlCode = sqlite3_step(dbStatement);
 		if(sqlCode != SQLITE_DONE) { 
-			finalizeAndClose();
+			finalize();
 			return E_UPDATE_ERROR;
 		}
-		finalizeAndClose();
+		finalize();
 
 		return E_OK;
 	}
 
 	// Loading object into a stringstream, returns 0 if loaded successfuly
 	int DatabaseHandler::loadObject(objId oid, string& cName, stringstream& sData) {
-		if(!openConnection()) return E_CONNECTION_ERROR;
-
 		const char *state = "SELECT * FROM objects WHERE id = ?;";
 		const char *coid = oid.c_str();
 		sqlite3_prepare_v2(dbConnection, state, (int)strlen(state), &dbStatement, 0);
@@ -97,19 +106,17 @@ namespace Dungeon {
 			delete[] datac;
 		}
 		else {
-			finalizeAndClose();
+			finalize();
 			return E_NO_ROW; //DatabaseHandler error: No object with id objId found
 		}
 
-		finalizeAndClose();
+		finalize();
 		return E_OK;
 	}
 	
 	
 	// Loading object into a stringstream, returns 0 if loaded successfuly
 	int DatabaseHandler::getObjectList(vector<objId>& list) {
-		if(!openConnection()) return E_CONNECTION_ERROR;
-
 		const char *state = "SELECT id FROM objects;";
 		sqlite3_prepare_v2(dbConnection, state, (int)strlen(state), &dbStatement, 0);
 		sqlCode = sqlite3_step(dbStatement);
@@ -118,19 +125,18 @@ namespace Dungeon {
 			sqlCode = sqlite3_step(dbStatement);
 		}
 		
-		finalizeAndClose();
+		finalize();
 		return E_OK;
 	}
 	
 	int DatabaseHandler::deleteObject(objId oid) {
-		if(!openConnection()) return E_CONNECTION_ERROR;
 		const char* cquery = "DELETE FROM objects WHERE id = ?;";
 
 		sqlite3_prepare_v2(dbConnection, cquery, strlen(cquery), &dbStatement, 0);
 		sqlite3_bind_text(dbStatement, 1, oid.c_str(), strlen(oid.c_str()), 0);
 		sqlCode = sqlite3_step(dbStatement);
 		
-		finalizeAndClose();
+		finalize();
 		if(sqlCode != SQLITE_DONE) {
 			LOGS("DB", Error) << "Deleting object " << oid << " failed!" << LOGF;
 			return E_DELETE_ERROR;
@@ -139,7 +145,6 @@ namespace Dungeon {
 	}
 
 	int DatabaseHandler::getRelations(vector<Relation*>& result, Relation* rel) {
-		if(!openConnection()) return E_CONNECTION_ERROR;
 		const string qtmp = rel->getSelectQuery();
 		// None parameters were handed, that is weird...
 		if(qtmp == "") {
@@ -160,12 +165,11 @@ namespace Dungeon {
 			result.push_back(r);
 			sqlCode = sqlite3_step(dbStatement);
 		}
-		finalizeAndClose();
+		finalize();
 		return E_OK;
 	}
 
 	int DatabaseHandler::addRelation(Relation* rel) {
-		if(!openConnection()) return E_CONNECTION_ERROR;
 		const char *statement = "INSERT INTO relations (pid, sid, pclass, sclass, relation) VALUES (?, ?, ?, ?, ?)";
 		sqlite3_prepare_v2(dbConnection, statement, (int)strlen(statement), &dbStatement, 0);
 
@@ -177,15 +181,14 @@ namespace Dungeon {
 
 		sqlCode = sqlite3_step(dbStatement);
 		if(sqlCode != SQLITE_DONE) { 
-			finalizeAndClose();
+			finalize();
 			return E_UPDATE_ERROR;
 		}
-		finalizeAndClose();
+		finalize();
 		return E_OK;
 	}
 
 	int DatabaseHandler::deleteRelation(Relation* rel) {
-		if(!openConnection()) return E_CONNECTION_ERROR;
 		const string qtmp = rel->getDeleteQuery();
 		// None parameters were handed, that is weird...
 		if(qtmp == "") {
@@ -198,14 +201,13 @@ namespace Dungeon {
 		sqlite3_prepare(dbConnection, cquery, strlen(cquery), &dbStatement, 0);
 		sqlCode = sqlite3_step(dbStatement);
 		
-		finalizeAndClose();
+		finalize();
 		if(sqlCode != SQLITE_DONE)
 			return E_DELETE_ERROR;
 		return E_OK;
 	}
 	
 	int DatabaseHandler::checkDatabase() {
-		if(!openConnection()) return E_CONNECTION_ERROR;
 		const char* check = "SELECT COUNT(*) FROM sqlite_master WHERE type = ?;";
 		sqlite3_prepare_v2(dbConnection, check, strlen(check), &dbStatement, 0);
 		sqlite3_bind_text(dbStatement, 1, "table", strlen("table"), 0);
@@ -213,7 +215,7 @@ namespace Dungeon {
 		
 		if(sqlCode == SQLITE_ROW) {
 			int count = sqlite3_column_int(dbStatement, 0);
-			finalizeAndClose();
+			finalize();
 			if(count == TABLE_COUNT)  {
 				return E_OK;
 			}
@@ -222,13 +224,12 @@ namespace Dungeon {
 			}
 		}
 		else {
-			finalizeAndClose();
+			finalize();
 			return E_COUNT_ERROR;
 		}
 	}
 	
 	int DatabaseHandler::initDatabase() {
-		if(!openConnection()) return E_CONNECTION_ERROR;
 		const char* create1 = "CREATE TABLE objects (" \
 			"id TEXT NOT NULL," \
 			"className TEXT NOT NULL," \
@@ -245,7 +246,7 @@ namespace Dungeon {
 		sqlite3_prepare(dbConnection, create1, strlen(create1), &dbStatement, 0);
 		sqlCode = sqlite3_step(dbStatement);
 		if(sqlCode != SQLITE_DONE) {
-			finalizeAndClose();
+			finalize();
 			return E_TABLE_CREATE_ERROR;
 		}
 		sqlite3_finalize(dbStatement);
@@ -254,7 +255,7 @@ namespace Dungeon {
 		sqlite3_prepare(dbConnection, create2, strlen(create2), &dbStatement, 0);
 		sqlCode = sqlite3_step(dbStatement);
 		if(sqlCode != SQLITE_DONE) {
-			finalizeAndClose();
+			finalize();
 			return E_TABLE_CREATE_ERROR;
 		}
                 
@@ -268,19 +269,19 @@ namespace Dungeon {
 		const char* drop2 = "DROP TABLE IF EXISTS relations;";
 		sqlite3_prepare(dbConnection, drop1, strlen(drop1), &dbStatement, 0);
 		sqlCode = sqlite3_step(dbStatement);
-		if(sqlCode != SQLITE_DONE) {
-			finalizeAndClose();
+		if(sqlCode != SQLITE_DONE) {		
+			finalize();
 			return E_TABLE_DROP_ERROR;
 		}
 		sqlite3_finalize(dbStatement);
 		sqlite3_prepare(dbConnection, drop2, strlen(drop2), &dbStatement, 0);
 		sqlCode = sqlite3_step(dbStatement);
 		if(sqlCode != SQLITE_DONE) {
-		finalizeAndClose();
+			finalize();
 			return E_TABLE_DROP_ERROR;
 		}
 		
-		finalizeAndClose();
+		finalize();
 		return E_OK;
 	}
 	
@@ -290,21 +291,21 @@ namespace Dungeon {
      */
 	int DatabaseHandler::beginTransaction() {
 		if (transactionDepth++ == 0) {
-			// exec BEGIN TRANSACTION;
+			sqlite3_exec(dbConnection, "BEGIN TRANSACTION;", NULL, NULL, NULL);
 		}
 		return E_OK;
 	}
 	
 	int DatabaseHandler::endTransaction() {
 		if (--transactionDepth == 0) {
-			// exec COMMIT
+			sqlite3_exec(dbConnection, "COMMIT;", NULL, NULL, NULL);
 		}
 		return E_OK;
 	}
 	
 	int DatabaseHandler::rollback() {
 		if (--transactionDepth == 0) {
-			// exec ROLLBACK
+			sqlite3_exec(dbConnection, "ROLLBACK;", NULL, NULL, NULL);
 		}
 		return E_OK;
 	}
