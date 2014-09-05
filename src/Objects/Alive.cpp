@@ -34,8 +34,7 @@ namespace Dungeon {
 			try {
 				ObjectMap equips = this->getRelations(Relation::Master, Wearable::SlotRelations[i]);
 				if(equips.size() != 0) {
-					Wearable* worn = equips.begin()->second.safeCast<Wearable>();
-					worn->getActions(list, this);
+					equips.begin()->second->getActions(list, this);
 				}
 			}
 			catch (const std::out_of_range& e) {
@@ -165,7 +164,8 @@ namespace Dungeon {
 			try {
 				ObjectMap worn = this->getRelations(Relation::Master, Wearable::SlotRelations[slot]);
 				if(worn.size() > 0) {
-					Wearable* wornItem = worn.begin()->second.safeCast<Wearable>();
+					worn.begin()->second.assertType<Wearable>("You've somehow managed to equip non-item. CG. Now contact the administrator to sort it out for you.");
+					Wearable* wornItem = worn.begin()->second.unsafeCast<Wearable>();
 					attack += wornItem->getAttackBonus();
 					defense += wornItem->getDefenseBonus();
 				}

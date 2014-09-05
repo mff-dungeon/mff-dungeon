@@ -64,6 +64,23 @@ namespace Dungeon {
             return (T*) get();
         }
         
+        template<typename T>
+        inline const ObjectPointer& assertType(string msg = "") const {
+            if (safeCast<T>() == nullptr)
+                throwInvalidType(msg);
+            return *this;
+        }
+        
+        /**
+         * Needs to be in the cpp file because of circular dependency with exceptions
+         * @param msg
+         */
+        void throwInvalidType(string msg = "") const;
+        
+        const ObjectPointer& assertExists(string msg = "") const;
+        
+        const ObjectPointer& assertRelation(string type, ObjectPointer other, Relation::Dir master = Relation::Master, string msg = "") const;
+        
         IObject* operator*() const {
             return get();
         }

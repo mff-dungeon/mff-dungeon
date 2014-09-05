@@ -97,7 +97,7 @@ namespace Dungeon {
          * @param alive
          * @param roomId Where to put the alive
          */
-        void moveAlive(Alive* alive, objId roomId);
+        void moveAlive(Alive* alive, ObjectPointer room);
         
         /**
          * Shutdown the world.

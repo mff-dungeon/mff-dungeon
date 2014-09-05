@@ -81,7 +81,7 @@ namespace Dungeon {
 							ObjectMap backpacks = this->getRelations(Relation::Master, R_INVENTORY);
 							for(auto& item : backpacks) {
 								if(!item.second->instanceOf(Inventory)) continue;
-								*ad << item.second.safeCast<IDescriptable>()->getDescriptionSentence();
+								*ad << item.second.unsafeCast<Inventory>()->getDescriptionSentence();
 							}
 						}
 						catch (const std::out_of_range& e) {
@@ -109,7 +109,8 @@ namespace Dungeon {
 					try {
 						ObjectMap backpacks = this->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Backpack]);
 						if(backpacks.size() > 0) {
-							Inventory* backpack = backpacks.begin()->second.safeCast<Inventory>();
+							backpacks.begin()->second.assertType<Inventory>("You've somehow managed to use not-a-backpack as a backpack. This can't be tolerated.");
+							Inventory* backpack = backpacks.begin()->second.unsafeCast<Inventory>();
 							*ad << backpack->getContainingSentence();
 							found = true;
 						}

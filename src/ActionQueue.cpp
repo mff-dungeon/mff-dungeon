@@ -28,7 +28,21 @@ namespace Dungeon {
 		ActionDescriptor *ad = actions.front();
 		actions.pop();
 
-		ad->driver->processDescriptor(ad);
+		try {
+			ad->driver->processDescriptor(ad);
+		}
+		catch (GameException& ge) {
+			LOGS("ActionQueue", Error) << "Game exception occured and Driver missed it. " << ge.what() << LOGF;			
+		}
+		catch (char const * e) {
+			LOGS("ActionQueue", Error) << e << LOGF;			
+		}
+		catch (int e) {
+			LOGS("ActionQueue", Error) << "Exception number " << e << " has been thrown while processing." << LOGF;	
+		}
+		catch (...) {
+			LOGS("ActionQueue", Error) << "Unknown error has occured while processing." << LOGF;	
+		}
 	}
 
 	void ActionQueue::loopToFinish() {

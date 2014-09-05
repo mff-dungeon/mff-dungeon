@@ -34,6 +34,9 @@ namespace Dungeon {
             virtual void commit(ActionDescriptor* ad);
             virtual void explain(ActionDescriptor* ad);
             virtual bool matchCommand(string command);
+            virtual bool handleException(GameException& exception, ActionDescriptor* ad);
+
+
             
             // Property Storage
             virtual IPropertyStorage& have(string& prop, string id, string desc, bool editable);

@@ -52,9 +52,8 @@ namespace Dungeon {
 	}
         
 	void DrinkPotionAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
-		if (!target->instanceOf(Potion))
-			return;
-		Potion* potion = target.safeCast<Potion>();
+		target.assertType<Potion>("You're too drunk. Hic.");
+		Potion* potion = target.unsafeCast<Potion>();
 		*ad << "You've drunk " + potion->getName() + ". ";
 		switch(potion->getType()) {
 			case Potion::PotionType::Healing: {

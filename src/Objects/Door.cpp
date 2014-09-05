@@ -20,9 +20,10 @@ namespace Dungeon {
 			for (auto& obj : targets) {
 				if (obj.second != callee.safeCast<Alive>()->getLocation()) {
 					action->addTarget(this->getObjectPointer());
+					list->addAction(action);
+					return;
 				}
 			}
-			list->addAction(action);
 		}
 		catch (const std::out_of_range& e) {
 			// What a weird door pointing nowhere...
@@ -30,25 +31,23 @@ namespace Dungeon {
 	}
 	
 	void DoorwalkAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer door) {	
-			ObjectPointer target;
-			try {
-				ObjectMap targets = door->getRelations(Relation::Master, R_TARGET);
-				for (auto& obj : targets) {
-					if (obj.second != ad->getAlive()->getLocation()) {
-						target = obj.second;
-					}
+		door.assertType<Door>("How do you want to walk through door?");
+		ObjectPointer target;
+		try {
+			ObjectMap targets = door->getRelations(Relation::Master, R_TARGET);
+			for (auto& obj : targets) {
+				if (obj.second != ad->getAlive()->getLocation()) {
+					target = obj.second;
 				}
 			}
-			catch (const std::out_of_range& e) {
-				// What a weird door pointing nowhere...
-			}
-			
-            if (!target) {
-                *ad << "That seems to head nowhere. You've decided not to go there.";
-                return;
-            }
-            ad->getGM()->moveAlive(ad->getAlive(), target.getId());
-            target.safeCast<Room>()->explore(ad);
+		}
+		catch (const std::out_of_range& e) {
+			// What a weird door pointing nowhere...
+		}
+
+		target.assertType<Room>("That seems to head nowhere. You've decided not to go there.");
+		ad->getGM()->moveAlive(ad->getAlive(), target);
+		target.unsafeCast<Room>()->explore(ad);
 	}
     
     string Door::getDescriptionSentence() {

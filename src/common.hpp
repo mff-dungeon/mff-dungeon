@@ -90,6 +90,7 @@ namespace Dungeon {
 }
     
 #include "IObject.hpp"
+#include "exceptions.hpp"
 #include "ObjectPointer.hpp"
 #include "AddIObject.hpp"
 

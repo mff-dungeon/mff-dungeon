@@ -113,7 +113,7 @@ namespace Dungeon
 						return;
 					}
 					
-					ad->getGM()->moveAlive(ad->getAlive(), matches[3]);
+					ad->getGM()->moveAlive(ad->getAlive(), ad->getGM()->getObjectPointer(matches[3]));
 				}));
 				
 		list->addAction(new PropertyEditor);
@@ -122,6 +122,12 @@ namespace Dungeon
 	bool ThorsHammer::PropertyEditor::matchCommand(string command) {
 		return RegexMatcher::match("edit .+", command);
 	}
+	
+	bool ThorsHammer::PropertyEditor::handleException(GameException& exception, ActionDescriptor* ad) {
+		ad->clearDialog();
+		return false; // Process the exception regularly
+	}
+
 	
 	void ThorsHammer::PropertyEditor::commit(ActionDescriptor* ad) {
 		smatch matches;
@@ -159,6 +165,7 @@ namespace Dungeon
 		if (!editable) return *this;
 		descriptions.push(desc + "(" + prop + ")");
 		ad->waitForReply([&] (ActionDescriptor* ad, string reply) {
+			target.assertExists();
 			if (reply != ".") {
 				prop = reply;
 				LOG("PropEditor") << "Set property of " << target->getId() << " to " << prop << LOGF;
@@ -174,6 +181,7 @@ namespace Dungeon
 		ss << desc << "(" << prop << ")";
 		descriptions.push(ss.str());
 		ad->waitForReply([&] (ActionDescriptor* ad, string reply) {
+			target.assertExists();
 			if (reply != ".") {
 				std::istringstream(reply) >> prop;
 				*ad << "Set to '" << prop << "'. ";
@@ -188,6 +196,7 @@ namespace Dungeon
 		if (!editable) return *this;
 		descriptions.push(desc + "(" + (prop ? "True" : "False") + "). 1/true for true, 0/false for false");
 		ad->waitForReply([&] (ActionDescriptor* ad, string reply) {
+			target.assertExists();
 			if (reply != ".") {
 				transform(reply.begin(), reply.end(), reply.begin(), ::tolower);
 				prop = (reply == "true" || reply == "1");

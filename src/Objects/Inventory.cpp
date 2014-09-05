@@ -168,9 +168,10 @@ namespace Dungeon {
 	}
         
 	void DropAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {	
-		Item* item = target.safeCast<Item>();
+		Item* item = target.assertType<Item>("You can drop only an item.")
+				.safeCast<Item>();
 		
-		if(!item || !item->isDropable()) {
+		if(!item->isDropable()) {
 			*ad << "You cannot drop this item.\n";
 			return;
 		}

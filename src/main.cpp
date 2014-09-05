@@ -75,7 +75,7 @@ void finish(int signal) {
  */
 void crash_segv(int signal) {
     LOGS("main", Fatal) << "Caught SIGSEGV (" << signal << "), crashing..." << getStacktace() << LOGF;
-    exit(signal);
+	throw GameException("Segmentation fault.");
 }
 
 /*

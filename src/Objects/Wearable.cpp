@@ -33,11 +33,8 @@ namespace Dungeon {
 	}
 	
 	bool Wearable::unequip(ActionDescriptor* ad, ObjectPointer itemPtr, int desiredAction) {
-		Wearable* item = itemPtr.safeCast<Wearable>();
-		if (!item) {
-			*ad << itemPtr.safeCast<IDescriptable>()->getName() << " could not be unequiped.";
-			return false;
-		}
+		itemPtr.assertType<Wearable>("Unequiped thing must be an item.");
+		Wearable* item = itemPtr.unsafeCast<Wearable>();
 		
 		if(desiredAction == 1) {
 			ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
@@ -123,18 +120,15 @@ namespace Dungeon {
 	}
 	
 	void EquipAction::equipItem(ActionDescriptor* ad, ObjectPointer itemPtr, ObjectPointer equipedItemPtr, int desiredAction) {
-		Wearable* item = itemPtr.safeCast<Wearable>();
-		Wearable* equipedItem = equipedItemPtr.safeCast<Wearable>();
-		if (!item || !equipedItem) {
-			*ad << itemPtr.safeCast<IDescriptable>()->getName() << " could not be equiped.";
-			return;
-		}
+		itemPtr.assertType<Wearable>("Equiped thing must be an item.");
+		Wearable* item = itemPtr.unsafeCast<Wearable>();
 		
-		if(equipedItem != 0) {
-				if(!Wearable::unequip(ad, equipedItem, desiredAction)) {
-					*ad << equipedItem->getName() + " couldn't be unequiped, so you cannot wear " + item->getName() + " now.";
-					return;
-				}
+		Wearable* equipedItem = equipedItemPtr.safeCast<Wearable>();
+		if(equipedItem) {
+			if(!Wearable::unequip(ad, equipedItem, desiredAction)) {
+				*ad << equipedItem->getName() + " couldn't be unequiped, so you cannot wear " + item->getName() + " now.";
+				return;
+			}
 		}
 		// Let's equip the item.
 		Room* currentRoom = ad->getAlive()->getLocation().safeCast<Room>();

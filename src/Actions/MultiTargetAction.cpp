@@ -37,7 +37,7 @@ namespace Dungeon {
             try {
                 target = group.match(str);
                 IDescriptable* obj = target.safeCast<IDescriptable>();
-                LOGS("MTA", Verbose) << "Selected " << obj->getLongName() << LOGF;
+				if (obj) LOGS("MTA", Verbose) << "Selected " << obj->getLongName() << LOGF;
                 commitOnTarget(ad, target);
             } catch (const StringMatcher::Uncertain& e) {
                 *ad << "I'm sorry, did you say \"" << "\"?";

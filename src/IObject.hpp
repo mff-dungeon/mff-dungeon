@@ -64,7 +64,9 @@ namespace Dungeon {
     public:
         IObject() {};
         IObject(objId id) : id(id) {};
-        virtual ~IObject() {};
+        virtual ~IObject() {
+            LOG("IObject") << "Deleting " + id << LOGF;
+        };
 
         virtual objId getId() const;
         

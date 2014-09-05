@@ -30,6 +30,15 @@ namespace Dungeon {
          * If this action should not be visible, then just do nothing.
          */
         virtual void explain(ActionDescriptor *ad);
+        
+        /**
+         * Handles arosen in-game exception. Can be called only after matching,
+         * or in dialog (where most errors can occur).
+         * @param exception
+         * @return true, if the error was handled properly and user
+         *         should not be notified any further
+         */
+        virtual bool handleException(GameException& exception, ActionDescriptor *ad);
 
         string type;
         

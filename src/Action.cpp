@@ -15,4 +15,10 @@ namespace Dungeon {
 		*ad << "Sorry. Neither me does know what should that mean.";
 	}
 	
+	bool Action::handleException(GameException& exception, ActionDescriptor* ad) {
+		*ad << "Sorry, an unexpected in-game error occured. Administrator have already been notified.\n";
+		*ad << exception.what();
+		return true;
+	}
+
 }

@@ -202,8 +202,8 @@ namespace Dungeon {
 			->setDropable(true)
 			->setPickable(true)
 			->setName("Leather backpack")
-			->setLongName("A common leather backpack. Not so big and comfortable, but what would you expect?")
-			->save();
+			->setLongName("A common leather backpack. Not so big and comfortable, but what would you expect?");
+		this->insertObject(pack);
 		createRelation(getObject("room/baseRoom"), figure, R_INSIDE);
 		createRelation(figure, pack, Wearable::SlotRelations[Wearable::Slot::Backpack]);
 		
@@ -245,9 +245,9 @@ namespace Dungeon {
 		delete ref_obj;
 	}
 	
-	void GameManager::moveAlive(Alive* alive, objId roomId) {
+	void GameManager::moveAlive(Alive* alive, ObjectPointer room) {
 		this->removeRelation(alive->getLocation(), alive, R_INSIDE);
-		this->createRelation(this->getObject(roomId), alive, R_INSIDE);
+		this->createRelation(room, alive, R_INSIDE);
 	}
 
 

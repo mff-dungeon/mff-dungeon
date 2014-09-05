@@ -30,8 +30,6 @@ namespace Dungeon {
 		string shape = "box";
 		if (obj->instanceOf(Human)) {
 			shape = "ellipse";
-		} else if (obj->instanceOf(Item)) {
-			shape = "hexagon";
 		} else if (obj->instanceOf(Alive)) {
 			shape = "octagon";
 		} else if (obj->instanceOf(Room)) {

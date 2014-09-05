@@ -62,11 +62,13 @@ namespace Dungeon {
     void JabberDriver::processDescriptor(ActionDescriptor* descriptor) {
         TextActionDescriptor* ad = (TextActionDescriptor*) descriptor;
         objId figureId = this->findFigureId(ad->from);
-        Alive* figure = gm->getObjectPointer(figureId).safeCast<Alive>();
+        Alive* figure = gm->getObjectPointer(figureId)
+				.assertType<Human>("I work only with Humans.")
+				.unsafeCast<Human>();
         // Really need to do it on every reply. Alive object could have been disposed in meantime...
         ad->assigned(figure);
-
-        this->process(ad);
+		
+		this->process(ad);
 
         Message msg(Message::Chat, ad->from, ad->getReply());
         ad->clearReply();

@@ -90,6 +90,10 @@ namespace Dungeon {
             r(this, reply);
         }
         
+        void clearDialog() {
+            queue<dialogReply>().swap(dialogReplies); // Trick
+        }
+        
     private:
         Action* action;
         GameManager* gm;

@@ -108,8 +108,8 @@ namespace Dungeon {
 	}
 
 	void PickupAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
-		Item* item = target.safeCast<Item>();
-		if(!item || !item->isPickable()) {
+		Item* item = target.assertType<Item>("You can pick up only an item.").safeCast<Item>();
+		if(!item->isPickable()) {
 			*ad << "You cannot pick " << item->getName() << ". \n";
 			return;
 		}
