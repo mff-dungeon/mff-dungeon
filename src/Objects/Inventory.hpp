@@ -24,9 +24,18 @@ namespace Dungeon {
 		int getMaxWeight();
 		int getFreeWeight();
 		
-		void addItem(Item* item);
-		void removeItem(Item* item);
-		bool contains(Item* item);
+        virtual Item* setSize(int size);
+        virtual int getSize();
+        virtual Item* setBaseSize(int size);
+        virtual int getBaseSize();
+        virtual Item* setWeight(int weight);
+        virtual int getWeight();
+        virtual Item* setBaseWeight(int weight);
+        virtual int getBaseWeight();
+		
+		void addItem(ObjectPointer itemPtr);
+		void removeItem(ObjectPointer itemPtr);
+		bool contains(ObjectPointer itemPtr);
 		
 		/**
 		 * Makes a string describing what is inside

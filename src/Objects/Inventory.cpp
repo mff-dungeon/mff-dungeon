@@ -46,22 +46,64 @@ namespace Dungeon {
 	int Inventory::getFreeWeight() {
 		return (this->maxWeight - this->usedWeight);
 	}
-	
-	void Inventory::addItem(Item* item) {
+
+	int Inventory::getBaseSize() {
+		return Item::getSize();
+	}
+
+	Item* Inventory::setBaseSize(int size) {
+		Item::setSize(size);
+		return this;
+	}
+
+	int Inventory::getSize() {
+		return getBaseSize() + usedSpace;
+	}
+
+	Item* Inventory::setSize(int size) {
+		Item::setSize(size);
+		return this;
+	}
+
+	int Inventory::getBaseWeight() {
+		return Item::getWeight();
+	}
+
+	Item* Inventory::setBaseWeight(int weight) {
+		Item::setWeight(weight);
+		return this;
+	}
+
+	int Inventory::getWeight() {
+		return getBaseWeight() + usedWeight;
+	}
+
+	Item* Inventory::setWeight(int weight) {
+		Item::setWeight(weight);
+		return this;
+	}
+
+	void Inventory::addItem(ObjectPointer itemPtr) {
+		itemPtr.assertType<Item>("You can add only items into your backpack.");
+		Item* item = itemPtr.safeCast<Item>();
 		this->usedWeight += item->getWeight();
 		this->usedSpace += item->getSize();
 		this->getGameManager()->createRelation(this, item, R_INVENTORY);
 		save();
 	}
 	
-	void Inventory::removeItem(Item* item) {
+	void Inventory::removeItem(ObjectPointer itemPtr) {
+		itemPtr.assertType<Item>("You can add only items into your backpack.");
+		Item* item = itemPtr.safeCast<Item>();
 		this->usedWeight -= item->getWeight();
 		this->usedSpace -= item->getSize();
 		this->getGameManager()->removeRelation(this, item, R_INVENTORY);
 		save();
 	}
 
-	bool Inventory::contains(Item* item) {
+	bool Inventory::contains(ObjectPointer itemPtr) {
+		itemPtr.assertType<Item>("You can add only items into your backpack.");
+		Item* item = itemPtr.safeCast<Item>();
 		// If it throws an error, it's because there is nothing, so it should be safe to return false
 		try {
 			ObjectMap inside = this->getRelations(Relation::Master, R_INVENTORY);
@@ -190,7 +232,7 @@ namespace Dungeon {
 			
 		}
 		
-		backpack->removeItem(item);
+		backpack->removeItem(target);
 		ad->getGM()->createRelation(ad->getAlive()->getLocation(), item, R_INSIDE);
 		
 		*ad << "You've dropped " + item->getName() + ".";

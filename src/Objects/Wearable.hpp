@@ -29,7 +29,9 @@ namespace Dungeon {
 		enum DesiredAction {
 			NotKnown = 0,
 			Drop = 1,
-			Keep = 2
+			Keep = 2,
+			MoveAndKeep = 3,
+			MoveAndDrop = 4
 		};
 		
 		static const char* SlotRelations[];
@@ -62,36 +64,6 @@ namespace Dungeon {
 	PERSISTENT_DECLARATION(Wearable, Item)
 	};
 	
-	/**
-	 * Action handling item equipping. The action itself is quite complex, because we need to find the item first.
-     */
-	class EquipAction : public MultiTargetAction {
-	public:
-		EquipAction(string type = "wearable-equip") : MultiTargetAction(type) {}
-		
-		virtual void commit(ActionDescriptor* ad);
-		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
-		virtual void explain(ActionDescriptor* ad);
-		virtual bool matchCommand(string command);
-		
-		/**
-		 * Equips any general not-backpack item
-         * @param ad ActionDescriptor
-         * @param item the new item to be equiped
-         * @param equipedItem currently equiped item, 0 if none is
-		 * @param desiredAction desired action for the unequip, 1 if drop, 2 if put to backpack
-         */
-		void equipItem(ActionDescriptor* ad, ObjectPointer item, ObjectPointer equipedItem = nullptr, int desiredAction = 0);
-		
-		/**
-		 * Provides special treatment to backpacks. Handles item switching, backpack switching, 
-		 * weight checking and more.
-         * @param ad ActionDescriptor
-         * @param newPack The newly equiped backpack
-         * @param currentPack The rusty old backpack
-         */
-		void equipBackpack(ActionDescriptor* ad, ObjectPointer newPack, ObjectPointer currentPack);
-	};
 	
 	class UnequipAction : public MultiTargetAction {
 	public:
@@ -103,6 +75,49 @@ namespace Dungeon {
 		virtual bool matchCommand(string command);
 	};
 
+	/**
+	 * Action handling item equipping. The action itself is quite complex, because we need to find the item first.
+     */
+	class EquipAction : public MultiTargetAction {
+	private:
+		Wearable::DesiredAction dAction = Wearable::DesiredAction::NotKnown;
+		ObjectPointer itemPtr;
+		ObjectPointer equipedItemPtr;
+	public:
+		EquipAction(string type = "wearable-equip") : MultiTargetAction(type) {}
+		
+		virtual void commit(ActionDescriptor* ad);
+		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
+		virtual void explain(ActionDescriptor* ad);
+		virtual bool matchCommand(string command);
+		
+		/**
+		 * Phase one handles asking user question and matching the answer
+         */
+		void itemPhaseOne(ActionDescriptor* ad);
+		/**
+		 * Phase two of item equip. It is called when the user currently has something on.
+		 * It is handed a DesiredAction, what is supposed to be done
+         */
+		void itemPhaseTwo(ActionDescriptor* ad);
+		/**
+		 * Phase three is called when there is nothing equipped in the slot. Handles equipping.
+         */
+		void itemPhaseThree(ActionDescriptor* ad);
+		
+		/**
+		 * Phase one handles reply matching
+         */
+		void backpackPhaseOne(ActionDescriptor* ad);
+		/**
+		 * Phase two handles handling the old backpack (dropping / moving the items)
+         */
+		void backpackPhaseTwo(ActionDescriptor* ad);
+		/**
+		 * Phase three finished the action by updating room, adding backpack and changing stats
+         */
+		void backpackPhaseThree(ActionDescriptor* ad);
+	};
 }
 
 #endif	/* WEARABLE_HPP */
