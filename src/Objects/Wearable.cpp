@@ -67,41 +67,35 @@ namespace Dungeon {
 					Actions - stage methods 
 	 *******************************************************************/
 	bool Wearable::unequip(ActionDescriptor* ad, ObjectPointer itemPtr, DesiredAction action) {
-		itemPtr.assertType<Wearable>("Unequiped thing must be an item.");
+		itemPtr.assertType<Wearable>(GameStateInvalid::EquippedNonWearable);
 		Wearable* item = itemPtr.unsafeCast<Wearable>();
 		
 		if(action == DesiredAction::Drop) {
 			ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
-			ad->getGM()->createRelation(ad->getAlive()->getLocation(), item, R_INSIDE);
+			itemPtr->setSingleRelation(R_INSIDE, ad->getAlive()->getLocation(), Relation::Slave);
 			*ad << "You have dropped " + item->getName() + ". ";
 			return true;
 		}
 		else if (action == DesiredAction::Keep) {
-			try {
-				ObjectMap inventories = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Slot::Backpack]);
-				if(inventories.size() == 0) {
-					*ad << "You have no backpack to put the item to. ";
-					return false;
-				}
-				Inventory* backpack = inventories.begin()->second.safeCast<Inventory>();
-				if(backpack->getFreeSpace() < item->getSize() 
-						|| backpack->getFreeWeight() < item->getWeight()) {
-					*ad << "You have no free space in your " + backpack->getName() + ". ";
-					return false;
-				}
-				if(backpack->getId() == item->getId()) {
-					*ad << "You cannot put " + item->getName() + " into itself! ";
-					return false;
-				}
-				ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
-				backpack->addItem(itemPtr);
-				*ad << "You have unequiped " + item->getName() + " and put it into your " + backpack->getName() + ". ";
-				return true;
+			Inventory* backpack = ad->getAlive()->getBackpack()
+					.safeCast<Inventory>();
+			if(!backpack) {
+				*ad << "You have no backpack to put the item to. ";
+				return false;
 			}
-			catch (const std::out_of_range& e) {
-			
+			if(backpack->getFreeSpace() < item->getSize() 
+					|| backpack->getFreeWeight() < item->getWeight()) {
+				*ad << "You have no free space in your " + backpack->getName() + ". ";
+				return false;
 			}
-			return false;
+			if(backpack->getId() == item->getId()) {
+				*ad << "You cannot put " + item->getName() + " into itself! ";
+				return false;
+			}
+			ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
+			backpack->addItem(itemPtr);
+			*ad << "You have unequiped " + item->getName() + " and put it into your " + backpack->getName() + ". ";
+			return true;
 		}
 		return false;
 	}
@@ -174,34 +168,29 @@ namespace Dungeon {
 	}
 	
 	void EquipAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
-		target.assertType<Wearable>("Equiped thing must be an item.");
+		target.assertType<Wearable>(GameStateInvalid::EquippedNonWearable);
 		itemPtr = target;
 		Wearable* item = target.unsafeCast<Wearable>();
-		Wearable* equipedItem = 0;
 		
-		// Get current equiped item
-		try {
-			ObjectMap equiped = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[item->getSlot()]);
-			if(equiped.size() == 1) {
-				equipedItem = equiped.begin()->second.safeCast<Wearable>();
-			}
+		slot = item->getSlot();
+		slotRelation = Wearable::SlotRelations[slot];
+		
+		equipedItemPtr = ad->getAlive()->getSingleRelation(slotRelation, Relation::Master, GameStateInvalid::EquippedMoreThanOne);
+		
+		if (!equipedItemPtr) {
+			// There's no difficult changing, just equip it
+			this->itemPhaseThree(ad);
+			return;
 		}
-		catch(const std::out_of_range& e) {
-			
-		}
-		if(equipedItem != 0) {
-			equipedItemPtr = equipedItem->getObjectPointer();
-		}
+		
+		equipedItemPtr.assertType<Wearable>(GameStateInvalid::EquippedNonWearable);
 		
 		// What we need to do?
-		if(item->getSlot() == Wearable::Slot::Backpack && equipedItem != 0) {
+		if(slot == Wearable::Slot::Backpack) {
 			this->backpackPhaseOne(ad);
 		}
-		else if (equipedItem != 0) {
-			this->itemPhaseOne(ad);
-		}
 		else {
-			this->itemPhaseThree(ad);
+			this->itemPhaseOne(ad);
 		}
 	}
 
@@ -242,20 +231,19 @@ namespace Dungeon {
 		Room* currentRoom = ad->getAlive()->getLocation().safeCast<Room>();
 		if(currentRoom->contains(itemPtr)) {
 			ad->getGM()->removeRelation(currentRoom, itemPtr, R_INSIDE);
-			ad->getGM()->createRelation(ad->getAlive(), itemPtr, Wearable::SlotRelations[itemPtr.unsafeCast<Wearable>()->getSlot()]);
+			ad->getAlive()->setSingleRelation(Wearable::SlotRelations[itemPtr.unsafeCast<Wearable>()->getSlot()], itemPtr, Relation::Master, GameStateInvalid::EquippedMoreThanOne);
 			*ad << "You have successfully equipped " << itemPtr.unsafeCast<IDescriptable>()->getName() << ". ";
 			ad->getAlive()->calculateBonuses()->save();
 			return;
 		}
 		
 		try {
-			ObjectMap inventories = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Slot::Backpack]);
-			if(inventories.size() > 0) {
-				Inventory* backpack = inventories.begin()->second.safeCast<Inventory>();
+			Inventory* backpack = ad->getAlive()->getBackpack().safeCast<Inventory>();
+			if (backpack) {
 				if(backpack->contains(itemPtr)) {
 					backpack->removeItem(itemPtr);
-					ad->getGM()->createRelation(ad->getAlive(), itemPtr, Wearable::SlotRelations[itemPtr.unsafeCast<Wearable>()->getSlot()]);
-					*ad << "You have equipped " << itemPtr.unsafeCast<IDescriptable>()->getName() << ". ";
+					ad->getAlive()->setSingleRelation(slotRelation, itemPtr, Relation::Master, GameStateInvalid::EquippedMoreThanOne);
+					*ad << "You have successfully equipped " << itemPtr.unsafeCast<IDescriptable>()->getName() << ". ";
 					ad->getAlive()->calculateBonuses()->save();
 					return;
 				}
@@ -368,7 +356,7 @@ namespace Dungeon {
 		if(currentLoc->contains(itemPtr)) {
 			ad->getGM()->removeRelation(currentLoc, newPack, R_INSIDE);
 		}
-		ad->getGM()->createRelation(ad->getAlive(), newPack, Wearable::SlotRelations[newPack->getSlot()]);
+		ad->getGM()->createRelation(ad->getAlive(), newPack, slotRelation);
 		*ad << "You have equipped " << newPack->getName() << ". ";
 		ad->getAlive()->calculateBonuses()->save();	
 	}

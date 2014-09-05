@@ -43,9 +43,10 @@ namespace Dungeon {
 		catch (int e) {
 			LOGS("ActionQueue", Error) << "Exception number " << e << " has been thrown while processing." << LOGF;	
 		}
+		/*
 		catch (...) {
 			LOGS("ActionQueue", Error) << "Unknown error has occured while processing." << LOGF;	
-		}
+		}*/
 		
 		gm->roundEnd(flawless);
 	}

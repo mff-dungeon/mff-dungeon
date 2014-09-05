@@ -83,6 +83,8 @@ namespace Dungeon {
 		Wearable::DesiredAction dAction = Wearable::DesiredAction::NotKnown;
 		ObjectPointer itemPtr;
 		ObjectPointer equipedItemPtr;
+                Wearable::Slot slot;
+                string slotRelation;
 	public:
 		EquipAction(string type = "wearable-equip") : MultiTargetAction(type) {}
 		

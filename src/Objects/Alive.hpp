@@ -89,6 +89,14 @@ namespace Dungeon
          */
         ObjectPointer getLocation();
         
+        /**
+         * @return Equipped backpack or nullptr
+         * 
+         * When there will be more than one backpack, one could implement "IterableObjectPointer",
+         * which utilizes operator++
+         */
+        ObjectPointer getBackpack();
+        
         virtual void registerProperties(IPropertyStorage& storage);
 		
 	private:

@@ -85,12 +85,23 @@ namespace Dungeon {
             for (int i = 0; i < len; ++i) ret[i] = RAND_ALNUM[rand_next(r, d)];
             return ret;
         }
+        
+        static string weightStr(const int weight) {
+            char buf [50];
+            if (weight > 1000000) 
+                sprintf(buf, "%.2f t", weight / 1016046.9088);
+            else if (weight > 1000) 
+                sprintf(buf, "%.2f lb", weight / 453.59237);
+            else 
+                sprintf(buf, "%.2f oz", weight / 28.349523125);
+            return string(buf);
+        }
     };
     
 }
     
-#include "IObject.hpp"
 #include "exceptions.hpp"
+#include "IObject.hpp"
 #include "ObjectPointer.hpp"
 #include "AddIObject.hpp"
 

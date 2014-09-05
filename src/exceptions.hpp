@@ -4,8 +4,6 @@
 #ifndef EXCEPTIONS_HPP
 #define	EXCEPTIONS_HPP
 
-#include "ObjectPointer.hpp"
-
 namespace Dungeon {
     
     /**
@@ -13,14 +11,15 @@ namespace Dungeon {
      */
     class GameException : public runtime_error {
     public:
-        GameException(string message) : runtime_error(""), message(message.c_str()) { }
+        GameException(string message);
+
         
         virtual const char* what() const _GLIBCXX_USE_NOEXCEPT {
-            return message;
+            return message.c_str();
         }
 
     protected:
-        const char * message;
+        string message, stacktrace;
     };
     
     /**
@@ -40,12 +39,6 @@ namespace Dungeon {
     class GameStateChanged : public GameException { 
     public:
         GameStateChanged(string message) : GameException(message) { }
-
-        virtual const char* what() const _GLIBCXX_USE_NOEXCEPT {
-            return *message
-                    ? message 
-                    : "";
-        }
     };
     
     /**
@@ -53,14 +46,7 @@ namespace Dungeon {
      */
     class ObjectLost : public GameException {
     public:
-        ObjectLost(string message = "", ObjectPointer object = ObjectPointer()) : GameException(message), object(object) { }
-
-        virtual const char* what() const _GLIBCXX_USE_NOEXCEPT {
-            return *message 
-                    ? message 
-                    : ("Object id " + object.getId() + " has vanished in the meantime.").c_str();
-        }
-        ObjectPointer object;
+        ObjectLost(string message = "Object has vanished in the meantime.") : GameException(message) { }
     };
     
     /**
@@ -69,8 +55,10 @@ namespace Dungeon {
     class GameStateInvalid : public GameException {
     public:
         GameStateInvalid(string message) : GameException(message) { }
+        
+        const static string EquippedNonWearable, BackpackNotInventory, EquippedMoreThanOne;
     };
-    
+
     
     /**
      * We tried hard to type-cast an object, but it wasn't possible
@@ -78,15 +66,7 @@ namespace Dungeon {
      */
     class InvalidType : public GameStateInvalid {
     public:
-        InvalidType(string message = "", ObjectPointer object = ObjectPointer()) : GameStateInvalid(message), object(object) { }
-        
-        virtual const char* what() const _GLIBCXX_USE_NOEXCEPT {
-            return *message 
-                    ? message 
-                    : (object.getId() + " should have been of different type.").c_str();
-        }
-
-        ObjectPointer object;
+        InvalidType(string message = "Object should have been of different type.") : GameStateInvalid(message) { }
     };
     
     /**
@@ -98,7 +78,6 @@ namespace Dungeon {
     private:
         // Trap* trap;
     };
-
 }
 
 #endif

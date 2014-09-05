@@ -219,17 +219,11 @@ namespace Dungeon {
 		}
 		
 		// Get the backpack
-		Inventory* backpack;
-		try {
-			ObjectMap backpacks = item->getRelations(Relation::Slave, R_INVENTORY);
-			if(backpacks.size() == 0) {
-				*ad << "You cannot drop this item.\n";
-				return;
-			}
-			backpack = backpacks.begin()->second.safeCast<Inventory>();
-		}
-		catch (const std::out_of_range& e) {
-			
+		Inventory* backpack = item->getSingleRelation(R_INVENTORY, Relation::Slave)
+				.safeCast<Inventory>();
+		if (!backpack) {
+			*ad << "You cannot drop this item.\n";
+			return;
 		}
 		
 		backpack->removeItem(target);

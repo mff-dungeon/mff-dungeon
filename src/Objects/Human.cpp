@@ -172,36 +172,16 @@ namespace Dungeon {
 								}
 							}
 						}
-						try {
-							ObjectMap backpacks = this->getRelations(Relation::Master, R_INVENTORY);
-							for(auto& item : backpacks) {
-								if(!item.second->instanceOf(Inventory)) continue;
-								*ad << item.second.unsafeCast<Inventory>()->getDescriptionSentence();
-							}
-						}
-						catch (const std::out_of_range& e) {
-							
-						}
 				}));
 				
 			// TODO - redo to a MTA. add equiped relations and other inventories
 			list->addAction(new CallbackAction("what i own", "what i own - A list of items in backpack",
 				RegexMatcher::matcher("what i (have|own)"),
 				[this] (ActionDescriptor* ad) {
-					bool found = false;
-					try {
-						ObjectMap backpacks = this->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Backpack]);
-						if(backpacks.size() > 0) {
-							backpacks.begin()->second.assertType<Inventory>("You've somehow managed to use not-a-backpack as a backpack. This can't be tolerated.");
-							Inventory* backpack = backpacks.begin()->second.unsafeCast<Inventory>();
-							*ad << backpack->getContainingSentence();
-							found = true;
-						}
-					}
-					catch (const std::out_of_range& e) {
-						
-					}
-					if(!found) {
+					Inventory* backpack = getBackpack().safeCast<Inventory>();
+					if (backpack) {
+						*ad << backpack->getContainingSentence();
+					} else {
 						*ad << "Nothing was found. ";
 					}
 				}, false));

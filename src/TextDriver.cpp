@@ -14,55 +14,42 @@ namespace Dungeon {
     
     bool TextDriver::process(TextActionDescriptor* ad) {
 		try {
-			try {
-				if (!ad->isFinished()) {
-					ad->userReplied(ad->in_msg);
-					return true;
-				} 
+			if (!ad->isFinished()) {
+				ad->userReplied(ad->in_msg);
+				return true;
+			} 
 
-				alist->clear();
-				ad->getAlive()->getAllActions(alist);
+			alist->clear();
+			ad->getAlive()->getAllActions(alist);
 
-				string message (ad->in_msg);
-				// We don't care, if user writes "Potion" or "potion"
-				transform(message.begin(), message.end(), message.begin(), ::tolower);
+			string message (ad->in_msg);
+			// We don't care, if user writes "Potion" or "potion"
+			transform(message.begin(), message.end(), message.begin(), ::tolower);
 
-				for (auto& pair: *alist) {
-					Action* action = pair.second;
-					LOGS("TD", Verbose) << "Matching action " << pair.first << LOGF;
-					if (action->matchCommand(message)) {
-						ad->matched(action);
-						break;
-					}
-				}
-
-				if (ad->isValid(this)) {
-					ad->getAction()->commit(ad);
-					return true;
-				} else {
-					*ad << getDontUnderstandResponse(ad->in_msg);
+			for (auto& pair: *alist) {
+				Action* action = pair.second;
+				LOGS("TD", Verbose) << "Matching action " << pair.first << LOGF;
+				if (action->matchCommand(message)) {
+					ad->matched(action);
+					break;
 				}
 			}
-			catch (TrapException& trapException) {
-				// Handle the trap
-			}
-			catch (GameException& gameException) {
-				LOGS("Driver", Error) << gameException.what() << LOGF;
-				if (ad->getAction() && ad->getAction()->handleException(gameException, ad))
-					return false;
-				*ad << gameException.what();
-			}
-			catch (char const * e) {
-				LOGS("Driver", Error) << e << LOGF;
-				throw;
-			}
-			catch (exception& e) {
-				LOGS("Driver", Error) << e.what() << LOGF;
-				throw;
+
+			if (ad->isValid(this)) {
+				ad->getAction()->commit(ad);
+				return true;
+			} else {
+				*ad << getDontUnderstandResponse(ad->in_msg);
 			}
 		}
-		catch (...) {
-			*ad << "Some other error occured, and noone can explain it. Sorry.";
+		catch (TrapException& trapException) {
+			// Handle the trap
+		}
+		catch (GameException& gameException) {
+			LOGS("Driver", Error) << gameException.what() << LOGF;
+			if (ad->getAction() && ad->getAction()->handleException(gameException, ad))
+				return false;
+			*ad << gameException.what();
 		}
         
         return false;

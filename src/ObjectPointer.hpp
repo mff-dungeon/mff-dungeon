@@ -44,15 +44,21 @@ namespace Dungeon {
         }
         
         /**
-         * Perform dynamic cast to type
+         * Perform dynamic cast to type. 
          * TODO Work out how to do it with instanceOf
+         * @return nullptr, if the object doesn't exist
          */
         template<typename T>
         inline T* safeCast() const {
-            IObject* target = dynamic_cast<T*>(get());
-            if (!target)
-                LOG("ObjectPointer") << "Tried to cast " + id + " to " + typeid(T).name() + " but that's not possible." << LOGF;
-            return (T*) target;
+            try {
+                IObject* target = dynamic_cast<T*>(get());
+                if (!target)
+                    LOG("ObjectPointer") << "Tried to cast " + id + " to " + typeid(T).name() + " but that's not possible." << LOGF;
+                return (T*) target;
+            } catch (ObjectLost& exception) {
+                LOG("ObjectPointer") << "Safe-casted non-existing object id " << id << LOGF;
+                return nullptr;
+            }
         }
         
         /**
@@ -64,21 +70,27 @@ namespace Dungeon {
             return (T*) get();
         }
         
+        /**
+         * Requires the object to exist and to be of given type
+         * @throws InvalidType
+         */
         template<typename T>
         inline const ObjectPointer& assertType(string msg = "") const {
             if (safeCast<T>() == nullptr)
-                throwInvalidType(msg);
+		throw InvalidType(msg);
             return *this;
         }
         
         /**
-         * Needs to be in the cpp file because of circular dependency with exceptions
-         * @param msg
+         * Requires the object to exist
+         * @throws ObjectLost
          */
-        void throwInvalidType(string msg = "") const;
-        
         const ObjectPointer& assertExists(string msg = "") const;
         
+        /**
+         * Requires the given relation to exist
+         * @throws GameStateChanged
+         */
         const ObjectPointer& assertRelation(string type, ObjectPointer other, Relation::Dir master = Relation::Master, string msg = "") const;
         
         IObject* operator*() const {

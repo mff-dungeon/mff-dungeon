@@ -72,10 +72,30 @@ namespace Dungeon {
 	ObjectMap& IObject::getRelations(Relation::Dir dir, string type) {
 		return getRelations(dir).at(type);
 	}
+	
+	ObjectPointer IObject::getSingleRelation(string type, Relation::Dir dir, string errMsg) {
+		try {
+			ObjectMap& objects = getRelations(dir, type);
+			if (objects.size() > 1)
+				throw GameStateInvalid(errMsg);
+			if (objects.size() == 0)
+				return ObjectPointer();
+			return objects.begin()->second;
+		} catch (std::out_of_range& e) {
+			// no relation of this type ever existed
+			return ObjectPointer();
+		}
+	}
+	
+	ObjectPointer IObject::setSingleRelation(string type, ObjectPointer other, Relation::Dir dir, string errMsg) {
+		eraseRelation(type, getSingleRelation(type, dir, errMsg), dir);
+		gm->addRelation(getObjectPointer(), other, type);
+		return getObjectPointer();
+	}
 
 	
 	void IObject::eraseRelation(string type, ObjectPointer other, bool master) {
-		if (!hasRelation(type, other, master)) return;
+		if (!other || !hasRelation(type, other, master)) return;
 		
 		LOGS("IObject", Verbose) << "Erasing relation " << getId() << (master ? "<--" : "-->") << other.getId() << " type " << type << LOGF;
 		if(master) {

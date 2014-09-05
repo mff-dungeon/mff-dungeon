@@ -10,12 +10,13 @@ namespace Dungeon
 	}
 	
 	IObject* ObjectPointer::get() const {
+		if (!gm) return nullptr;
 		return gm->getObject(this->id);
 	}
 
 	const ObjectPointer& ObjectPointer::assertExists(string msg) const {
 		if (!gm->hasObject(id))
-			throw ObjectLost(msg, *this);
+			throw ObjectLost(msg);
 		return *this;
 	}
 	
@@ -31,12 +32,9 @@ namespace Dungeon
 			throw GameStateChanged(msg);
 		return *this;
 	}
+
+
 	
-	void ObjectPointer::throwInvalidType(string msg) const {
-		throw InvalidType(msg, *this);
-	}
-
-
 	
 
 }

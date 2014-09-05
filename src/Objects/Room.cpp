@@ -12,16 +12,8 @@
 namespace Dungeon {
 
 	bool Room::contains(ObjectPointer object) {
-		// If it throws an error, it's because there is nothing, so it should be safe to return false
-		try {
-			ObjectMap inside = getRelations(Relation::Master).at(R_INSIDE);
-			if(inside.find(object->getId()) != inside.end())
-				return true;
-		}
-		catch (const std::out_of_range& e) {
-			
-		}
-		return false;
+		ObjectMap& inside = getRelations(Relation::Master, R_INSIDE);
+		return inside.find(object->getId()) != inside.end();
 	}
 
 	bool Room::isRespawnable() const {
@@ -122,47 +114,39 @@ namespace Dungeon {
 	}
 
 	void PickupAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
-		Item* item = target.assertType<Item>("You can pick up only an item.").safeCast<Item>();
+		Item* item = target.assertType<Item>("You can pick up only an item.").unsafeCast<Item>();
 		if(!item->isPickable()) {
 			*ad << "You cannot pick " << item->getName() << ". \n";
 			return;
 		}
 		
-		// Let's get the backpack, supposes only one for now
-		Inventory* inventory = 0;
-		try {
-			ObjectMap inv = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Slot::Backpack]);
-			inventory = inv.begin()->second.safeCast<Inventory>();
-		}
-		catch (const std::out_of_range& e) {
-			
-		}
-		if(inventory == 0) {
+		Inventory* inventory = ad->getAlive()
+				->getBackpack()
+				.assertType<Inventory>(GameStateInvalid::BackpackNotInventory)
+				.unsafeCast<Inventory>();
+		
+		if (!inventory) {
 			*ad << "You have no inventory to put " << item->getName() << " in. ";
 			return;
 		}
 		
 		if(inventory->getFreeWeight() < item->getWeight()) {
-			*ad << "Your inventory would be too heavy with " << item->getName() << ". ";
+			*ad << "Content of " << inventory->getName() << " would be too heavy with " << item->getName() << ". ";
+			*ad << item->getName() << " weights " << Utils::weightStr(item->getWeight()) 
+					<< ", but there's only " << Utils::weightStr(inventory->getFreeWeight()) << " available.";
 			return;
 		}
 		
 		if(inventory->getFreeSpace() < item->getSize()) {
-			*ad << "There is no space left for " << item->getName() << " in your inventory. ";
+			*ad << "There is not enough space left for " << item->getName() << " in " << inventory->getName() << ". ";
 			return;
 		}
 		// Everything is allright, let's add it
-		Room* current = 0;
-		try {
-			ObjectMap rooms = item->getRelations(Relation::Slave, R_INSIDE);
-			if(rooms.size() != 1) {
-				LOGS("PickupAction", Error) << "The item is nowhere?!" << LOGF;
-				return;
-			}
-			current = rooms.begin()->second.safeCast<Room>();
-		}
-		catch (const std::out_of_range& e) {
-			
+		Room* current = item->getSingleRelation(R_INSIDE, Relation::Slave, "The item is located in more than one room.")
+							.safeCast<Room>();
+		if(!current) {
+			LOGS("PickupAction", Error) << "The item is nowhere?!" << LOGF;
+			return;
 		}
 		ad->getGM()->removeRelation(current, item, R_INSIDE);
 		inventory->addItem(item->getObjectPointer());

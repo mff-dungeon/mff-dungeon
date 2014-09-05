@@ -120,6 +120,27 @@ namespace Dungeon {
         ObjectMap& getRelations(Relation::Dir dir, string type);
         
         /**
+         * Returns the one and only relation of this type.
+         * Throws GameStateInvalid when there are more of these.
+         * @return nullptr when no such relation found.
+         */
+        ObjectPointer getSingleRelation(
+                string type, 
+                Relation::Dir dir = Relation::Master, 
+                string errMsg = "There are more than one object for single relation.");
+        
+        /**
+         * Sets the one and only relation of this type.
+         * Throws GameStateInvalid when there are more of these.
+         * @return itself
+         */
+        ObjectPointer setSingleRelation(
+                string type, 
+                ObjectPointer other, 
+                Relation::Dir dir = Relation::Master, 
+                string errMsg = "There are more than one object for single relation.");
+        
+        /**
          * A special method used for some magic
          * @return the name of this class
          */
@@ -149,13 +170,13 @@ namespace Dungeon {
          */
         virtual void registerProperties(IPropertyStorage& storage);
         
-	protected:
-            /**
-             * Kept as warning :)
-             */
-            void serialize(Archiver& stream);
-            GameManager* getGameManager() const;
-            void setGameManager(GameManager* gm);
+    protected:
+        /**
+         * Kept as warning :)
+         */
+        void serialize(Archiver& stream);
+        GameManager* getGameManager() const;
+        void setGameManager(GameManager* gm);
         	
     private:
         GameManager* gm;

@@ -76,7 +76,7 @@ namespace Dungeon {
 			if (r != 0)
 				this->objects.insert(r);
 			else
-				throw new runtime_error("No such object found");
+				throw new ObjectLost("No such object found");
 		}
         LOGS("GameManager", Verbose) << "Looking up object '" << id << "'." << LOGF;
 		return r;

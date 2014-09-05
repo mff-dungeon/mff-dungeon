@@ -36,9 +36,9 @@ namespace Dungeon {
 		LOGS("Alive", Verbose) << "Getting actions on equiped items" << LOGF;
 		for(int i = Wearable::Slot::BodyArmor; i != Wearable::Slot::Invalid; i--) {
 			try {
-				ObjectMap equips = this->getRelations(Relation::Master, Wearable::SlotRelations[i]);
-				if(equips.size() != 0) {
-					equips.begin()->second->getActions(list, this);
+				ObjectPointer equip = getSingleRelation(Wearable::SlotRelations[i], Relation::Master, GameStateInvalid::EquippedMoreThanOne);
+				if (!!equip) {
+					equip->getActions(list, this);
 				}
 			}
 			catch (const std::out_of_range& e) {
@@ -107,7 +107,7 @@ namespace Dungeon {
     }
 
 	ObjectPointer Alive::getLocation() {
-		return getRelations(Relation::Slave, R_INSIDE).begin()->second;
+		return getSingleRelation(R_INSIDE, Relation::Slave);
 	}
 
 	int Alive::getAttack() const {
@@ -165,10 +165,11 @@ namespace Dungeon {
 		
 		for(int slot = Wearable::Slot::BodyArmor; slot != Wearable::Slot::Invalid; slot--) {
 			try {
-				ObjectMap worn = this->getRelations(Relation::Master, Wearable::SlotRelations[slot]);
-				if(worn.size() > 0) {
-					worn.begin()->second.assertType<Wearable>("You've somehow managed to equip non-item. CG. Now contact the administrator to sort it out for you.");
-					Wearable* wornItem = worn.begin()->second.unsafeCast<Wearable>();
+				ObjectPointer worn = getSingleRelation(Wearable::SlotRelations[slot], Relation::Master, GameStateInvalid::EquippedMoreThanOne);
+				if(!!worn) {
+					Wearable* wornItem = worn
+							.assertType<Wearable>(GameStateInvalid::EquippedNonWearable)
+							.unsafeCast<Wearable>();
 					attack += wornItem->getAttackBonus();
 					defense += wornItem->getDefenseBonus();
 				}
@@ -178,11 +179,15 @@ namespace Dungeon {
 			}
 		}
 		
-		this->setAttack(attack);
-		this->setDefense(defense);
-		this->save();
+		this->setAttack(attack)
+			->setDefense(defense)
+			->save();
 		return this;
 	}
+	
+	ObjectPointer Alive::getBackpack() {
+		return getSingleRelation(Wearable::SlotRelations[Wearable::Backpack], Relation::Master, "You've somehow equipped more than backpack.");
+	}	
 
 	Alive* Alive::damageAlive(Alive* attacker, int amount, ActionDescriptor* ad) {
 		double multiplier = 10;
