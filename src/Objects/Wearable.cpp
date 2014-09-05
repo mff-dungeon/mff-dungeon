@@ -1,5 +1,6 @@
 #include "Wearable.hpp"
 #include "Inventory.hpp"
+#include "../FuzzyStringMatcher.hpp"
 
 namespace Dungeon {
 
@@ -31,18 +32,44 @@ namespace Dungeon {
 		this->defenseBonus = bonus;
 		return this;
 	}
+
+	void Wearable::getActions(ActionList* list, ObjectPointer callee) {
+		Item::getActions(list, callee);
+		// Do I see this equipped or not?
+		try {
+			ObjectMap equipped = this->getRelations(Relation::Slave, Wearable::SlotRelations[this->getSlot()]);
+			if(equipped.find(callee->getId()) != equipped.end()) {
+				UnequipAction* action = new UnequipAction;
+				action->addTarget(this->getObjectPointer());
+				list->addAction(action);
+			}
+			else {
+				EquipAction* action = new EquipAction;
+				action->addTarget(this->getObjectPointer());
+				list->addAction(action);
+			}
+		}
+		catch (const std::out_of_range& e) { // Nothing equipped, well then
+			EquipAction* action = new EquipAction;
+			action->addTarget(this->getObjectPointer());
+			list->addAction(action);
+		}
+	}
 	
-	bool Wearable::unequip(ActionDescriptor* ad, ObjectPointer itemPtr, int desiredAction) {
+	/*******************************************************************
+					Actions - stage methods 
+	 *******************************************************************/
+	bool Wearable::unequip(ActionDescriptor* ad, ObjectPointer itemPtr, DesiredAction action) {
 		itemPtr.assertType<Wearable>("Unequiped thing must be an item.");
 		Wearable* item = itemPtr.unsafeCast<Wearable>();
 		
-		if(desiredAction == 1) {
+		if(action == DesiredAction::Drop) {
 			ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
 			ad->getGM()->createRelation(ad->getAlive()->getLocation(), item, R_INSIDE);
 			*ad << "You have dropped " + item->getName() + ". ";
 			return true;
 		}
-		else if (desiredAction == 2) {
+		else if (action == DesiredAction::Keep) {
 			try {
 				ObjectMap inventories = ad->getAlive()->getRelations(Relation::Master, Wearable::SlotRelations[Wearable::Slot::Backpack]);
 				if(inventories.size() == 0) {
@@ -70,29 +97,6 @@ namespace Dungeon {
 			return false;
 		}
 		return false;
-	}
-
-	void Wearable::getActions(ActionList* list, ObjectPointer callee) {
-		Item::getActions(list, callee);
-		// Do I see this equipped or not?
-		try {
-			ObjectMap equipped = this->getRelations(Relation::Slave, Wearable::SlotRelations[this->getSlot()]);
-			if(equipped.find(callee->getId()) != equipped.end()) {
-				UnequipAction* action = new UnequipAction;
-				action->addTarget(this->getObjectPointer());
-				list->addAction(action);
-			}
-			else {
-				EquipAction* action = new EquipAction;
-				action->addTarget(this->getObjectPointer());
-				list->addAction(action);
-			}
-		}
-		catch (const std::out_of_range& e) { // Not equipped, well then
-			EquipAction* action = new EquipAction;
-			action->addTarget(this->getObjectPointer());
-			list->addAction(action);
-		}
 	}
 
 	void Wearable::registerProperties(IPropertyStorage& storage) {
@@ -125,7 +129,7 @@ namespace Dungeon {
 		
 		Wearable* equipedItem = equipedItemPtr.safeCast<Wearable>();
 		if(equipedItem) {
-			if(!Wearable::unequip(ad, equipedItem, desiredAction)) {
+			if(!Wearable::unequip(ad, equipedItem, Wearable::DesiredAction::NotKnown)) {
 				*ad << equipedItem->getName() + " couldn't be unequiped, so you cannot wear " + item->getName() + " now.";
 				return;
 			}
@@ -188,7 +192,7 @@ namespace Dungeon {
 			LOG("Wear") << to_string(drop) << LOGF;
 			// Move items to new backpack
 			if(drop == 3) {
-				Wearable::unequip(ad, currentPack, 1); // drop it
+				Wearable::unequip(ad, currentPack, Wearable::DesiredAction::Drop); // drop it
 				if(currentPack->contains(newPack)) {
 					currentPack->removeItem(newPack);
 				}
@@ -235,7 +239,7 @@ namespace Dungeon {
 				}
 				// Remove the old backpack
 				if(drop == 2) {
-					Wearable::unequip(ad, currentPack, 1);
+					Wearable::unequip(ad, currentPack, Wearable::DesiredAction::Drop);
 				} 
 				else {
 					ad->getGM()->removeRelation(ad->getAlive(), currentPack, Wearable::SlotRelations[Wearable::Slot::Backpack]);
@@ -311,21 +315,33 @@ namespace Dungeon {
 	
 	void UnequipAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		Wearable* item = target.safeCast<Wearable>();
+		// How can we put something in backpack if we won't have it anymore?
+		if(item->isInstanceOf(Inventory::InventoryClassName)) {
+			if(!Wearable::unequip(ad, item, Wearable::DesiredAction::Drop)) {
+				*ad << item->getName() + " couldn't be unequiped.";
+			}
+			else {
+				ad->getAlive()->calculateBonuses();
+			}
+			return;
+		}
+		
 		*ad << "Do you want to drop " + item->getName() + ", or do you want to put it into your backpack?";
 			ad->waitForReply([this, item] (ActionDescriptor *ad, string reply) {
-				// FIXME: Use StringMatcher to match drop/put...
-				int act;
-				if(reply.compare("drop") == 0) {
-					act = 1;
-				}
-				else {
-					act = 2;
-				}
-				if(!Wearable::unequip(ad, item, act)) {
+				FuzzyStringMatcher<Wearable::DesiredAction> matcher;
+				matcher.add("drop", Wearable::DesiredAction::Drop);
+				matcher.add("ground", Wearable::DesiredAction::Drop);
+				matcher.add("drop on the ground", Wearable::DesiredAction::Drop);
+				matcher.add("keep", Wearable::DesiredAction::Keep);
+				matcher.add("put", Wearable::DesiredAction::Keep);
+				matcher.add("put in backpack", Wearable::DesiredAction::Keep);
+				Wearable::DesiredAction dAction = matcher.find(reply);
+				
+				if(!Wearable::unequip(ad, item, dAction)) {
 					*ad << item->getName() + " couldn't be unequiped.";
 				}
 				else {
-					ad->getAlive()->calculateBonuses();
+					ad->getAlive()->calculateBonuses()->save();
 				}
 			});	
 	}

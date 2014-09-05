@@ -15,6 +15,12 @@ namespace Dungeon {
 		Creature() {}
 		Creature(objId id) : Alive(id) {};
 		virtual ~Creature() {}
+	
+		virtual Alive* die(ActionDescriptor* ad = 0);
+		virtual Alive* respawn(ActionDescriptor* ad = 0);
+
+		virtual void getActions(ActionList* list, ObjectPointer callee);
+
 	private:
 
 	PERSISTENT_DECLARATION(Creature, Alive)

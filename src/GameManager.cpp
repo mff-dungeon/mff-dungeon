@@ -3,6 +3,7 @@
 #include "WorldCreator.hpp"
 #include "dynamic.hpp"
 #include "ActionQueue.hpp"
+#include "Objects/Human.hpp"
 
 namespace Dungeon {
 
@@ -194,7 +195,7 @@ namespace Dungeon {
     
     Alive* GameManager::addNewFigure(Alive *figure) {
         // TODO: put the figure somewhere, initialize the inventory, and so on...
-        
+        figure->setRespawnLocation("room/baseRoom");
         this->insertObject(figure);
 		
 		Inventory* pack = new Inventory("item/backpack/" + RANDID);
@@ -248,6 +249,9 @@ namespace Dungeon {
 	void GameManager::moveAlive(Alive* alive, ObjectPointer room) {
 		this->removeRelation(alive->getLocation(), alive, R_INSIDE);
 		this->createRelation(room, alive, R_INSIDE);
+		if(room.safeCast<Room>()->isRespawnable() && alive->isInstanceOf(Human::HumanClassName)) {
+			alive->setRespawnLocation(room->getId())->save();
+		}
 	}
 	
 	void GameManager::roundBegin(ActionDescriptor* ad) {

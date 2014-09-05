@@ -59,7 +59,7 @@ namespace Dungeon {
 			case Potion::PotionType::Healing: {
 				int lastHp = ad->getAlive()->getCurrentHp();
 				ad->getAlive()->changeHp(potion->getStrength());
-				*ad << "You've healed " << lastHp - ad->getAlive()->getCurrentHp() << " hitpoints";
+				*ad << "You've healed " <<  ad->getAlive()->getCurrentHp() - lastHp << " hitpoints. ";
 				break; 
 			}
 			case Potion::PotionType::NoEffect:

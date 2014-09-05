@@ -10,6 +10,8 @@
 namespace Dungeon {
 	
 	class Wearable : public Item {
+	friend class UnequipAction;
+	friend class EquipAction;
 	public:
 		/**
 		 *	Holds the slot for the wearable. Should be grouped logically for easier printing,
@@ -21,6 +23,15 @@ namespace Dungeon {
                     Backpack = 2,
                     BodyArmor = 3
                 };
+		/**
+		 * Used for actions
+		 */
+		enum DesiredAction {
+			NotKnown = 0,
+			Drop = 1,
+			Keep = 2
+		};
+		
 		static const char* SlotRelations[];
 		
 		Wearable() {}
@@ -34,7 +45,7 @@ namespace Dungeon {
 		int getDefenseBonus() const;
 		Wearable* setDefenseBonus(int bonus);
 		
-		static bool unequip(ActionDescriptor* ad, ObjectPointer item, int desiredAction = 0);
+		static bool unequip(ActionDescriptor* ad, ObjectPointer item, Wearable::DesiredAction action = NotKnown);
 		
 		virtual void getActions(ActionList* list, ObjectPointer callee);
                 
@@ -42,6 +53,7 @@ namespace Dungeon {
 
 		
 	private:
+		
 		Slot slot = Invalid;
 		
 		int attackBonus = 0;

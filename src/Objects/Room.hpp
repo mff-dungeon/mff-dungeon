@@ -21,8 +21,15 @@ namespace Dungeon {
         virtual string getDescriptionSentence();
         virtual void getActions(ActionList* list, ObjectPointer calee);
         virtual void explore(ActionDescriptor* ad);
-		
+
+		virtual void registerProperties(IPropertyStorage& storage);
+
 		bool contains(ObjectPointer object);
+		bool isRespawnable() const;
+		Room* setRespawnable(bool respawnable);
+		
+	private:
+		bool respawnable;
 	
     PERSISTENT_DECLARATION(Room, IDescriptable)
 			

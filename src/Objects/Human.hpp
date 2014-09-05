@@ -6,6 +6,11 @@
 
 namespace Dungeon {
     
+	/**
+	 * Default respawn interval in seconds for humans, testing value, could be changed later (or used kinda dynamically)	 
+	 */
+	#define DEFAULT_RESPAWN_INTERVAL 60
+
     /**
      * A player's representation in Dung world.
      * Bears only contact information.
@@ -16,13 +21,15 @@ namespace Dungeon {
     class Human : public Alive {
     public:
         Human();
-        Human(const Human& orig);
         virtual ~Human();
-        Human(objId id) : Alive(id) {}
-        Human(objId id, string username, string contact) :
-        Alive(id), username(username), contact(contact) {}
-
+        Human(objId id);
+        Human(objId id, string username, string contact);
+		
         virtual void getActions(ActionList* list, ObjectPointer callee);
+
+		virtual Alive* die(ActionDescriptor* ad = 0);
+		virtual Alive* respawn(ActionDescriptor* ad = 0);
+
 
         virtual string getName() const;
         virtual string getLongName() const;

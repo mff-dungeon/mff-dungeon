@@ -11,10 +11,14 @@ namespace Dungeon {
 		
 	}
 	
-    void Alive::getAllActions(ActionList* list) {
+    void Alive::getAllActions(ActionList* list) {		
 		LOGS("Alive", Verbose) << "Getting all actions on " << this->getId() << "." << LOGF;
         // Add some actions on myself
         this->getActions(list, this);
+		if(getState() == State::Dead) {
+			// No interacting!
+			return;
+		}
 		
 		// Get actions for the inventory items - thors hammer
 		LOGS("Alive", Verbose) << "Getting actions on inventory - " << this->getId() << "." << LOGF;
@@ -56,22 +60,21 @@ namespace Dungeon {
     }
     
     void Alive::getActions(ActionList* list, ObjectPointer callee) {
-		LOGS("Alive", Verbose) << "Getting actions on " << this->getId() << "." << LOGF;
-		if (this == callee) {
-			list->addAction(new CallbackAction("suicide", "commit suicide - If you just dont want to live on this planet anymore.",
-				RegexMatcher::matcher("commit( a)? suicide|kill me( now)?"),
-				[this] (ActionDescriptor * ad) {
-						*ad << "You've killed yaself. Cool yeah?";
-						this->changeHp(-99999);
-				}));
+		if(getState() == State::Dead) {
+			return;
 		}
+		// Add actions if any will be generic to all alives
     }
 	
 	void Alive::registerProperties(IPropertyStorage& storage) {
 		storage.have(currentHp, "alive-currenthp", "Current hitpoints")
 			.have(maxHp, "alive-maxhp", "Maximum hitpoints")
 			.have(attack, "alive-attack", "Attack value")
-			.have(defense, "alive-defense", "Defense value");
+			.have(defense, "alive-defense", "Defense value")
+			.have((int&) currentState, "alive-state", "Current state of alive: 1 - Living, 2 - Dying, 3 - Dead")
+			.have(respawnTime, "alive-respawntime", "Respawn time")
+			.have(respawnInterval, "alive-respawninterval", "Respawn interval")
+			.have(respawnLocation, "alive-respawnlocation", "Respawn location");
 		IDescriptable::registerProperties(storage);
 	}
 
@@ -177,6 +180,7 @@ namespace Dungeon {
 		
 		this->setAttack(attack);
 		this->setDefense(defense);
+		this->save();
 		return this;
 	}
 
@@ -199,7 +203,7 @@ namespace Dungeon {
 				*ad << "You have dealt " + to_string(damage) + " to " + this->getName() + ". ";
 			}
 		}
-		changeHp(-damage);
+		changeHp(-damage, ad);
 		return this;
 	}
 
@@ -210,17 +214,57 @@ namespace Dungeon {
 		}
 		if(this->currentHp <= 0) {
 			this->currentHp = 0;	// Just to be sure
-			die();
+			die(ad);
 		}
+		save();
 		return this;
 	}
 
-	Alive* Alive::die() {
-		// TODO: Oh no, I'm dead, I should respawn
+	Alive* Alive::die(ActionDescriptor* ad) {
+		// TODO: Oh no, I'm dead, I should respawn, should be overriden, prolly some basic implement can be here
 		return this;
 	}
 
+	Alive* Alive::respawn(ActionDescriptor* ad) {
+		// TODO: Respawn, should be overriden, prolly some basic implement can be here
+		return this;
+	}
 
+	objId Alive::getRespawnLocation() const {
+		return respawnLocation;
+	}
+
+	Alive* Alive::setRespawnLocation(objId room) {
+		this->respawnLocation = room;
+		return this;
+	}
+
+	int Alive::getRespawnTime() const {
+		return respawnTime;
+	}
+
+	Alive* Alive::setRespawnTime(int time) {
+		this->respawnTime = time;
+		return this;
+	}
+
+	int Alive::getRespawnInterval() const {
+		return respawnInterval;
+	}
+
+	Alive* Alive::setRespawnInterval(int interval) {
+		this->respawnInterval = interval;
+		return this;
+	}
+
+	Alive::State Alive::getState() const {
+		return currentState;
+	}
+
+	Alive* Alive::setState(State newState) {
+		this->currentState = newState;
+		return this;
+	}
 
 	PERSISTENT_IMPLEMENTATION(Alive)
 }

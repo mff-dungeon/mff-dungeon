@@ -24,6 +24,15 @@ namespace Dungeon {
 		return false;
 	}
 
+	bool Room::isRespawnable() const {
+		return respawnable;
+	}
+
+	Room* Room::setRespawnable(bool respawnable) {
+		this->respawnable = respawnable;
+		return this;
+	}
+
 	void Room::getActions(ActionList* list, ObjectPointer callee) {
 		LOGS("Room", Verbose) << "Getting actions on " << this->getName() << "." << LOGF;
 		// Recursively search all items in this room
@@ -86,6 +95,11 @@ namespace Dungeon {
 			
 		}
     }
+	
+	void Room::registerProperties(IPropertyStorage& storage) {
+		storage.have(respawnable, "room-respawnable", "True if user can respawn here");
+		IDescriptable::registerProperties(storage);
+	}
 
 	PERSISTENT_IMPLEMENTATION(Room)
 

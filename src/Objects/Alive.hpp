@@ -17,6 +17,20 @@ namespace Dungeon
     class Alive : public IDescriptable
     {
     public:
+		/**
+		 * State representing current status of Alive
+		 * Meanings:
+		 *  Living - Alive is ok, can do all the things
+		 *  Dying - Used for creatures, will show "finish him" action
+		 *  Dead - Used for dead alives eligible to respawn, should now allow any actions except respawn
+		 */
+		enum State {
+			Invalid = 0,
+			Living = 1,
+			Dying = 2,
+			Dead = 3
+		};
+		
         Alive() {}		// Constructor allowing to load class later
         Alive(objId id);
         void getAllActions(ActionList* list);
@@ -49,7 +63,18 @@ namespace Dungeon
 		/**
 		 * Implements the dying procedures
          */
-		virtual Alive* die();		
+		virtual Alive* die(ActionDescriptor* ad = 0);
+		virtual Alive* respawn(ActionDescriptor* ad = 0);
+		
+		virtual State getState() const;
+		virtual Alive* setState(State newState);
+		virtual int getRespawnTime() const;
+		virtual Alive* setRespawnTime(int time);
+		virtual int getRespawnInterval() const;
+		virtual Alive* setRespawnInterval(int interval);
+		virtual objId getRespawnLocation() const;
+		virtual Alive* setRespawnLocation(objId room);
+
 		
 		/**
 		 * Recalculates this alive's attack and defense values due to equip changes
@@ -67,13 +92,26 @@ namespace Dungeon
         virtual void registerProperties(IPropertyStorage& storage);
 		
 	private:
-		/*
-		 *	Defaults for persistence
-		 */
+		// Combat stats
         int maxHp = 1000;
 		int currentHp = 1000;
 		int defense = 1;
 		int attack = 1;
+		
+		// Respawn related stats
+		State currentState = State::Living;
+		/**
+		 * Location, where the alive will respawn, if it respawns
+		 */
+		objId respawnLocation = "";
+		/**
+		 * Timestamp, when it respawns
+		 */
+		int respawnTime = 0;
+		/**
+		 * Interval, time it takes after death to respawn, -1 is not respawning
+		 */
+		int respawnInterval = -1;
 	
 	PERSISTENT_DECLARATION(Alive, IDescriptable)
     };
