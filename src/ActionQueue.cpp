@@ -26,10 +26,13 @@ namespace Dungeon {
 
         LOGS("ActionQueue", Verbose) << "Processing action." << LOGF;
 		ActionDescriptor *ad = actions.front();
+		gm->roundBegin(ad);
 		actions.pop();
 
+		bool flawless = false;
 		try {
 			ad->driver->processDescriptor(ad);
+			flawless = true;
 		}
 		catch (GameException& ge) {
 			LOGS("ActionQueue", Error) << "Game exception occured and Driver missed it. " << ge.what() << LOGF;			
@@ -43,6 +46,8 @@ namespace Dungeon {
 		catch (...) {
 			LOGS("ActionQueue", Error) << "Unknown error has occured while processing." << LOGF;	
 		}
+		
+		gm->roundEnd(flawless);
 	}
 
 	void ActionQueue::loopToFinish() {

@@ -249,6 +249,16 @@ namespace Dungeon {
 		this->removeRelation(alive->getLocation(), alive, R_INSIDE);
 		this->createRelation(room, alive, R_INSIDE);
 	}
-
+	
+	void GameManager::roundBegin(ActionDescriptor* ad) {
+		DatabaseHandler::getInstance().beginTransaction();
+	}
+	
+	void GameManager::roundEnd(bool noException) {
+		if (noException)
+			DatabaseHandler::getInstance().endTransaction();
+		else 
+			DatabaseHandler::getInstance().rollback();
+	}
 
 }

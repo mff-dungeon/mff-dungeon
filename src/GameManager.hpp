@@ -104,8 +104,14 @@ namespace Dungeon {
          * TODO: Get reason, message active users...
          */
         void shutdown();
-    protected:
         
+        /**
+         * Handlers for counting time
+         */
+        void roundBegin(ActionDescriptor* ad);
+        void roundEnd(bool noException);
+        
+    protected:
         IObject* getObject(objId id);
     };
 }

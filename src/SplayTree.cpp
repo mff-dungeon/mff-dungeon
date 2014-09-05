@@ -194,6 +194,8 @@ namespace Dungeon {
 				if(f->value != 0) {
 					delete f->value;
 				}
+				if (p->left == f) p->left = 0;
+				else p->right = 0;
 				delete f;
 				f = p;
 			}

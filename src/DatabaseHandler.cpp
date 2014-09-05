@@ -283,4 +283,32 @@ namespace Dungeon {
 		finalizeAndClose();
 		return E_OK;
 	}
+	
+	/**
+	 * TODO implement these.
+	 * I think that connection must be held open in between.
+     */
+	int DatabaseHandler::beginTransaction() {
+		if (transactionDepth++ == 0) {
+			// exec BEGIN TRANSACTION;
+		}
+		return E_OK;
+	}
+	
+	int DatabaseHandler::endTransaction() {
+		if (--transactionDepth == 0) {
+			// exec COMMIT
+		}
+		return E_OK;
+	}
+	
+	int DatabaseHandler::rollback() {
+		if (--transactionDepth == 0) {
+			// exec ROLLBACK
+		}
+		return E_OK;
+	}
+
+
+
 }

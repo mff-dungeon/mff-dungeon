@@ -133,6 +133,25 @@ namespace Dungeon {
          * @return DatabaseHandler state value
          */
 		int deleteRelation(Relation* rel);
+                
+                
+                /**
+                 * Begins transaction
+                 */
+                int beginTransaction();
+
+                /**
+                 * Commits transaction
+                 */
+                int endTransaction();
+
+                /**
+                 * Cancels transaction
+                 */
+                int rollback();
+                
+        private:
+            int transactionDepth = 0;
 	};
 }
 #endif
