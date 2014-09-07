@@ -94,7 +94,7 @@ namespace Dungeon {
 		vector<Relation*> list_master;
 		DatabaseHandler::getInstance().getRelations(list_master, ref_master);
 		for(Relation* n : list_master) {
-			r->addRelation(n->relation, getObject(n->sid), true);
+			r->addRelation(n->relation, getObject(n->sid), Relation::Master);
 			delete n;
 		}
 		delete ref_master;
@@ -103,7 +103,7 @@ namespace Dungeon {
 		vector<Relation*> list_slave;
 		DatabaseHandler::getInstance().getRelations(list_slave, ref_slave);
 		for(Relation* n : list_slave) {
-			r->addRelation(n->relation, getObject(n->pid), false);
+			r->addRelation(n->relation, getObject(n->pid), Relation::Slave);
 			delete n;
 		}
 		delete ref_slave;
@@ -180,7 +180,7 @@ namespace Dungeon {
 	}
 
 	void GameManager::addRelation(ObjectPointer master, ObjectPointer slave, string relation) {
-		Relation* ref = new Relation(master->getId(), slave->getId(), master->className(), slave->className(), relation);
+		Relation* ref = new Relation(master.getId(), slave.getId(), master->className(), slave->className(), relation);
 		this->addRelation(ref);
 		delete ref;
 	}
@@ -215,22 +215,23 @@ namespace Dungeon {
     }
 	
 	void GameManager::createRelation(ObjectPointer master, ObjectPointer slave, string relation) {
-		Relation rel (master->getId(), slave->getId(), master->className(), slave->className(), relation);
+		Relation rel (master.getId(), slave.getId(), master->className(), slave->className(), relation);
 		this->addRelation(&rel);
 		if (master.isLoaded())
-			master->addRelation(relation, getObject(slave->getId()));
+			master->addRelation(relation, slave, Relation::Master);
 		if (slave.isLoaded())
-			slave->addRelation(relation, getObject(master->getId()), false);
+			slave->addRelation(relation, master, Relation::Slave);
 	}
 	
 	void GameManager::clearRelationsOfType(ObjectPointer obj, string relation, Relation::Dir master) {
 		Relation* ref_obj;
 		if (master)
-			ref_obj = new Relation(obj->getId(), "0", "0", "0", relation);
-		else ref_obj = new Relation("0", obj->getId(), "0", "0", relation);
+			ref_obj = new Relation(obj.getId(), "0", "0", "0", relation);
+		else ref_obj = new Relation("0", obj.getId(), "0", "0", relation);
 		DatabaseHandler::getInstance().deleteRelation(ref_obj);
 		delete ref_obj;
 		
+		// Need to load it because of the "others"
 		for (RelationList::value_type& rel : obj->getRelations(master)) {
 			for (ObjectMap::value_type& pair : rel.second) {
 				obj->eraseRelation(relation, pair.second, master);
@@ -240,7 +241,7 @@ namespace Dungeon {
 	
 	void GameManager::removeRelation(ObjectPointer master, ObjectPointer slave, string relation) {
 		if (!master || !slave) return; 
- 		master->eraseRelation(relation, slave);
+ 		master->eraseRelation(relation, slave, Relation::Master);
 		Relation* ref_obj = new Relation(master.getId(), slave.getId(), "0", "0", relation);
 		DatabaseHandler::getInstance().deleteRelation(ref_obj);
 		delete ref_obj;

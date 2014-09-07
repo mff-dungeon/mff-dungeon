@@ -23,9 +23,9 @@ namespace Dungeon {
             objId pid, sid;
             string pclass, sclass, relation;
             
-            enum Dir {
-                Slave = 0,
-                Master = 1
+            enum Dir : bool {
+                Slave = false,
+                Master = true
             };
 
             /**
@@ -60,6 +60,10 @@ namespace Dungeon {
              */
 		bool addWhere(stringstream& query);
 	};
+        
+        
+            
+        inline Relation::Dir operator!(const Relation::Dir dir) { return Relation::Dir(!(bool) dir); }
 }
 
 #endif

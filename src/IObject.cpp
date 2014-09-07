@@ -42,19 +42,23 @@ namespace Dungeon {
 		return object;
 	}
 	
-	bool IObject::hasRelation(string type, ObjectPointer other, bool master) {
-		if(master) {
-			return relation_master[type].find(other.getId()) != relation_master[type].end();
-		} else {
-			return relation_slave[type].find(other.getId()) != relation_slave[type].end();
+	bool IObject::hasRelation(string type, ObjectPointer other, Relation::Dir dir) {
+		try {
+			if(dir == Relation::Master) {
+				return relation_master[type].find(other.getId()) != relation_master[type].end();
+			} else {
+				return relation_slave[type].find(other.getId()) != relation_slave[type].end();
+			}
+		} catch (std::out_of_range& oor) {
+			return false; // No relation of this type
 		}
 	}
 	
-	void IObject::addRelation(string type, ObjectPointer other, bool master) {
-		if (hasRelation(type, other, master)) return;
+	void IObject::addRelation(string type, ObjectPointer other, Relation::Dir dir) {
+		if (hasRelation(type, other, dir)) return;
 		
-		LOGS("IObject", Verbose) << "Adding relation " << getId() << (master ? "<--" : "-->") << other.getId() << " type " << type << LOGF;
-		if(master) {
+		LOGS("IObject", Verbose) << "Adding relation " << getId() << (dir ? "<--" : "-->") << other.getId() << " type " << type << LOGF;
+		if(dir) {
 			relation_master[type][other.getId()] = other;
 		}
 		else {
@@ -62,7 +66,7 @@ namespace Dungeon {
 		}
 		
 		if (other.isLoaded())
-			other->addRelation(type, this, !master);
+			other->addRelation(type, this, !dir);
 	}
 
 	RelationList& IObject::getRelations(Relation::Dir dir) {
@@ -100,11 +104,11 @@ namespace Dungeon {
 	}
 
 	
-	void IObject::eraseRelation(string type, ObjectPointer other, bool master) {
-		if (!other || !hasRelation(type, other, master)) return;
+	void IObject::eraseRelation(string type, ObjectPointer other, Relation::Dir dir) {
+		if (!other || !hasRelation(type, other, dir)) return;
 		
-		LOGS("IObject", Verbose) << "Erasing relation " << getId() << (master ? "<--" : "-->") << other.getId() << " type " << type << LOGF;
-		if(master) {
+		LOGS("IObject", Verbose) << "Erasing relation " << getId() << (dir ? "<--" : "-->") << other.getId() << " type " << type << LOGF;
+		if(dir) {
 			relation_master.at(type).erase(other.getId());
 		}
 		else {
@@ -112,7 +116,7 @@ namespace Dungeon {
 		}
 		
 		if (other.isLoaded())
-			other->eraseRelation(type, this, !master);
+			other->eraseRelation(type, this, !dir);
 	}
 	
 	void IObject::serialize(Archiver& stream) {

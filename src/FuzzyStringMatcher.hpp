@@ -64,11 +64,13 @@ namespace Dungeon {
                     .add("yeah", true)
                     .add("ok", true)
                     .add("of course", true)
+                    .add("1", true)
                     .add("no", false)
                     .add("false", false)
                     .add("nope", false)
                     .add("not", false)
-                    .add("of course not", false);
+                    .add("of course not", false)
+                    .add("0", false);
             }
             
             return matcher.find(text);

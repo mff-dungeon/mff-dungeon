@@ -5,6 +5,7 @@
 #include "../ActionDescriptor.hpp"
 #include "../ActionList.hpp"
 #include "../WorldDumper.hpp"
+#include "../FuzzyStringMatcher.hpp"
 
 namespace Dungeon
 {
@@ -37,7 +38,7 @@ namespace Dungeon
 					}
 					target = ad->getGM()->getObject(matches[3]);
 				}
-				*ad << "So you want to know something? Relations which " << target->getId() << " master:\n";
+				*ad << "So you want to know something? Relations which " << target.getId() << " master:\n";
 				RelationList r = target->getRelations(Relation::Master);
 				for (auto& type : r) {
 					*ad << "=== " << type.first + ":\n";
@@ -168,7 +169,7 @@ namespace Dungeon
 			target.assertExists();
 			if (reply != ".") {
 				prop = reply;
-				LOG("PropEditor") << "Set property of " << target->getId() << " to " << prop << LOGF;
+				LOG("PropEditor") << "Set property of " << target.getId() << " to " << prop << LOGF;
 			}
 			askForNextOne(ad);
 		});
@@ -185,7 +186,7 @@ namespace Dungeon
 			if (reply != ".") {
 				std::istringstream(reply) >> prop;
 				*ad << "Set to '" << prop << "'. ";
-				LOG("PropEditor") << "Set property of " << target->getId() << " to " << prop << LOGF;
+				LOG("PropEditor") << "Set property of " << target.getId() << " to " << prop << LOGF;
 			}
 			askForNextOne(ad);
 		});
@@ -194,14 +195,13 @@ namespace Dungeon
 	
 	IPropertyStorage& ThorsHammer::PropertyEditor::have(bool& prop, string id, string desc, bool editable) {
 		if (!editable) return *this;
-		descriptions.push(desc + "(" + (prop ? "True" : "False") + "). 1/true for true, 0/false for false");
+		descriptions.push(desc + "(" + (prop ? "True" : "False") + ")");
 		ad->waitForReply([&] (ActionDescriptor* ad, string reply) {
 			target.assertExists();
 			if (reply != ".") {
-				transform(reply.begin(), reply.end(), reply.begin(), ::tolower);
-				prop = (reply == "true" || reply == "1");
+				prop = StringMatcher::matchTrueFalse(reply);
 				*ad << "Set to " << (prop ? "True" : "False") << ". ";
-				LOG("PropEditor") << "Set property of " << target->getId() << " to " << (prop ? "True" : "False") << LOGF;
+				LOG("PropEditor") << "Set property of " << target.getId() << " to " << (prop ? "True" : "False") << LOGF;
 			}
 			askForNextOne(ad);
 		});

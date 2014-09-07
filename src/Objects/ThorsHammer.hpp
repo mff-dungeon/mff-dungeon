@@ -51,7 +51,7 @@ namespace Dungeon {
             std::queue<string> descriptions;
         };
         
-    PERSISTENT_DECLARATION(ThorsHammer, IObject)
+        PERSISTENT_DECLARATION(ThorsHammer, Item)
     };
 }
 #endif	/* THORSHAMMER_HPP */

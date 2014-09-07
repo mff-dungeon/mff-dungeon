@@ -26,8 +26,11 @@ namespace Dungeon {
 			RelationList mastering = getRelations(Relation::Master);
 			for (auto& pair : mastering)
 				for(auto& item: pair.second) {
+					LOGS("Alive", Verbose) << "Getting actions " << item.second << "." << LOGF;
 					if (item.second->instanceOf(Item))
 						item.second->getActions(list, this);
+					else
+					LOGS("Alive", Verbose) << item.second << " is not item" << LOGF;
 				}
 		}
 		catch (const std::out_of_range& e) {
@@ -115,7 +118,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::setAttack(int attack, ActionDescriptor* ad) {
-		if(ad != 0 && this->attack != attack && this->getId() == ad->getAlive()->getId()) {
+		if(ad != 0 && this->attack != attack && ad->getAlive() == this) {
 			*ad << "Your attack value has changed to " + to_string(attack) + ". ";
 		}
 		this->attack = attack;
@@ -127,7 +130,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::setDefense(int defense, ActionDescriptor* ad) {
-		if(ad != 0 && this->defense != defense && this->getId() == ad->getAlive()->getId()) {
+		if(ad != 0 && this->defense != defense && ad->getAlive() == this) {
 			*ad << "Your defense value has changed to " + to_string(defense) + ". ";
 		}
 		this->defense = defense;
@@ -142,7 +145,7 @@ namespace Dungeon {
 		if(hp >= maxHp) hp = maxHp;
 		if(hp <= 0) hp = 0;
 		
-		if(ad != 0 && this->currentHp != currentHp && this->getId() == ad->getAlive()->getId()) {
+		if(ad != 0 && this->currentHp != currentHp && ad->getAlive() == this) {
 			*ad << "Your current hitpoints have changed to " + to_string(currentHp) + ". ";
 		}
 		this->currentHp = hp;
@@ -154,7 +157,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::setMaxHp(int hp, ActionDescriptor* ad) {
-		if(ad != 0 && this->maxHp != maxHp && this->getId() == ad->getAlive()->getId()) {
+		if(ad != 0 && this->maxHp != maxHp && ad->getAlive() == this) {
 			*ad << "Your maximum hitpoints have changed to " + to_string(maxHp) + ". ";
 		}
 		this->maxHp = hp;
@@ -212,7 +215,7 @@ namespace Dungeon {
 		int damage = (int) (multiplier * rnd / 100 *(amount - getDefense() * 0.33));
 		if(damage <= 0) return this; 
 		if(ad != 0) {
-			if(this->getId() == ad->getAlive()->getId()) {
+			if(ad->getAlive() == this) {
 				*ad << "You have received " + to_string(damage) + " damage from " + attacker->getName() + ". ";
 			}
 			else {

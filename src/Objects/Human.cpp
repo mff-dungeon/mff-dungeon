@@ -55,7 +55,7 @@ namespace Dungeon {
 		this->setState(State::Dead);
 		this->setRespawnTime(time(0) + getRespawnInterval());
 		if(ad != 0) { // Let's tell what happened
-			if(getId() == ad->getAlive()->getId()) { // It is me dying
+			if(ad->getAlive() == this) { // It is me dying
 			// TODO: Write some fancy method to respawn time nicer (probably rounding to highest order is enough)
 				*ad << "Oh no! You have just died. "
 					<< "Your soul has moved to another plane of existence where it's currently regaining strength. "
@@ -162,7 +162,7 @@ namespace Dungeon {
 							if (r) {
 								r->explore(ad);
 							} else {
-								*ad << "Non-room location: " << obj->getId() << "\n";
+								*ad << "Non-room location: " << obj.getId() << "\n";
 								ObjectMap objects = obj->getRelations(Relation::Master, R_INSIDE);
 								for(auto& o : objects) {
 									*ad << "\t" + o.first + "\n";

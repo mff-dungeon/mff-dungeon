@@ -12,8 +12,7 @@
 namespace Dungeon {
 
 	bool Room::contains(ObjectPointer object) {
-		ObjectMap& inside = getRelations(Relation::Master, R_INSIDE);
-		return inside.find(object->getId()) != inside.end();
+		return hasRelation(R_INSIDE, object, Relation::Master);
 	}
 
 	bool Room::isRespawnable() const {
@@ -31,7 +30,7 @@ namespace Dungeon {
 		try {
 			ObjectMap objects = getRelations(Relation::Master, R_INSIDE);
 			for(auto& item: objects) {
-				if (item.second.getId() != callee->getId())
+				if (item.second != callee)
 					item.second->getActions(list, callee);
 			}
 		}

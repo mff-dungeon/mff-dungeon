@@ -36,20 +36,13 @@ namespace Dungeon {
 	void Wearable::getActions(ActionList* list, ObjectPointer callee) {
 		Item::getActions(list, callee);
 		// Do I see this equipped or not?
-		try {
-			ObjectMap equipped = this->getRelations(Relation::Slave, Wearable::SlotRelations[this->getSlot()]);
-			if(equipped.find(callee->getId()) != equipped.end()) {
-				UnequipAction* action = new UnequipAction;
-				action->addTarget(this);
-				list->addAction(action);
-			}
-			else {
-				EquipAction* action = new EquipAction;
-				action->addTarget(this);
-				list->addAction(action);
-			}
+		
+		if (hasRelation(Wearable::SlotRelations[this->getSlot()], callee, Relation::Slave)) {
+			UnequipAction* action = new UnequipAction;
+			action->addTarget(this);
+			list->addAction(action);
 		}
-		catch (const std::out_of_range& e) { // Nothing equipped, well then
+		else {
 			EquipAction* action = new EquipAction;
 			action->addTarget(this);
 			list->addAction(action);
@@ -324,7 +317,7 @@ namespace Dungeon {
 				for(auto& i : inventory) {
 					if(!i.second->isInstanceOf(Item::ItemClassName)) continue;
 					Item* it = i.second.unsafeCast<Item>();
-					if(it->getId() != newPack->getId()) {
+					if(it != newPack) {
 						currentPack->removeItem(it);
 						newPack->addItem(it);
 					}

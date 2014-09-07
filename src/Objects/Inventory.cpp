@@ -102,18 +102,7 @@ namespace Dungeon {
 	}
 
 	bool Inventory::contains(ObjectPointer itemPtr) {
-		itemPtr.assertType<Item>("You can add only items into your backpack.");
-		Item* item = itemPtr.safeCast<Item>();
-		// If it throws an error, it's because there is nothing, so it should be safe to return false
-		try {
-			ObjectMap inside = this->getRelations(Relation::Master, R_INVENTORY);
-			if(inside.find(item->getId()) != inside.end())
-				return true;
-		}
-		catch (const std::out_of_range& e) {
-			
-		}
-		return false;
+		return hasRelation(R_INVENTORY, itemPtr, Relation::Master);
 	}
 	
 	string Inventory::getContainingSentence() {

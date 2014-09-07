@@ -105,7 +105,7 @@ namespace Dungeon {
          * @param other ObjectPointer of the other object
          * @param master true, if the relation is master relation
          */
-        bool hasRelation(string type, ObjectPointer other, bool master=true);
+        bool hasRelation(string type, ObjectPointer other, Relation::Dir dir = Relation::Master);
 		
         /**
          * Returns either master, or slave relations of the object
@@ -191,7 +191,7 @@ namespace Dungeon {
          * @param other ObjectPointer of the other object
          * @param master true, if the relation is master relation
          */
-        void eraseRelation(string type, ObjectPointer other, bool master=true);
+        void eraseRelation(string type, ObjectPointer other, Relation::Dir dir);
 
         /**
          * Registers a new relation for this object
@@ -199,7 +199,7 @@ namespace Dungeon {
          * @param other ObjectPointer of the other object
          * @param master true, if the relation is master relation
          */
-        void addRelation(string type, ObjectPointer other, bool master=true);
+        void addRelation(string type, ObjectPointer other, Relation::Dir dir);
     };
 }
 
