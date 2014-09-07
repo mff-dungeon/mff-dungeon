@@ -96,6 +96,14 @@ namespace Dungeon {
                 sprintf(buf, "%.2f oz", weight / 28.349523125);
             return string(buf);
         }
+        
+        static inline string progressBar(const int val, const int max, const int length) {
+            int l = val * length / max;
+            char buf [length];
+            for (int i = 0; i < length; i++)
+                buf[i] = (i <= l ? '*' : '-');
+            return string(buf, length);
+        }
     };
     
 }

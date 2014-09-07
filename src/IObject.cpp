@@ -88,11 +88,12 @@ namespace Dungeon {
 	}
 	
 	ObjectPointer IObject::setSingleRelation(string type, ObjectPointer other, Relation::Dir dir, string errMsg) {
-		eraseRelation(type, getSingleRelation(type, dir, errMsg), dir);
 		if(dir == Relation::Master) {
+			gm->removeRelation(this, getSingleRelation(type, dir, errMsg), type);
 			gm->createRelation(this, other, type);
 		}
 		else {
+			gm->removeRelation(getSingleRelation(type, dir, errMsg), this, type);
 			gm->createRelation(other, this, type);
 		}
 		return this;

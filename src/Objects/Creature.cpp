@@ -241,6 +241,8 @@ namespace Dungeon {
 			ad->getAlive()->damageAlive(creaturePtr, creature->getAttack(), ad);
 			// Should be able to use potion, or so (later)
 			*ad << text;
+			*ad << "\n" << creature->getName() << ": [" << Utils::progressBar(creature->getCurrentHp(), creature->getMaxHp(), 10) << "]"
+				<< "     You: [" << Utils::progressBar(ad->getAlive()->getCurrentHp(), ad->getAlive()->getMaxHp(), 10) << "]";
 			ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
 				this->combatLoop(ad, reply);
 			});

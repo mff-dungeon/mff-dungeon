@@ -26,7 +26,8 @@ namespace Dungeon {
 			RelationList mastering = getRelations(Relation::Master);
 			for (auto& pair : mastering)
 				for(auto& item: pair.second) {
-					item.second->getActions(list, this);
+					if (item.second->instanceOf(Item))
+						item.second->getActions(list, this);
 				}
 		}
 		catch (const std::out_of_range& e) {

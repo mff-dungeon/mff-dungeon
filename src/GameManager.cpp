@@ -239,9 +239,9 @@ namespace Dungeon {
 	}
 	
 	void GameManager::removeRelation(ObjectPointer master, ObjectPointer slave, string relation) {
- 		master->eraseRelation(relation, this->getObject(slave->getId()));
-		
-		Relation* ref_obj = new Relation(master->getId(), slave->getId(), "0", "0", relation);
+		if (!master || !slave) return; 
+ 		master->eraseRelation(relation, slave);
+		Relation* ref_obj = new Relation(master.getId(), slave.getId(), "0", "0", relation);
 		DatabaseHandler::getInstance().deleteRelation(ref_obj);
 		delete ref_obj;
 	}
