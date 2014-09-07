@@ -101,7 +101,7 @@ namespace Dungeon {
 	}
 	
 	void UnequipAction::explain(ActionDescriptor* ad) {
-		*ad << "Use 'take off ...' or 'unequip ...' to equip chosen item.";
+		*ad << "Use 'take off ...' or 'unequip ...' to unequip chosen item.";
 	}
 
 	bool UnequipAction::matchCommand(string command) {

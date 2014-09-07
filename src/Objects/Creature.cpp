@@ -18,6 +18,7 @@ namespace Dungeon {
 		if(ad != 0) {
 			*ad << "You have killed " << getName() << ". ";
 		}
+		save();
 		
 		return this;
 	}
@@ -187,9 +188,12 @@ namespace Dungeon {
 	CombatAction::CombatMatch CombatAction::matchAnswer(string reply) {
 		FuzzyStringMatcher<CombatAction::CombatMatch> matcher;
 		matcher.add("attack", CombatAction::CombatMatch::Attack);
+		matcher.add("a", CombatAction::CombatMatch::Attack);
 		matcher.add("check", CombatAction::CombatMatch::Check);
+		matcher.add("c", CombatAction::CombatMatch::Check);
 		matcher.add("status", CombatAction::CombatMatch::Check);
 		matcher.add("run", CombatAction::CombatMatch::Run);
+		matcher.add("r", CombatAction::CombatMatch::Run);
 		
 		return matcher.find(reply);
 	}
@@ -215,7 +219,7 @@ namespace Dungeon {
 			else {
 				*ad << creature->getName() << " is seriously wounded, finish it while you can! ";
 			}
-			*ad << "\nType 'attack' to attack the enemy, 'check' to check its status or 'run' to run from the fight.";
+			*ad << text;
 			ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
 				this->combatLoop(ad, reply);
 			});
@@ -235,7 +239,8 @@ namespace Dungeon {
 				return;
 			}
 			ad->getAlive()->damageAlive(creaturePtr, creature->getAttack(), ad);
-			*ad << "\nType 'attack' to attack the enemy, 'check' to check its status or 'run' to run from the fight.";
+			// Should be able to use potion, or so (later)
+			*ad << text;
 			ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
 				this->combatLoop(ad, reply);
 			});

@@ -55,6 +55,7 @@ namespace Dungeon {
 		CombatMatch matchAnswer(string reply);
 	private:
 		ObjectPointer creaturePtr;
+		string text = "\nType 'attack' (a) to attack the enemy, 'check' (c) to check its status or 'run' (r) to run from the fight.";
 	};
 	
 	class KillAction : public MultiTargetAction {
