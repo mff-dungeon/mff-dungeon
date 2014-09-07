@@ -43,6 +43,7 @@ namespace Dungeon
 		virtual Alive* setCurrentHp(int hp, ActionDescriptor* ad = 0);
 		virtual int getMaxHp() const;
 		virtual Alive* setMaxHp(int hp, ActionDescriptor* ad = 0);
+		virtual double getPercentageHp();
 		virtual int getAttack() const;
 		virtual Alive* setAttack(int attack, ActionDescriptor* ad = 0);
 		virtual int getDefense() const;
@@ -52,7 +53,7 @@ namespace Dungeon
 		 * Calls method to damage alive. Calculates the actual damage and calls reduceHp
          * @param amount The attacker's attack value
          */
-		virtual Alive* damageAlive(Alive* attacker, int amount, ActionDescriptor* ad = 0);
+		virtual Alive* damageAlive(ObjectPointer attackerPtr, int amount, ActionDescriptor* ad = 0);
 		
 		/**
 		 * Adds (or removes) hitpoints. Checks for death or full hitpoints.
@@ -72,8 +73,11 @@ namespace Dungeon
 		virtual Alive* setRespawnTime(int time);
 		virtual int getRespawnInterval() const;
 		virtual Alive* setRespawnInterval(int interval);
-		virtual objId getRespawnLocation() const;
-		virtual Alive* setRespawnLocation(objId room);
+		/**
+		 * Counts only on humans, creatures respawn where they were killed.
+		 */
+		virtual ObjectPointer getRespawnLocation();
+		virtual Alive* setRespawnLocation(ObjectPointer room);
 
 		
 		/**
@@ -108,10 +112,6 @@ namespace Dungeon
 		
 		// Respawn related stats
 		State currentState = State::Living;
-		/**
-		 * Location, where the alive will respawn, if it respawns
-		 */
-		objId respawnLocation = "";
 		/**
 		 * Timestamp, when it respawns
 		 */

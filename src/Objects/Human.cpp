@@ -71,19 +71,16 @@ namespace Dungeon {
 	}
 	
 	Alive* Human::respawn(ActionDescriptor* ad) {
-		if(!this->getGameManager()->hasObject(getRespawnLocation())) {
-			throw GameStateInvalid("No respawning room available.");
-		}
-		ObjectPointer room(getGameManager(), getRespawnLocation());
-		getGameManager()->moveAlive(this, room);
+		getRespawnLocation().assertExists("No respawning room available");
+		getGameManager()->moveAlive(this, getRespawnLocation());
 		this->setCurrentHp((int) getMaxHp() * 0.75);
 		this->setState(State::Living);
 		if(ad != 0) {
-			*ad << "You have just respawned in " << room.safeCast<Room>()->getName() << ". ";
+			*ad << "You have just respawned in " << getRespawnLocation().safeCast<Room>()->getName() << ". ";
 		}
 		return this;
 	}
-	
+
 	void Human::registerProperties(IPropertyStorage& storage) {
 		storage.have(username, "human-username", "Username, public available")
 			.have(contact, "human-jid", "Contact JID", false);

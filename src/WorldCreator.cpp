@@ -26,7 +26,7 @@ namespace Dungeon {
 		/**
 		 * Init Objects
 		 */
-		Room *baseRoom, *trapRoom;
+		Room *baseRoom, *trapRoom, *darkRoom;
 		
 		baseRoom = new Room("room/baseRoom");
 		baseRoom->setName("Base Camp")
@@ -39,6 +39,11 @@ namespace Dungeon {
 		trapRoom->setName("Equip room")
 				->setDescription("Looks like noone has been there for a long time.");
 		gm->insertObject(trapRoom);
+		
+		darkRoom = new Room("room/darkRoom");
+		darkRoom->setName("Dark room")
+				->setDescription("A scary room with a lack of light.");
+		gm->insertObject(darkRoom);
 		
 		createObject<Potion>("item/potion/" + RANDID, trapRoom)
 			->setType(Potion::PotionType::Healing)
@@ -73,12 +78,22 @@ namespace Dungeon {
 			->save();
 		
 		createObject<Wearable>("item/weapon/" + RANDID, trapRoom)
-			->setAttackBonus(20)
+			->setAttackBonus(6)
 			->setSlot(Wearable::Weapon)
-			->setSize(10000)
-			->setWeight(25000)
-			->setName("Iron club")
-			->setLongName("A rusty old iron club.")
+			->setSize(3000)
+			->setWeight(5000)
+			->setName("Wooden club")
+			->setLongName("A weak wooden club.")
+			->save();
+		
+		createObject<Creature>("creature/spider/" + RANDID, darkRoom)
+			->setAttack(3)
+			->setDefense(2)
+			->setMaxHp(100)
+			->setCurrentHp(100)
+			->setRespawnInterval(20)
+			->setName("Small spider")
+			->setLongName("A small brown spider")
 			->save();
 		/*
 		 * Init relations
@@ -87,6 +102,10 @@ namespace Dungeon {
 		this->createDoor("trap-base", baseRoom, trapRoom)
 				->setName("wooden door")
 				->setLongName("wooden door with simple metal handle")
+				->save();
+		this->createDoor("dark-base", baseRoom, darkRoom)
+				->setName("narrow tunnel")
+				->setLongName("a narrow tunnel with no visible ending")
 				->save();
 	}
 	

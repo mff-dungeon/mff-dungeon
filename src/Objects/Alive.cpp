@@ -73,8 +73,7 @@ namespace Dungeon {
 			.have(defense, "alive-defense", "Defense value")
 			.have((int&) currentState, "alive-state", "Current state of alive: 1 - Living, 2 - Dying, 3 - Dead")
 			.have(respawnTime, "alive-respawntime", "Respawn time")
-			.have(respawnInterval, "alive-respawninterval", "Respawn interval")
-			.have(respawnLocation, "alive-respawnlocation", "Respawn location");
+			.have(respawnInterval, "alive-respawninterval", "Respawn interval");
 		IDescriptable::registerProperties(storage);
 	}
 
@@ -139,6 +138,9 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::setCurrentHp(int hp, ActionDescriptor* ad) {
+		if(hp >= maxHp) hp = maxHp;
+		if(hp <= 0) hp = 0;
+		
 		if(ad != 0 && this->currentHp != currentHp && this->getId() == ad->getAlive()->getId()) {
 			*ad << "Your current hitpoints have changed to " + to_string(currentHp) + ". ";
 		}
@@ -157,6 +159,11 @@ namespace Dungeon {
 		this->maxHp = hp;
 		return this;
 	}
+
+	double Alive::getPercentageHp() {
+		return ((double) currentHp) / maxHp;
+	}
+
 
 	Alive* Alive::calculateBonuses() {
 		// Base Values
@@ -189,7 +196,9 @@ namespace Dungeon {
 		return getSingleRelation(Wearable::SlotRelations[Wearable::Backpack], Relation::Master, "You've somehow equipped more than backpack.");
 	}	
 
-	Alive* Alive::damageAlive(Alive* attacker, int amount, ActionDescriptor* ad) {
+	Alive* Alive::damageAlive(ObjectPointer attackerPtr, int amount, ActionDescriptor* ad) {
+		Alive* attacker = attackerPtr.safeCast<Alive>();
+		if(attacker == 0) return this;
 		double multiplier = 10;
 		if(getDefense() != 0) { // Division by zero
 			multiplier = (double) amount / getDefense();
@@ -200,6 +209,7 @@ namespace Dungeon {
         int rnd = rand_next(gen, dist);
 		
 		int damage = (int) (multiplier * rnd / 100 *(amount - getDefense() * 0.33));
+		if(damage <= 0) return this; 
 		if(ad != 0) {
 			if(this->getId() == ad->getAlive()->getId()) {
 				*ad << "You have received " + to_string(damage) + " damage from " + attacker->getName() + ". ";
@@ -214,11 +224,7 @@ namespace Dungeon {
 
 	Alive* Alive::changeHp(int amount, ActionDescriptor* ad) {
 		this->currentHp += amount;
-		if(this->currentHp > this->maxHp) {
-			this->currentHp = this->maxHp;
-		}
 		if(this->currentHp <= 0) {
-			this->currentHp = 0;	// Just to be sure
 			die(ad);
 		}
 		save();
@@ -233,17 +239,18 @@ namespace Dungeon {
 	Alive* Alive::respawn(ActionDescriptor* ad) {
 		// TODO: Respawn, should be overriden, prolly some basic implement can be here
 		return this;
+	}	
+	
+	ObjectPointer Alive::getRespawnLocation() {
+		return getSingleRelation("respawn-location", Relation::Master, "Respawn location not found!");
 	}
 
-	objId Alive::getRespawnLocation() const {
-		return respawnLocation;
-	}
-
-	Alive* Alive::setRespawnLocation(objId room) {
-		this->respawnLocation = room;
+	Alive* Alive::setRespawnLocation(ObjectPointer room) {
+		room.assertType<Room>("Respawn location can only be a room");
+		setSingleRelation("respawn-location", room, Relation::Master, "Respawn location couldn't be set.");
 		return this;
 	}
-
+	
 	int Alive::getRespawnTime() const {
 		return respawnTime;
 	}
