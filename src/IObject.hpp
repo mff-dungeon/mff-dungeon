@@ -160,9 +160,6 @@ namespace Dungeon {
 		return IObjectClassName == cname;
 	};
 
-        
-        ObjectPointer getObjectPointer();
-
         /**
          * Must be overwritten if there is some property 
          * that we want to be configurable. Handles both load&store

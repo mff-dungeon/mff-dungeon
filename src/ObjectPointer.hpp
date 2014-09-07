@@ -6,10 +6,10 @@
 namespace Dungeon {
 
     struct ObjectPointer {
+    friend class GameManager;
     public:
         ObjectPointer() : gm(NULL), id("") {} // "Null OP"
         ObjectPointer(const nullptr_t n) :  ObjectPointer() {} // "Null OP"
-        ObjectPointer(GameManager *gm, objId id)  : gm(gm), id(id) {}
         ObjectPointer(const ObjectPointer& other) : ObjectPointer(other.gm, other.id) {}
         ObjectPointer(const IObject* ptr) : ObjectPointer(ptr->gm, ptr->id) {}
 
@@ -123,6 +123,11 @@ namespace Dungeon {
          * OP shall be used as regular pointer, and type-casted with [un]safeCast().
          */
         IObject *get() const;
+        
+        /**
+         * Only GM should use this constructor to create new OP.
+         */
+        ObjectPointer(GameManager *gm, objId id)  : gm(gm), id(id) {}
 
     private:
         GameManager *gm;

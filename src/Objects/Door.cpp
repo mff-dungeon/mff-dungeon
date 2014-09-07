@@ -19,7 +19,7 @@ namespace Dungeon {
 			DoorwalkAction* action = new DoorwalkAction;
 			for (auto& obj : targets) {
 				if (obj.second != callee.safeCast<Alive>()->getLocation()) {
-					action->addTarget(this->getObjectPointer());
+					action->addTarget(this);
 					list->addAction(action);
 					return;
 				}

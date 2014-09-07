@@ -68,7 +68,7 @@ namespace Dungeon {
 		LOGH("Database cleanup finished");
 	}
 	
-	IObject* GameManager::getObject(objId id) {
+	IObject* GameManager::getObjectInstance(objId id) {
 		IObject * r;
 		r = this->objects.find(id);
 		if (r == 0) {
@@ -94,7 +94,7 @@ namespace Dungeon {
 		vector<Relation*> list_master;
 		DatabaseHandler::getInstance().getRelations(list_master, ref_master);
 		for(Relation* n : list_master) {
-			r->addRelation(n->relation, getObjectPointer(n->sid), true);
+			r->addRelation(n->relation, getObject(n->sid), true);
 			delete n;
 		}
 		delete ref_master;
@@ -103,7 +103,7 @@ namespace Dungeon {
 		vector<Relation*> list_slave;
 		DatabaseHandler::getInstance().getRelations(list_slave, ref_slave);
 		for(Relation* n : list_slave) {
-			r->addRelation(n->relation, getObjectPointer(n->pid), false);
+			r->addRelation(n->relation, getObject(n->pid), false);
 			delete n;
 		}
 		delete ref_slave;
@@ -133,7 +133,7 @@ namespace Dungeon {
 		return this->objects.find(id) != 0;
 	}
 
-	ObjectPointer GameManager::getObjectPointer(objId id) {
+	ObjectPointer GameManager::getObject(objId id) {
 		return ObjectPointer(this, id);
 	}
 
@@ -205,7 +205,7 @@ namespace Dungeon {
 			->setName("Leather backpack")
 			->setLongName("A common leather backpack. Not so big and comfortable, but what would you expect?");
 		this->insertObject(pack);
-		createRelation(getObject("room/baseRoom"), figure, R_INSIDE);
+		createRelation(getObjectInstance("room/baseRoom"), figure, R_INSIDE);
 		createRelation(figure, pack, Wearable::SlotRelations[Wearable::Slot::Backpack]);
 		
 		// Warning: loads user's backpack
@@ -218,9 +218,9 @@ namespace Dungeon {
 		Relation rel (master->getId(), slave->getId(), master->className(), slave->className(), relation);
 		this->addRelation(&rel);
 		if (master.isLoaded())
-			master->addRelation(relation, getObjectPointer(slave->getId()));
+			master->addRelation(relation, getObject(slave->getId()));
 		if (slave.isLoaded())
-			slave->addRelation(relation, getObjectPointer(master->getId()), false);
+			slave->addRelation(relation, getObject(master->getId()), false);
 	}
 	
 	void GameManager::clearRelationsOfType(ObjectPointer obj, string relation, Relation::Dir master) {
@@ -239,7 +239,7 @@ namespace Dungeon {
 	}
 	
 	void GameManager::removeRelation(ObjectPointer master, ObjectPointer slave, string relation) {
- 		master->eraseRelation(relation, this->getObjectPointer(slave->getId()));
+ 		master->eraseRelation(relation, this->getObject(slave->getId()));
 		
 		Relation* ref_obj = new Relation(master->getId(), slave->getId(), "0", "0", relation);
 		DatabaseHandler::getInstance().deleteRelation(ref_obj);

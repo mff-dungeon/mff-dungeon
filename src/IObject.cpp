@@ -62,7 +62,7 @@ namespace Dungeon {
 		}
 		
 		if (other.isLoaded())
-			other->addRelation(type, getObjectPointer(), !master);
+			other->addRelation(type, this, !master);
 	}
 
 	RelationList& IObject::getRelations(Relation::Dir dir) {
@@ -90,12 +90,12 @@ namespace Dungeon {
 	ObjectPointer IObject::setSingleRelation(string type, ObjectPointer other, Relation::Dir dir, string errMsg) {
 		eraseRelation(type, getSingleRelation(type, dir, errMsg), dir);
 		if(dir == Relation::Master) {
-			gm->createRelation(getObjectPointer(), other, type);
+			gm->createRelation(this, other, type);
 		}
 		else {
-			gm->createRelation(other, getObjectPointer(), type);
+			gm->createRelation(other, this, type);
 		}
-		return getObjectPointer();
+		return this;
 	}
 
 	
@@ -111,7 +111,7 @@ namespace Dungeon {
 		}
 		
 		if (other.isLoaded())
-			other->eraseRelation(type, getObjectPointer(), !master);
+			other->eraseRelation(type, this, !master);
 	}
 	
 	void IObject::serialize(Archiver& stream) {
@@ -126,10 +126,6 @@ namespace Dungeon {
 	IObject* IObject::save() {
 		gm->saveObject(this);
 		return this;
-	}
-	
-	ObjectPointer IObject::getObjectPointer() {
-		return gm->getObjectPointer(this->id);
 	}
 
 	GameManager* IObject::getGameManager() const {

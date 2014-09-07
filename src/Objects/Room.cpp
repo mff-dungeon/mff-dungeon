@@ -149,7 +149,7 @@ namespace Dungeon {
 			return;
 		}
 		ad->getGM()->removeRelation(current, item, R_INSIDE);
-		inventory->addItem(item->getObjectPointer());
+		inventory->addItem(item);
 		*ad << "You've picked up " + item->getName() + ".";
 	}
 }

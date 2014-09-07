@@ -44,21 +44,13 @@ namespace Dungeon {
          * @param id
          * @return 
          */
-        ObjectPointer getObjectPointer(objId id);
+        ObjectPointer getObject(objId id);
 		
         /**
          * Adds a relation to the database
          * @param rel Relation to be added
          */
         void addRelation(Relation* rel);
-		
-        /**
-         * Adds a relation to the database
-         * @param master Pointer to the master object
-         * @param slave Pointer to the slave object
-         * @param relation type of the relation
-         */
-        void addRelation(ObjectPointer master, ObjectPointer slave, string relation);
 	
         /**
          * Creates relation on already loaded objects
@@ -112,7 +104,15 @@ namespace Dungeon {
         void roundEnd(bool noException);
         
     protected:
-        IObject* getObject(objId id);
+        IObject* getObjectInstance(objId id);
+		
+        /**
+         * Adds a relation to the database
+         * @param master Pointer to the master object
+         * @param slave Pointer to the slave object
+         * @param relation type of the relation
+         */
+        void addRelation(ObjectPointer master, ObjectPointer slave, string relation);
     };
 }
 

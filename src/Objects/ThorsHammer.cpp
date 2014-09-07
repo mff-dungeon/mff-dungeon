@@ -35,7 +35,7 @@ namespace Dungeon
 						*ad << "404: Object not found :)";
 						return;
 					}
-					target = ad->getGM()->getObjectPointer(matches[3]);
+					target = ad->getGM()->getObject(matches[3]);
 				}
 				*ad << "So you want to know something? Relations which " << target->getId() << " master:\n";
 				RelationList r = target->getRelations(Relation::Master);
@@ -81,7 +81,7 @@ namespace Dungeon
 					*ad << "You can find the dump at " << dd.startDump() << ".";
 					
 					for (vector<objId>::value_type& id : ad->getGM()->getObjectList()) {
-						ObjectPointer obj = ad->getGM()->getObjectPointer(id);
+						ObjectPointer obj = ad->getGM()->getObject(id);
 						dd.dumpObject(obj);
 					}
 
@@ -113,7 +113,7 @@ namespace Dungeon
 						return;
 					}
 					
-					ad->getGM()->moveAlive(ad->getAlive(), ad->getGM()->getObjectPointer(matches[3]));
+					ad->getGM()->moveAlive(ad->getAlive(), ad->getGM()->getObject(matches[3]));
 				}));
 				
 		list->addAction(new PropertyEditor);
@@ -139,7 +139,7 @@ namespace Dungeon
 			*ad << "404: Object not found :)";
 			return;
 		}
-		target = gm->getObjectPointer(matches[3]);
+		target = gm->getObject(matches[3]);
 		
 		target->beforeLoad(*this);
 		target->beforeStore(*this);

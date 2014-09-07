@@ -40,18 +40,18 @@ namespace Dungeon {
 			ObjectMap equipped = this->getRelations(Relation::Slave, Wearable::SlotRelations[this->getSlot()]);
 			if(equipped.find(callee->getId()) != equipped.end()) {
 				UnequipAction* action = new UnequipAction;
-				action->addTarget(this->getObjectPointer());
+				action->addTarget(this);
 				list->addAction(action);
 			}
 			else {
 				EquipAction* action = new EquipAction;
-				action->addTarget(this->getObjectPointer());
+				action->addTarget(this);
 				list->addAction(action);
 			}
 		}
 		catch (const std::out_of_range& e) { // Nothing equipped, well then
 			EquipAction* action = new EquipAction;
-			action->addTarget(this->getObjectPointer());
+			action->addTarget(this);
 			list->addAction(action);
 		}
 	}
@@ -292,7 +292,7 @@ namespace Dungeon {
 			return;
 		}
 		else if(dAction == Wearable::DesiredAction::Drop) {
-			Wearable::unequip(ad, currentPack->getObjectPointer(), Wearable::DesiredAction::Drop);
+			Wearable::unequip(ad, currentPack, Wearable::DesiredAction::Drop);
 			if(currentPack->contains(itemPtr)) {
 				currentPack->removeItem(itemPtr);
 			}
@@ -325,11 +325,11 @@ namespace Dungeon {
 					if(!i.second->isInstanceOf(Item::ItemClassName)) continue;
 					Item* it = i.second.unsafeCast<Item>();
 					if(it->getId() != newPack->getId()) {
-						currentPack->removeItem(it->getObjectPointer());
-						newPack->addItem(it->getObjectPointer());
+						currentPack->removeItem(it);
+						newPack->addItem(it);
 					}
 					else {
-						currentPack->removeItem(it->getObjectPointer());
+						currentPack->removeItem(it);
 					}
 				}
 			}

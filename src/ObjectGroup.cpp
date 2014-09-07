@@ -28,7 +28,7 @@ namespace Dungeon
     }
     
     ObjectGroupMap::value_type ObjectGroup::getPair(IObject *obj) {
-        return ObjectGroupMap::value_type(obj->getId(), obj->getObjectPointer());
+        return ObjectGroupMap::value_type(obj->getId(), obj);
     }
     
     ObjectGroupMap::value_type ObjectGroup::getPair(ObjectPointer ptr) {

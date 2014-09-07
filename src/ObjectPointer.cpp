@@ -11,7 +11,7 @@ namespace Dungeon
 	
 	IObject* ObjectPointer::get() const {
 		if (!gm) return nullptr;
-		return gm->getObject(this->id);
+		return gm->getObjectInstance(this->id);
 	}
 
 	const ObjectPointer& ObjectPointer::assertExists(string msg) const {
