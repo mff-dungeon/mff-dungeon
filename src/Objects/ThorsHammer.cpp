@@ -141,6 +141,11 @@ namespace Dungeon
 			return;
 		}
 		target = gm->getObject(matches[3]);
+		/**
+		 * Instance of object registers its properties as references,
+		 * and therefore must not be unloaded in between
+		 */
+		target.setLock(true);
 		
 		target->beforeLoad(*this);
 		target->beforeStore(*this);

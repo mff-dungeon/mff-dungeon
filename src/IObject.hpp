@@ -65,6 +65,8 @@ namespace Dungeon {
         IObject() {};
         IObject(objId id) : id(id) {};
         virtual ~IObject() {
+            if (isLocked())
+                LOGS("IObject", Error) << "Locked object is being deleted, something is wrong!" << LOGF;
             LOG("IObject") << "Deleting " + id << LOGF;
         };
 
@@ -167,6 +169,13 @@ namespace Dungeon {
          */
         virtual void registerProperties(IPropertyStorage& storage);
         
+        /**
+         * If the object is locked, it should not be deleted.
+         */
+        virtual bool isLocked() {
+            return loadLock > 0;
+        }
+        
     protected:
         /**
          * Kept as warning :)
@@ -179,6 +188,8 @@ namespace Dungeon {
         GameManager* gm;
         objId id;
 	RelationList relation_master, relation_slave;
+        
+        int loadLock = 0;
         
         /**
          * Only GM can set id

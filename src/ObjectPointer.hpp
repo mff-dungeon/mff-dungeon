@@ -13,7 +13,9 @@ namespace Dungeon {
         ObjectPointer(const ObjectPointer& other) : ObjectPointer(other.gm, other.id) {}
         ObjectPointer(const IObject* ptr) : ObjectPointer(ptr->gm, ptr->id) {}
 
-        virtual ~ObjectPointer() {}
+        virtual ~ObjectPointer() {
+            setLock(false);
+        }
         
         objId getId() const
         {
@@ -41,6 +43,16 @@ namespace Dungeon {
          */
         IObject* operator->() const {
             return get();
+        }
+        
+        void setLock(bool lock) {
+            if (locked != lock) {
+				assertExists("Object must exist in order to be locked.");
+                LOGS("ObjectPointer", Verbose) << "Object " << id << " is now " << (lock ? "locked" : "unlocked") << LOGF;
+                if (locked) get()->loadLock++;
+                else get()->loadLock--;
+                locked = lock;
+            }
         }
         
         /**
@@ -132,6 +144,7 @@ namespace Dungeon {
     private:
         GameManager *gm;
         objId id;
+        bool locked = false;
     };
 }
 
