@@ -99,7 +99,8 @@ namespace Dungeon {
 		 * Init relations
 		 */
 		
-		this->createDoor("trap-base", baseRoom, trapRoom)
+		IObject* d = this->createDoor("trap-base", baseRoom, trapRoom)
+				->setGoThroughMessage("You've gone through that door. It made a funny noise.")
 				->setName("wooden door")
 				->setLongName("wooden door with simple metal handle")
 				->save();
@@ -107,6 +108,9 @@ namespace Dungeon {
 				->setName("narrow tunnel")
 				->setLongName("a narrow tunnel with no visible ending")
 				->save();
+		
+		Trap* t = createObject<DemoTrap>("trap/demo");
+		gm->createRelation(t, d, Trap::getRelation("go-through"));
 	}
 	
 	Door* WorldCreator::createDoor(string name, Room* a, Room* b, bool two_way) {

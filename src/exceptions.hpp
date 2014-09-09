@@ -12,7 +12,6 @@ namespace Dungeon {
     class GameException : public runtime_error {
     public:
         GameException(string message);
-
         
         virtual const char* what() const _GLIBCXX_USE_NOEXCEPT {
             return message.c_str();
@@ -67,16 +66,6 @@ namespace Dungeon {
     class InvalidType : public GameStateInvalid {
     public:
         InvalidType(string message = "Object should have been of different type.") : GameStateInvalid(message) { }
-    };
-    
-    /**
-     * Special exception that happens when a trap is triggered.
-     */
-    class TrapException : public GameException {
-    public:
-        TrapException(string message = "") : GameException(message) { }
-    private:
-        // Trap* trap;
     };
 }
 

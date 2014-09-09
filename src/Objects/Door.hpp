@@ -4,6 +4,7 @@
 #include "../common.hpp"
 #include "IDescriptable.hpp"
 #include "../Actions/MultiTargetAction.hpp"
+#include "../ActionDescriptor.hpp"
 
 namespace Dungeon {
 
@@ -18,6 +19,27 @@ namespace Dungeon {
         
         virtual string getDescriptionSentence();
         virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
+        
+        string getGoThroughMessage() const
+        {
+            return goThroughMessage;
+        }
+
+        Door* setGoThroughMessage(string goThroughMessage)
+        {
+            this->goThroughMessage = goThroughMessage;
+            return this;
+        }
+
+        virtual void registerProperties(IPropertyStorage& storage);
+        
+        virtual void onGoThrough(ActionDescriptor* ad) {
+            *ad << goThroughMessage;
+            triggerTraps("go-through", ad);
+        }
+        
+    private:
+        string goThroughMessage;
         
     PERSISTENT_DECLARATION(Door, IDescriptable)
     }; 

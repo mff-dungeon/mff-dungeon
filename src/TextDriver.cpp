@@ -1,6 +1,7 @@
 #include "TextDriver.hpp"
 #include "ActionDescriptor.hpp"
 #include "RandomString.hpp"
+#include "Objects/Trap.hpp"
 
 namespace Dungeon {
     
@@ -36,6 +37,7 @@ namespace Dungeon {
 			}
 
 			if (ad->isValid(this)) {
+				ad->getAlive()->triggerTraps("action-" + ad->getAction()->type);
 				ad->getAction()->commit(ad);
 				return true;
 			} else {

@@ -1,6 +1,7 @@
 #include "IObject.hpp"
 #include "ObjectPointer.hpp"
 #include "GameManager.hpp"
+#include "Objects/Trap.hpp"
 #include <memory>
 
 #include <stdexcept>
@@ -139,6 +140,15 @@ namespace Dungeon {
 	
 	void IObject::setGameManager(GameManager* gm) {
 		this->gm = gm;
+	}
+	
+	void IObject::triggerTraps(string event, ActionDescriptor* ad) {
+		try {
+			const ObjectMap& map = getRelations(Relation::Slave, Trap::getRelation(event));
+			for (const ObjectMap::value_type& pair : map) {
+				pair.second.safeCast<Trap>()->trigger(event, this, ad);
+			}
+		} catch (std::out_of_range& e) {}
 	}
 
 	NONPERSISTENT_IMPLEMENTATION(IObject)

@@ -24,7 +24,7 @@ public: \
 private: \
 	static AddIObject addIObject; \
         NONPERSISTENT_DECLARATION(cName, pName)
-        
+
 
 /*
  *	Simple line of code registering the object
@@ -53,30 +53,38 @@ public: \
 
 
 namespace Dungeon {
-    
+
     /**
      * Base clas of everything in the world.
      */
     class IObject : public IStorable {
-    friend class GameManager; // Injecting GM
-    friend struct ObjectPointer; // Access to GM when cloning
-    friend class ObjectLoader; // Setting ID
+        friend class GameManager; // Injecting GM
+        friend struct ObjectPointer; // Access to GM when cloning
+        friend class ObjectLoader; // Setting ID
     public:
-        IObject() {};
-        IObject(objId id) : id(id) {};
-        virtual ~IObject() {
+
+        IObject()
+        {
+        };
+
+        IObject(objId id) : id(id)
+        {
+        };
+
+        virtual ~IObject()
+        {
             if (isLocked())
                 LOGS("IObject", Error) << "Locked object is being deleted, something is wrong!" << LOGF;
             LOG("IObject") << "Deleting " + id << LOGF;
         };
 
         virtual objId getId() const;
-        
+
         /**
          * Which actions can be performed by callee on this object?
          */
         virtual void getActions(ActionList * list, ObjectPointer callee) = 0;
-        
+
         /*
          * Serializing functions: 
          *	createObject() returns a new blank object - class needs to define
@@ -88,19 +96,19 @@ namespace Dungeon {
         virtual IObject* createObject() const = 0;
         static IObject* load(Archiver& stream, string className);
         void store(Archiver& stream, objId& id, string& className) const;
-        
+
         /**
          * Saves changes made to object. Must be called after changes.
          * Shortcut for gm->saveObject(obj).
          */
         IObject* save();
-		
+
         /*
          * Relation Functions:
          *  master relations - this object acts as the master
          *  slave relations - this object acts as the slave
          */
-                
+
         /**
          * Checks whether this relation exists
          * @param type the type of the new relation
@@ -108,59 +116,61 @@ namespace Dungeon {
          * @param master true, if the relation is master relation
          */
         bool hasRelation(string type, ObjectPointer other, Relation::Dir dir = Relation::Master);
-		
+
         /**
          * Returns either master, or slave relations of the object
          * @param master true, if the relation is master relation
          */
         RelationList& getRelations(Relation::Dir dir);
-        
+
         /**
          * Returns objects with given relation to this object
          * @param master true, if the relation is master relation
          */
         ObjectMap& getRelations(Relation::Dir dir, string type);
-        
+
         /**
          * Returns the one and only relation of this type.
          * Throws GameStateInvalid when there are more of these.
          * @return nullptr when no such relation found.
          */
         ObjectPointer getSingleRelation(
-                string type, 
-                Relation::Dir dir = Relation::Master, 
+                string type,
+                Relation::Dir dir = Relation::Master,
                 string errMsg = "There are more than one object for single relation.");
-        
+
         /**
          * Sets the one and only relation of this type.
          * Throws GameStateInvalid when there are more of these.
          * @return itself
          */
         ObjectPointer setSingleRelation(
-                string type, 
-                ObjectPointer other, 
-                Relation::Dir dir = Relation::Master, 
+                string type,
+                ObjectPointer other,
+                Relation::Dir dir = Relation::Master,
                 string errMsg = "There are more than one object for single relation.");
-        
+
         /**
          * A special method used for some magic
          * @return the name of this class
          */
-	inline virtual const char * className() const {
-		return IObjectClassName;
-	};
-        
+        inline virtual const char * className() const
+        {
+            return IObjectClassName;
+        };
+
         const static char * IObjectClassName;
-        
+
         /**
          * Returns, whether the current class is an instance of desired class
          * See cname limitations because of fast implementation.
          * @param cname MUST be pointer to <class>::<class>ClassName constant
          * @return true, if the class is instance of cname
          */
-	inline virtual bool isInstanceOf(char const * cname) const {
-		return IObjectClassName == cname;
-	};
+        inline virtual bool isInstanceOf(char const * cname) const
+        {
+            return IObjectClassName == cname;
+        };
 
         /**
          * Must be overwritten if there is some property 
@@ -168,14 +178,23 @@ namespace Dungeon {
          * and in-game configuration.
          */
         virtual void registerProperties(IPropertyStorage& storage);
-        
+
         /**
          * If the object is locked, it should not be deleted.
          */
-        virtual bool isLocked() {
+        virtual bool isLocked()
+        {
             return loadLock > 0;
         }
         
+        /**
+         * Shortcut for invoking all traps associated with this object for event
+         * @param event identificator of event - be consistent
+         * @param ad Is not required
+         */
+        virtual void triggerTraps(string event, ActionDescriptor *ad = NULL);
+        
+
     protected:
         /**
          * Kept as warning :)
@@ -183,19 +202,19 @@ namespace Dungeon {
         void serialize(Archiver& stream);
         GameManager* getGameManager() const;
         void setGameManager(GameManager* gm);
-        	
+
     private:
         GameManager* gm;
         objId id;
-	RelationList relation_master, relation_slave;
-        
+        RelationList relation_master, relation_slave;
+
         int loadLock = 0;
-        
+
         /**
          * Only GM can set id
          */
         virtual IObject * setId(objId id);
-		
+
         /**
          * Erases a given relation of this object
          * @param type the type of the erased relation

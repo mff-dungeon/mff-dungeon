@@ -11,6 +11,7 @@
 #include "Objects/Potion.hpp"
 #include "Objects/Room.hpp"
 #include "Objects/ThorsHammer.hpp"
+#include "Objects/Trap.hpp"
 #include "Objects/Wearable.hpp"
 
 #endif

@@ -47,6 +47,7 @@ namespace Dungeon {
 
 		target.assertType<Room>("That seems to head nowhere. You've decided not to go there.");
 		ad->getGM()->moveAlive(ad->getAlive(), target);
+		door.unsafeCast<Door>()->onGoThrough(ad);
 		target.unsafeCast<Room>()->explore(ad);
 	}
     
@@ -76,6 +77,11 @@ namespace Dungeon {
 				<< "You see " + sentence + "." << endr;
     }
 	
+	void Door::registerProperties(IPropertyStorage& storage) {
+		storage.have(goThroughMessage, "door-gothrough", "Message that will be displayed when user goes through");
+		IDescriptable::registerProperties(storage);
+	}	
+
 	void DoorwalkAction::explain(ActionDescriptor* ad) {
 		*ad << "Use 'go to ...' to enter another room.";
 	}

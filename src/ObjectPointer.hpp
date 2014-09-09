@@ -45,7 +45,7 @@ namespace Dungeon {
             return get();
         }
         
-        void setLock(bool lock) {
+        void setLock(bool lock = true) {
             if (locked != lock) {
 				assertExists("Object must exist in order to be locked.");
                 LOGS("ObjectPointer", Verbose) << "Object " << id << " is now " << (lock ? "locked" : "unlocked") << LOGF;
