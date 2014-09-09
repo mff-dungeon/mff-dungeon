@@ -20,7 +20,7 @@ namespace Dungeon
             Trap() : IObject() { };
             Trap(string id) : IObject(id) { };
             virtual ~Trap() { };
-
+            
             /**
              * Can either process everything (and continue processing original action),
              * or throw TrapException and stop it.
@@ -32,12 +32,20 @@ namespace Dungeon
              * @param target The target which triggered the trap
              * @param ad Can be NULL sometimes, then use the exception trigger
              */
-            virtual void trigger(string event, ObjectPointer target, ActionDescriptor* ad) { }
+            virtual void trigger(string event, ObjectPointer target, ActionDescriptor* ad) {
+                LOG("Trap") << "Empty trap triggered." << LOGF;
+            }
             
             /**
-             * This one will be called by driver after throwing TrapException
+             * This one will be called by driver after throwing TrapException.
+             * Trap MUST take care for the lifecycle of AD as following:
+             *  - if the action shall be repeated, do nothing
+             *  - if no further action shall be processed, set action to null
+             *  - to redirect, just set the action to the new one
+             * 
+             * TL;DR The action in ad, if any, will be run afterwards.
              */
-            virtual void exceptionTrigger(ActionDescriptor* ad) { }
+            virtual void exceptionTrigger(ActionDescriptor* ad);
             
             /**
              * This method should never be called on Trap.
@@ -63,6 +71,8 @@ namespace Dungeon
         public:
             TrapException(const ObjectPointer& trap);
             
+            ObjectPointer getTrap() const;
+
         private:
             ObjectPointer trap;
         };
@@ -76,7 +86,28 @@ namespace Dungeon
             DemoTrap(string id) : Trap(id) { };
             virtual ~DemoTrap() { };
             virtual void trigger(string event, ObjectPointer target, ActionDescriptor* ad);
+            
+            PERSISTENT_DECLARATION(DemoTrap, Trap)
+        };
+        
+        /**
+         * When in location, attack automatically
+         */
+        class AttackTrap : public Trap {
+        public:
+            AttackTrap() : Trap() {}
+            AttackTrap(string id) : Trap(id) { };
+            virtual ~AttackTrap() { };
+            
+            const static string doNotAttackRelation;
 
+            virtual void trigger(string event, ObjectPointer room, ActionDescriptor* ad);
+            virtual void exceptionTrigger(ActionDescriptor* ad);
+            
+        private:
+            ObjectPointer target;
+            
+            PERSISTENT_DECLARATION(AttackTrap, Trap)
         };
 }
 

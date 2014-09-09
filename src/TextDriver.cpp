@@ -6,11 +6,9 @@
 namespace Dungeon {
     
     TextDriver::TextDriver(ActionQueue* queue) : Driver(queue) {
-        this->alist = new ActionList();
     }
 
-    TextDriver::~TextDriver() {        
-		delete alist;
+    TextDriver::~TextDriver() { 
     }
     
     bool TextDriver::process(TextActionDescriptor* ad) {
@@ -19,33 +17,52 @@ namespace Dungeon {
 				ad->userReplied(ad->in_msg);
 				return true;
 			} 
-
-			alist->clear();
-			ad->getAlive()->getAllActions(alist);
+			
+			ad->getAlive()->getAllActions(&alist);
 
 			string message (ad->in_msg);
-			// We don't care, if user writes "Potion" or "potion"
 			transform(message.begin(), message.end(), message.begin(), ::tolower);
-
-			for (auto& pair: *alist) {
-				Action* action = pair.second;
-				LOGS("TD", Verbose) << "Matching action " << pair.first << LOGF;
+			
+			for (ActionList::iterator it = alist.begin(); it != alist.end(); ++it) {
+				Action* action = it->second;
+				LOGS("TD", Verbose) << "Matching action " << it->first << LOGF;
 				if (action->matchCommand(message)) {
 					ad->matched(action);
+					alist.erase(it);
 					break;
 				}
 			}
-
-			if (ad->isValid(this)) {
-				ad->getAlive()->triggerTraps("action-" + ad->getAction()->type);
-				ad->getAction()->commit(ad);
-				return true;
-			} else {
+			alist.clear();
+			
+			if (!ad->isValid(this)) {
 				*ad << getDontUnderstandResponse(ad->in_msg);
+				return false;
 			}
-		}
-		catch (TrapException& trapException) {
-			// Handle the trap
+			
+			try {
+				ad->state = ActionDescriptor::RoundBegin;
+				ad->getAlive()->onBeforeAction(ad);
+				ad->getAlive()->triggerTraps("action-" + ad->getAction()->type, ad);
+
+				ad->state = ActionDescriptor::Round;
+				ad->getAction()->commit(ad);
+
+				ad->state = ActionDescriptor::RoundEnd;
+				ad->getAlive()->onAfterAction(ad);
+				return true;
+			} catch (TrapException& te) {
+				ad->state = ActionDescriptor::Trap;
+				te.getTrap().unsafeCast<Trap>()->exceptionTrigger(ad);
+			}
+			
+			while (ad->isValid(this)) {
+				try {
+					ad->getAction()->commit(ad);
+					return true;
+				} catch (TrapException& te) {
+					te.getTrap().unsafeCast<Trap>()->exceptionTrigger(ad);
+				}
+			}
 		}
 		catch (GameException& gameException) {
 			LOGS("Driver", Error) << gameException.what() << LOGF;

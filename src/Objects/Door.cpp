@@ -48,6 +48,7 @@ namespace Dungeon {
 		target.assertType<Room>("That seems to head nowhere. You've decided not to go there.");
 		ad->getGM()->moveAlive(ad->getAlive(), target);
 		door.unsafeCast<Door>()->onGoThrough(ad);
+		target->triggerTraps("inside", ad);
 		target.unsafeCast<Room>()->explore(ad);
 	}
     

@@ -88,20 +88,28 @@ namespace Dungeon
 		Alive* calculateBonuses();
 
 		
-        /**
-         * @return Current location of this being
-         */
-        ObjectPointer getLocation();
-        
-        /**
-         * @return Equipped backpack or nullptr
-         * 
-         * When there will be more than one backpack, one could implement "IterableObjectPointer",
-         * which utilizes operator++
-         */
-        ObjectPointer getBackpack();
-        
-        virtual void registerProperties(IPropertyStorage& storage);
+            /**
+             * @return Current location of this being
+             */
+            ObjectPointer getLocation();
+
+            /**
+             * @return Equipped backpack or nullptr
+             * 
+             * When there will be more than one backpack, one could implement "IterableObjectPointer",
+             * which utilizes operator++
+             */
+            ObjectPointer getBackpack();
+
+            virtual void registerProperties(IPropertyStorage& storage);
+            
+            virtual void onBeforeAction(ActionDescriptor* ad) {
+                getLocation()->triggerTraps("inside", ad);
+            }
+            
+            virtual void onAfterAction(ActionDescriptor* ad) {
+                getLocation()->triggerTraps("inside", ad);
+            }
 		
 	private:
 		// Combat stats

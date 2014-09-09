@@ -20,6 +20,8 @@ namespace Dungeon {
         typedef function<void (ActionDescriptor*, string)> dialogReply;
         
         ActionDescriptor(Driver * driver);
+        virtual ~ActionDescriptor();
+
         Action* getAction();
         Alive* getAlive();
         GameManager* getGM();
@@ -27,6 +29,13 @@ namespace Dungeon {
         Driver* driver;
         
         string in_msg;
+        
+        enum State {
+            RoundBegin,
+            Round,
+            RoundEnd,
+            Trap
+        } state = RoundBegin;
         
         /**
          * Id called after receiving a message.
@@ -39,9 +48,15 @@ namespace Dungeon {
         void assigned(Alive* alive);
         
         /**
-         * Id called when appropriate action is matched.
+         * Is called when appropriate action is matched.
          */
         void matched(Action* action);
+        
+        /**
+         * Sets the action for this AD.
+         * It will be automatically deleted after replacing or deletign AD.
+         */
+        void setAction(Action* action);
         
         /**
          * Add some text to the reply. @see operator <<

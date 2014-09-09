@@ -21,10 +21,10 @@ namespace Dungeon {
 		ulock u(q_mutex);
 		while (actions.empty() && running) {
 			q_condvar.wait(u);
-                }
+		}
 		if (actions.empty()) return;
 
-        LOGS("ActionQueue", Verbose) << "Processing action." << LOGF;
+		LOGS("ActionQueue", Verbose) << "Processing action." << LOGF;
 		ActionDescriptor *ad = actions.front();
 		gm->roundBegin(ad);
 		actions.pop();
@@ -33,48 +33,47 @@ namespace Dungeon {
 		try {
 			ad->driver->processDescriptor(ad);
 			flawless = true;
+		}		catch (GameException& ge) {
+			LOGS("ActionQueue", Error) << "Game exception occured and Driver missed it. " << ge.what() << LOGF;
 		}
-		catch (GameException& ge) {
-			LOGS("ActionQueue", Error) << "Game exception occured and Driver missed it. " << ge.what() << LOGF;			
-		}
+		/* Disabled for debugging, enable on production
 		catch (char const * e) {
 			LOGS("ActionQueue", Error) << e << LOGF;			
 		}
 		catch (int e) {
 			LOGS("ActionQueue", Error) << "Exception number " << e << " has been thrown while processing." << LOGF;	
 		}
-		/*
 		catch (...) {
 			LOGS("ActionQueue", Error) << "Unknown error has occured while processing." << LOGF;	
 		}*/
-		
+
 		gm->roundEnd(flawless);
 	}
 
 	void ActionQueue::loopToFinish() {
-        LOG("ActionQueue") << "Started." << LOGF;
-		while (running) { 
+		LOG("ActionQueue") << "Started." << LOGF;
+		while (running) {
 			process();
 		}
 	}
 
-    void ActionQueue::stop() {
-        if (!this->running) {
-            return;
-        }
-        
-        this->running = false;
+	void ActionQueue::stop() {
+		if (!this->running) {
+			return;
+		}
+
+		this->running = false;
 		LOG("ActionQueue") << "Stopped." << LOGF;
-        q_condvar.notify_one();
-    }
-    
-    void ActionQueue::registerDriver(Driver *driver) {
-        drivers.push_back(driver);
-    }
-    
-    void ActionQueue::unregisterDriver(Driver *driver) {
-        drivers.erase(remove(drivers.begin(), drivers.end(), driver), drivers.end());
-    }
+		q_condvar.notify_one();
+	}
+
+	void ActionQueue::registerDriver(Driver *driver) {
+		drivers.push_back(driver);
+	}
+
+	void ActionQueue::unregisterDriver(Driver *driver) {
+		drivers.erase(remove(drivers.begin(), drivers.end(), driver), drivers.end());
+	}
 }
 
 

@@ -13,6 +13,9 @@ namespace Dungeon {
 	
     void Alive::getAllActions(ActionList* list) {		
 		LOGS("Alive", Verbose) << "Getting all actions on " << this->getId() << "." << LOGF;
+		
+		triggerTraps("get-all-actions", nullptr);
+		
         // Add some actions on myself
         this->getActions(list, this);
 		if(getState() == State::Dead) {
@@ -28,7 +31,8 @@ namespace Dungeon {
 				for(auto& item: pair.second) {
 					LOGS("Alive", Verbose) << "Getting actions " << item.second << "." << LOGF;
 					if (item.second->instanceOf(Item))
-						item.second->getActions(list, this);
+						item.second->triggerTraps("get-actions", nullptr)
+								->getActions(list, this);
 					else
 					LOGS("Alive", Verbose) << item.second << " is not item" << LOGF;
 				}
@@ -42,7 +46,8 @@ namespace Dungeon {
 			try {
 				ObjectPointer equip = getSingleRelation(Wearable::SlotRelations[i], Relation::Master, GameStateInvalid::EquippedMoreThanOne);
 				if (!!equip) {
-					equip->getActions(list, this);
+					equip->triggerTraps("get-actions", nullptr)
+						->getActions(list, this);
 				}
 			}
 			catch (const std::out_of_range& e) {
@@ -55,7 +60,8 @@ namespace Dungeon {
 		try{
 			ObjectMap room = getRelations(Relation::Slave, R_INSIDE);
 			for(auto& item: room) {
-				item.second->getActions(list, this);
+				item.second->triggerTraps("get-actions", nullptr)
+						->getActions(list, this);
 			}
 		}
 		catch (const std::out_of_range& e) {
@@ -64,6 +70,7 @@ namespace Dungeon {
     }
     
     void Alive::getActions(ActionList* list, ObjectPointer callee) {
+		triggerTraps("get-actions", nullptr);
 		if(getState() == State::Dead) {
 			return;
 		}

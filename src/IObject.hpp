@@ -101,7 +101,7 @@ namespace Dungeon {
          * Saves changes made to object. Must be called after changes.
          * Shortcut for gm->saveObject(obj).
          */
-        IObject* save();
+        ObjectPointer save();
 
         /*
          * Relation Functions:
@@ -190,9 +190,12 @@ namespace Dungeon {
         /**
          * Shortcut for invoking all traps associated with this object for event
          * @param event identificator of event - be consistent
-         * @param ad Is not required
+         * @param ad Is not required, but must be explicitly NULL
          */
-        virtual void triggerTraps(string event, ActionDescriptor *ad = NULL);
+        virtual ObjectPointer triggerTraps(string event, ActionDescriptor *ad);
+        
+        ObjectPointer attachTrap(ObjectPointer trap, string event);
+        ObjectPointer detachTrap(ObjectPointer trap, string event);
         
 
     protected:

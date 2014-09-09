@@ -31,7 +31,8 @@ namespace Dungeon {
 			ObjectMap objects = getRelations(Relation::Master, R_INSIDE);
 			for(auto& item: objects) {
 				if (item.second != callee)
-					item.second->getActions(list, callee);
+					item.second->triggerTraps("get-actions", nullptr)
+						->getActions(list, callee);
 			}
 		}
 		catch (const std::out_of_range& e) {

@@ -45,7 +45,7 @@ namespace Dungeon {
         }
         
     private:
-	ActionList* alist;
+	ActionList alist;
     };
 }
 #endif

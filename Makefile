@@ -41,7 +41,7 @@ doc/Documentation.pdf: $(shell find doc/ -type f -not -iname "Documentation.pdf"
 
 clean:
 	$(RM) -r $(BUILDDIR) $(TARGET)
-	$(RM) *.log
+	$(RM) *.log dumps/*.dot
 
 sedfix:
 	@git checkout src/dynamic.hpp

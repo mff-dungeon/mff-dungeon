@@ -39,7 +39,7 @@ namespace Dungeon {
         }
         
     private:
-        string goThroughMessage;
+        string goThroughMessage = "";
         
     PERSISTENT_DECLARATION(Door, IDescriptable)
     }; 

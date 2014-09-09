@@ -129,7 +129,7 @@ namespace Dungeon {
 		// and serves as a base to recursion
 	}
 	
-	IObject* IObject::save() {
+	ObjectPointer IObject::save() {
 		gm->saveObject(this);
 		return this;
 	}
@@ -142,14 +142,30 @@ namespace Dungeon {
 		this->gm = gm;
 	}
 	
-	void IObject::triggerTraps(string event, ActionDescriptor* ad) {
+	ObjectPointer IObject::triggerTraps(string event, ActionDescriptor* ad) {
 		try {
+			LOG("Object") << "Triggering event " << event << " on " << id << ":" << LOGF;
 			const ObjectMap& map = getRelations(Relation::Slave, Trap::getRelation(event));
 			for (const ObjectMap::value_type& pair : map) {
+				LOG("Object") << "	trap " << pair.second.getId() << LOGF;
 				pair.second.safeCast<Trap>()->trigger(event, this, ad);
 			}
 		} catch (std::out_of_range& e) {}
+		return this;
 	}
+	
+	ObjectPointer IObject::attachTrap(ObjectPointer trap, string event) {
+		trap.assertType<Trap>("Tried to attach non-trap");
+		gm->createRelation(trap, this, Trap::getRelation(event));
+		return this;
+	}
+	
+	ObjectPointer IObject::detachTrap(ObjectPointer trap, string event) {
+		trap.assertType<Trap>("Tried to detach non-trap");
+		gm->removeRelation(trap, this, Trap::getRelation(event));
+		return this;
+	}
+
 
 	NONPERSISTENT_IMPLEMENTATION(IObject)
 

@@ -10,6 +10,11 @@ namespace Dungeon {
 		caller = 0;
 		action = 0;
 	}
+	
+	ActionDescriptor::~ActionDescriptor() {
+		if (action)
+			delete action;
+	}
 
 	void ActionDescriptor::enqueued(GameManager* gm) {
 		this->gm = gm;
@@ -20,6 +25,12 @@ namespace Dungeon {
 	}
 
 	void ActionDescriptor::matched(Action* action) {
+		setAction(action);
+	}
+
+	void ActionDescriptor::setAction(Action* action) {
+		if (this->action)
+			delete this->action;
 		this->action = action;
 	}
 
