@@ -6,6 +6,9 @@ namespace Dungeon {
 	
 	ObjectPointer Cloner::getClone() {
 		IObject* cloned = orig->createObject();
+		cloned->setId(objId_getType(orig.getId()) + "/" + RANDID);
+		// What if beforeLoad did something with relations...
+		gm->insertObject(cloned);
 		
 		orig->beforeStore(*this);
 		orig->registerProperties(*this);
@@ -17,7 +20,6 @@ namespace Dungeon {
 		cloned->registerProperties(*this);
 		cloned->afterLoad(*this);
 		
-		gm->insertObject(cloned);
 		return cloned;
 	}
 

@@ -61,6 +61,7 @@ namespace Dungeon {
         friend class GameManager; // Injecting GM
         friend struct ObjectPointer; // Access to GM when cloning
         friend class ObjectLoader; // Setting ID
+        friend class Cloner; // Setting ID
     public:
 
         IObject()
@@ -214,7 +215,7 @@ namespace Dungeon {
         int loadLock = 0;
 
         /**
-         * Only GM can set id
+         * Only some classes can set id
          */
         virtual IObject * setId(objId id);
 
