@@ -7,6 +7,8 @@
 #include "../src/dynamic.hpp"
 #include "../src/FuzzyStringMatcher.hpp"
 #include "../src/RandomString.hpp"
+#include "../src/Objects/Item.hpp"
+#include "../src/Cloner.hpp"
 
 void testFSMatcher() {
     testing("FuzzyMatcher");
@@ -54,7 +56,7 @@ void testInstanceOf() {
 	assertEqual(h->instanceOf(Human), true, "Same class");
 	assertEqual(h->instanceOf(Alive), true, "Inherited");
 	assertEqual(h->instanceOf(IObject), true, "Base class");
-	assertEqual(h->instanceOf(Backpack), false, "Different class");
+	assertEqual(h->instanceOf(Inventory), false, "Different class");
 }
 
 void testRandomString() {
@@ -71,12 +73,28 @@ void testRandomString() {
 	
 	assertEqual<string>(r.substr(0, 4), "Test", "Static use operator");
 }
+
+void testCloner() {
+	testing("Cloner");
+	GameManager* gm = new GameManager();
+	Item* i = new Item("Testing Item");
+	gm->insertObject(i);
+	i->setName("Test name")->setDescription("Some going to be cloned item");
+	
+	Cloner cl = Cloner(i, gm);
+	ObjectPointer other = cl.getClone();
+	Item* j = other.safeCast<Item>();
+	assertEqual<string>(i->getName(), j->getName(), "Name is different");
+	assertEqual<string>(i->getDescription(), j->getDescription(), "Description is different");
+}
+
 int main(int argc, char** argv) {
     testStart();
 	
     testFSMatcher();
 	testInstanceOf();
 	testRandomString();
+	testCloner();
     // Add your own test method
     
     return testFinish();
