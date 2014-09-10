@@ -20,23 +20,25 @@ namespace Dungeon {
          * Approximate size in litres/1000 
          */
         virtual Item* setSize(int size);
-        virtual int getSize();
+        virtual int getSize() const;
         
         /**
          * Approximate weight in kg/1000
          */
         virtual Item* setWeight(int weight);
-        virtual int getWeight();
+        virtual int getWeight() const;
 
-        virtual bool isPickable();
+        virtual bool isPickable() const;
         virtual Item* setPickable(bool pickable);
-        virtual bool isDropable();
+        virtual bool isDropable() const;
         virtual Item* setDropable(bool dropable);
 
         virtual void getActions(ActionList* list, ObjectPointer callee);
         
         virtual void examine(ActionDescriptor* ad);
 
+
+        virtual string getDescription() const;
         virtual string getDescriptionSentence();
         virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
 		

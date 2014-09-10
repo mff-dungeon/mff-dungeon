@@ -66,7 +66,7 @@ namespace Dungeon {
 		*ad << (RandomString::get()
 			<<  name + " has immedietely attacked you. " << endr
 			<< "You've seen some motion, that was  " + name +  " attacking you. " << endr
-			<< "Before you could have done anything else, " + name + " striked." << endr);
+			<< "Before you could have done anything else, " + name + " striked. " << endr);
 		
 		CombatAction* c = new CombatAction;
 		c->addTarget(target);

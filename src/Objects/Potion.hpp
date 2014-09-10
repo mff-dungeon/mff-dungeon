@@ -14,7 +14,8 @@ namespace Dungeon {
     public:
         enum PotionType {
             NoEffect = 0,
-            Healing = 1
+            Healing = 1,
+            Poison = 2
         };
 
         Potion();
@@ -34,18 +35,19 @@ namespace Dungeon {
             return type;
         }
 
-        virtual int getSize() {
+        virtual int getSize() const {
             int s = Item::getSize();
             if (s != 0) return s;
             return 100 + getStrength(); // 100 for vial :)
         }
         
-        virtual int getWeight() {
+        virtual int getWeight() const {
             int s = Item::getSize();
             if (s != 0) return s;
             return 100 + getStrength() * 2; // Potions are heavier than water
         }
-
+        
+        virtual string getDescription() const;
 
         virtual void registerProperties(IPropertyStorage& storage);
 

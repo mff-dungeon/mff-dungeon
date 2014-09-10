@@ -4,7 +4,7 @@ namespace Dungeon {
 	
 	string IDescriptable::getDescription() const {
 		if (description == "")
-			return "Nothing much really. Just " + getLongName() + ".";
+			return "Nothing much really. Just " + getLongName() + ". ";
 		return description;
 	}
 

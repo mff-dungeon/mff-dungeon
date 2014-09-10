@@ -24,7 +24,7 @@ namespace Dungeon {
 		return this;
 	}
 	
-	int Item::getSize() {
+	int Item::getSize() const {
 		return this->size;
 	}
 	
@@ -33,11 +33,11 @@ namespace Dungeon {
 		return this;
 	}
 	
-	int Item::getWeight() {
+	int Item::getWeight() const {
 		return this->weight;
 	}
 
-	bool Item::isDropable() {
+	bool Item::isDropable() const {
 		return dropable;
 	}
 
@@ -46,7 +46,7 @@ namespace Dungeon {
 		return this;
 	}
 
-	bool Item::isPickable() {
+	bool Item::isPickable() const {
 		return pickable;
 	}
 
@@ -66,6 +66,19 @@ namespace Dungeon {
 		if (ad) {
 			*ad << getDescription();
 		}
+	}
+	
+	string Item::getDescription() const {
+		stringstream ss;
+		ss << IDescriptable::getDescription();
+		if (getWeight())
+			ss << "It weights " << Utils::weightStr(getWeight()) << ". ";
+		else ss << "It weights almost nothing. "; 
+		if (!isPickable())
+			ss << "It cannot be taken. ";
+		if (!isDropable())
+			ss << "Once taken, it cannot be dropped. ";
+		return ss.str();
 	}
 
 	

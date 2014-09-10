@@ -33,8 +33,22 @@ namespace Dungeon {
 		list->addAction(action);
 	}
 	
+	string Potion::getDescription() const {
+		stringstream ss;
+		ss << Item::getDescription();
+		switch(getType()) {
+			case Potion::PotionType::Healing:
+				ss << "When drunk, it can heal you " << getStrength() << " hitpoints. ";
+				break;
+			case Potion::PotionType::NoEffect:
+			default:
+				ss << "It is uncertain what it will do when drunk. ";
+		}
+		return ss.str();
+	}
+
 	void Potion::registerProperties(IPropertyStorage& storage) {
-		storage.have((int&) type, "potion-type", "Potion type (0 - ineffective, 1 - healing)")
+		storage.have((int&) type, "potion-type", "Potion type (0 - ineffective, 1 - healing, 2 - poison)")
 			.have(strength, "potion-strength", "Potion strength");
 		Item::registerProperties(storage);
 	}
@@ -55,17 +69,23 @@ namespace Dungeon {
 		target.assertType<Potion>("You're too drunk. Hic.");
 		Potion* potion = target.unsafeCast<Potion>();
 		*ad << "You've drunk " + potion->getName() + ". ";
+		int lastHp = ad->getAlive()->getCurrentHp();
 		switch(potion->getType()) {
-			case Potion::PotionType::Healing: {
-				int lastHp = ad->getAlive()->getCurrentHp();
+			case Potion::PotionType::Healing:
 				ad->getAlive()->changeHp(potion->getStrength());
-				*ad << "You've healed " <<  ad->getAlive()->getCurrentHp() - lastHp << " hitpoints. ";
 				break; 
-			}
+			case Potion::PotionType::Poison:
+				ad->getAlive()->changeHp(-potion->getStrength());
+				break; 
 			case Potion::PotionType::NoEffect:
 			default:
 				*ad << "... and it did nothing.";
 		}
+		int curHp =  ad->getAlive()->getCurrentHp();
+		if (curHp > lastHp) 
+			*ad << "You've healed " <<  curHp - lastHp << " hitpoints. ";
+		else if (lastHp > curHp)
+			*ad << "You've lost " <<  lastHp - curHp << " hitpoints. ";
 		ad->getGM()->deleteObject(potion);
 	}
 

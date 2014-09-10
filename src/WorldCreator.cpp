@@ -81,12 +81,12 @@ namespace Dungeon {
 				->setLongName("wooden door with simple metal handle")
 				->save();
 
-		createObject<Potion>("potion/bluehealing/" + RANDID, equipRoom)
-				->setType(Potion::PotionType::Healing)
+		createObject<Potion>("potion/blue/" + RANDID, equipRoom)
+				->setType(Potion::PotionType::Poison)
 				->setStrength(100)
 				->setName("Blue potion")
 				->setLongName("a blue potion in glass vial")
-				->setDescription("It may look like water for some people.")
+				->setDescription("It may look like water for some people. ")
 				->save();
 
 		createObject<Potion>("potion/redhealing/" + RANDID, equipRoom)
@@ -94,7 +94,7 @@ namespace Dungeon {
 				->setStrength(200)
 				->setName("Red potion")
 				->setLongName("a red potion in silver vial")
-				->setDescription("The vial has some scratches, but the color of the liquid is just beautiful.")
+				->setDescription("The vial has some scratches, but the color of the liquid is just beautiful. ")
 				->save();
 
 		createObject<Inventory>("inventory/hardleatherbackpack/" + RANDID, equipRoom)
@@ -105,7 +105,7 @@ namespace Dungeon {
 				->setSize(5000)
 				->setWeight(2500)
 				->setName("Hard leather backpack")
-				->setLongName("a more solid leather backpack.")
+				->setLongName("a more solid leather backpack")
 				->save();
 
 		createObject<Wearable>("wearable/woodenclub/" + RANDID, equipRoom)
@@ -114,7 +114,8 @@ namespace Dungeon {
 				->setSize(3000)
 				->setWeight(5000)
 				->setName("Wooden club")
-				->setLongName("a weak wooden club.")
+				->setLongName("a weak wooden club")
+				->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop. ")
 				->save();
 
 		/*

@@ -199,11 +199,14 @@ namespace Dungeon {
         figure->setRespawnLocation(ObjectPointer(this, "room/baseRoom"));
 		
 		Inventory* pack = new Inventory("item/backpack/" + RANDID);
-		pack->setSlot(Wearable::Slot::Backpack)
+		pack->setBaseWeight(1000)
+			->setBaseSize(1000)
+			->setSlot(Wearable::Slot::Backpack)
 			->setDropable(true)
 			->setPickable(true)
 			->setName("Leather backpack")
-			->setLongName("A common leather backpack. Not so big and comfortable, but what would you expect?");
+			->setLongName("common leather backpack")
+			->setDescription("A common leather backpack. Not so big and comfortable, but what would you expect?");
 		this->insertObject(pack);
 		createRelation(getObjectInstance("room/baseRoom"), figure, R_INSIDE);
 		createRelation(figure, pack, Wearable::SlotRelations[Wearable::Slot::Backpack]);

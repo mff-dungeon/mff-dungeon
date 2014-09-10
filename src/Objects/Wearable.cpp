@@ -46,7 +46,16 @@ namespace Dungeon {
 				return getName() + " is fucking out of our tables for some reason. ";
 		}
 	}
-
+	
+	string Wearable::getDescription() const {
+		stringstream ss;
+		ss << Item::getDescription();
+		if (getAttackBonus())
+			ss << "It adds " << getAttackBonus() << " to your attack. ";
+		if (getDefenseBonus())
+			ss << "It adds " << getDefenseBonus() << " to your defense. ";
+		return ss.str();
+	}
 
 	void Wearable::getActions(ActionList* list, ObjectPointer callee) {
 		Item::getActions(list, callee);

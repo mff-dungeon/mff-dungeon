@@ -1,3 +1,5 @@
+#include <unistd.h>
+
 #include "Inventory.hpp"
 #include "Alive.hpp"
 #include "../RandomString.hpp"
@@ -26,11 +28,11 @@ namespace Dungeon {
 		return this;
 	}
 	
-	int Inventory::getMaxSpace() {
+	int Inventory::getMaxSpace() const {
 		return this->maxSpace;
 	}
 	
-	int Inventory::getFreeSpace() {
+	int Inventory::getFreeSpace() const {
 		return (this->maxSpace - this->usedSpace);
 	}
 	
@@ -39,48 +41,38 @@ namespace Dungeon {
 		return this;
 	}
 	
-	int Inventory::getMaxWeight() {
+	int Inventory::getMaxWeight()  const {
 		return this->maxWeight;
 	}
 	
-	int Inventory::getFreeWeight() {
+	int Inventory::getFreeWeight()  const {
 		return (this->maxWeight - this->usedWeight);
 	}
 
-	int Inventory::getBaseSize() {
+	int Inventory::getBaseSize() const {
 		return Item::getSize();
 	}
 
-	Item* Inventory::setBaseSize(int size) {
+	Inventory* Inventory::setBaseSize(int size) {
 		Item::setSize(size);
 		return this;
 	}
 
-	int Inventory::getSize() {
+	int Inventory::getSize() const {
 		return getBaseSize() + usedSpace;
 	}
 
-	Item* Inventory::setSize(int size) {
-		Item::setSize(size);
-		return this;
-	}
-
-	int Inventory::getBaseWeight() {
+	int Inventory::getBaseWeight() const {
 		return Item::getWeight();
 	}
 
-	Item* Inventory::setBaseWeight(int weight) {
+	Inventory* Inventory::setBaseWeight(int weight) {
 		Item::setWeight(weight);
 		return this;
 	}
 
-	int Inventory::getWeight() {
+	int Inventory::getWeight() const {
 		return getBaseWeight() + usedWeight;
-	}
-
-	Item* Inventory::setWeight(int weight) {
-		Item::setWeight(weight);
-		return this;
 	}
 
 	void Inventory::addItem(ObjectPointer itemPtr) {
@@ -151,6 +143,17 @@ namespace Dungeon {
 		}
 		return sentence;
 	}
+	
+	string Inventory::getDescription() const {
+		stringstream ss;
+		ss << Wearable::getDescription();
+		ss << "It can hold " << Utils::weightStr(getMaxWeight()) ;
+		if (usedWeight)
+			ss << " and currently holds " << Utils::weightStr(usedWeight) << ". ";
+		else ss << " and now it's empty. ";
+		return ss.str();
+	}
+
 	
 	void Inventory::getActions(ActionList* list, ObjectPointer callee) {
 		Wearable::getActions(list, callee);

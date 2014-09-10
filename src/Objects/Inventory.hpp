@@ -17,21 +17,20 @@ namespace Dungeon {
 		virtual ~Inventory();
 		
 		Inventory* setMaxSpace(int maxSpace);
-		int getMaxSpace();
-		int getFreeSpace();
+		int getMaxSpace() const;
+		int getFreeSpace() const;
 		
 		Inventory* setMaxWeight(int maxWeight);
-		int getMaxWeight();
-		int getFreeWeight();
+		int getMaxWeight() const;
+		int getFreeWeight() const;
 		
-        virtual Item* setSize(int size);
-        virtual int getSize();
-        virtual Item* setBaseSize(int size);
-        virtual int getBaseSize();
-        virtual Item* setWeight(int weight);
-        virtual int getWeight();
-        virtual Item* setBaseWeight(int weight);
-        virtual int getBaseWeight();
+        virtual int getSize() const;
+        virtual Inventory* setBaseSize(int size);
+        virtual int getBaseSize() const;
+        
+        virtual int getWeight() const;
+        virtual Inventory* setBaseWeight(int weight);
+        virtual int getBaseWeight() const;
 		
 		void addItem(ObjectPointer itemPtr);
 		void removeItem(ObjectPointer itemPtr);
@@ -43,6 +42,13 @@ namespace Dungeon {
                  * @return a string for AD
                 */
 		virtual string getContainingSentence();
+                
+
+            /**
+             * Adds information about size and weight
+             */
+            virtual string getDescription() const;
+
 		
 		virtual void getActions(ActionList* list, ObjectPointer callee);
 		
