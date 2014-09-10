@@ -43,15 +43,10 @@ namespace Dungeon {
 		
 		LOGS("Alive", Verbose) << "Getting actions on equiped items" << LOGF;
 		for(int i = Wearable::Slot::BodyArmor; i != Wearable::Slot::Invalid; i--) {
-			try {
-				ObjectPointer equip = getSingleRelation(Wearable::SlotRelations[i], Relation::Master, GameStateInvalid::EquippedMoreThanOne);
-				if (!!equip) {
-					equip->triggerTraps("get-actions", nullptr)
-						->getActions(list, this);
-				}
-			}
-			catch (const std::out_of_range& e) {
-				
+			ObjectPointer equip = getSingleRelation(Wearable::SlotRelations[i], Relation::Master, GameStateInvalid::EquippedMoreThanOne);
+			if (!!equip) {
+				equip->triggerTraps("get-actions", nullptr)
+					->getActions(list, this);
 			}
 		}
 		

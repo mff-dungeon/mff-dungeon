@@ -32,6 +32,21 @@ namespace Dungeon {
 		this->defenseBonus = bonus;
 		return this;
 	}
+	
+	string Wearable::getEquippedSentence() const {
+		switch (getSlot()) {
+			case Slot::Backpack:
+				return "As your backpack, you're using " + getName() + ". ";
+			case Slot::BodyArmor:
+				return getName() + " gives you some protection for damage. ";
+			case Slot::Weapon:
+				return getName() + " is your main weapon. ";
+			case Slot::Invalid:
+			default:
+				return getName() + " is fucking out of our tables for some reason. ";
+		}
+	}
+
 
 	void Wearable::getActions(ActionList* list, ObjectPointer callee) {
 		Item::getActions(list, callee);

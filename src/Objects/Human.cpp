@@ -5,6 +5,7 @@
 #include "Inventory.hpp"
 #include <time.h>
 #include "../exceptions.hpp"
+#include "../RandomString.hpp"
 
 namespace Dungeon {
 	Human::Human() {
@@ -173,14 +174,24 @@ namespace Dungeon {
 				
 			// TODO - redo to a MTA. add equiped relations and other inventories
 			list->addAction(new CallbackAction("what i own", "what i own - A list of items in backpack",
-				RegexMatcher::matcher("what i (have|own)"),
+				RegexMatcher::matcher("(what i (have|own)|inventory|list items)"),
 				[this] (ActionDescriptor* ad) {
-					Inventory* backpack = getBackpack().safeCast<Inventory>();
-					if (backpack) {
-						*ad << backpack->getContainingSentence();
-					} else {
-						*ad << "Nothing was found. ";
+					bool  empty = true;
+					for(int i = Wearable::Slot::BodyArmor; i != Wearable::Slot::Invalid; i--) {
+						ObjectPointer equip = getSingleRelation(Wearable::SlotRelations[i], Relation::Master, GameStateInvalid::EquippedMoreThanOne);
+						if (!!equip) {
+							empty = false;
+							*ad << equip.safeCast<Wearable>()->getEquippedSentence();
+							if (equip->instanceOf(Inventory)) {
+								*ad << equip.unsafeCast<Inventory>()->getContainingSentence();
+							}
+						}
 					}
+					if (empty)
+						*ad << ( RandomString::get()
+								<< "Your inventory is just empty. " << endr
+								<< "You're poor as a church mouse. " << endr
+								<< "You don't have anything. " << endr );
 				}, false));
 				
 			list->addAction(new CallbackAction("combat stats", "Prints all your combat stats",

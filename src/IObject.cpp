@@ -144,10 +144,10 @@ namespace Dungeon {
 	
 	ObjectPointer IObject::triggerTraps(string event, ActionDescriptor* ad) {
 		try {
-			LOG("Object") << "Triggering event " << event << " on " << id << ":" << LOGF;
+			LOGS("Object", Verbose) << "Triggering event " << event << " on " << id << ":" << LOGF;
 			const ObjectMap& map = getRelations(Relation::Slave, Trap::getRelation(event));
 			for (const ObjectMap::value_type& pair : map) {
-				LOG("Object") << "	trap " << pair.second.getId() << LOGF;
+				LOGS("Object", Verbose) << "	trap " << pair.second.getId() << LOGF;
 				pair.second.safeCast<Trap>()->trigger(event, this, ad);
 			}
 		} catch (std::out_of_range& e) {}

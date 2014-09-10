@@ -106,11 +106,7 @@ namespace Dungeon {
 	}
 	
 	string Inventory::getContainingSentence() {
-		string sentence;
-        
-		sentence = RandomString::get()
-			<< "You own a " + this->getName() + ". " << endr
-            << "You have a " + this->getName() + " with you. " << endr;
+		string sentence = "";
 		
 		try {
 			ObjectMap items = this->getRelations(Relation::Master, R_INVENTORY);
@@ -132,7 +128,7 @@ namespace Dungeon {
 						sentence += item.second.getId();
 					}
 				}
-				sentence += ".";
+				sentence += ". ";
 			}
 			else if(items.size() == 1) {
 				for(auto& item : items) {
@@ -143,7 +139,7 @@ namespace Dungeon {
 					else {
 						sentence += item.second.getId();
 					}
-					sentence += ".";
+					sentence += ". ";
 				}
 			}
 			else {

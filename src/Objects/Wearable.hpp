@@ -46,6 +46,8 @@ namespace Dungeon {
 		Wearable* setAttackBonus(int bonus);
 		int getDefenseBonus() const;
 		Wearable* setDefenseBonus(int bonus);
+                
+                                                string getEquippedSentence() const;
 		
 		static bool unequip(ActionDescriptor* ad, ObjectPointer item, Wearable::DesiredAction action = NotKnown);
 		
