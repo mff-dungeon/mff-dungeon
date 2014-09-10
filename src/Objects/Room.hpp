@@ -29,7 +29,7 @@ namespace Dungeon {
 		Room* setRespawnable(bool respawnable);
 		
 	private:
-		bool respawnable = true;
+		bool respawnable = false;
 	
     PERSISTENT_DECLARATION(Room, IDescriptable)
 			

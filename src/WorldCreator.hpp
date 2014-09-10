@@ -3,6 +3,8 @@
 
 #include "common.hpp"
 #include "dynamic.hpp"
+#include "Cloner.hpp"
+#include "Dropper.hpp"
 
 namespace Dungeon {
     /**
@@ -12,6 +14,7 @@ namespace Dungeon {
     public:
         WorldCreator(GameManager* gm);
         void initAdmins();
+		void initTemplates();
         virtual void bigBang();
         
     protected:
@@ -25,6 +28,16 @@ namespace Dungeon {
             if (location) gm->createRelation(location, ptr, R_INSIDE);
             return ptr;
         }
+		
+		// TODO: a nicer way to deal with templateId
+		ObjectPointer cloneTemplate(ObjectPointer tmp, IObject* location = NULL) {
+			ObjectPointer clone = Cloner::deepClone(tmp);
+			if(location) gm->createRelation(location, clone, R_INSIDE);
+			return clone;
+		}
+		
+	private:
+		map<objId, ObjectPointer> templates;
     };
 
 }

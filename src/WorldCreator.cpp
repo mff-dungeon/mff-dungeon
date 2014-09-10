@@ -21,18 +21,47 @@ namespace Dungeon {
 		// TODO - zvetsit batohy
 	}
 
+	void WorldCreator::initTemplates() {
+		templates["potion/greenhealing"] = createObject<Potion>("template/potion/greenhealing/")
+				->setType(Potion::PotionType::Healing)
+				->setStrength(100)
+				->setName("Green potion")
+				->setLongName("A green potion in gold vial.")
+				->save();
+
+		templates["dropper/smallspider1"] = createObject<Dropper>("template/dropper/smallspider1/")
+				->setChance(400000) // 40%
+				->setMin(1)
+				->setMax(1)
+				->setItem(templates["potion/greenhealing"])
+				->save();
+		
+		templates["creature/smallspider"] = createObject<Creature>("template/creature/smallspider/")
+				->attachDrop(templates["dropper/smallspider1"])
+				->setAttack(3)
+				->setDefense(2)
+				->setMaxHp(100)
+				->setCurrentHp(100)
+				->setRespawnInterval(90)
+				->setName("Small spider")
+				->setLongName("A small brown spider")
+				->save();
+	}
+
+
 	void WorldCreator::bigBang() {
 		/**
 		 * Base
 		 */
 		Room* baseRoom = createObject<Room>("room/baseRoom")
+				->setRespawnable(true)
 				->setName("Base Camp")
 				->setDescription("Nothing much to be found here, but get familiar with basic commands - try to type 'help'.")
 				->save().unsafeCast<Room>();
 
 		initAdmins();
+		initTemplates();
 
-		Trap* demoTrap = createObject<DemoTrap>("trap/demo");
 		AttackTrap* autoAttack = createObject<AttackTrap>("trap/attack");
 
 		/*
@@ -50,28 +79,23 @@ namespace Dungeon {
 				->setLongName("wooden door with simple metal handle")
 				->save();
 
-		createObject<Potion>("item/potion/" + RANDID, equipRoom)
+		createObject<Potion>("potion/bluehealing/" + RANDID, equipRoom)
 				->setType(Potion::PotionType::Healing)
 				->setStrength(100)
 				->setName("Blue potion")
 				->setLongName("A blue potion in glass vial.")
 				->save();
 
-		createObject<Potion>("item/potion/" + RANDID, equipRoom)
-				->setType(Potion::PotionType::Healing)
-				->setStrength(100)
-				->setName("Green potion")
-				->setLongName("A green potion in gold vial.")
-				->save();
+		cloneTemplate(templates.at("potion/greenhealing"), equipRoom);
 
-		createObject<Potion>("item/potion/" + RANDID, equipRoom)
+		createObject<Potion>("potion/redhealing/" + RANDID, equipRoom)
 				->setType(Potion::PotionType::Healing)
 				->setStrength(200)
 				->setName("Red potion")
 				->setLongName("A red potion in silver vial.")
 				->save();
 
-		createObject<Inventory>("item/backpack/" + RANDID, equipRoom)
+		createObject<Inventory>("inventory/hardleatherbackpack/" + RANDID, equipRoom)
 				->setMaxSpace(30000)
 				->setMaxWeight(50000)
 				->setSlot(Wearable::Backpack)
@@ -82,7 +106,7 @@ namespace Dungeon {
 				->setLongName("A more solid leather backpack.")
 				->save();
 
-		createObject<Wearable>("item/weapon/" + RANDID, equipRoom)
+		createObject<Wearable>("wearable/woodenclub/" + RANDID, equipRoom)
 				->setAttackBonus(6)
 				->setSlot(Wearable::Weapon)
 				->setSize(3000)
@@ -100,21 +124,14 @@ namespace Dungeon {
 				->setDescription("A scary room with a lack of light.")
 				->attachTrap(autoAttack, "inside")
 				->save().unsafeCast<Room>();
+		
+		cloneTemplate(templates.at("creature/smallspider"), darkRoom);
+		cloneTemplate(templates.at("creature/smallspider"), darkRoom);
 
 		this->createDoor("dark-base", baseRoom, darkRoom)
 				->setGoThroughMessage("You've crawled through that tunnel. It smelled bad. ")
 				->setName("narrow tunnel")
 				->setLongName("a narrow tunnel with no visible ending")
-				->save();
-
-		createObject<Creature>("creature/spider/" + RANDID, darkRoom)
-				->setAttack(3)
-				->setDefense(2)
-				->setMaxHp(100)
-				->setCurrentHp(100)
-				->setRespawnInterval(20)
-				->setName("Small spider")
-				->setLongName("A small brown spider")
 				->save();
 	}
 

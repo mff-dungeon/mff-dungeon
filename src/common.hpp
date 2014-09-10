@@ -17,6 +17,8 @@
 #define R_INVENTORY "inventory"
 // Door targets somewhere
 #define R_TARGET "target"
+// Creature drops an item
+#define R_DROP "dropper"
 
 /*
  *  Logging
@@ -85,6 +87,11 @@ namespace Dungeon {
             for (int i = 0; i < len; ++i) ret[i] = RAND_ALNUM[rand_next(r, d)];
             return ret;
         }
+		
+		static int getRandomInt(int min, int max) {
+			static rand_init(r, d, min, max);
+			return rand_next(r, d);
+		}
         
         static string weightStr(const int weight) {
             char buf [50];

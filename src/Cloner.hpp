@@ -4,7 +4,7 @@
 #include "ObjectPointer.hpp"
 #include "IPropertyStorage.hpp"
 #include "GameManager.hpp"
-#include <vector>
+#include <queue>
 
 namespace Dungeon {
 	/**
@@ -13,16 +13,27 @@ namespace Dungeon {
      */
 	class Cloner : IPropertyStorage {
 	public:
-		Cloner(ObjectPointer original, GameManager* gm) : orig(original), gm(gm) {}
+		Cloner(ObjectPointer original) : orig(original) {
+			gm = orig->getGameManager();
+		}
 		
-		ObjectPointer getClone();
+		ObjectPointer getShallowClone();
+		ObjectPointer getDeepClone();
 		/**
 		 * Method used to clone any object. Creates a new Object, clones its properties and stores it in DB
          * @param original the object to be cloned
          * @param gm GameManager
          * @return an ObjectPointer to a new object
          */
-		static ObjectPointer clone(ObjectPointer original, GameManager* gm);
+		static ObjectPointer shallowClone(ObjectPointer original);
+		/**
+		 * Method used to clone any object. Creates a new Object, clones its properties, stores it in DB and
+		 * clones its relations.
+         * @param original the object to be cloned
+         * @param gm GameManager
+         * @return an ObjectPointer to a new object
+         */
+		static ObjectPointer deepClone(ObjectPointer original);
 		
 		virtual IPropertyStorage& have(bool& prop, string id, string desc, bool editable);
 		virtual IPropertyStorage& have(int& prop, string id, string desc, bool editable);

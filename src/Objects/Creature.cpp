@@ -1,11 +1,54 @@
 #include "Creature.hpp"
 #include "../RandomString.hpp"
+#include "../Dropper.hpp"
 #include <time.h>
 #include <vector>
 
 namespace Dungeon {
 
+	Creature* Creature::calculateDrops(ActionDescriptor* ad) {
+		bool dropped = false;
+		try {
+			ObjectMap drops = getRelations(Relation::Master, R_DROP);
+			if(!drops.empty()) {
+				for(auto& dropIt : drops) {
+					ObjectPointer dropPtr = dropIt.second
+							.assertExists("Creature has a non-existing drop")
+							.assertType<Dropper>("Create has an invalid drop");
+					Dropper* drop = dropPtr.unsafeCast<Dropper>();
+					if(drop->tryDrop(this->getLocation())) {
+						dropped = true;
+					}
+				}
+			}
+		}
+		catch (const std::out_of_range& e) {
+			
+		}
+		
+		if(ad != 0) {
+			if(dropped) {
+				*ad << this->getName() << " has dropped some items on the ground! ";
+			}
+			else {
+				*ad << this->getName() << " has dropped nothing. ";
+			}
+		}
+		return this;
+	}
+
+	Creature* Creature::attachDrop(ObjectPointer drop) {
+		getGameManager()->createRelation(this, drop, R_DROP);
+		return this;
+	}
+	
+	Creature* Creature::detachDrop(ObjectPointer drop) {
+		getGameManager()->removeRelation(this, drop, R_DROP);
+		return this;
+	}
+
 	Alive* Creature::die(ActionDescriptor* ad) {
+		this->calculateDrops(ad);
 		if(this->getRespawnInterval() == -1) { // Remove
 			// FIXME: Workout a way to tell GM, to delete this after this action
 			this->setState(State::Invalid);

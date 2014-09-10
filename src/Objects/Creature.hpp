@@ -20,6 +20,10 @@ namespace Dungeon {
 
 		virtual Alive* changeHp(int amount, ActionDescriptor* ad);
 
+		virtual Creature* calculateDrops(ActionDescriptor*ad = 0);
+		virtual Creature* attachDrop(ObjectPointer drop);
+		virtual Creature* detachDrop(ObjectPointer drop);
+		
 		virtual Alive* die(ActionDescriptor* ad = 0);
 		virtual Alive* respawn(ActionDescriptor* ad = 0);
 

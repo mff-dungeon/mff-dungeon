@@ -4,9 +4,13 @@
 
 namespace Dungeon {
 	
-	ObjectPointer Cloner::getClone() {
+	ObjectPointer Cloner::getShallowClone() {
 		IObject* cloned = orig->createObject();
-		cloned->setId(objId_getType(orig.getId()) + "/" + RANDID);
+		// Add new Id
+		string newId = objId_getType(orig.getId());
+		if(newId.find("template" == 0)) newId = newId.substr(9);
+		newId += "/" + RANDID;
+		cloned->setId(newId);
 		// What if beforeLoad did something with relations...
 		gm->insertObject(cloned);
 		
@@ -19,15 +23,29 @@ namespace Dungeon {
 		cloned->beforeLoad(*this);
 		cloned->registerProperties(*this);
 		cloned->afterLoad(*this);
+		cloned->save();
 		
 		return cloned;
 	}
-
-	ObjectPointer Cloner::clone(ObjectPointer original, GameManager* gm) {
-		Cloner cl = Cloner(original, gm);
-		return cl.getClone();
+		
+	ObjectPointer Cloner::getDeepClone() {
+		ObjectPointer clone = this->getShallowClone();
+		// Copy all relations
+		clone->relation_master.insert(orig->relation_master.begin(), orig->relation_master.end());
+		clone->relation_slave.insert(orig->relation_slave.begin(), orig->relation_slave.end());
+		return clone;
 	}
 
+
+	ObjectPointer Cloner::shallowClone(ObjectPointer original) {
+		Cloner cl = Cloner(original);
+		return cl.getShallowClone();
+	}
+
+	ObjectPointer Cloner::deepClone(ObjectPointer original) {
+		Cloner cl = Cloner(original);
+		return cl.getDeepClone();
+	}
 
 	IPropertyStorage& Cloner::have(bool& prop, string id, string desc, bool editable) {
 		if(storing) {
