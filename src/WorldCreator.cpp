@@ -27,6 +27,7 @@ namespace Dungeon {
 				->setStrength(100)
 				->setName("Green potion")
 				->setLongName("A green potion in gold vial.")
+				->setDescription("The vial is untouched, and the color of the liquid is some kind of scary.")
 				->save();
 
 		templates["dropper/smallspider1"] = createObject<Dropper>("template/dropper/smallspider1/")
@@ -45,6 +46,7 @@ namespace Dungeon {
 				->setRespawnInterval(90)
 				->setName("Small spider")
 				->setLongName("A small brown spider")
+				->setDescription("On closer look, it is cute. But I won't touch it!")
 				->save();
 	}
 
@@ -83,16 +85,16 @@ namespace Dungeon {
 				->setType(Potion::PotionType::Healing)
 				->setStrength(100)
 				->setName("Blue potion")
-				->setLongName("A blue potion in glass vial.")
+				->setLongName("a blue potion in glass vial")
+				->setDescription("It may look like water for some people.")
 				->save();
-
-		cloneTemplate(templates.at("potion/greenhealing"), equipRoom);
 
 		createObject<Potion>("potion/redhealing/" + RANDID, equipRoom)
 				->setType(Potion::PotionType::Healing)
 				->setStrength(200)
 				->setName("Red potion")
-				->setLongName("A red potion in silver vial.")
+				->setLongName("a red potion in silver vial")
+				->setDescription("The vial has some scratches, but the color of the liquid is just beautiful.")
 				->save();
 
 		createObject<Inventory>("inventory/hardleatherbackpack/" + RANDID, equipRoom)
@@ -103,7 +105,7 @@ namespace Dungeon {
 				->setSize(5000)
 				->setWeight(2500)
 				->setName("Hard leather backpack")
-				->setLongName("A more solid leather backpack.")
+				->setLongName("a more solid leather backpack.")
 				->save();
 
 		createObject<Wearable>("wearable/woodenclub/" + RANDID, equipRoom)
@@ -112,7 +114,7 @@ namespace Dungeon {
 				->setSize(3000)
 				->setWeight(5000)
 				->setName("Wooden club")
-				->setLongName("A weak wooden club.")
+				->setLongName("a weak wooden club.")
 				->save();
 
 		/*
@@ -121,7 +123,7 @@ namespace Dungeon {
 
 		Room* darkRoom = createObject<Room>("room/darkRoom")
 				->setName("Dark room")
-				->setDescription("A scary room with a lack of light.")
+				->setDescription("a scary room with a lack of light.")
 				->attachTrap(autoAttack, "inside")
 				->save().unsafeCast<Room>();
 		

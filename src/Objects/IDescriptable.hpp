@@ -52,8 +52,8 @@ namespace Dungeon {
         NONPERSISTENT_DECLARATION(IDescriptable, IObject)	
    
     private:
-        string name, longName;
-        string description;
+        string name = "", longName = "";
+        string description = "";
     };
 }
 
