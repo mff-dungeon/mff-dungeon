@@ -31,8 +31,30 @@ namespace Dungeon {
 	ObjectPointer Cloner::getDeepClone() {
 		ObjectPointer clone = this->getShallowClone();
 		// Copy all relations
-		clone->relation_master.insert(orig->relation_master.begin(), orig->relation_master.end());
-		clone->relation_slave.insert(orig->relation_slave.begin(), orig->relation_slave.end());
+		try {
+			for(auto& relList : orig->getRelations(Relation::Master)) {
+				if(!relList.second.empty()) {
+					for(auto& rel : relList.second) {
+						gm->createRelation(clone, rel.second, relList.first);
+					}
+				}
+			}
+		}
+		catch (const std::out_of_range& e) {
+			
+		}
+		try {
+			for(auto& relList : orig->getRelations(Relation::Slave)) {
+				if(!relList.second.empty()) {
+					for(auto& rel : relList.second) {
+						gm->createRelation(rel.second, clone, relList.first);
+					}
+				}
+			}
+		}
+		catch (const std::out_of_range& e) {
+			
+		}
 		return clone;
 	}
 

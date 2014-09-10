@@ -57,8 +57,9 @@ namespace Dungeon{
 		if(random <= getChance()) { // Let's drop it
 			int amount = Utils::getRandomInt(getMin(), getMax());
 			for(int i=1; i<=amount; i++) {
-				ObjectPointer item = Cloner::deepClone(getItem());
-				getGameManager()->createRelation(loc, item, R_INSIDE);
+				ObjectPointer item = Cloner::shallowClone(getItem());
+				LOG("Dropper") << "Dropped item. " << LOGF;
+				item->setSingleRelation(R_INSIDE, loc);
 			}
 			return true;
 		}

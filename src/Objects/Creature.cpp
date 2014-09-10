@@ -38,11 +38,13 @@ namespace Dungeon {
 	}
 
 	Creature* Creature::attachDrop(ObjectPointer drop) {
+		drop.assertType<Dropper>("You can only attach instances of class Dropper");
 		getGameManager()->createRelation(this, drop, R_DROP);
 		return this;
 	}
 	
 	Creature* Creature::detachDrop(ObjectPointer drop) {
+		drop.assertType<Dropper>("You can only detach instances of class Dropper");
 		getGameManager()->removeRelation(this, drop, R_DROP);
 		return this;
 	}

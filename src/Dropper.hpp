@@ -13,6 +13,13 @@ namespace Dungeon {
 	 */
 	class Dropper : public IObject {
 	public:
+		enum DropChance {
+			Always = 1000000,
+			Half = 500000,
+			Percent = 10000,
+			Thousandth = 1000,
+			Milionth = 1
+		};
 		Dropper();
 		Dropper(objId id);
 		virtual ~Dropper();

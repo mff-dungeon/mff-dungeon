@@ -30,10 +30,10 @@ namespace Dungeon {
 				->save();
 
 		templates["dropper/smallspider1"] = createObject<Dropper>("template/dropper/smallspider1/")
-				->setChance(400000) // 40%
+				->setChance(Dropper::Always)
 				->setMin(1)
 				->setMax(1)
-				->setItem(templates["potion/greenhealing"])
+				->setItem(Cloner::shallowClone(templates["potion/greenhealing"]))
 				->save();
 		
 		templates["creature/smallspider"] = createObject<Creature>("template/creature/smallspider/")
