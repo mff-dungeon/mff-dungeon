@@ -43,7 +43,7 @@ namespace Dungeon {
 		target = getSingleRelation(R_TARGET);
 		if (!target) {
 			// Find some creature in that room (not necessarily room, but...)
-			for (ObjectMap::value_type& pair : room->getRelations(Relation::Master, R_INSIDE))
+			for (const ObjectMap::value_type& pair : room->getRelations(Relation::Master, R_INSIDE))
 				if (pair.second->instanceOf(Creature) && pair.second.unsafeCast<Creature>()->getState() == Alive::Living)
 					target = pair.second;
 		}

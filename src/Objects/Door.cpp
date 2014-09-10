@@ -5,6 +5,7 @@
 #include "../RegexMatcher.hpp"
 #include "../ActionDescriptor.hpp"
 #include "../RandomString.hpp"
+#include "../SentenceJoiner.hpp"
 
 namespace Dungeon {
 	
@@ -52,31 +53,21 @@ namespace Dungeon {
 		target.unsafeCast<Room>()->explore(ad);
 	}
     
-    string Door::getDescriptionSentence() {
-        return RandomString::get()
-                << "There is a " + this->getName() + "." << endr
-				<< "A " + this->getName() + " is casting a grimm shadow on the floor." << endr
-				<< "You see the frame of a " + this->getName() + "." << endr;
-    }
-    
-    string Door::getGroupDescriptionSentence(vector<ObjectPointer> others) {
-        if (others.size() == 0) return "";
-        else if (others.size() == 1) return getDescriptionSentence();
-        
-        string sentence;
-		
-        for (int i = 0; i < others.size() - 1; i++) {
-            if (i != 0) sentence += ", ";
-            sentence += others.at(i).safeCast<Door>()->getName();
-        }
-        
-        sentence += " and " + others.back().safeCast<Door>()->getName();
-		
-        return RandomString::get()
-				<< "There are " + sentence + "." << endr
-				<< "Around you are " + sentence + "." << endr
-				<< "You see " + sentence + "." << endr;
-    }
+	string Door::getDescriptionSentence() {
+		return getGroupDescriptionSentence({ this });
+	}
+
+	string Door::getGroupDescriptionSentence(vector<ObjectPointer> others) {
+		SentenceJoiner doors;
+		for (auto i = others.begin(); i != others.end(); i++) {
+			doors << *i;
+		}
+
+		return RandomString::get()
+				<< doors.getSentence("", "There is %. ", "There are %. ") << endr
+				<< doors.getSentence("", "A % is casting a grimm shadow on the floor. ", "Around you are %. ") << endr
+				<< doors.getSentence("", "You see the frame of a %. ", "You see %. ") << endr;
+	}
 	
 	void Door::registerProperties(IPropertyStorage& storage) {
 		storage.have(goThroughMessage, "door-gothrough", "Message that will be displayed when user goes through");

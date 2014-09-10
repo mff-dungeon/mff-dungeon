@@ -3,6 +3,7 @@
 #include "Inventory.hpp"
 #include "Alive.hpp"
 #include "../RandomString.hpp"
+#include "../SentenceJoiner.hpp"
 
 namespace Dungeon {
 	Inventory::Inventory() {
@@ -98,50 +99,12 @@ namespace Dungeon {
 	}
 	
 	string Inventory::getContainingSentence() {
-		string sentence = "";
+		SentenceJoiner items;
 		
-		try {
-			ObjectMap items = this->getRelations(Relation::Master, R_INVENTORY);
-			if(items.size() >= 2) {
-				int count = 0;
-				sentence += "There are ";
-				for(auto& item : items) {
-					if(count > 0 && count < items.size() - 1) {
-						sentence += ", ";
-					}
-					else if(count == items.size() - 1) {
-						sentence += " and ";
-					}
-					count++;
-					if(item.second->instanceOf(IDescriptable)) {
-						sentence += item.second.unsafeCast<IDescriptable>()->getName();
-					}
-					else {
-						sentence += item.second.getId();
-					}
-				}
-				sentence += ". ";
-			}
-			else if(items.size() == 1) {
-				for(auto& item : items) {
-					sentence += "There is ";
-					if(item.second->instanceOf(IDescriptable)) {
-						sentence += item.second.unsafeCast<IDescriptable>()->getName();
-					}
-					else {
-						sentence += item.second.getId();
-					}
-					sentence += ". ";
-				}
-			}
-			else {
-				sentence += "It is empty. ";
-			}
+		for(auto& item : getRelations(Relation::Master, R_INVENTORY)) {
+			items << item.second;
 		}
-		catch(const std::out_of_range& e) {
-			
-		}
-		return sentence;
+		return items.getSentence("", "There is %. ", "There are %. ");
 	}
 	
 	string Inventory::getDescription() const {

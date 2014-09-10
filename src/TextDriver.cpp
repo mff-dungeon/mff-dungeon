@@ -16,7 +16,7 @@ namespace Dungeon {
 			if (!ad->isFinished()) {
 				ad->userReplied(ad->in_msg);
 				return true;
-			} 
+			}
 			
 			ad->getAlive()->getAllActions(&alist);
 

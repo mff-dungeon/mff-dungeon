@@ -83,9 +83,9 @@ namespace Dungeon {
 	}
 	
 	IObject* GameManager::loadObject(objId id) {
-        LOGS("GameManager", Info) << "Loading object '" << id << "'." << LOGF;
 		IObject* r = 0;
 		r = loader->loadObject(id);
+		LOGS("GameManager", Info) << "Loaded object '" << id << "' with class " << r->className() << "." << LOGF;
 		if(r == 0) return 0;
 		r->setGameManager(this);
 		
@@ -235,8 +235,8 @@ namespace Dungeon {
 		delete ref_obj;
 		
 		// Need to load it because of the "others"
-		for (RelationList::value_type& rel : obj->getRelations(master)) {
-			for (ObjectMap::value_type& pair : rel.second) {
+		for (const RelationList::value_type& rel : obj->getRelations(master)) {
+			for (const ObjectMap::value_type& pair : rel.second) {
 				obj->eraseRelation(relation, pair.second, master);
 			}
 		}

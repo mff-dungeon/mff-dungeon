@@ -2,6 +2,7 @@
 #include "ObjectPointer.hpp"
 #include "GameManager.hpp"
 #include "Objects/Trap.hpp"
+#include "Cloner.hpp"
 #include <memory>
 
 #include <stdexcept>
@@ -70,17 +71,21 @@ namespace Dungeon {
 			other->addRelation(type, this, !dir);
 	}
 
-	RelationList& IObject::getRelations(Relation::Dir dir) {
+	const RelationList& IObject::getRelations(Relation::Dir dir) {
 		return dir == Relation::Dir::Master ? relation_master : relation_slave;
 	}
 	
-	ObjectMap& IObject::getRelations(Relation::Dir dir, string type) {
-		return getRelations(dir).at(type);
+	const ObjectMap IObject::getRelations(Relation::Dir dir, string type) {
+		try {
+			return getRelations(dir).at(type);
+		} catch (std::out_of_range& e) {
+			return ObjectMap();
+		}
 	}
 	
 	ObjectPointer IObject::getSingleRelation(string type, Relation::Dir dir, string errMsg) {
 		try {
-			ObjectMap& objects = getRelations(dir, type);
+			const ObjectMap& objects = getRelations(dir, type);
 			if (objects.size() > 1)
 				throw GameStateInvalid(errMsg);
 			if (objects.size() == 0)
@@ -165,6 +170,15 @@ namespace Dungeon {
 		gm->removeRelation(trap, this, Trap::getRelation(event));
 		return this;
 	}
+	
+	ObjectPointer IObject::deepClone() const {
+		return Cloner::deepClone(this);
+	}
+	
+	ObjectPointer IObject::shallowClone() const {
+		return Cloner::shallowClone(this);
+	}
+
 
 
 	NONPERSISTENT_IMPLEMENTATION(IObject)

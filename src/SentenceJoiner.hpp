@@ -62,6 +62,17 @@ namespace Dungeon {
             return *this;
         }
 
+        /**
+         * Because name of object is the most used part
+         */
+        SentenceJoiner& operator<<(ObjectPointer value)
+        {
+            if (value->instanceOf(IDescriptable))
+                return *this << value.unsafeCast<IDescriptable>()->getName();
+            else
+                return *this  << value.getId();
+        }
+
     private:
         int count = 0;
         stringstream parts;

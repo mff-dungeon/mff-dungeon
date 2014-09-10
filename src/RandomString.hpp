@@ -27,57 +27,63 @@ namespace Dungeon {
     class RandomString {
     public:
         RandomString();
-        virtual ~RandomString() {}
-        
+
+        virtual ~RandomString()
+        {
+        }
+
         /** Special type to indicate EOM - @see endr*/
-        class EndOfMessage {};
-        
+        class EndOfMessage {
+        };
+
         /**
          * @return Random string
          */
         string getRandom();
-        
+
         /**
          * @return Random string
          */
-        operator string ();
-        
+        operator string();
+
         /**
          * Finishes current message. @see endr
          */
         RandomString& operator<<(RandomString::EndOfMessage* (*endofmessage)());
-        
+
         /**
          * Add a part to current message
          */
         template<typename T>
-        RandomString& operator<<(T value) {
+        RandomString& operator<<(T value)
+        {
             current << value;
             return *this;
         }
-        
+
         /**
          * Get singleton instance. It will be cleared after string typecast.
          * Provided only for convenience, this class can be instatiated and 
          * used more than once.
          */
         static RandomString& get();
-        
+
+
     private:
         static RandomString* instance;
-        
+
         vector<string> messages;
         stringstream current;
         default_random_engine random;
     };
-    
+
     /**
      * Special value that breaks the stream and divides distinct messages.
      * Do not call it, it makes sense only in stream context of RandomString.
      * @return NULL
      */
     RandomString::EndOfMessage* endr();
-    
+
 }
 
 #endif

@@ -22,23 +22,26 @@ namespace Dungeon {
 	}
 
 	void WorldCreator::initTemplates() {
-		templates["potion/greenhealing"] = createObject<Potion>("template/potion/greenhealing/")
+		Room* templateRoom = createObject<Room>("room/templateRoom")
+				->setName("Template storage")
+				->setDescription("Just a room to keep all the templates at one place.")
+				->save().unsafeCast<Room>();
+		
+		templates["potion/greenhealing"] = createObject<Potion>("template/potion/greenhealing/1", templateRoom)
 				->setType(Potion::PotionType::Healing)
 				->setStrength(100)
 				->setName("Green potion")
 				->setLongName("A green potion in gold vial.")
 				->setDescription("The vial is untouched, and the color of the liquid is some kind of scary.")
 				->save();
-
-		templates["dropper/smallspider1"] = createObject<Dropper>("template/dropper/smallspider1/")
-				->setChance(Dropper::Always)
-				->setMin(1)
-				->setMax(1)
-				->setItem(Cloner::shallowClone(templates["potion/greenhealing"]))
-				->save();
 		
-		templates["creature/smallspider"] = createObject<Creature>("template/creature/smallspider/")
-				->attachDrop(templates["dropper/smallspider1"])
+		templates["creature/smallspider"] = createObject<Creature>("template/creature/smallspider/1", templateRoom)
+				->attachDrop(createObject<Dropper>("dropper/smallspider/1/1")
+					->setChance(Dropper::Always)
+					->setMin(1)
+					->setMax(1)
+					->setItem(templates["potion/greenhealing"])
+					->save())
 				->setAttack(3)
 				->setDefense(2)
 				->setMaxHp(100)
@@ -117,6 +120,16 @@ namespace Dungeon {
 				->setLongName("a weak wooden club")
 				->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop. ")
 				->save();
+		
+		createObject<Wearable>("wearable/woodenclub/" + RANDID, equipRoom)
+				->setAttackBonus(6)
+				->setSlot(Wearable::Weapon)
+				->setSize(3000)
+				->setWeight(5000)
+				->setName("Wooden club")
+				->setLongName("a weak wooden club")
+				->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop. ")
+				->save();
 
 		/*
 		 ************************     Dark room		************************
@@ -128,13 +141,53 @@ namespace Dungeon {
 				->attachTrap(autoAttack, "inside")
 				->save().unsafeCast<Room>();
 		
-		cloneTemplate(templates.at("creature/smallspider"), darkRoom);
-		cloneTemplate(templates.at("creature/smallspider"), darkRoom);
+		cloneTemplate(templates["creature/smallspider"], darkRoom);
+		cloneTemplate(templates["creature/smallspider"], darkRoom);
 
 		this->createDoor("dark-base", baseRoom, darkRoom)
 				->setGoThroughMessage("You've crawled through that tunnel. It smelled bad. ")
 				->setName("narrow tunnel")
 				->setLongName("a narrow tunnel with no visible ending")
+				->save();
+
+		/*
+		 ************************     Boss room		************************
+		 */
+		Room* bossRoom = createObject<Room>("room/bossRoom")
+				->setName("Round room")
+				->setDescription("Prepare for the fight!")
+				->save().unsafeCast<Room>();
+
+		this->createDoor("dark-boss", bossRoom, darkRoom)
+				->setGoThroughMessage("You can't get rid of that strange feeling. ")
+				->setName("Crevice")
+				->setLongName("hole just big enough to fit in")
+				->save();
+		
+		 createObject<Creature>("creature/megaspider/" + RANDID, bossRoom)
+				->attachDrop(createObject<Dropper>("dropper/megaspider/1")
+					->setChance(Dropper::Always)
+					->setMin(1)
+					->setMax(1)
+					->setItem(createObject<Wearable>("template/wearable/ironclub/1")
+							->setAttackBonus(20)
+							->setDefenseBonus(3)
+							->setSlot(Wearable::Weapon)
+							->setSize(5000)
+							->setWeight(10000)
+							->setName("Iron club")
+							->setLongName("a strong iron club")
+							->setDescription("Finally a weapon!")
+							->save())
+					->save())
+				->setAttack(8)
+				->setDefense(4)
+				->setMaxHp(300)
+				->setCurrentHp(300)
+				->setRespawnInterval(9000)
+				->setName("Big spider")
+				->setLongName("A big ugly black spider")
+				->setDescription("You would even look closer?!")
 				->save();
 	}
 

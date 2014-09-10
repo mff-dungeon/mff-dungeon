@@ -122,13 +122,13 @@ namespace Dungeon {
          * Returns either master, or slave relations of the object
          * @param master true, if the relation is master relation
          */
-        RelationList& getRelations(Relation::Dir dir);
+        const RelationList& getRelations(Relation::Dir dir);
 
         /**
          * Returns objects with given relation to this object
          * @param master true, if the relation is master relation
          */
-        ObjectMap& getRelations(Relation::Dir dir, string type);
+        const ObjectMap getRelations(Relation::Dir dir, string type);
 
         /**
          * Returns the one and only relation of this type.
@@ -197,6 +197,9 @@ namespace Dungeon {
         
         ObjectPointer attachTrap(ObjectPointer trap, string event);
         ObjectPointer detachTrap(ObjectPointer trap, string event);
+        
+        ObjectPointer deepClone() const;
+        ObjectPointer shallowClone() const;
         
 
     protected:

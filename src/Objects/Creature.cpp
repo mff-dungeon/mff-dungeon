@@ -1,6 +1,7 @@
 #include "Creature.hpp"
 #include "../RandomString.hpp"
 #include "../Dropper.hpp"
+#include "../SentenceJoiner.hpp"
 #include <time.h>
 #include <vector>
 
@@ -111,57 +112,38 @@ namespace Dungeon {
 	}
 
 	string Creature::getDescriptionSentence() {
-		switch(getState()) {
-			case State::Living:
-				return RandomString::get()
-					<< "You see " + this->getName() + " wandering around. " << endr
-					<< "There is " + this->getName() + ". " << endr;
-				break;
-			case State::Dying:
-				return RandomString::get()
-					<< "You see " + this->getName() + " lying on the ground heavy breathing. " << endr
-					<< "There lies a hardly living body of " + this->getName() + ". " << endr;
-				break;
-			default:
-				// Dead doesn't need to be seen
-				return "";
-		}
+		return getGroupDescriptionSentence({ this });
 	}
 
 	string Creature::getGroupDescriptionSentence(vector<ObjectPointer> others) {
-		if (others.size() == 0) return "";
-        else if (others.size() == 1) return getDescriptionSentence();
-		// Do you see a better way?
-		vector<ObjectPointer> living, dying;
-		for (int i = 0; i < others.size() - 1; i++) {
-			if(others.at(i).safeCast<Creature>()->getState() == Alive::State::Living) {
-				living.push_back(others.at(i));
+		SentenceJoiner living, dying, dead;
+		
+		for (auto i = others.begin(); i != others.end() ; i++) {
+			Creature* cr = i->assertType<Creature>().unsafeCast<Creature>();
+			switch (cr->getState()) {
+				case Alive::State::Living:
+					living << cr->getName();
+					break;
+				case Alive::State::Dying:
+					dying << cr->getName();
+					break;
+				case Alive::State::Dead:
+					dead << cr->getName();
+					break;
+				default:
+					LOG("Creature") << "Some invalid creature would like to be explored." << LOGF;
 			}
-			else if(others.at(i).safeCast<Creature>()->getState() == Alive::State::Dying) {
-				dying.push_back(others.at(i));
-			}
-        }
+		}
 		
-		string sentenceLiving, sentenceDying, sentenceFinal;
-		for (int i = 0; i < living.size() - 1; i++) {
-            if (i != 0) sentenceLiving += ", ";
-            sentenceLiving += living.at(i).safeCast<Creature>()->getName();
-        }
-        sentenceLiving += " and " + living.at(living.size() - 1).safeCast<Creature>()->getName();
-		for (int i = 0; i < dying.size() - 1; i++) {
-            if (i != 0) sentenceDying += ", ";
-            sentenceDying += dying.at(i).safeCast<Creature>()->getName();
-        }
-        sentenceDying += " and " + dying.at(dying.size() - 1).safeCast<Creature>()->getName();
-		
-		
-		sentenceFinal = RandomString::get()
-					<< "You see " + sentenceLiving + " wandering around. " << endr
-					<< "There are " + sentenceLiving + ". " << endr;
-		sentenceFinal += RandomString::get()
-					<< "You see " + sentenceDying + " lying on the ground heavy breathing. " << endr
-					<< "There lie hardly living bodies of " + sentenceDying + ". " << endr;
-		return sentenceFinal;
+		return (string) (RandomString::get()
+					<<  living.getSentence("", "You see % wandering around. ") << endr
+					<< living.getSentence("", "There is %. ", "There are %.  ") << endr)
+			+ (string) (RandomString::get()
+					<< dying.getSentence("", "You see % lying on the ground heavy breathing. ") << endr
+					<< dying.getSentence("", "There lie hardly living bodies of %. ") << endr)
+			+ (string) (RandomString::get()
+					<< dead.getSentence("", "% was kiled here. ", "% were killed here. ") << endr
+					<< dead.getSentence("", "There lies corpse of %. ", "There lies corpses of %. ") << endr);
 	}
 	
 	void KillAction::explain(ActionDescriptor* ad) {

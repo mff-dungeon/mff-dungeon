@@ -51,8 +51,8 @@ namespace Dungeon {
 		}
 		file << ", shape=" + shape + "];\n";
 		
-		for (RelationList::value_type& relPair : obj->getRelations(Relation::Master)) {
-			for (ObjectMap::value_type& objPair : relPair.second) {
+		for (const RelationList::value_type& relPair : obj->getRelations(Relation::Master)) {
+			for (const ObjectMap::value_type& objPair : relPair.second) {
 				if (objects.find(objPair.first) != objects.end()) {
 					file << node << " -> " << objects[objPair.first] 
 					     << " [label=\"" << relPair.first << "\"]\n";
@@ -60,8 +60,8 @@ namespace Dungeon {
 			}
 		}
 		
-		for (RelationList::value_type& relPair : obj->getRelations(Relation::Slave)) {
-			for (ObjectMap::value_type& objPair : relPair.second) {
+		for (const RelationList::value_type& relPair : obj->getRelations(Relation::Slave)) {
+			for (const ObjectMap::value_type& objPair : relPair.second) {
 				if (objects.find(objPair.first) != objects.end()) {
 					file << objects[objPair.first] << " -> " << node
 					     << " [label=\"" << relPair.first << "\"]\n";

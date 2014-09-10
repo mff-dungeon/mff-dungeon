@@ -32,7 +32,7 @@ namespace Dungeon {
 		// TODO: a nicer way to deal with templateId
 		ObjectPointer cloneTemplate(ObjectPointer tmp, IObject* location = NULL) {
 			ObjectPointer clone = Cloner::deepClone(tmp);
-			if(location) gm->createRelation(location, clone, R_INSIDE);
+			if(location) clone->setSingleRelation(R_INSIDE, location, Relation::Slave);
 			return clone;
 		}
 		

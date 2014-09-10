@@ -4,6 +4,7 @@
 #include "../Actions/CallbackAction.hpp"
 #include "../ActionDescriptor.hpp"
 #include "../RandomString.hpp"
+#include "../SentenceJoiner.hpp"
 
 namespace Dungeon {
 	
@@ -83,28 +84,19 @@ namespace Dungeon {
 
 	
 	string Item::getDescriptionSentence() {
-		return RandomString::get()
-				<< "You see " + this->getName() + " lying on the ground." << endr
-				<< "There lies " + this->getName() + "." << endr
-				<< this->getName() + " lies nearby." << endr;
+		return getGroupDescriptionSentence({ this });
 	}
 	
 	string Item::getGroupDescriptionSentence(vector<ObjectPointer> others) {
-		if (others.size() == 0) return "";
-        else if (others.size() == 1) return getDescriptionSentence();
-        
-        string sentence;
-		for (int i = 0; i < others.size() - 1; i++) {
-            if (i != 0) sentence += ", ";
-            sentence += others.at(i).safeCast<Item>()->getName();
-        }
-        
-        sentence += " and " + others.at(others.size() - 1).safeCast<Item>()->getName();
-		
+		SentenceJoiner items;
+		for (auto i = others.begin(); i != others.end(); i++) {
+			items << *i;
+		}
+
 		return RandomString::get()
-				<< "You see " + sentence + "." << endr
-				<< "There lies " + sentence + " on the ground." << endr
-				<< "On the ground there " << (others.size() > 1 ? "are " : "is ") << sentence + "." << endr;
+				<< items.getSentence("", "You see % lying on the ground. ", "You see %. ") << endr
+				<< items.getSentence("", "There lies %. " , "There lies % on the ground. ") << endr
+				<< items.getSentence("", "% lies nearby. ", "On the ground there are %. ") << endr;
 	}
 	
 	void Item::registerProperties(IPropertyStorage& storage) {

@@ -59,7 +59,7 @@ namespace Dungeon{
 			for(int i=1; i<=amount; i++) {
 				ObjectPointer item = Cloner::shallowClone(getItem());
 				LOG("Dropper") << "Dropped item. " << LOGF;
-				item->setSingleRelation(R_INSIDE, loc);
+				item->setSingleRelation(R_INSIDE, loc, Relation::Slave);
 			}
 			return true;
 		}

@@ -4,6 +4,7 @@
 #include "../ActionDescriptor.hpp"
 #include "../ActionList.hpp"
 #include "../RandomString.hpp"
+#include "../SentenceJoiner.hpp"
 
 namespace Dungeon {
     
@@ -83,33 +84,22 @@ namespace Dungeon {
 		IDescriptable::registerProperties(storage);
 	}
 
-    
-    string Alive::getDescriptionSentence() {
-        return RandomString::get()
-				<< "You recognize " + this->getName() + "'s figure." << endr
-				<< this->getName() + " is there with you." << endr
-				<< "You smell the presence of " + this->getName() + "." << endr
-				<< this->getName() + " is nearby." << endr;
-    }
-    
-    string Alive::getGroupDescriptionSentence(vector<ObjectPointer> others) {
-        if (others.size() == 0) return "";
-        else if (others.size() == 1) return getDescriptionSentence();
-        
-        string sentence;
-        for (int i = 0; i < others.size() - 1; i++) {
-            if (i != 0) sentence += ", ";
-            sentence += others.at(i).safeCast<Alive>()->getName();
-        }
-        
-        sentence += " and " + others.back().safeCast<Alive>()->getName();
-		
-        return RandomString::get()
-				<< "You recognize " + sentence + "." << endr
-				<< sentence + " are there with you." << endr
-				<< "You smell the presence of " + sentence + "." << endr
-				<< sentence + " are nearby." << endr;
-    }
+	string Alive::getDescriptionSentence() {
+		return getGroupDescriptionSentence({ this });
+	}
+
+	string Alive::getGroupDescriptionSentence(vector<ObjectPointer> others) {
+		SentenceJoiner alives;
+		for (auto i = others.begin(); i != others.end(); i++) {
+			alives << *i;
+		}
+
+		return RandomString::get()
+				<< alives.getSentence("", "You recognize %'s figure. ", "You recognize %. ") << endr
+				<< alives.getSentence("", "% is there with you. ", "% are there with you. ") << endr
+				<< alives.getSentence("", "You smell the presence of %.") << endr
+				<< alives.getSentence("", "& is nearby.", "% are nearby.") << endr;
+	}
 
 	ObjectPointer Alive::getLocation() {
 		return getSingleRelation(R_INSIDE, Relation::Slave);
