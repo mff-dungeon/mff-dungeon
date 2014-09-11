@@ -19,6 +19,8 @@
 #define R_TARGET "target"
 // Creature drops an item
 #define R_DROP "dropper"
+// Creature drops an item
+#define R_RECIPE "crafter-recipe"
 
 /*
  *  Logging
