@@ -1,7 +1,7 @@
 #include "TextDriver.hpp"
 #include "ActionDescriptor.hpp"
 #include "RandomString.hpp"
-#include "Objects/Trap.hpp"
+#include "Traps/Trap.hpp"
 
 namespace Dungeon {
     

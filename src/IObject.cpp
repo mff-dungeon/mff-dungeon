@@ -1,7 +1,7 @@
 #include "IObject.hpp"
 #include "ObjectPointer.hpp"
 #include "GameManager.hpp"
-#include "Objects/Trap.hpp"
+#include "Traps/Trap.hpp"
 #include "Cloner.hpp"
 #include <memory>
 

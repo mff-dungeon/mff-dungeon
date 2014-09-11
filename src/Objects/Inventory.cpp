@@ -179,7 +179,7 @@ namespace Dungeon {
 		
 		backpack->removeItem(target);
 		ad->getGM()->createRelation(ad->getAlive()->getLocation(), item, R_INSIDE);
-		
 		*ad << "You've dropped " + item->getName() + ".";
+		item->onDrop(ad);
 	}
 }

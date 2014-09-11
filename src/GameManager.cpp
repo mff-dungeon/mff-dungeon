@@ -210,6 +210,8 @@ namespace Dungeon {
 		this->insertObject(pack);
 		createRelation(getObjectInstance("room/baseRoom"), figure, R_INSIDE);
 		createRelation(figure, pack, Wearable::SlotRelations[Wearable::Slot::Backpack]);
+		pack->onPick(nullptr);
+		pack->onEquip(nullptr);
 		
 		// Warning: loads user's backpack
 		figure->calculateBonuses();

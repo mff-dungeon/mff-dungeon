@@ -143,5 +143,6 @@ namespace Dungeon {
 		ad->getGM()->removeRelation(current, item, R_INSIDE);
 		inventory->addItem(item);
 		*ad << "You've picked up " + item->getName() + ".";
+		item->onPick(ad);
 	}
 }

@@ -56,8 +56,17 @@ namespace Dungeon {
 		virtual void getActions(ActionList* list, ObjectPointer callee);
                 
 		virtual void registerProperties(IPropertyStorage& storage);
-
-		
+                
+                virtual ObjectPointer onEquip(ActionDescriptor* ad) {
+                    triggerTraps("equipped", ad);
+                    return this;
+                }
+                
+                virtual ObjectPointer onUnequip(ActionDescriptor* ad) {
+                    triggerTraps("unequipped", ad);
+                    return this;
+                }
+                	
 	private:
 		
 		Slot slot = Invalid;

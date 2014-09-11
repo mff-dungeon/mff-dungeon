@@ -116,16 +116,7 @@ namespace Dungeon {
 				->setSlot(Wearable::Weapon)
 				->setSize(3000)
 				->setWeight(5000)
-				->setName("Wooden club")
-				->setLongName("a weak wooden club")
-				->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop. ")
-				->save();
-		
-		createObject<Wearable>("wearable/woodenclub/" + RANDID, equipRoom)
-				->setAttackBonus(6)
-				->setSlot(Wearable::Weapon)
-				->setSize(3000)
-				->setWeight(5000)
+				->respawnEvery(60)
 				->setName("Wooden club")
 				->setLongName("a weak wooden club")
 				->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop. ")

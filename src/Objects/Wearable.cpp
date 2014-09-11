@@ -91,6 +91,8 @@ namespace Dungeon {
 			ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
 			itemPtr->setSingleRelation(R_INSIDE, ad->getAlive()->getLocation(), Relation::Slave);
 			*ad << "You have dropped " + item->getName() + ". ";
+			item->onUnequip(ad);
+			item->onDrop(ad);
 			return true;
 		}
 		else if (action == DesiredAction::Keep) {
@@ -112,6 +114,7 @@ namespace Dungeon {
 			ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
 			backpack->addItem(itemPtr);
 			*ad << "You have unequiped " + item->getName() + " and put it into your " + backpack->getName() + ". ";
+			item->onUnequip(ad);
 			return true;
 		}
 		return false;
@@ -216,7 +219,6 @@ namespace Dungeon {
 			<< equipedItemPtr.safeCast<IDescriptable>()->getName()
 			<< ", or do you want to put it into your backpack? ";
 		ad->waitForReply([this] (ActionDescriptor *ad, string reply) {
-			// FIXME: Use StringMatcher to match drop/put...
 			FuzzyStringMatcher<Wearable::DesiredAction> matcher;
 			matcher.add("drop", Wearable::DesiredAction::Drop);
 			matcher.add("ground", Wearable::DesiredAction::Drop);
@@ -224,6 +226,7 @@ namespace Dungeon {
 			matcher.add("keep", Wearable::DesiredAction::Keep);
 			matcher.add("put", Wearable::DesiredAction::Keep);
 			matcher.add("put in backpack", Wearable::DesiredAction::Keep);
+			matcher.add("backpack", Wearable::DesiredAction::Keep);
 			this->dAction = matcher.find(reply);
 			itemPhaseTwo(ad);
 		});
@@ -252,6 +255,8 @@ namespace Dungeon {
 			ad->getAlive()->setSingleRelation(Wearable::SlotRelations[itemPtr.unsafeCast<Wearable>()->getSlot()], itemPtr, Relation::Master, GameStateInvalid::EquippedMoreThanOne);
 			*ad << "You have successfully equipped " << itemPtr.unsafeCast<IDescriptable>()->getName() << ". ";
 			ad->getAlive()->calculateBonuses()->save();
+			itemPtr.unsafeCast<Wearable>()->onPick(ad);
+			itemPtr.unsafeCast<Wearable>()->onEquip(ad);
 			return;
 		}
 		
@@ -263,6 +268,7 @@ namespace Dungeon {
 					ad->getAlive()->setSingleRelation(slotRelation, itemPtr, Relation::Master, GameStateInvalid::EquippedMoreThanOne);
 					*ad << "You have successfully equipped " << itemPtr.unsafeCast<IDescriptable>()->getName() << ". ";
 					ad->getAlive()->calculateBonuses()->save();
+					itemPtr.unsafeCast<Wearable>()->onEquip(ad);
 					return;
 				}
 			}
@@ -364,6 +370,7 @@ namespace Dungeon {
 				newPack->addItem(equipedItemPtr);
 				*ad << "You have unequiped " << currentPack->getName() 
 					<< " and put it into your " << newPack->getName() << ". ";
+				equipedItemPtr.unsafeCast<Wearable>()->onUnequip(ad);
 			}
 			backpackPhaseThree(ad);
 		}
@@ -377,6 +384,7 @@ namespace Dungeon {
 		ad->getGM()->createRelation(ad->getAlive(), newPack, slotRelation);
 		*ad << "You have equipped " << newPack->getName() << ". ";
 		ad->getAlive()->calculateBonuses()->save();	
+		newPack->onEquip(ad);
 	}
 	
 	PERSISTENT_IMPLEMENTATION(Wearable)

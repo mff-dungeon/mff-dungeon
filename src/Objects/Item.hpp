@@ -37,12 +37,26 @@ namespace Dungeon {
         
         virtual void examine(ActionDescriptor* ad);
 
+        /**
+         * Must be inserted to world and be "inside" something to work.
+         */
+        virtual Item* respawnEvery(int seconds);
 
         virtual string getDescription() const;
         virtual string getDescriptionSentence();
         virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
 		
 		virtual void registerProperties(IPropertyStorage& storage);
+                
+                virtual ObjectPointer onPick(ActionDescriptor* ad) {
+                    triggerTraps("picked", ad);
+                    return this;
+                }
+                
+                virtual ObjectPointer onDrop(ActionDescriptor* ad) {
+                    triggerTraps("dropped", ad);
+                    return this;
+                }
 		
 	private:
 		int size;

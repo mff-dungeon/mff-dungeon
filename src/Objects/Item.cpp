@@ -5,6 +5,7 @@
 #include "../ActionDescriptor.hpp"
 #include "../RandomString.hpp"
 #include "../SentenceJoiner.hpp"
+#include "../Traps/ItemRespawner.hpp"
 
 namespace Dungeon {
 	
@@ -68,6 +69,23 @@ namespace Dungeon {
 			*ad << getDescription();
 		}
 	}
+	
+	Item* Item::respawnEvery(int seconds) {
+		ObjectPointer item (this);
+		item.assertExists("Item must exist to be respawnable");
+		ObjectPointer location = getSingleRelation(R_INSIDE, Relation::Slave);
+		if (!location)
+			throw new GameException("Item must be inside something to be respawnable.");
+		
+		ItemRespawner* trap = new ItemRespawner("trap/respawn/" + getId());
+		trap->setInterval(seconds);
+		this->getGameManager()->insertObject(trap);
+		trap->setTemplate(item);
+		location->attachTrap(trap, "get-actions");
+		this->getGameManager()->removeRelation(location, this, R_INSIDE);
+		return this;
+	}
+
 	
 	string Item::getDescription() const {
 		stringstream ss;

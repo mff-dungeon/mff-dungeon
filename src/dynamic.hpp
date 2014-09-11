@@ -13,7 +13,9 @@
 #include "Objects/Recipe.hpp"
 #include "Objects/Room.hpp"
 #include "Objects/ThorsHammer.hpp"
-#include "Objects/Trap.hpp"
 #include "Objects/Wearable.hpp"
+#include "Traps/AttackTrap.hpp"
+#include "Traps/ItemRespawner.hpp"
+#include "Traps/Trap.hpp"
 
 #endif
