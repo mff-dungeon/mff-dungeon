@@ -256,7 +256,6 @@ namespace Dungeon {
 			if(ad->getAlive()->getState() == Alive::State::Living) {
 				*ad << "You have managed to run from " << creature->getName() 
 					<< ". Be warned though, as any other action than leaving this room would reinitiate attack. ";
-				// FIXME: set a trap to reinitiate attack
 			}
 		}
 		else {
@@ -266,6 +265,7 @@ namespace Dungeon {
 				return;
 			}
 			ad->getAlive()->damageAlive(creaturePtr, creature->getAttack(), ad);
+			if(ad->getAlive()->getState() != Alive::State::Living) return;
 			// Should be able to use potion, or so (later)
 			*ad << text;
 			*ad << "\n" << creature->getName() << ": [" << Utils::progressBar(creature->getCurrentHp(), creature->getMaxHp(), 10) << "]"
