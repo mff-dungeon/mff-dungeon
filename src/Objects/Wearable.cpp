@@ -225,6 +225,7 @@ namespace Dungeon {
 			matcher.add("put", Wearable::DesiredAction::Keep);
 			matcher.add("put in backpack", Wearable::DesiredAction::Keep);
 			this->dAction = matcher.find(reply);
+			itemPhaseTwo(ad);
 		});
 	}	
 	
@@ -241,7 +242,7 @@ namespace Dungeon {
 				<< " now. ";
 			return;
 		}
-		this->itemPhaseTwo(ad);
+		this->itemPhaseThree(ad);
 	}
 	
 	void EquipAction::itemPhaseThree(ActionDescriptor* ad) {
