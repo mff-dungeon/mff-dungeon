@@ -30,6 +30,7 @@ namespace Dungeon {
 		virtual Alive* die(ActionDescriptor* ad = 0);
 		virtual Alive* respawn(ActionDescriptor* ad = 0);
 
+		virtual int getCraftingLevel() const {return 0;}
 
         virtual string getName() const;
         virtual string getLongName() const;

@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <math.h>
 #include "Alive.hpp"
 #include "Room.hpp"
 #include "../ActionDescriptor.hpp"
@@ -197,14 +198,13 @@ namespace Dungeon {
 		if(attacker == 0) return this;
 		double multiplier = 10;
 		if(getDefense() != 0) { // Division by zero
-			multiplier = (double) amount / getDefense();
+			multiplier = (double) sqrt(amount / getDefense());
 			if(multiplier > 10) multiplier = 10;
 		}
-		// Random part
-		rand_init(gen, dist, 90, 110);
-        int rnd = rand_next(gen, dist);
 		
-		int damage = (int) (multiplier * rnd / 100 *(amount - getDefense() * 0.33));
+        int rnd = Utils::getRandomInt(90, 110);
+		
+		int damage = (int) (multiplier * rnd / 100 *(amount - getDefense() * 0.2));
 		if(damage <= 0) return this; 
 		if(ad != 0) {
 			if(ad->getAlive() == this) {

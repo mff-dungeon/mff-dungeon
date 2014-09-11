@@ -78,7 +78,6 @@ namespace Dungeon
 		 */
 		virtual ObjectPointer getRespawnLocation();
 		virtual Alive* setRespawnLocation(ObjectPointer room);
-
 		
 		/**
 		 * Recalculates this alive's attack and defense values due to equip changes
@@ -86,30 +85,29 @@ namespace Dungeon
 		 * implemented here
          */
 		Alive* calculateBonuses();
-
 		
-            /**
-             * @return Current location of this being
-             */
-            ObjectPointer getLocation();
+		/**
+		 * @return Current location of this being
+		 */
+		ObjectPointer getLocation();
 
-            /**
-             * @return Equipped backpack or nullptr
-             * 
-             * When there will be more than one backpack, one could implement "IterableObjectPointer",
-             * which utilizes operator++
-             */
-            ObjectPointer getBackpack();
+		/**
+		 * @return Equipped backpack or nullptr
+		 * 
+		 * When there will be more than one backpack, one could implement "IterableObjectPointer",
+		 * which utilizes operator++
+		 */
+		ObjectPointer getBackpack();
 
-            virtual void registerProperties(IPropertyStorage& storage);
-            
-            virtual void onBeforeAction(ActionDescriptor* ad) {
-                getLocation()->triggerTraps("inside", ad);
-            }
-            
-            virtual void onAfterAction(ActionDescriptor* ad) {
-                getLocation()->triggerTraps("inside", ad);
-            }
+		virtual void registerProperties(IPropertyStorage& storage);
+
+		virtual void onBeforeAction(ActionDescriptor* ad) {
+			getLocation()->triggerTraps("inside", ad);
+		}
+
+		virtual void onAfterAction(ActionDescriptor* ad) {
+			getLocation()->triggerTraps("inside", ad);
+		}
 		
 	private:
 		// Combat stats
