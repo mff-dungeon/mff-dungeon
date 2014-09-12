@@ -274,7 +274,7 @@ namespace Dungeon {
 	}
         
         int Alive::getResourceQuantity(Resource::ResourceType type) {
-            ObjectPointer resource = getSingleRelation(R_RESOURCE(type), Relation::Slave);
+            ObjectPointer resource = getSingleRelation(R_RESOURCE(type), Relation::Master);
             
             if (!!resource) {
                 return resource.unsafeCast<Resource>()->getQuantity();
@@ -284,7 +284,7 @@ namespace Dungeon {
         }
         
         Alive* Alive::addResource(Resource* resource) {
-            ObjectPointer current = getSingleRelation(R_RESOURCE(resource->getType()), Relation::Slave);
+            ObjectPointer current = getSingleRelation(R_RESOURCE(resource->getType()), Relation::Master);
             
             if (!!current) {
                 Resource *res = current.unsafeCast<Resource>();
@@ -293,7 +293,7 @@ namespace Dungeon {
                 
                 this->getGameManager()->deleteObject(resource);
             } else {
-                resource->setSingleRelation(R_RESOURCE(resource->getType()), this);
+                this->setSingleRelation(R_RESOURCE(resource->getType()), resource);
             }
             
             return this;
