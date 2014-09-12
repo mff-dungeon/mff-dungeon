@@ -42,11 +42,17 @@ namespace Dungeon {
             } catch (const StringMatcher::Uncertain& e) {
                 *ad << "I'm sorry, did you say \"" << "\"?";
                 ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
-                    bool repl = StringMatcher::matchTrueFalse(reply);
-                    if (repl) {
-                        // commitOnTarget(ad, target);
-                    } else {
-                        *ad << "Sorry, i'm sort of dumb last few days. Please say it again.";
+                    try {
+                        bool repl = StringMatcher::matchTrueFalse(reply);
+                        if (repl) {
+                            // commitOnTarget(ad, target);
+                        } else {
+                            *ad << "Sorry, i'm sort of dumb last few days. Please say it again.";
+                        }
+                    } catch (const StringMatcher::Uncertain& e) {
+                        *ad << "Nevermind.";
+                    } catch (const StringMatcher::NoCandidate& e) {
+                        *ad << "Nevermind.";
                     }
                 });
             } catch (const StringMatcher::NoCandidate& e) {
