@@ -115,7 +115,7 @@ namespace Dungeon {
 		if (this == callee) {
 			// Actions always available 
             list->addAction(new CallbackAction("hello", "hello - When you wanna be polite to your Dungeon",
-               RegexMatcher::matcher("hello|hi|whats up|wazzup|yo"),
+               RegexMatcher::matcher("hello|hi|whats up|wazzup|yo|hey"),
                [this] (ActionDescriptor * ad) {
                    *ad << "Hi!" << eos;
                }, false));
@@ -178,7 +178,7 @@ namespace Dungeon {
 				}, false));
 
 			list->addAction(new CallbackAction("explore", "explore - List items you can see in your current location",
-				RegexMatcher::matcher("explore|examine|(tell me )?where (the fuck )?am i|locate me|tell me my location"),
+				RegexMatcher::matcher("explore|examine|(tell me )?where (the fuck )?am i|locate me|tell me my location|investigate"),
 				[this] (ActionDescriptor * ad) {
 						ObjectMap rooms = getRelations(Relation::Slave, R_INSIDE);
 						for (auto& room : rooms) {

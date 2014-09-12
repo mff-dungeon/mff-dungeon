@@ -76,7 +76,7 @@ namespace Dungeon {
 			
 		
 	bool ExamineEction::matchCommand(string command) {
-		return RegexMatcher::match("(examine?|explore?|look( +(in|to|into|on|onto))?) +(.+)", command, matches);
+		return RegexMatcher::match("(investigate?|examine?|explore?|look( closer)?( +(in|to|into|on|onto|at))?) +(.+)", command, matches);
 	}	
 
 	void ExamineEction::commit(ActionDescriptor* ad) {
@@ -89,7 +89,7 @@ namespace Dungeon {
 	}
 	
 	void ExamineEction::explain(ActionDescriptor* ad) {
-		*ad << "You can use 'examine ...' to look closer on items you have or see.\n" << eos;
+		*ad << "examine ... - look closer on items you have or see." << eos;
 	}
 
 	

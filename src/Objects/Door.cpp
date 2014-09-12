@@ -90,11 +90,11 @@ namespace Dungeon {
 	}	
 
 	void DoorwalkAction::explain(ActionDescriptor* ad) {
-		*ad << "Use 'go to ...' to enter another room." << eos;
+		*ad << "go to ... - enter another room." << eos;
 	}
 	
 	bool DoorwalkAction::matchCommand(string command) {
-		return RegexMatcher::match("(go to|cd) .+", command); // Common mistake :)
+		return RegexMatcher::match("(go to|cd|walk through) .+", command); // Common mistake :)
 	}
 
 

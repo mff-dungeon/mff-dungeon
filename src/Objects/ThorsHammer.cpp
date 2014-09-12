@@ -100,14 +100,14 @@ namespace Dungeon
 				}));
 				
 		list->addAction(new CallbackAction("heal", "heal yourself - heals you to full hp.",
-				RegexMatcher::matcher("heal"),
+				RegexMatcher::matcher("heal( myself| me)?"),
 				[] (ActionDescriptor* ad) {
 					ad->getAlive()->setCurrentHp(ad->getAlive()->getMaxHp());
 					*ad << "You have fully healed yourself." << eos;
 				}));
 		
-		list->addAction(new CallbackAction("teleport", "teleport <id> - teleport yourself everywhere.",
-				RegexMatcher::matcher("teleport .+"), 
+		list->addAction(new CallbackAction("teleport", "teleport to <id> - teleport yourself everywhere.",
+				RegexMatcher::matcher("teleport( to)? .+"), 
 				[] (ActionDescriptor* ad) {
 					smatch matches;
 					RegexMatcher::match("^teleport (.*)$", ad->in_msg, matches);
@@ -216,7 +216,7 @@ namespace Dungeon
 	}
 	
 	void ThorsHammer::PropertyEditor::explain(ActionDescriptor* ad) {
-		*ad << "You can edit all properties of any object with \"edit <id>\".\n" << eos;
+		*ad << "edit <id> - alter properties of any object" << eos;
 	}
 
     PERSISTENT_IMPLEMENTATION(ThorsHammer)
