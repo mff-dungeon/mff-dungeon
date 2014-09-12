@@ -32,6 +32,12 @@ namespace Dungeon {
 		virtual string getDescriptionSentence();
 		virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
 
+                /**
+                 * Helper method to set the creature drops
+                 * @see Dropper
+                 */
+                virtual Creature* drops(ObjectPointer item, int chance, int min = 1, int max = 1);
+                
 	private:
 		
 	PERSISTENT_DECLARATION(Creature, Alive)

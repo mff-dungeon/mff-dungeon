@@ -44,11 +44,11 @@ namespace Dungeon {
     }
 
     string Resource::getName() const {
-        return getResourceTypeName(getType());
+        return to_string(getQuantity()) + " " + getResourceTypeName(getType());
     }
 
     string Resource::getLongName() const {
-        return to_string(getQuantity()) + " " + getResourceTypeName(getType());
+        return to_string(getQuantity()) + " units of " + getResourceTypeName(getType());
     }
 
     string Resource::getDescription() const {

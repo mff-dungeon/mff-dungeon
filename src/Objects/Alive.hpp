@@ -141,6 +141,12 @@ namespace Dungeon
                     this->weaponName = weaponName;
                     return this;
                 }
+                
+                /**
+                 * Helper method to set auto-healing trap.
+                 * @see Healing
+                 */
+                virtual Alive* regenerate(int rate);
 
                 
 	private:

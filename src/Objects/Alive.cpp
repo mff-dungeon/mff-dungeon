@@ -6,6 +6,7 @@
 #include "../ActionList.hpp"
 #include "../RandomString.hpp"
 #include "../SentenceJoiner.hpp"
+#include "../Traps/Healing.hpp"
 
 namespace Dungeon {
     
@@ -336,6 +337,16 @@ namespace Dungeon {
 
 		return this;
 	}
+	
+	Alive* Alive::regenerate(int rate) {
+		Healing* heal = new Healing("trap/healing/" + getId());
+		heal->setRate(rate);
+		getGameManager()->insertObject(heal);
+
+		heal->setTarget(this);
+		return this;
+	}
+
 
 	PERSISTENT_IMPLEMENTATION(Alive)
 }

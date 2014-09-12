@@ -22,7 +22,7 @@
 // Creature drops an item
 #define R_RECIPE "crafter-recipe"
 // Alive has gold
-#define R_RESOURCE(type) ( "resource" + to_string((int)(type)) )
+#define R_RESOURCE(type) ( "resource-" + to_string((int)(type)) )
 
 /*
  *  Logging

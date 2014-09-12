@@ -2,6 +2,7 @@
 #include "../RandomString.hpp"
 #include "../Dropper.hpp"
 #include "../SentenceJoiner.hpp"
+#include "../Dropper.hpp"
 #include <time.h>
 #include <vector>
 
@@ -274,6 +275,19 @@ namespace Dungeon {
 			});
 		}
 	}
+	
+	Creature* Creature::drops(ObjectPointer item, int chance, int min, int max) {
+		Dropper* dropper = new Dropper("dropper/" + getId() + "/" + RANDID);
+		dropper->setChance(chance)
+				->setMin(min)
+				->setMax(max);
+		getGameManager()->insertObject(dropper);
+
+		dropper->setItem(item);
+		this->attachDrop(dropper);
+		return this;
+	}
+
 
 	PERSISTENT_IMPLEMENTATION(Creature)
 }

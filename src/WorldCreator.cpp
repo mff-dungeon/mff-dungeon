@@ -45,12 +45,9 @@ namespace Dungeon {
 				->save();
 		
 		templates["creature/smallspider"] = createObject<Creature>("template/creature/smallspider/1", templateRoom)
-				->attachDrop(createObject<Dropper>("dropper/smallspider/1/1")
-					->setChance(Dropper::Always)
-					->setMin(1)
-					->setMax(1)
-					->setItem(templates["potion/greenhealing"])
-					->save())
+				->drops(templates["potion/greenhealing"], 50 * Dropper::Percent)
+				->drops(templates["potion/greenhealing"], 30 * Dropper::Percent)
+				->drops(templates["potion/greenhealing"], 1  * Dropper::Percent)
 				->setAttack(3)
 				->setDefense(2)
 				->setMaxHp(100)
@@ -159,11 +156,11 @@ namespace Dungeon {
 						->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop. ")
 						->save();
                                 
-                                createObject<Resource>("resource/gold/" + RANDID, equipChest)
-                                                ->setType(Resource::ResourceType::Gold)
-                                                ->setQuantity(200)
-                                                ->attachSumTrap()
-                                                ->save();
+				createObject<Resource>("resource/gold/" + RANDID, equipChest)
+								->setType(Resource::ResourceType::Gold)
+								->setQuantity(200)
+								->attachSumTrap()
+								->save();
 
 			ObjectPointer trapChest = createObject<Location>("chest/equipRoom/3", equipRoom)
 					->setEmptyMessage("There are some nails, but they're too small for your fingers to pick. ")
@@ -211,11 +208,7 @@ namespace Dungeon {
 				->save();
 		
 		 createObject<Creature>("creature/megaspider/" + RANDID, bossRoom)
-				->attachDrop(createObject<Dropper>("dropper/megaspider/1")
-					->setChance(Dropper::Always)
-					->setMin(1)
-					->setMax(1)
-					->setItem(createObject<Wearable>("template/wearable/ironclub/1")
+				->drops(createObject<Wearable>("template/wearable/ironclub/1")
 							->setAttackBonus(20)
 							->setDefenseBonus(3)
 							->setSlot(Wearable::Weapon)
@@ -224,8 +217,7 @@ namespace Dungeon {
 							->setName("Iron club")
 							->setLongName("a strong iron club")
 							->setDescription("Finally a weapon!")
-							->save())
-					->save())
+							->save(), 80 * Dropper::Percent)
 				->setAttack(8)
 				->setDefense(4)
 				->setMaxHp(300)
