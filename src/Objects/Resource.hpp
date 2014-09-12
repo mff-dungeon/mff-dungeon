@@ -49,6 +49,7 @@ namespace Dungeon {
             int quantity = 0;
             
             objId getResourceTypeId(ResourceType type) const;
+            string getResourceTypeName(ResourceType type) const;
 		
 	PERSISTENT_DECLARATION(Resource, Item)
 	};

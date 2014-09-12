@@ -3,27 +3,26 @@
 
 namespace Dungeon {
     
-    objId Resource::getResourceTypeId(ResourceType type) const {
-        objId prefix = "resource/";
-        
-        switch (getType()) {
+    string Resource::getResourceTypeName(ResourceType type) const {
+        switch (type) {
             case ResourceType::Gold:
-                prefix += "gold";
+                return "gold";
             case ResourceType::Wood:
-                prefix += "wood";
+                return "wood";
             case ResourceType::Stone:
-                prefix += "stone";
+                return "stone";
             case ResourceType::Food:
-                prefix += "food";
+                return "food";
             case ResourceType::ManaShard:
-                prefix += "manashard";
+                return "manashard";
             default:
                 // no laughing, this is actually a serious error
-                prefix += "puppies";
+                return "puppies";
         }
-        
-        prefix += "/" + RANDID;
-        return prefix;
+    }
+    
+    objId Resource::getResourceTypeId(ResourceType type) const {
+        return "resource/" + getResourceTypeName(type) + "/" + RANDID;
     }
     
     Resource::ResourceType Resource::getType() const {
@@ -45,21 +44,7 @@ namespace Dungeon {
     }
 
     string Resource::getName() const {
-        switch (getType()) {
-            case ResourceType::Gold:
-                return "Gold";
-            case ResourceType::Wood:
-                return "Wood";
-            case ResourceType::Stone:
-                return "Stone";
-            case ResourceType::Food:
-                return "Food";
-            case ResourceType::ManaShard:
-                return "Mana shard";
-            default:
-                // no laughing, this is actually a serious error
-                return "Puppies";
-        }
+        return to_string(getQuantity()) + " " + getResourceTypeName(getType());
     }
 
     string Resource::getLongName() const {
