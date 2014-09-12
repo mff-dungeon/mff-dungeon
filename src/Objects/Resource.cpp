@@ -44,10 +44,14 @@ namespace Dungeon {
     }
 
     string Resource::getName() const {
-        return to_string(getQuantity()) + " " + getResourceTypeName(getType());
+        return getResourceTypeName(getType());
     }
 
     string Resource::getLongName() const {
+        return to_string(getQuantity()) + " " + getResourceTypeName(getType());
+    }
+
+    string Resource::getDescription() const {
         switch (getType()) {
             case ResourceType::Gold:
                 return "A chunk of great wealth (" + to_string(getQuantity()) + " units).";
@@ -65,14 +69,10 @@ namespace Dungeon {
         }
     }
 
-    string Resource::getDescription() const {
-        return "Yay a description!";
-    }
-
     void Resource::registerProperties(IPropertyStorage& storage) {
-            storage.have((int&) resourceType, "resource-type", "Type of the resource (0 - gold, 1 - wood, 2 - stone, 3 - food, 4 - mana shard)");
-            storage.have(quantity, "resource-quantity", "Quantity of the resource");
-            Item::registerProperties(storage);
+        storage.have((int&) resourceType, "resource-type", "Type of the resource (0 - gold, 1 - wood, 2 - stone, 3 - food, 4 - mana shard)");
+        storage.have(quantity, "resource-quantity", "Quantity of the resource");
+        Item::registerProperties(storage);
     }
 
     Resource* Resource::attachSumTrap() {
@@ -91,10 +91,8 @@ namespace Dungeon {
 
         Resource* newResource = target.safeCast<Resource>();            
         Alive* sender = ad->getAlive();
-
-        *ad << " sum trap! gold before: " << sender->getResourceQuantity(Resource::ResourceType::Gold);            
+            
         sender->addResource(newResource);
-        *ad << " gold after: " << sender->getResourceQuantity(Resource::ResourceType::Gold);
     }
 
     PERSISTENT_IMPLEMENTATION(ResourceSumTrap)
