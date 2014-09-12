@@ -5,6 +5,7 @@
 #include "../Actions/CallbackAction.hpp"
 #include "IDescriptable.hpp"
 #include "Wearable.hpp"
+#include "Resource.hpp"
 
 namespace Dungeon
 {
@@ -108,7 +109,27 @@ namespace Dungeon
 		virtual void onAfterAction(ActionDescriptor* ad) {
 			getLocation()->triggerTraps("inside", ad);
 		}
+                
+                int getResourceQuantity(Resource::ResourceType type);
+                
+                bool hasResourceGreaterThan(Resource::ResourceType type, int quantity) {
+                    int actual = getResourceQuantity(type);
+                    return actual >= quantity;
+                }
+                
+                bool hasResourceLowerThan(Resource::ResourceType type, int quantity)  {
+                    int actual = getResourceQuantity(type);
+                    return actual <= quantity;
+                }
+                
+                bool hasResourceEqual(Resource::ResourceType type, int quantity) {
+                    int actual = getResourceQuantity(type);
+                    return actual == quantity;
+                }    
+                
+                Alive* addResource(Resource* resource);
 		
+                
 	private:
 		// Combat stats
         int maxHp = 1000;

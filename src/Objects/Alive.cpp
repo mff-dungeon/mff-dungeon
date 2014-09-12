@@ -273,6 +273,32 @@ namespace Dungeon {
 		this->currentState = newState;
 		return this;
 	}
+        
+        int Alive::getResourceQuantity(Resource::ResourceType type) {
+            ObjectPointer resource = getSingleRelation(R_RESOURCE(type), Relation::Slave);
+            
+            if (!!resource) {
+                return resource.unsafeCast<Resource>()->getQuantity();
+            } else {
+                return 0;
+            }
+        }
+        
+        Alive* Alive::addResource(Resource* resource) {
+            ObjectPointer current = getSingleRelation(R_RESOURCE(resource->getType()), Relation::Slave);
+            
+            if (!!current) {
+                Resource *res = current.unsafeCast<Resource>();
+                res->setQuantity(res->getQuantity() + resource->getQuantity());
+                res->save();
+                
+                this->getGameManager()->deleteObject(resource);
+            } else {
+                resource->setSingleRelation(R_RESOURCE(resource->getType()), this);
+            }
+            
+            return this;
+        }
 
 	PERSISTENT_IMPLEMENTATION(Alive)
 }

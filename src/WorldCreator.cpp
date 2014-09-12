@@ -104,6 +104,18 @@ namespace Dungeon {
 						->setLongName("a red potion in silver vial")
 						->setDescription("The vial has some scratches, but the color of the liquid is just beautiful. ")
 						->save();
+                                
+                                createObject<Resource>("resource/gold/" + RANDID, potionChest)
+                                                ->setType(Resource::ResourceType::Gold)
+                                                ->setQuantity(42)
+                                                ->attachSumTrap()
+                                                ->save();
+                                
+                                createObject<Resource>("resource/food/" + RANDID, potionChest)
+                                                ->setType(Resource::ResourceType::Food)
+                                                ->setQuantity(100)
+                                                ->attachSumTrap()
+                                                ->save();
 
 			ObjectPointer equipChest = createObject<Location>("chest/equipRoom/2", equipRoom)
 					->setName("Big chest")
@@ -131,6 +143,12 @@ namespace Dungeon {
 						->setLongName("a weak wooden club")
 						->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop. ")
 						->save();
+                                
+                                createObject<Resource>("resource/gold/" + RANDID, equipChest)
+                                                ->setType(Resource::ResourceType::Gold)
+                                                ->setQuantity(200)
+                                                ->attachSumTrap()
+                                                ->save();
 
 			ObjectPointer trapChest = createObject<Location>("chest/equipRoom/3", equipRoom)
 					->setEmptyMessage("There are some nails, but they're too small for your fingers to pick. ")

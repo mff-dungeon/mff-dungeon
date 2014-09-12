@@ -21,6 +21,8 @@
 #define R_DROP "dropper"
 // Creature drops an item
 #define R_RECIPE "crafter-recipe"
+// Alive has gold
+#define R_RESOURCE(type) ( "resource" + to_string((int)(type)) )
 
 /*
  *  Logging
@@ -69,6 +71,7 @@ namespace Dungeon {
     class IDescriptable;
     class Alive;
     class Item;
+    class Resource;
     class Potion;
     
     /**
@@ -121,7 +124,6 @@ namespace Dungeon {
 #include "IObject.hpp"
 #include "ObjectPointer.hpp"
 #include "AddIObject.hpp"
-
 
 
 #endif

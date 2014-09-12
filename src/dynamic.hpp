@@ -12,6 +12,7 @@
 #include "Objects/Location.hpp"
 #include "Objects/Potion.hpp"
 #include "Objects/Recipe.hpp"
+#include "Objects/Resource.hpp"
 #include "Objects/ThorsHammer.hpp"
 #include "Objects/Wearable.hpp"
 #include "Traps/AttackTrap.hpp"
