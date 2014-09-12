@@ -169,12 +169,12 @@ namespace Dungeon {
 						*ad << "This is an non-interactive help. You can do following actions:\n";
 						ActionList list;
 						this->getAllActions(&list);
+                                                
+                                                ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
 						for (auto& a : list) {
                             if (!a.second->isVisibleInHelp) continue;
 							a.second->explain(ad);
-							*ad << "\n";
 						}
-                                                *ad << eos;
 				}, false));
 
 			list->addAction(new CallbackAction("explore", "explore - List items you can see in your current location",
@@ -235,8 +235,11 @@ namespace Dungeon {
 				RegexMatcher::matcher(".*combat stats|hitpoints"),
 				[this] (ActionDescriptor* ad) {
 					Alive* me = ad->getAlive();
-					*ad << "Hitpoints: " + to_string(me->getCurrentHp()) + "/" + to_string(me->getMaxHp()) + "\n";
-					*ad << "Attack value: " + to_string(me->getAttack()) + "\n";
+                                        *ad << "Here is your current combat profile:" << eos;
+                                        
+                                        ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
+					*ad << "Hitpoints: " + to_string(me->getCurrentHp()) + "/" + to_string(me->getMaxHp()) << eos;
+					*ad << "Attack value: " + to_string(me->getAttack()) << eos;
 					*ad << "Defense value: " + to_string(me->getDefense()) << eos;
 				}, false));
                                 
@@ -245,10 +248,10 @@ namespace Dungeon {
 				[this] (ActionDescriptor* ad) {
 					Alive* me = ad->getAlive();
                                         
-                                        *ad << "Here are your current resources:";
+                                        *ad << "Here are your current resources:" << eos;
+                                        ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
                                         for (int type = (int)Resource::ResourceType::BEGIN; type != (int)Resource::ResourceType::END; type++) {
-                                            *ad << "\n";                                            
-                                            *ad << "  - " << Utils::capitalize(Resource::ResourceName[type], true) << ": ";
+                                            *ad << Utils::capitalize(Resource::ResourceName[type], true) << ": ";
                                             
                                             int quantity = me->getResourceQuantity((Resource::ResourceType)type);
                                             
@@ -302,8 +305,9 @@ namespace Dungeon {
                                                                              << "you've broken physics" << endr
                                                                              << "keep calm and nuke it from orbit" << endr );
                                             }
+                                            
+                                            *ad << eos;
                                         }
-                                        *ad << eos;
 				}, false));
             
             list->addAction(new CallbackAction("self-rename", "",

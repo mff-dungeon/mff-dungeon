@@ -38,6 +38,11 @@ namespace Dungeon {
             Trap
         } state = RoundBegin;
         
+        enum ReplyFormat {
+            Paragraph,
+            List
+        } replyFormat;
+        
         /** Special type to indicate EOS - @see eos*/
         class EndOfSentence { };
         
@@ -116,6 +121,8 @@ namespace Dungeon {
         void clearDialog() {
             queue<dialogReply>().swap(dialogReplies); // Trick
         }
+        
+        ActionDescriptor* setReplyFormat(ReplyFormat format);
         
     protected:
         string message;

@@ -52,14 +52,22 @@ namespace Dungeon {
         
 	void ActionDescriptor::addSentence(string msg) {
             string trimmed = Utils::trim(msg);
-            
             if (trimmed == "") return;
             
-            if (++sentences > 1) {
-                message += " ";
+            if (replyFormat == ReplyFormat::List) {
+                if (++sentences > 1) {
+                    message += "\n";
+                }
+
+                message += "  - ";
+                message += trimmed;
+            } else {
+                if (++sentences > 1) {
+                    message += " ";
+                }
+
+                message += trimmed;
             }
-                     
-            message += trimmed;
 	}
 	
 	ActionDescriptor& ActionDescriptor::operator<< (const string& msg){
@@ -85,6 +93,12 @@ namespace Dungeon {
             this->addSentence(currentSentence.str());
             currentSentence.str("");
             return *this;
+        }
+        
+        ActionDescriptor* ActionDescriptor::setReplyFormat(ReplyFormat format) {
+            *this << eos;
+            replyFormat = format;
+            return this;
         }
 
 
