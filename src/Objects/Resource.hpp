@@ -13,7 +13,8 @@ namespace Dungeon {
 	class Resource : public Item {
 	public:
 		/**
-		 * Determines the type of the resource.
+		 * Determines the type of the resource. 
+		 * Mana shard should always be the last as many iterations depend on it
 		 */
 		enum ResourceType {
                     Gold = 0,
@@ -22,6 +23,8 @@ namespace Dungeon {
                     Food = 3,
                     ManaShard = 4
                 };
+				
+		static const char* ResourceName[];
 		
 		Resource() {}
 		Resource(objId id) : Item(id) {}
@@ -45,7 +48,7 @@ namespace Dungeon {
                 	
 	private:
 		
-            ResourceType resourceType;
+            ResourceType resourceType = Resource::Gold;
             int quantity = 0;
             
             objId getResourceTypeId(ResourceType type) const;

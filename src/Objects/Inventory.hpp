@@ -33,6 +33,7 @@ namespace Dungeon {
         virtual int getBaseWeight() const;
 		
 		void addItem(ObjectPointer itemPtr);
+		bool canAdd(ObjectPointer itemPtr);
 		void removeItem(ObjectPointer itemPtr);
 		bool contains(ObjectPointer itemPtr);
 		

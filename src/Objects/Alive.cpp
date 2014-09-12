@@ -99,7 +99,7 @@ namespace Dungeon {
 				<< alives.getSentence("", "You recognize %'s figure. ", "You recognize %. ") << endr
 				<< alives.getSentence("", "% is there with you. ", "% are there with you. ") << endr
 				<< alives.getSentence("", "You smell the presence of %.") << endr
-				<< alives.getSentence("", "& is nearby.", "% are nearby.") << endr;
+				<< alives.getSentence("", "% is nearby.", "% are nearby.") << endr;
 	}
 
 	ObjectPointer Alive::getLocation() {

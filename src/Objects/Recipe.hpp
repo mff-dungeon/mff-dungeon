@@ -15,11 +15,16 @@ namespace Dungeon {
 		
 		virtual string getDescription() const;
 		
-		int getLevelRequired() const;
-		Recipe* setLevelRequired(int level);
-		int getResource(int type);
-		Recipe* setResource(int resource, int type);
-		Recipe* setResourceList(int* resources);
+		int getLevel() const;
+		Recipe* setLevel(int level);
+		int getExperience() const;
+		Recipe* setExperience(int experience);
+		int getResource(int type) const;
+		Recipe* setResource(int type, int resource);
+		ObjectPointer getBadItem();
+		Recipe* setBadItem(ObjectPointer item);
+		ObjectPointer getGoodItem();
+		Recipe* setGoodItem(ObjectPointer item);
 		
 		void tryCraft(ActionDescriptor* ad);
 		
@@ -28,7 +33,8 @@ namespace Dungeon {
 		virtual void registerProperties(IPropertyStorage& storage);
 
 	private:
-		int level;
+		int level = 1;
+		int experience = 0;
 		int* resources;
 
 	PERSISTENT_DECLARATION(Recipe, IObject)

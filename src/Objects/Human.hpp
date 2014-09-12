@@ -30,7 +30,9 @@ namespace Dungeon {
 		virtual Alive* die(ActionDescriptor* ad = 0);
 		virtual Alive* respawn(ActionDescriptor* ad = 0);
 
-		virtual int getCraftingLevel() const {return 0;}
+		virtual int getCraftingLevel() const;
+		virtual Human* addCraftingExp(int exp);
+		virtual int getRequiredExp(int level);
 
         virtual string getName() const;
         virtual string getLongName() const;
@@ -53,6 +55,10 @@ namespace Dungeon {
         
     private:
         string username, contact;
+		
+		// Level stats
+		int craftingLvl = 1;
+		int craftingExp = 0;
         
     PERSISTENT_DECLARATION(Human, Alive)
 

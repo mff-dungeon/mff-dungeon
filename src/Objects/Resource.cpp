@@ -2,7 +2,9 @@
 #include "Alive.hpp"
 
 namespace Dungeon {
-    
+   
+	const char* Resource::ResourceName[] = {"gold", "wood", "stone", "food", "mana shards"};
+	 
     string Resource::getResourceTypeName(ResourceType type) const {
         switch (type) {
             case ResourceType::Gold:

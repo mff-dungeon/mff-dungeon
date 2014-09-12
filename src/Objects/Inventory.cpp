@@ -84,6 +84,13 @@ namespace Dungeon {
 		this->getGameManager()->createRelation(this, item, R_INVENTORY);
 		save();
 	}
+
+	bool Inventory::canAdd(ObjectPointer itemPtr) {
+		itemPtr.assertType<Item>("You can add only items into your backpack.");
+		Item* item = itemPtr.safeCast<Item>();
+		return (getFreeWeight() >= item->getWeight() && getFreeSpace() >= item->getSize());
+	}
+
 	
 	void Inventory::removeItem(ObjectPointer itemPtr) {
 		itemPtr.assertType<Item>("You can add only items into your backpack.");

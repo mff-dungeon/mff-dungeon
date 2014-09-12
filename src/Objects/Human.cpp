@@ -4,6 +4,7 @@
 #include "Location.hpp"
 #include "Inventory.hpp"
 #include <time.h>
+#include <cmath>
 #include "../exceptions.hpp"
 #include "../RandomString.hpp"
 
@@ -52,6 +53,24 @@ namespace Dungeon {
     	return username;
 	}
 
+	int Human::getCraftingLevel() const {
+		return craftingLvl;
+	}
+
+	Human* Human::addCraftingExp(int exp) {
+		this->craftingExp += exp;
+		// Recalculate level
+		while(getRequiredExp(getCraftingLevel()+1) <= craftingExp) {
+			craftingLvl++;
+		}
+		return this;
+	}
+
+	int Human::getRequiredExp(int level) {
+		return (int) 42*pow(1.142,level) + 42 * level * level + 42 * level - 42;
+	}
+
+
 	Alive* Human::die(ActionDescriptor* ad) {
 		this->setState(State::Dead);
 		this->setRespawnTime(time(0) + getRespawnInterval());
@@ -84,7 +103,9 @@ namespace Dungeon {
 
 	void Human::registerProperties(IPropertyStorage& storage) {
 		storage.have(username, "human-username", "Username, public available")
-			.have(contact, "human-jid", "Contact JID", false);
+			.have(contact, "human-jid", "Contact JID", false)
+			.have(craftingLvl, "human-craftinglvl", "Human's crafting lvl")
+			.have(craftingExp, "human-craftingexp", "Human's crafting exp");
 		Alive::registerProperties(storage);
 	}
 	

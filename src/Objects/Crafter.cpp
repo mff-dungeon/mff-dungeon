@@ -42,7 +42,7 @@ namespace Dungeon {
 			const ObjectMap& recipes = getRelations(Relation::Master, R_RECIPE);
 			for(auto& recipe : recipes) {
 				recipe.second.assertExists("Recipe somehow disappeared. ").assertType<Recipe>("This is not a recipe! ");
-				if(recipe.second.unsafeCast<Recipe>()->getLevelRequired() <= level) {
+				if(recipe.second.unsafeCast<Recipe>()->getLevel() <= level) {
 					createAct->addTarget(recipe.second);
 				}
 			}
@@ -81,7 +81,7 @@ namespace Dungeon {
 			for(auto& recipe : recipes) {
 				recipe.second.assertExists("Recipe has disappeared. ").assertType<Recipe>("There is a non-recipe registered. ");
 				Recipe* r = recipe.second.unsafeCast<Recipe>();
-				if(level >= r->getLevelRequired()) {
+				if(level >= r->getLevel()) {
 					*ad << r->getDescription();
 				}
 			}
@@ -109,7 +109,7 @@ namespace Dungeon {
 		
 		Recipe* r = target.unsafeCast<Recipe>();
 		int level = ((Human*) ad->getAlive())->getCraftingLevel();
-		if(r->getLevelRequired() > level) {
+		if(r->getLevel() > level) {
 			*ad << "You cannot craft this item yet. ";
 			LOGS("Crafter", Error) << "Somehow, a unsuitable item got to the create action. " << LOGF;
 		}

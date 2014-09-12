@@ -45,8 +45,9 @@ namespace Dungeon {
 		virtual void getActions(ActionList* list, ObjectPointer callee);
 		
 	private:
-		int chance; // 1000000 = 100%
-		int min, max;
+		int chance = 0; // 1000000 = 100%
+		int min = 1;
+		int max = 1;
 		
 	PERSISTENT_DECLARATION(Dropper, IObject)
 	};
