@@ -57,13 +57,13 @@ namespace Dungeon {
 	}
 
 	Door* Door::addLock(ObjectPointer lock) {
-		lock.assertExists("The lock doesn't exists. ").assertType<DoorLock>("You are locking a door with something strange. ");
+		lock.assertExists("The lock doesn't exists.").assertType<DoorLock>("You are locking a door with something strange.");
 		this->attachTrap(lock, "doorwalk");
 		return this;
 	}
 
 	Door* Door::removeLock(ObjectPointer lock) {
-		lock.assertExists("The lock doesn't exists. ").assertType<DoorLock>("You are unlocking a door with something strange. ");
+		lock.assertExists("The lock doesn't exists.").assertType<DoorLock>("You are unlocking a door with something strange.");
 		this->detachTrap(lock, "doorwalk");
 		return this;
 	}
@@ -79,9 +79,9 @@ namespace Dungeon {
 		}
 
 		return RandomString::get()
-				<< doors.getSentence("", "There is %. ", "There are %. ") << endr
-				<< doors.getSentence("", "A % is casting a grimm shadow on the floor. ", "Around you are %. ") << endr
-				<< doors.getSentence("", "You see the frame of a %. ", "You see %. ") << endr;
+				<< doors.getSentence("", "There is %.", "There are %.") << endr
+				<< doors.getSentence("", "A % is casting a grimm shadow on the floor.", "Around you are %.") << endr
+				<< doors.getSentence("", "You see the frame of a %.", "You see %.") << endr;
 	}
 	
 	void Door::registerProperties(IPropertyStorage& storage) {
@@ -90,7 +90,7 @@ namespace Dungeon {
 	}	
 
 	void DoorwalkAction::explain(ActionDescriptor* ad) {
-		*ad << "Use 'go to ...' to enter another room.";
+		*ad << "Use 'go to ...' to enter another room." << eos;
 	}
 	
 	bool DoorwalkAction::matchCommand(string command) {

@@ -3,7 +3,7 @@
 
 namespace Dungeon {
 	void CallbackAction::explain(ActionDescriptor* ad) {
-		*ad << explanation;
+		*ad << explanation << eos;
 	}
 
 	void CallbackAction::commit(ActionDescriptor* ad) {

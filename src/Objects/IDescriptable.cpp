@@ -5,7 +5,7 @@ namespace Dungeon {
 	
 	string IDescriptable::getDescription() const {
 		if (description == "")
-			return "Nothing much really. Just " + getLongName() + ". ";
+			return "Nothing much really. Just " + getLongName() + ".";
 		return description;
 	}
 
@@ -50,7 +50,7 @@ namespace Dungeon {
 	void IDescriptable::examine(ActionDescriptor* ad) {
 		triggerTraps("examine", ad);
 		if (ad) {
-			*ad << getDescription();
+			*ad << getDescription() << eos;
 		}
 	}
 
@@ -89,7 +89,7 @@ namespace Dungeon {
 	}
 	
 	void ExamineEction::explain(ActionDescriptor* ad) {
-		*ad << "You can use 'examine ...' to look closer on items you have or see.\n";
+		*ad << "You can use 'examine ...' to look closer on items you have or see.\n" << eos;
 	}
 
 	

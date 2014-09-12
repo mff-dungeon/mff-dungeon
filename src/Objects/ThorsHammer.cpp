@@ -33,7 +33,7 @@ namespace Dungeon
 					target = ad->getAlive();
 				} else {
 					if (!ad->getGM()->hasObject(matches[3])) {
-						*ad << "404: Object not found :)";
+						*ad << "404: Object not found :)" << eos;
 						return;
 					}
 					target = ad->getGM()->getObject(matches[3]);
@@ -66,20 +66,22 @@ namespace Dungeon
 						}
 					}
 				}
+                                
+                                *ad << eos;
 		}));
 		
 		list->addAction(new CallbackAction("shutdown", "server shutdown - Shutdown's the server.",
 				RegexMatcher::matcher("server shutdown"), 
 				[] (ActionDescriptor* ad) {
 					ad->getGM()->shutdown();
-					*ad << "OK. I will just finish the queue. Bye!";
+					*ad << "OK. I will just finish the queue. Bye!" << eos;
 				}));
 		
 		list->addAction(new CallbackAction("dot-dump", "server dump dot - generate game graph in dot format.",
 				RegexMatcher::matcher("server dump dot"), 
 				[] (ActionDescriptor* ad) {
 					DotDumper dd;
-					*ad << "You can find the dump at " << dd.startDump() << ".";
+					*ad << "You can find the dump at " << dd.startDump() << "." << eos;
 					
 					for (vector<objId>::value_type& id : ad->getGM()->getObjectList()) {
 						ObjectPointer obj = ad->getGM()->getObject(id);
@@ -92,16 +94,16 @@ namespace Dungeon
 		list->addAction(new CallbackAction("bigBang", "server initialize - Delete & recreate tables.",
 				RegexMatcher::matcher("server initialize"), 
 				[] (ActionDescriptor* ad) {
-					*ad << "Cross your fingers! ";
+					*ad << "Cross your fingers!" << eos;
 					ad->getGM()->initWorld(false);
-					*ad << "... can you hear me? Yes? It worked!";
+					*ad << "... can you hear me? Yes? It worked!" << eos;
 				}));
 				
 		list->addAction(new CallbackAction("heal", "heal yourself - heals you to full hp.",
 				RegexMatcher::matcher("heal"),
 				[] (ActionDescriptor* ad) {
 					ad->getAlive()->setCurrentHp(ad->getAlive()->getMaxHp());
-					*ad << "You have fully healed yourself. ";
+					*ad << "You have fully healed yourself." << eos;
 				}));
 		
 		list->addAction(new CallbackAction("teleport", "teleport <id> - teleport yourself everywhere.",
@@ -110,7 +112,7 @@ namespace Dungeon
 					smatch matches;
 					RegexMatcher::match("^teleport (.*)$", ad->in_msg, matches);
 					if (!ad->getGM()->hasObject(matches[3])) {
-						*ad << "404: Object not found :)";
+						*ad << "404: Object not found :)" << eos;
 						return;
 					}
 					
@@ -137,7 +139,7 @@ namespace Dungeon
 		LOG("TH") << "Editing " << matches[3] << LOGF;
 		GameManager* gm = ad->getGM();
 		if (!gm->hasObject(matches[3])) {
-			*ad << "404: Object not found :)";
+			*ad << "404: Object not found :)" << eos;
 			return;
 		}
 		target = gm->getObject(matches[3]);
@@ -158,13 +160,13 @@ namespace Dungeon
 	
 	void ThorsHammer::PropertyEditor::askForNextOne(ActionDescriptor* ad) {
 		if (descriptions.empty()) {
-			*ad << "Finished editing!";
+			*ad << "Finished editing!" << eos;
 			target->save();
 			return;
 		}
 		string descr = descriptions.front();
 		descriptions.pop();
-		*ad << "Enter value for " << descr << ". ('.' = skip)";
+		*ad << "Enter value for " << descr << ". ('.' = skip)" << eos;
 	}
 	
 	IPropertyStorage& ThorsHammer::PropertyEditor::have(string& prop, string id, string desc, bool editable) {
@@ -190,7 +192,7 @@ namespace Dungeon
 			target.assertExists();
 			if (reply != ".") {
 				std::istringstream(reply) >> prop;
-				*ad << "Set to '" << prop << "'. ";
+				*ad << "Set to '" << prop << "'." << eos;
 				LOG("PropEditor") << "Set property of " << target.getId() << " to " << prop << LOGF;
 			}
 			askForNextOne(ad);
@@ -205,7 +207,7 @@ namespace Dungeon
 			target.assertExists();
 			if (reply != ".") {
 				prop = StringMatcher::matchTrueFalse(reply);
-				*ad << "Set to " << (prop ? "True" : "False") << ". ";
+				*ad << "Set to " << (prop ? "True" : "False") << "." << eos;
 				LOG("PropEditor") << "Set property of " << target.getId() << " to " << (prop ? "True" : "False") << LOGF;
 			}
 			askForNextOne(ad);
@@ -214,7 +216,7 @@ namespace Dungeon
 	}
 	
 	void ThorsHammer::PropertyEditor::explain(ActionDescriptor* ad) {
-		*ad << "You can edit all properties of any object with \"edit <id>\".\n";
+		*ad << "You can edit all properties of any object with \"edit <id>\".\n" << eos;
 	}
 
     PERSISTENT_IMPLEMENTATION(ThorsHammer)

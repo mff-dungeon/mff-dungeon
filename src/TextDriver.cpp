@@ -41,7 +41,7 @@ namespace Dungeon {
 			alist.clear();
 			
 			if (!ad->isValid(this)) {
-				*ad << getDontUnderstandResponse(ad->in_msg);
+				*ad << getDontUnderstandResponse(ad->in_msg) << eos;
 				debugfile << "!!!!!" << endl;
 				debugfile.close();
 				return false;
@@ -76,7 +76,7 @@ namespace Dungeon {
 			LOGS("Driver", Error) << gameException.what() << LOGF;
 			if (ad->getAction() && ad->getAction()->handleException(gameException, ad))
 				return false;
-			*ad << gameException.what();
+			*ad << gameException.what() << eos;
 		}
         
         return false;

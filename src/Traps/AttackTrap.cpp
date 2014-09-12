@@ -36,9 +36,9 @@ namespace Dungeon {
 	void AttackTrap::exceptionTrigger(ActionDescriptor* ad) {
 		string name = target.unsafeCast<Creature>()->getName();
 		*ad << (RandomString::get()
-			<<  name + " has immedietely attacked you. " << endr
-			<< "You've seen some motion, that was  " + name +  " attacking you. " << endr
-			<< "Before you could have done anything else, " + name + " striked. " << endr);
+			<<  name + " has immedietely attacked you." << endr
+			<< "You've seen some motion, that was  " + name +  " attacking you." << endr
+			<< "Before you could have done anything else, " + name + " striked." << endr) << eos;
 		
 		CombatAction* c = new CombatAction;
 		c->addTarget(target);

@@ -47,19 +47,19 @@ namespace Dungeon {
 		switch (getSlot()) {
 			// FIXME do a nicer stuff
 			case Slot::Backpack:
-				return "As your backpack, you're using " + getName() + ". ";
+				return "As your backpack, you're using " + getName() + ".";
 			case Slot::BodyArmor:
 			case Slot::Boots:
 			case Slot::Gloves:
 			case Slot::Helmet:
-				return getName() + " gives you some protection for damage. ";
+				return getName() + " gives you some protection for damage.";
 			case Slot::Weapon:
-				return getName() + " is your main weapon. ";
+				return getName() + " is your main weapon.";
 			case Slot::Shield:
-				return "Your defense is boosted by " + getName() + ". ";
+				return "Your defense is boosted by " + getName() + ".";
 			case Slot::Invalid:
 			default:
-				return getName() + " is fucking out of our tables for some reason. ";
+				return getName() + " is fucking out of our tables for some reason.";
 		}
 	}
 	
@@ -67,9 +67,9 @@ namespace Dungeon {
 		stringstream ss;
 		ss << Item::getDescription();
 		if (getAttackBonus())
-			ss << "It adds " << getAttackBonus() << " to your attack. ";
+			ss << "It adds " << getAttackBonus() << " to your attack.";
 		if (getDefenseBonus())
-			ss << "It adds " << getDefenseBonus() << " to your defense. ";
+			ss << "It adds " << getDefenseBonus() << " to your defense.";
 		return ss.str();
 	}
 
@@ -107,7 +107,7 @@ namespace Dungeon {
 		if(action == DesiredAction::Drop) {
 			ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
 			itemPtr->setSingleRelation(R_INSIDE, ad->getAlive()->getLocation(), Relation::Slave);
-			*ad << "You have dropped " + item->getName() + ". ";
+			*ad << "You have dropped " + item->getName() + "." << eos;
 			item->onUnequip(ad);
 			item->onDrop(ad);
 			return true;
@@ -116,21 +116,21 @@ namespace Dungeon {
 			Inventory* backpack = ad->getAlive()->getBackpack()
 					.safeCast<Inventory>();
 			if(!backpack) {
-				*ad << "You have no backpack to put the item to. ";
+				*ad << "You have no backpack to put the item to." << eos;
 				return false;
 			}
 			if(backpack->getFreeSpace() < item->getSize() 
 					|| backpack->getFreeWeight() < item->getWeight()) {
-				*ad << "You have no free space in your " + backpack->getName() + ". ";
+				*ad << "You have no free space in your " + backpack->getName() + "." << eos;
 				return false;
 			}
 			if(backpack->getId() == item->getId()) {
-				*ad << "You cannot put " + item->getName() + " into itself! ";
+				*ad << "You cannot put " + item->getName() + " into itself!" << eos;
 				return false;
 			}
 			ad->getGM()->removeRelation(ad->getAlive(), item, Wearable::SlotRelations[item->getSlot()]);
 			backpack->addItem(itemPtr);
-			*ad << "You have unequiped " + item->getName() + " and put it into your " + backpack->getName() + ". ";
+			*ad << "You have unequiped " + item->getName() + " and put it into your " + backpack->getName() + "." << eos;
 			item->onUnequip(ad);
 			return true;
 		}
@@ -138,7 +138,7 @@ namespace Dungeon {
 	}
 	
 	void UnequipAction::explain(ActionDescriptor* ad) {
-		*ad << "Use 'take off ...' or 'unequip ...' to unequip chosen item.";
+		*ad << "Use 'take off ...' or 'unequip ...' to unequip chosen item." << eos;
 	}
 
 	bool UnequipAction::matchCommand(string command) {
@@ -159,7 +159,7 @@ namespace Dungeon {
 		// How can we put something in backpack if we won't have it anymore?
 		if(item->isInstanceOf(Inventory::InventoryClassName)) {
 			if(!Wearable::unequip(ad, item, Wearable::DesiredAction::Drop)) {
-				*ad << item->getName() + " couldn't be unequiped.";
+				*ad << item->getName() + " couldn't be unequiped." << eos;
 			}
 			else {
 				ad->getAlive()->calculateBonuses();
@@ -167,7 +167,7 @@ namespace Dungeon {
 			return;
 		}
 		
-		*ad << "Do you want to drop " + item->getName() + ", or do you want to put it into your backpack?";
+		*ad << "Do you want to drop " + item->getName() + ", or do you want to put it into your backpack?" << eos;
 			ad->waitForReply([this, item] (ActionDescriptor *ad, string reply) {
 				FuzzyStringMatcher<Wearable::DesiredAction> matcher;
 				matcher.add("drop", Wearable::DesiredAction::Drop);
@@ -179,7 +179,7 @@ namespace Dungeon {
 				Wearable::DesiredAction dAction = matcher.find(reply);
 				
 				if(!Wearable::unequip(ad, item, dAction)) {
-					*ad << item->getName() + " couldn't be unequiped.";
+					*ad << item->getName() + " couldn't be unequiped." << eos;
 				}
 				else {
 					ad->getAlive()->calculateBonuses()->save();
@@ -188,7 +188,7 @@ namespace Dungeon {
 	}
 	
 	void EquipAction::explain(ActionDescriptor* ad) {
-		*ad << "Use 'wear ...' or 'equip ...' to equip chosen item.";
+		*ad << "Use 'wear ...' or 'equip ...' to equip chosen item." << eos;
 	}
 
 	bool EquipAction::matchCommand(string command) {
@@ -234,7 +234,7 @@ namespace Dungeon {
 	void EquipAction::itemPhaseOne(ActionDescriptor* ad) {
 		*ad << "Do you want to drop " 
 			<< equipedItemPtr.safeCast<IDescriptable>()->getName()
-			<< ", or do you want to put it into your backpack? ";
+			<< ", or do you want to put it into your backpack?" << eos;
 		ad->waitForReply([this] (ActionDescriptor *ad, string reply) {
 			FuzzyStringMatcher<Wearable::DesiredAction> matcher;
 			matcher.add("drop", Wearable::DesiredAction::Drop);
@@ -259,7 +259,7 @@ namespace Dungeon {
 			*ad << equipedItemPtr.safeCast<IDescriptable>()->getName() 
 				<< " couldn't be unequiped, so you cannot wear " 
 				<< itemPtr.safeCast<IDescriptable>()->getName() 
-				<< " now. ";
+				<< " now." << eos;
 			return;
 		}
 		this->itemPhaseThree(ad);
@@ -270,7 +270,7 @@ namespace Dungeon {
 		if(currentRoom->contains(itemPtr)) {
 			ad->getGM()->removeRelation(currentRoom, itemPtr, R_INSIDE);
 			ad->getAlive()->setSingleRelation(Wearable::SlotRelations[itemPtr.unsafeCast<Wearable>()->getSlot()], itemPtr, Relation::Master, GameStateInvalid::EquippedMoreThanOne);
-			*ad << "You have successfully equipped " << itemPtr.unsafeCast<IDescriptable>()->getName() << ". ";
+			*ad << "You have successfully equipped " << itemPtr.unsafeCast<IDescriptable>()->getName() << "." << eos;
 			ad->getAlive()->calculateBonuses()->save();
 			itemPtr.unsafeCast<Wearable>()->onPick(ad);
 			itemPtr.unsafeCast<Wearable>()->onEquip(ad);
@@ -283,7 +283,7 @@ namespace Dungeon {
 				if(backpack->contains(itemPtr)) {
 					backpack->removeItem(itemPtr);
 					ad->getAlive()->setSingleRelation(slotRelation, itemPtr, Relation::Master, GameStateInvalid::EquippedMoreThanOne);
-					*ad << "You have successfully equipped " << itemPtr.unsafeCast<IDescriptable>()->getName() << ". ";
+					*ad << "You have successfully equipped " << itemPtr.unsafeCast<IDescriptable>()->getName() << "." << eos;
 					ad->getAlive()->calculateBonuses()->save();
 					itemPtr.unsafeCast<Wearable>()->onEquip(ad);
 					return;
@@ -304,7 +304,7 @@ namespace Dungeon {
 		
 		*ad << "Would you like to move your items to a " << newPack->getName() << " and keep " 
 				<< currentPack->getName() + ", move items and drop " << currentPack->getName() 
-				<< " or leave all items in " << currentPack->getName() << " and drop it?";
+				<< " or leave all items in " << currentPack->getName() << " and drop it?" << eos;
 		ad->waitForReply([this] (ActionDescriptor *ad, string reply) {
 			FuzzyStringMatcher<Wearable::DesiredAction> matcher;
 			matcher.add("move keep", Wearable::DesiredAction::MoveAndKeep);
@@ -329,7 +329,7 @@ namespace Dungeon {
 		Inventory* currentPack = equipedItemPtr.safeCast<Inventory>();
 		
 		if(dAction == Wearable::DesiredAction::NotKnown) {
-			*ad << "I don't know what you mean. ";
+			*ad << "I don't know what you mean." << eos;
 			return;
 		}
 		else if(dAction == Wearable::DesiredAction::Drop) {
@@ -352,11 +352,11 @@ namespace Dungeon {
 			}
 			// Do the checks
 			if(newPack->getFreeSpace() < requiredSize) {
-				*ad << "You cannot switch backpacks because " + newPack->getName() + " isn't big enough.";
+				*ad << "You cannot switch backpacks because " + newPack->getName() + " isn't big enough." << eos;
 				return;
 			}
 			if(newPack->getFreeWeight() < requiredWeight) {
-				*ad << "You cannot switch backpacks because " + newPack->getName() + " cannot hold that much weight.";
+				*ad << "You cannot switch backpacks because " + newPack->getName() + " cannot hold that much weight." << eos;
 				return;
 			}
 			// Let's move the items
@@ -386,7 +386,7 @@ namespace Dungeon {
 				ad->getGM()->removeRelation(ad->getAlive(), currentPack, Wearable::SlotRelations[Wearable::Slot::Backpack]);
 				newPack->addItem(equipedItemPtr);
 				*ad << "You have unequiped " << currentPack->getName() 
-					<< " and put it into your " << newPack->getName() << ". ";
+					<< " and put it into your " << newPack->getName() << "." << eos;
 				equipedItemPtr.unsafeCast<Wearable>()->onUnequip(ad);
 			}
 			backpackPhaseThree(ad);
@@ -399,7 +399,7 @@ namespace Dungeon {
 			ad->getGM()->removeRelation(currentLoc, newPack, R_INSIDE);
 		}
 		ad->getGM()->createRelation(ad->getAlive(), newPack, slotRelation);
-		*ad << "You have equipped " << newPack->getName() << ". ";
+		*ad << "You have equipped " << newPack->getName() << "." << eos;
 		ad->getAlive()->calculateBonuses()->save();	
 		newPack->onEquip(ad);
 	}

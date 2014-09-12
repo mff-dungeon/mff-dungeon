@@ -40,23 +40,23 @@ namespace Dungeon {
 				if (obj) LOGS("MTA", Verbose) << "Selected " << obj->getLongName() << LOGF;
                 commitOnTarget(ad, target);
             } catch (const StringMatcher::Uncertain& e) {
-                *ad << "I'm sorry, did you say \"" << "\"?";
+                *ad << "I'm sorry, did you say \"" << "\"?" << eos;
                 ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
                     try {
                         bool repl = StringMatcher::matchTrueFalse(reply);
                         if (repl) {
                             // commitOnTarget(ad, target);
                         } else {
-                            *ad << "Sorry, i'm sort of dumb last few days. Please say it again.";
+                            *ad << "Sorry, i'm sort of dumb last few days. Please say it again." << eos;
                         }
                     } catch (const StringMatcher::Uncertain& e) {
-                        *ad << "Nevermind.";
+                        *ad << "Nevermind." << eos;
                     } catch (const StringMatcher::NoCandidate& e) {
-                        *ad << "Nevermind.";
+                        *ad << "Nevermind." << eos;
                     }
                 });
             } catch (const StringMatcher::NoCandidate& e) {
-                *ad << "No such thing found. Really.";
+                *ad << "No such thing found. Really." << eos;
             }
         }
 }

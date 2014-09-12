@@ -8,7 +8,7 @@ namespace Dungeon {
 		if (justOnce && hasRelation("damage-dealt", ad->getAlive()))
 			return;
 		
-		*ad << getDamageMessage();
+		*ad << getDamageMessage() << eos;
 		ad->getAlive()->changeHp(-getDamage());
 		if (justOnce)
 			ad->getGM()->createRelation(this, ad->getAlive(), "damage-dealt");

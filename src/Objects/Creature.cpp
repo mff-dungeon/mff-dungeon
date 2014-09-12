@@ -30,10 +30,10 @@ namespace Dungeon {
 		
 		if(ad != 0) {
 			if(dropped) {
-				*ad << this->getName() << " has dropped some items on the ground! ";
+				*ad << this->getName() << " has dropped some items on the ground!" << eos;
 			}
 			else {
-				*ad << this->getName() << " has dropped nothing. ";
+				*ad << this->getName() << " has dropped nothing." << eos;
 			}
 		}
 		return this;
@@ -63,7 +63,7 @@ namespace Dungeon {
 			this->setState(State::Dead);
 		}
 		if(ad != 0) {
-			*ad << "You have killed " << getName() << ". ";
+			*ad << "You have killed " << getName() << "." << eos;
 		}
 		save();
 		
@@ -137,18 +137,18 @@ namespace Dungeon {
 		}
 		
 		return (string) (RandomString::get()
-					<<  living.getSentence("", "You see % wandering around. ") << endr
-					<< living.getSentence("", "There is %. ", "There are %.  ") << endr)
+					<<  living.getSentence("", "You see % wandering around.") << endr
+					<< living.getSentence("", "There is %.", "There are %.  ") << endr)
 			+ (string) (RandomString::get()
-					<< dying.getSentence("", "You see % lying on the ground heavy breathing. ") << endr
-					<< dying.getSentence("", "There lies hardly living body of %. ", "There lie hardly living bodies of %. ") << endr)
+					<< dying.getSentence("", "You see % lying on the ground heavy breathing.") << endr
+					<< dying.getSentence("", "There lies hardly living body of %.", "There lie hardly living bodies of %.") << endr)
 			+ (string) (RandomString::get()
-					<< dead.getSentence("", "% was kiled here. ", "% were killed here. ") << endr
-					<< dead.getSentence("", "There lies corpse of %. ", "There lies corpses of %. ") << endr);
+					<< dead.getSentence("", "% was kiled here.", "% were killed here.") << endr
+					<< dead.getSentence("", "There lies corpse of %.", "There lies corpses of %.") << endr);
 	}
 	
 	void KillAction::explain(ActionDescriptor* ad) {
-		*ad << "Use 'kill ...' to kill an almost dead creature.\n";
+		*ad << "Use 'kill ...' to kill an almost dead creature.\n" << eos;
 	}
 	
 	bool KillAction::matchCommand(string command) {
@@ -170,10 +170,10 @@ namespace Dungeon {
 		target.assertRelation(R_INSIDE, ad->getAlive()->getLocation(), Relation::Slave, "The creature is not here.");
 		Creature* creature = target.unsafeCast<Creature>();
 		if(creature->getState() == Alive::State::Living) {
-			*ad << creature->getName() << " is too healthy to be killed. ";
+			*ad << creature->getName() << " is too healthy to be killed." << eos;
 		}
 		else if(creature->getState() == Alive::State::Dead || creature->getState() == Alive::State::Invalid) {
-			*ad << creature->getName() << " is already dead. ";
+			*ad << creature->getName() << " is already dead." << eos;
 		}
 		else {
 			creature->die(ad);
@@ -203,10 +203,10 @@ namespace Dungeon {
 		creaturePtr.assertRelation(R_INSIDE, ad->getAlive()->getLocation(), Relation::Slave, "The creature is not here.");
 		Creature* creature = creaturePtr.unsafeCast<Creature>();
 		if(creature->getState() == Alive::State::Dying) {
-			*ad << creature->getName() << " is hardly breathing. Finish him! ";
+			*ad << creature->getName() << " is hardly breathing. Finish him!" << eos;
 			return false;
 		} else if(creature->getState() == Alive::State::Dead) {
-			*ad << creature->getName() << " is already dead. ";
+			*ad << creature->getName() << " is already dead." << eos;
 			return false;
 		}
 		return true;
@@ -235,16 +235,16 @@ namespace Dungeon {
 		CombatAction::CombatMatch action = matchAnswer(reply);
 		if(action == CombatAction::CombatMatch::Check) {
 			if(creature->getPercentageHp() > 0.75) {
-				*ad << creature->getName() << " looks very vital. ";
+				*ad << creature->getName() << " looks very vital." << eos;
 			}
 			else if(creature->getPercentageHp() > 0.50) {
-				*ad << creature->getName() << " is still vital, but you can see some scratches there. ";
+				*ad << creature->getName() << " is still vital, but you can see some scratches there." << eos;
 			}
 			else if(creature->getPercentageHp() > 0.25) {
-				*ad << creature->getName() << " is wounded, but it is still standing still. ";
+				*ad << creature->getName() << " is wounded, but it is still standing still." << eos;
 			}
 			else {
-				*ad << creature->getName() << " is seriously wounded, finish it while you can! ";
+				*ad << creature->getName() << " is seriously wounded, finish it while you can!" << eos;
 			}
 			*ad << text;
 			ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
@@ -255,13 +255,13 @@ namespace Dungeon {
 			ad->getAlive()->damageAlive(creaturePtr, creature->getAttack(), ad);
 			if(ad->getAlive()->getState() == Alive::State::Living) {
 				*ad << "You have managed to run from " << creature->getName() 
-					<< ". Be warned though, as any other action than leaving this room would reinitiate attack. ";
+					<< ". Be warned though, as any other action than leaving this room would reinitiate attack." << eos;
 			}
 		}
 		else {
 			creature->damageAlive(ad->getAlive(), ad->getAlive()->getAttack(), ad);
 			if(creature->getState() == Alive::State::Dying) {
-				*ad << creature->getName() << " is mortally wounded. Use 'kill ...' to finish it. ";
+				*ad << creature->getName() << " is mortally wounded. Use 'kill ...' to finish it." << eos;
 				return;
 			}
 			ad->getAlive()->damageAlive(creaturePtr, creature->getAttack(), ad);
@@ -269,7 +269,7 @@ namespace Dungeon {
 			// Should be able to use potion, or so (later)
 			*ad << text;
 			*ad << "\n" << creature->getName() << ": [" << Utils::progressBar(creature->getCurrentHp(), creature->getMaxHp(), 10) << "]"
-				<< "     You: [" << Utils::progressBar(ad->getAlive()->getCurrentHp(), ad->getAlive()->getMaxHp(), 10) << "]";
+				<< "     You: [" << Utils::progressBar(ad->getAlive()->getCurrentHp(), ad->getAlive()->getMaxHp(), 10) << "]" << eos;
 			ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
 				this->combatLoop(ad, reply);
 			});

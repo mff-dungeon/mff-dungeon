@@ -15,13 +15,13 @@ namespace Dungeon {
 	}
 
 	Crafter* Crafter::addRecipe(ObjectPointer recipe) {
-		recipe.assertExists("The recipe doesn't exist").assertType<Recipe>("You can only add recipes. ");
+		recipe.assertExists("The recipe doesn't exist").assertType<Recipe>("You can only add recipes.");
 		getGameManager()->createRelation(this, recipe, R_RECIPE);
 		return this;
 	}
 
 	Crafter* Crafter::removeRecipe(ObjectPointer recipe) {
-		recipe.assertExists("The recipe doesn't exist").assertType<Recipe>("You can only remove recipes. ")
+		recipe.assertExists("The recipe doesn't exist").assertType<Recipe>("You can only remove recipes.")
 			.assertRelation(R_RECIPE, recipe);
 		getGameManager()->removeRelation(this, recipe, R_RECIPE);
 		return this;
@@ -36,12 +36,12 @@ namespace Dungeon {
 		// Recipes action
 		CreateAction* createAct = new CreateAction;
 		try {
-			callee.assertType<Human>("Only humans can craft. ");
+			callee.assertType<Human>("Only humans can craft.");
 			int level = callee.unsafeCast<Human>()->getCraftingLevel();
 			
 			const ObjectMap& recipes = getRelations(Relation::Master, R_RECIPE);
 			for(auto& recipe : recipes) {
-				recipe.second.assertExists("Recipe somehow disappeared. ").assertType<Recipe>("This is not a recipe! ");
+				recipe.second.assertExists("Recipe somehow disappeared.").assertType<Recipe>("This is not a recipe! ");
 				if(recipe.second.unsafeCast<Recipe>()->getLevel() <= level) {
 					createAct->addTarget(recipe.second);
 				}
@@ -59,7 +59,7 @@ namespace Dungeon {
 	}
 	
 	void CraftAction::explain(ActionDescriptor* ad) {
-		*ad << "Use 'craft ...' to ask for a recipe list. ";
+		*ad << "Use 'craft ...' to ask for a recipe list." << eos;
 	}
 	
 	bool CraftAction::matchCommand(string command) {
@@ -71,7 +71,7 @@ namespace Dungeon {
 	}
         
 	void CraftAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
-		target.assertExists("Crafter is not found. ").assertType<Crafter>("You can ask only a crafter for a craft list. ");
+		target.assertExists("Crafter is not found.").assertType<Crafter>("You can ask only a crafter for a craft list.");
 		if(!ad->getAlive()->isInstanceOf(Human::HumanClassName)) return;
 		
 		int level = ((Human*) ad->getAlive())->getCraftingLevel();
@@ -79,10 +79,10 @@ namespace Dungeon {
 			const ObjectMap& recipes = target.unsafeCast<Crafter>()->getRelations(Relation::Master, R_RECIPE);
 			if(recipes.empty()) return;
 			for(auto& recipe : recipes) {
-				recipe.second.assertExists("Recipe has disappeared. ").assertType<Recipe>("There is a non-recipe registered. ");
+				recipe.second.assertExists("Recipe has disappeared.").assertType<Recipe>("There is a non-recipe registered.");
 				Recipe* r = recipe.second.unsafeCast<Recipe>();
 				if(level >= r->getLevel()) {
-					*ad << r->getDescription();
+					*ad << r->getDescription() << eos;
 				}
 			}
 		}
@@ -92,7 +92,7 @@ namespace Dungeon {
 	}
 	
 	void CreateAction::explain(ActionDescriptor* ad) {
-		*ad << "Use 'create ...' to use a recipe to create something. ";
+		*ad << "Use 'create ...' to use a recipe to create something." << eos;
 	}
 	
 	bool CreateAction::matchCommand(string command) {
@@ -104,14 +104,14 @@ namespace Dungeon {
 	}
 
 	void CreateAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
-		target.assertExists("Recipe doesn't exists. ").assertType<Recipe>("You are trying to craft from a non-recipe. ");
+		target.assertExists("Recipe doesn't exists.").assertType<Recipe>("You are trying to craft from a non-recipe.");
 		if(!ad->getAlive()->isInstanceOf(Human::HumanClassName)) return;
 		
 		Recipe* r = target.unsafeCast<Recipe>();
 		int level = ((Human*) ad->getAlive())->getCraftingLevel();
 		if(r->getLevel() > level) {
-			*ad << "You cannot craft this item yet. ";
-			LOGS("Crafter", Error) << "Somehow, a unsuitable item got to the create action. " << LOGF;
+			*ad << "You cannot craft this item yet." << eos;
+			LOGS("Crafter", Error) << "Somehow, a unsuitable item got to the create action." << LOGF;
 		}
 		else {
 			r->tryCraft(ad);

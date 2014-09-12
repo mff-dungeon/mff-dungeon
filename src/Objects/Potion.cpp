@@ -38,11 +38,11 @@ namespace Dungeon {
 		ss << Item::getDescription();
 		switch(getType()) {
 			case Potion::PotionType::Healing:
-				ss << "When drunk, it can heal you " << getStrength() << " hitpoints. ";
+				ss << "When drunk, it can heal you " << getStrength() << " hitpoints.";
 				break;
 			case Potion::PotionType::NoEffect:
 			default:
-				ss << "It is uncertain what it will do when drunk. ";
+				ss << "It is uncertain what it will do when drunk.";
 		}
 		return ss.str();
 	}
@@ -54,7 +54,7 @@ namespace Dungeon {
 	}
 	
 	void DrinkPotionAction::explain(ActionDescriptor* ad) {
-		*ad << "Use 'drink ...' to drink a potion you have or see.\n";
+		*ad << "Use 'drink ...' to drink a potion you have or see.\n" << eos;
 	}
 	
 	bool DrinkPotionAction::matchCommand(string command) {
@@ -68,7 +68,7 @@ namespace Dungeon {
 	void DrinkPotionAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		target.assertType<Potion>("You're too drunk. Hic.");
 		Potion* potion = target.unsafeCast<Potion>();
-		*ad << "You've drunk " + potion->getName() + ". ";
+		*ad << "You've drunk " + potion->getName() + "." << eos;
 		int lastHp = ad->getAlive()->getCurrentHp();
 		switch(potion->getType()) {
 			case Potion::PotionType::Healing:
@@ -79,13 +79,13 @@ namespace Dungeon {
 				break; 
 			case Potion::PotionType::NoEffect:
 			default:
-				*ad << "... and it did nothing.";
+				*ad << "... and it did nothing." << eos;
 		}
 		int curHp =  ad->getAlive()->getCurrentHp();
 		if (curHp > lastHp) 
-			*ad << "You've healed " <<  curHp - lastHp << " hitpoints. ";
+			*ad << "You've healed " <<  curHp - lastHp << " hitpoints." << eos;
 		else if (lastHp > curHp)
-			*ad << "You've lost " <<  lastHp - curHp << " hitpoints. ";
+			*ad << "You've lost " <<  lastHp - curHp << " hitpoints." << eos;
 		ad->getGM()->deleteObject(potion);
 	}
 

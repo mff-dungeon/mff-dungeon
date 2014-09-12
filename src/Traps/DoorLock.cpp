@@ -50,20 +50,20 @@ namespace Dungeon {
 				}
 			}
 			*ad << "As you use your " << getKey().safeCast<IDescriptable>()->getName()
-				<< " it disappears. ";
+				<< " it disappears." << eos;
 		}
 		else {
-			*ad << "You use your " << getKey().safeCast<IDescriptable>()->getName() << ". ";
+			*ad << "You use your " << getKey().safeCast<IDescriptable>()->getName() << "." << eos;
 		}
 	}
 
 	void DoorLock::exceptionTrigger(ActionDescriptor* ad) {
-		*ad << "You need to have a " << getKey().safeCast<IDescriptable>()->getName() << " to pass this door. ";
+		*ad << "You need to have a " << getKey().safeCast<IDescriptable>()->getName() << " to pass this door." << eos;
 		ad->setAction(0);
 	}
 	
 	void DoorLock::registerProperties(IPropertyStorage& storage) {
-		storage.have(consumeKey, "doorlock-consumekey", "True when unlocking the door removes the key. ")
+		storage.have(consumeKey, "doorlock-consumekey", "True when unlocking the door removes the key.")
 				.have(keyId, "doorlock-keyid", "Item type of the required key");
 		Trap::registerProperties(storage);
 	}

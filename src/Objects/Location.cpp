@@ -28,8 +28,8 @@ namespace Dungeon {
 	string Location::getEmptyMessage() const {
 		return emptyMessage != "" ? emptyMessage
 				: RandomString::get()
-					<< "It is empty. " << endr
-					<< "There is nothing. " << endr;
+					<< "It is empty." << endr
+					<< "There is nothing." << endr;
 	}
 	
 	Location* Location::setEmptyMessage(string emptyMessage) {
@@ -75,15 +75,15 @@ namespace Dungeon {
 		return RandomString::get()
 				<< "There is also " + common << endr
 				<< "You can see " + common << endr
-				<< "You've searched " + this->getLongName() + " too. " + this->getDescription() << endr;
+				<< "You've searched " + this->getLongName() + " too." + this->getDescription() << endr;
 	}
 	
 	string Location::getInsideSentence() {
-		string common = this->getLongName() + ". " + this->getDescription();
+		string name = this->getLongName();
 		return RandomString::get()
-				<< "You are in " + common << endr
-				<< "You find yourself in " + common << endr
-				<< "Seems like you are in " + common << endr;
+				<< "You are in " << name << "." << endr
+				<< "You find yourself in " << name << "." << endr
+				<< "Seems like you are in " << name << "." << endr;
 	}
 
 	void Location::examine(ActionDescriptor* ad) {
@@ -98,7 +98,8 @@ namespace Dungeon {
 		// remove myself from the exploration group
 		for (auto obj :  getRelations(Relation::Master, R_INSIDE)) {
 			if (alive == obj.second) {
-				*ad << getInsideSentence();
+				*ad << getInsideSentence() << eos;
+                                *ad << getDescription() << eos;
 			} else if (obj.second->instanceOf(Location)) {
 				nested << obj.second;
 			} else {
@@ -106,11 +107,11 @@ namespace Dungeon {
 			}
 		}
 		
-		*ad << groupedObjects.explore();
-		*ad << nested.getSentence("", "You may want too look into %.");
+		groupedObjects.explore(ad);
+		*ad << nested.getSentence("", "You may want to look into %.") << eos;
 		
 		if (nested.size() + groupedObjects.size() == 0)
-			*ad << getEmptyMessage();
+			*ad << getEmptyMessage() << eos;
 		
 	}
 
@@ -124,11 +125,11 @@ namespace Dungeon {
 
 
 	void PickupAction::explain(ActionDescriptor* ad) {
-		*ad << "Use 'pick up ...' to pick the items you see.";
+		*ad << "Use 'pick up ...' to pick the items you see." << eos;
 	}
 
 	bool PickupAction::matchCommand(string command) {
-		return RegexMatcher::match("(pick( up)?|take) .+", command);
+		return RegexMatcher::match("(pick( up)?|take|grab|obtain|catch|seize) .+", command);
 	}
 
 	void PickupAction::commit(ActionDescriptor* ad) {
@@ -142,7 +143,7 @@ namespace Dungeon {
 	void PickupAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		Item* item = target.assertType<Item>("You can pick up only an item.").unsafeCast<Item>();
 		if (!item->isPickable()) {
-			*ad << "You cannot pick " << item->getName() << ". \n";
+			*ad << "You cannot pick " << item->getName() << ". \n" << eos;
 			return;
 		}
 		
@@ -150,7 +151,7 @@ namespace Dungeon {
 				->getBackpack();
 
 		if (!backpack) {
-			*ad << "You have no inventory to put " << item->getName() << " in. ";
+			*ad << "You have no inventory to put " << item->getName() << " in." << eos;
 			return;
 		}
 		
@@ -160,14 +161,14 @@ namespace Dungeon {
 
 
 		if (inventory->getFreeWeight() < item->getWeight()) {
-			*ad << "Content of " << inventory->getName() << " would be too heavy with " << item->getName() << ". ";
+			*ad << "Content of " << inventory->getName() << " would be too heavy with " << item->getName() << "." << eos;
 			*ad << item->getName() << " weights " << Utils::weightStr(item->getWeight())
-					<< ", but there's only " << Utils::weightStr(inventory->getFreeWeight()) << " available.";
+					<< ", but there's only " << Utils::weightStr(inventory->getFreeWeight()) << " available." << eos;
 			return;
 		}
 
 		if (inventory->getFreeSpace() < item->getSize()) {
-			*ad << "There is not enough space left for " << item->getName() << " in " << inventory->getName() << ". ";
+			*ad << "There is not enough space left for " << item->getName() << " in " << inventory->getName() << "." << eos;
 			return;
 		}
 		// Everything is allright, let's add it
@@ -179,7 +180,7 @@ namespace Dungeon {
 		}
 		ad->getGM()->removeRelation(current, item, R_INSIDE);
 		inventory->addItem(item);
-		*ad << "You've picked up " + item->getName() + ".";
+		*ad << "You've picked up " + item->getName() + "." << eos;
 		item->onPick(ad);
 	}
 }

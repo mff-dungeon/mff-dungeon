@@ -5,6 +5,7 @@
 #include "GameManager.hpp"
 #include "FuzzyStringMatcher.hpp"
 #include "Objects/IDescriptable.hpp"
+#include "ActionDescriptor.hpp"
 
 namespace Dungeon {
     
@@ -42,7 +43,10 @@ namespace Dungeon {
         
         ObjectGroupMap::iterator insertObject(ObjectPointer ptr);
         
+        /** @deprecated */
         string explore();
+        
+        void explore(ActionDescriptor *ad);
         
         ObjectPointer match(string name) {
             FuzzyStringMatcher<ObjectPointer> matcher;

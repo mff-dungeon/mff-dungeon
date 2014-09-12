@@ -6,6 +6,7 @@
 #include <functional>
 #include "common.hpp"
 #include "Driver.hpp"
+#include "RandomString.hpp"
 
 namespace Dungeon {
     
@@ -37,6 +38,9 @@ namespace Dungeon {
             Trap
         } state = RoundBegin;
         
+        /** Special type to indicate EOS - @see eos*/
+        class EndOfSentence { };
+        
         /**
          * Id called after receiving a message.
          */
@@ -61,7 +65,7 @@ namespace Dungeon {
         /**
          * Add some text to the reply. @see operator <<
          */
-        void addMessage(string msg);
+        void addSentence(string msg);
         
         /**
          * Shortcut for addMessage.
@@ -70,8 +74,12 @@ namespace Dungeon {
         ActionDescriptor& operator<<(const char * msg);
         ActionDescriptor& operator<<(const int& msg);
         
+        /**
+         * Finishes current sentence. @see eos
+         */
+        ActionDescriptor& operator<<(ActionDescriptor::EndOfSentence* (*endofsentence)());
+        
         bool isValid(Driver* driver);
-        stringstream messages;
         
         /**
          * Queries user for something. Givencallback will be called 
@@ -109,6 +117,9 @@ namespace Dungeon {
             queue<dialogReply>().swap(dialogReplies); // Trick
         }
         
+    protected:
+        string message;
+        
     private:
         Action* action;
         GameManager* gm;
@@ -116,8 +127,17 @@ namespace Dungeon {
         int id;
         
         queue<dialogReply> dialogReplies;
-
+        
+        int sentences = 0;
+        stringstream currentSentence;
     };
+    
+    /**
+      * Special value that breaks the stream and divides distinct sentences.
+      * Do not call it, it makes sense only in stream context of ActionDescriptor.
+      * @return NULL
+      */
+    ActionDescriptor::EndOfSentence* eos();
     
     /**
      * Prepared for distant future, where responses might be not only textual :)

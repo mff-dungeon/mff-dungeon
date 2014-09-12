@@ -13,8 +13,8 @@ namespace Dungeon {
      *      SentenceJoiner rnd;
      *      rnd << "one" << "two" << "three"; 
      *   
-     *      rnd.getSentence("There is %. ", "There are %. " ); 
-     *                == "There are one, two and three. "
+     *      rnd.getSentence("There is %.", "There are %." ); 
+     *                == "There are one, two and three."
      */
     class SentenceJoiner {
     public:

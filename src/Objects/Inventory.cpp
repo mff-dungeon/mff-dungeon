@@ -111,7 +111,7 @@ namespace Dungeon {
 		for(auto& item : getRelations(Relation::Master, R_INVENTORY)) {
 			items << item.second;
 		}
-		return items.getSentence("", "There is %. ", "There are %. ");
+		return items.getSentence("", "There is %.", "There are %.");
 	}
 	
 	string Inventory::getDescription() const {
@@ -119,8 +119,8 @@ namespace Dungeon {
 		ss << Wearable::getDescription();
 		ss << "It can hold " << Utils::weightStr(getMaxWeight()) ;
 		if (usedWeight)
-			ss << " and currently holds " << Utils::weightStr(usedWeight) << ". ";
-		else ss << " and now it's empty. ";
+			ss << " and currently holds " << Utils::weightStr(usedWeight) << ".";
+		else ss << " and now it's empty.";
 		return ss.str();
 	}
 
@@ -156,7 +156,7 @@ namespace Dungeon {
 	PERSISTENT_IMPLEMENTATION(Inventory)
 	
 	void DropAction::explain(ActionDescriptor* ad) {
-		*ad << "Use 'drop ...' to drop items from your backpack. \n";
+		*ad << "Use 'drop ...' to drop items from your backpack. \n" << eos;
 	}
 	
 	bool DropAction::matchCommand(string command) {
@@ -172,7 +172,7 @@ namespace Dungeon {
 				.safeCast<Item>();
 		
 		if(!item->isDropable()) {
-			*ad << "You cannot drop this item.\n";
+			*ad << "You cannot drop this item.\n" << eos;
 			return;
 		}
 		
@@ -180,13 +180,13 @@ namespace Dungeon {
 		Inventory* backpack = item->getSingleRelation(R_INVENTORY, Relation::Slave)
 				.safeCast<Inventory>();
 		if (!backpack) {
-			*ad << "You cannot drop this item.\n";
+			*ad << "You cannot drop this item.\n" << eos;
 			return;
 		}
 		
 		backpack->removeItem(target);
 		ad->getGM()->createRelation(ad->getAlive()->getLocation(), item, R_INSIDE);
-		*ad << "You've dropped " + item->getName() + ".";
+		*ad << "You've dropped " + item->getName() + "." << eos;
 		item->onDrop(ad);
 	}
 }

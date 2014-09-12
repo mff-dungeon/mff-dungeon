@@ -33,7 +33,7 @@ namespace Dungeon {
 	void WorldCreator::initTemplates() {
 		Location* templateRoom = createObject<Location>("room/templateRoom")
 				->setName("Template storage")
-				->setDescription("Just a room to keep all the templates at one place. ")
+				->setDescription("Just a room to keep all the templates at one place.")
 				->save().unsafeCast<Location>();
 		
 		/***********************************************************************
@@ -768,39 +768,39 @@ namespace Dungeon {
 		templates["item/spiderkey"] = createObject<Item>("template/item/spiderkey/1", templateRoom)
 				->setName("Spider key")
 				->setLongName("a key with an imprint of spider")
-				->setDescription("The key seems to give access to a spider nest. ")
+				->setDescription("The key seems to give access to a spider nest.")
 				->save();
 		templates["item/unicornkey"] = createObject<Item>("template/item/unicornkey/1", templateRoom)
 				->setName("Unicorn key")
 				->setLongName("a key with an imprint of unicorn")
-				->setDescription("The key seems to give access to a unicorn's forest. ")
+				->setDescription("The key seems to give access to a unicorn's forest.")
 				->save();
 		templates["item/minotaurkey"] = createObject<Item>("template/item/minotaurkey/1", templateRoom)
 				->setName("Minotaur key")
 				->setLongName("a key with an imprint of minotaur")
-				->setDescription("The key seems to give access to a minotaur's lair. ")
+				->setDescription("The key seems to give access to a minotaur's lair.")
 				->save();
 		templates["item/hydrakey"] = createObject<Item>("template/item/hydrakey/1", templateRoom)
 				->setName("Hydra key")
 				->setLongName("a key with an imprint of hydra")
-				->setDescription("The key seems to give access to a hydra's lake. ")
+				->setDescription("The key seems to give access to a hydra's lake.")
 				->save();
 		templates["item/dragonkey"] = createObject<Item>("template/item/dragonkey/1", templateRoom)
 				->setName("Dragon key")
 				->setLongName("a key with an imprint of dragon")
-				->setDescription("The key seems to give access to a dragon's volcano. ")
+				->setDescription("The key seems to give access to a dragon's volcano.")
 				->save();
 		// Access key - a drop from boss to access some areas of the dungeon
 		templates["item/pentagonalkey"] = createObject<Item>("template/item/pentagonalkey/1", templateRoom)
 				->setName("Pentagon key")
 				->setLongName("a key in a shape of pentagon")
-				->setDescription("I'll need this key to access further areas of the dungeon. ")
+				->setDescription("I'll need this key to access further areas of the dungeon.")
 				->save();
 		// Late access key - a drop from boss to access some areas of the dungeon
 		templates["item/heptagonalkey"] = createObject<Item>("template/item/heptagonalkey/1", templateRoom)
 				->setName("Heptagon key")
 				->setLongName("a key in a shape of heptagon")
-				->setDescription("I'll need this key to access the most dangerous areas of the dungeon. ")
+				->setDescription("I'll need this key to access the most dangerous areas of the dungeon.")
 				->save();
 		/**********************************************************************
 		 *					Recipes 
@@ -833,15 +833,15 @@ namespace Dungeon {
 				->setStrength(100)
 				->setName("Green potion")
 				->setLongName("A green potion in gold vial.")
-				->setDescription("The vial is untouched, and the color of the liquid is some kind of scary. ")
+				->setDescription("The vial is untouched, and the color of the liquid is some kind of scary.")
 				->setLongName("A green potion in gold vial.")
-				->setDescription("The vial is untouched, and the color of the liquid is some kind of scary. ")
+				->setDescription("The vial is untouched, and the color of the liquid is some kind of scary.")
 				->save();
 		
 		templates["item/trianglekey"] = createObject<Item>("template/item/trianglekey/1", templateRoom)
 				->setName("Triangular key")
 				->setLongName("A small triangular key.")
-				->setDescription("The key seems rather strange, maybe it unlocks something. ")
+				->setDescription("The key seems rather strange, maybe it unlocks something.")
 				->save();
 		
 		templates["creature/smallspider"] = createObject<Creature>("template/creature/smallspider/1", templateRoom)
@@ -887,18 +887,18 @@ namespace Dungeon {
 
 		Location* equipRoom = createObject<Location>("room/equipRoom")
 				->setName("Equip room")
-				->setDescription("Looks like noone has been there for a long time. ")
+				->setDescription("Looks like noone has been there for a long time.")
 				->save().unsafeCast<Location>();
 
 			createDoor("equip-base", baseRoom, equipRoom)
-					->setGoThroughMessage("You've gone through that door. It made a funny noise. ")
+					->setGoThroughMessage("You've gone through that door. It made a funny noise.")
 					->setName("wooden door")
 					->setLongName("wooden door with simple metal handle")
 					->save();
 
 			ObjectPointer potionChest = createObject<Location>("chest/equipRoom/1", equipRoom)
 					->setName("Small chest")
-					->setDescription("An old, rusty chest. ")
+					->setDescription("An old, rusty chest.")
 					->save();
 
 				createObject<Potion>("potion/blue/" + RANDID, potionChest)
@@ -906,7 +906,7 @@ namespace Dungeon {
 						->setStrength(100)
 						->setName("Blue potion")
 						->setLongName("a blue potion in glass vial")
-						->setDescription("It may look like water for some people. ")
+						->setDescription("It may look like water for some people.")
 						->save();
 
 				createObject<Potion>("potion/redhealing/" + RANDID, potionChest)
@@ -914,7 +914,7 @@ namespace Dungeon {
 						->setStrength(200)
 						->setName("Red potion")
 						->setLongName("a red potion in silver vial")
-						->setDescription("The vial has some scratches, but the color of the liquid is just beautiful. ")
+						->setDescription("The vial has some scratches, but the color of the liquid is just beautiful.")
 						->save();
                                 
                                 createObject<Resource>("resource/gold/" + RANDID, potionChest)
@@ -925,7 +925,7 @@ namespace Dungeon {
 
 			ObjectPointer equipChest = createObject<Location>("chest/equipRoom/2", equipRoom)
 					->setName("Big chest")
-					->setDescription("An old, rusty chest. ")
+					->setDescription("An old, rusty chest.")
 					->save();
 			
 			shallowCloneTemplate(templates["item/trianglekey"], equipChest).unsafeCast<Item>()->respawnEvery(60)->save();
@@ -942,7 +942,7 @@ namespace Dungeon {
 							->setWeight(5000)
 							->setName("Wooden club")
 							->setLongName("a weak wooden club")
-							->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop. ")
+							->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop.")
 							->save())
 						->setBadItem(createObject<Wearable>("recipeitem/woodenclub1/" + RANDID)
 							->setAttackBonus(3)
@@ -951,12 +951,12 @@ namespace Dungeon {
 							->setWeight(5000)
 							->setName("Broken Wooden club")
 							->setLongName("a weak cracked wooden club")
-							->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop. ")
+							->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop.")
 							->save())
 						->setName("Wooden club")
 						->setLongName("Wooden club"))
 					->setName("Old anvil")
-					->setDescription("An old rusty anvil. ")
+					->setDescription("An old rusty anvil.")
 					->save();
 			
 			createObject<Resource>("resource/wood/" + RANDID, equipChest)
@@ -984,7 +984,7 @@ namespace Dungeon {
 						->respawnEvery(60)
 						->setName("Wooden club")
 						->setLongName("a weak wooden club")
-						->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop. ")
+						->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop.")
 						->save();
                                 
 				createObject<Resource>("resource/gold/" + RANDID, equipChest)
@@ -994,13 +994,13 @@ namespace Dungeon {
 								->save();
 
 			ObjectPointer trapChest = createObject<Location>("chest/equipRoom/3", equipRoom)
-					->setEmptyMessage("There are some nails, but they're too small for your fingers to pick. ")
+					->setEmptyMessage("There are some nails, but they're too small for your fingers to pick.")
 					->setName("Toolbox")
-					->setDescription("Looks dangerously. ")
+					->setDescription("Looks dangerously.")
 					->attachTrap(createObject<SimpleDamageTrap>("trap/simpledamage/nail")
 						->setDamage(42)
 						->setJustOnce()
-						->setDamageMessage("A nail has fallen and caused you 42 damage. ")
+						->setDamageMessage("A nail has fallen and caused you 42 damage.")
 						->save(), "explore")
 					->save();
 
@@ -1019,7 +1019,7 @@ namespace Dungeon {
 		deepCloneTemplate(templates["creature/smallspider"], darkRoom);
 
 		this->createDoor("dark-base", baseRoom, darkRoom)
-				->setGoThroughMessage("You've crawled through that tunnel. It smelled bad. ")
+				->setGoThroughMessage("You've crawled through that tunnel. It smelled bad.")
 				->addLock(createObject<DoorLock>("doorlock/dark-base-lock/1")
 						->setKey(templates["item/trianglekey"]))
 				->setName("narrow tunnel")
@@ -1035,7 +1035,7 @@ namespace Dungeon {
 				->save().unsafeCast<Location>();
 
 		this->createDoor("dark-boss", bossRoom, darkRoom)
-				->setGoThroughMessage("You can't get rid of that strange feeling. ")
+				->setGoThroughMessage("You can't get rid of that strange feeling.")
 				->setName("Crevice")
 				->setLongName("hole just big enough to fit in")
 				->save();

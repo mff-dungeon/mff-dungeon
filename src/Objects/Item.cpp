@@ -82,12 +82,12 @@ namespace Dungeon {
 		stringstream ss;
 		ss << IDescriptable::getDescription();
 		if (getWeight())
-			ss << "It weights " << Utils::weightStr(getWeight()) << ". ";
-		else ss << "It weights almost nothing. "; 
+			ss << "It weights " << Utils::weightStr(getWeight()) << ".";
+		else ss << "It weights almost nothing."; 
 		if (!isPickable())
-			ss << "It cannot be taken. ";
+			ss << "It cannot be taken.";
 		if (!isDropable())
-			ss << "Once taken, it cannot be dropped. ";
+			ss << "Once taken, it cannot be dropped.";
 		return ss.str();
 	}
 
@@ -104,11 +104,11 @@ namespace Dungeon {
 
 		// TODO we need way more nice sentences cause this is displaying veery often.
 		return RandomString::get()
-				<< items.getSentence("", "You see % lying there. ") << endr
-				<< items.getSentence("", "There lies %. " ) << endr
-				<< items.getSentence("", "% lies there. ") << endr
-				<< items.getSentence("", "There is also some %. ", "There are % too. ") << endr
-				<< items.getSentence("", "There is %. ", "There are %. ") << endr;
+				<< items.getSentence("", "You see % lying there.") << endr
+				<< items.getSentence("", "There lies %." ) << endr
+				<< items.getSentence("", "% lies there.") << endr
+				<< items.getSentence("", "There is also some %.", "There are % too.") << endr
+				<< items.getSentence("", "There is %.", "There are %.") << endr;
 	}
 	
 	void Item::registerProperties(IPropertyStorage& storage) {

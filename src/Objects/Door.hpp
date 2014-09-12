@@ -37,7 +37,7 @@ namespace Dungeon {
         virtual void registerProperties(IPropertyStorage& storage);
         
         virtual void onGoThrough(ActionDescriptor* ad) {
-            *ad << goThroughMessage;
+            *ad << goThroughMessage << eos;
             triggerTraps("go-through", ad);
         }
         

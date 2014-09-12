@@ -34,7 +34,7 @@ namespace Dungeon {
 			ad->driver->processDescriptor(ad);
 			flawless = true;
 		}		catch (GameException& ge) {
-			LOGS("ActionQueue", Error) << "Game exception occured and Driver missed it. " << ge.what() << LOGF;
+			LOGS("ActionQueue", Error) << "Game exception occured and Driver missed it." << ge.what() << LOGF;
 		}
 		/* Disabled for debugging, enable on production
 		catch (char const * e) {

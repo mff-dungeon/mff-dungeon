@@ -49,36 +49,74 @@ namespace Dungeon {
 	bool ActionDescriptor::isValid(Driver* driver) {
 		return gm && caller && action && driver == this->driver;
 	}
+        
+        // courtesy of http://stackoverflow.com/questions/1798112/removing-leading-and-trailing-spaces-from-a-string
 	
-	void ActionDescriptor::addMessage(string msg) {
-		messages << msg;
+        // trim from left
+        inline std::string& ltrim(std::string& s, const char* t = " \t\n\r\f") {
+            s.erase(0, s.find_first_not_of(t));
+            return s;
+        }
+
+        // trim from right
+        inline std::string& rtrim(std::string& s, const char* t = " \t\n\r\f") {
+            s.erase(s.find_last_not_of(t) + 1);
+            return s;
+        }
+
+        // trim from left & right
+        inline std::string& trim(std::string& s, const char* t = " \t\n\r\f") {
+            return ltrim(rtrim(s, t), t);
+        }
+        
+	void ActionDescriptor::addSentence(string msg) {
+            string trimmed = trim(msg);
+            
+            if (trimmed == "") return;
+            
+            if (sentences++ > 1) {
+                message += "\n";
+            }
+            
+            sentences++;
+            message += "  - ";            
+            message += trimmed;
 	}
 	
 	ActionDescriptor& ActionDescriptor::operator<< (const string& msg){
-		messages << msg;
+		currentSentence << msg;
 		return *this;
 	}
 	
 	ActionDescriptor& ActionDescriptor::operator<< (char const* msg){
-		messages << msg;
+		currentSentence << msg;
 		return *this;
 	}
 	
 	ActionDescriptor& ActionDescriptor::operator<< (const int& msg){
-		messages << msg;
+		currentSentence << msg;
 		return *this;
 	}
+        
+        ActionDescriptor::EndOfSentence *eos() {
+            throw "Method eos is not callable.";
+        }
+        
+        ActionDescriptor& ActionDescriptor::operator <<(ActionDescriptor::EndOfSentence*(*endofsentence)()) {
+            this->addSentence(currentSentence.str());
+            currentSentence.str("");
+            return *this;
+        }
 
 
 	TextActionDescriptor::TextActionDescriptor(Driver* driver) : ActionDescriptor(driver) {}
 
 	string TextActionDescriptor::getReply() {
-		return messages.str();
+            return message;
 	}
 	
 	void TextActionDescriptor::clearReply() {
-		messages.str("");
-		messages.clear();
+            message = "";
 	}
 
 

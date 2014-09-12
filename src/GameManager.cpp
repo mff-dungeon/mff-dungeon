@@ -37,7 +37,7 @@ namespace Dungeon {
 			LOGS("GameManager", Fatal) << "Drop database query failed with error code " << err << LOGF;
 			exit(1);
 		}
-		LOG("GameManager") << "All tables dropped. " << LOGF;
+		LOG("GameManager") << "All tables dropped." << LOGF;
 		err = DatabaseHandler::getInstance().initDatabase();
 		if(err != DatabaseHandler::E_OK) {
 			LOGS("GameManager", Fatal) << "Create table database query failed with error code " << err << LOGF;

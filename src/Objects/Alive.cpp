@@ -97,8 +97,8 @@ namespace Dungeon {
 		}
 
 		return RandomString::get()
-				<< alives.getSentence("", "You recognize %'s figure. ", "You recognize %. ") << endr
-				<< alives.getSentence("", "% is there with you. ", "% are there with you. ") << endr
+				<< alives.getSentence("", "You recognize %'s figure.", "You recognize %.") << endr
+				<< alives.getSentence("", "% is there with you.", "% are there with you.") << endr
 				<< alives.getSentence("", "You smell the presence of %.") << endr
 				<< alives.getSentence("", "% is nearby.", "% are nearby.") << endr;
 	}
@@ -113,7 +113,7 @@ namespace Dungeon {
 
 	Alive* Alive::setAttack(int attack, ActionDescriptor* ad) {
 		if(ad != 0 && this->attack != attack && ad->getAlive() == this) {
-			*ad << "Your attack value has changed to " + to_string(attack) + ". ";
+			*ad << "Your attack value has changed to " + to_string(attack) + "." << eos;
 		}
 		this->attack = attack;
 		return this;
@@ -125,7 +125,7 @@ namespace Dungeon {
 
 	Alive* Alive::setDefense(int defense, ActionDescriptor* ad) {
 		if(ad != 0 && this->defense != defense && ad->getAlive() == this) {
-			*ad << "Your defense value has changed to " + to_string(defense) + ". ";
+			*ad << "Your defense value has changed to " + to_string(defense) + "." << eos;
 		}
 		this->defense = defense;
 		return this;
@@ -140,7 +140,7 @@ namespace Dungeon {
 		if(hp <= 0) hp = 0;
 		
 		if(ad != 0 && this->currentHp != hp && ad->getAlive() == this) {
-			*ad << "Your current hitpoints have changed to " + to_string(hp) + ". ";
+			*ad << "Your current hitpoints have changed to " + to_string(hp) + "." << eos;
 		}
 		this->currentHp = hp;
 		return this;
@@ -152,7 +152,7 @@ namespace Dungeon {
 
 	Alive* Alive::setMaxHp(int hp, ActionDescriptor* ad) {
 		if(ad != 0 && this->maxHp != maxHp && ad->getAlive() == this) {
-			*ad << "Your maximum hitpoints have changed to " + to_string(maxHp) + ". ";
+			*ad << "Your maximum hitpoints have changed to " + to_string(maxHp) + "." << eos;
 		}
 		this->maxHp = hp;
 		if(getCurrentHp() > maxHp) setCurrentHp(maxHp);
@@ -236,19 +236,19 @@ namespace Dungeon {
 			if(ad->getAlive() == this) {
 				if (attacker->getWeaponName() != "")
 					*ad << (RandomString::get()
-							<< "You have received " << damage << " damage from " + attacker->getName() + "'s " + attacker->getWeaponName() + ". " << endr
-							<< attacker->getName() << " caused you " << damage << " damage by its " << attacker->getWeaponName()  << ". " << endr);
+							<< "You have received " << damage << " damage from " + attacker->getName() + "'s " + attacker->getWeaponName() + "." << endr
+							<< attacker->getName() << " caused you " << damage << " damage by its " << attacker->getWeaponName()  << "." << endr) << eos;
 				else
-					*ad << "You have received " + to_string(damage) + " damage from " + attacker->getName() + ". ";
+					*ad << "You have received " + to_string(damage) + " damage from " + attacker->getName() + "." << eos;
 			}
 			else {
 				string weapon = ad->getAlive()->getWeaponName();
 				if (weapon != "")
 					*ad << (RandomString::get()
-							<< "You have dealt " << damage << " damage to " + this->getName() + " by your " + weapon + ". " << endr
-							<< "Your " + weapon + " have caused " << damage << " damage to " + this->getName() + ". " << endr);
+							<< "You have dealt " << damage << " damage to " + this->getName() + " by your " + weapon + "." << endr
+							<< "Your " + weapon + " have caused " << damage << " damage to " + this->getName() + "." << endr) << eos;
 				else 
-					*ad << "You have dealt " << damage << " damage to " + this->getName() + ". ";
+					*ad << "You have dealt " << damage << " damage to " + this->getName() + "." << eos;
 			}
 		}
 		changeHp(-damage, ad);

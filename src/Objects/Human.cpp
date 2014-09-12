@@ -77,14 +77,14 @@ namespace Dungeon {
 		if(ad != 0) { // Let's tell what happened
 			if(ad->getAlive() == this) { // It is me dying
 			// TODO: Write some fancy method to respawn time nicer (probably rounding to highest order is enough)
-				*ad << "Oh no! You have just died. "
-					<< "Your soul has moved to another plane of existence where it's currently regaining strength. "
-					<< "You cannot play for " << this->getRespawnInterval() << " seconds. "
-					<< "Type respawn to respawn, when the time comes. ";
+				*ad << "Oh no! You have just died."
+					<< "Your soul has moved to another plane of existence where it's currently regaining strength."
+					<< "You cannot play for " << this->getRespawnInterval() << " seconds."
+					<< "Type respawn to respawn, when the time comes." << eos;
 			}
 			else {
 				// Actually do we want to notify? if not, remove later
-				*ad << this->getName() << " has just died.";
+				*ad << this->getName() << " has just died." << eos;
 			}
 		}
 		return this;
@@ -96,7 +96,7 @@ namespace Dungeon {
 		this->setCurrentHp((int) getMaxHp() * 0.75);
 		this->setState(State::Living);
 		if(ad != 0) {
-			*ad << "You have just respawned in " << getRespawnLocation().safeCast<Location>()->getName() << ". ";
+			*ad << "You have just respawned in " << getRespawnLocation().safeCast<Location>()->getName() << "." << eos;
 		}
 		return this;
 	}
@@ -117,13 +117,13 @@ namespace Dungeon {
             list->addAction(new CallbackAction("hello", "hello - When you wanna be polite to your Dungeon",
                RegexMatcher::matcher("hello|hi|whats up|wazzup|yo"),
                [this] (ActionDescriptor * ad) {
-                   *ad << "Hi!";
+                   *ad << "Hi!" << eos;
                }, false));
             
             list->addAction(new CallbackAction("who am i", "who am i - In case you forget your identity",
 				RegexMatcher::matcher("who( )?am( )?i"),
 				[this] (ActionDescriptor * ad) {
-					*ad << "You are " + ad->getAlive()->getName() + ".";
+					*ad << "You are " + ad->getAlive()->getName() + "." << eos;
 				}, false));
 				
 			// Dead related actions, do not add rest if user is dead	
@@ -136,7 +136,7 @@ namespace Dungeon {
 						}
 						else {
 							*ad << "You cannot respawn yet. Wait for another " 
-								<< (getRespawnTime() - time(0)) << " seconds and try again. ";
+								<< (getRespawnTime() - time(0)) << " seconds and try again." << eos;
 						}
 				}));
 				
@@ -144,12 +144,12 @@ namespace Dungeon {
 				list->addAction(new CallbackAction("info-dead", "Informs user of death", 
 					RegexMatcher::matcher("(?!respawn|who( )?am( )?i|hello|hi|whats up|wazzup|yo).*"),
 					[this] (ActionDescriptor* ad) {
-						*ad << "You cannot do anything when you are dead. ";
+						*ad << "You cannot do anything when you are dead." << eos;
 						if(time(0) >= getRespawnTime()) {
-							*ad << "Please type 'respawn' to become alive again. ";
+							*ad << "Please type 'respawn' to become alive again." << eos;
 						}
 						else {
-							*ad << "Please wait another " << (getRespawnTime() - time(0)) << " seconds and then type respawn. ";
+							*ad << "Please wait another " << (getRespawnTime() - time(0)) << " seconds and then type respawn." << eos;
 						}
 						
 				},false));
@@ -174,6 +174,7 @@ namespace Dungeon {
 							a.second->explain(ad);
 							*ad << "\n";
 						}
+                                                *ad << eos;
 				}, false));
 
 			list->addAction(new CallbackAction("explore", "explore - List items you can see in your current location",
@@ -191,6 +192,7 @@ namespace Dungeon {
 								for(auto& o : objects) {
 									*ad << "\t" + o.first + "\n";
 								}
+                                                                *ad << eos;
 							}
 						}
 				}));
@@ -201,9 +203,9 @@ namespace Dungeon {
 					*ad << (RandomString::get()
 							<< "Well, you know, fuck you too." << endr
 							<< "Fuck yourself, sir! " << endr
-							<< "Server error. Too much grossness in the message. " << endr
-							<< "Stop behaving like shit and do something useful. " << endr);
-					*ad << "You've been charged 50 hitpoints for server atmosphere reconstruction. ";
+							<< "Server error. Too much grossness in the message." << endr
+							<< "Stop behaving like shit and do something useful." << endr) << eos;
+					*ad << "You've been charged 50 hitpoints for server atmosphere reconstruction." << eos;
 					ad->getAlive()->changeHp(50, ad);
 				}));
 				
@@ -216,17 +218,17 @@ namespace Dungeon {
 						ObjectPointer equip = getSingleRelation(Wearable::SlotRelations[i], Relation::Master, GameStateInvalid::EquippedMoreThanOne);
 						if (!!equip) {
 							empty = false;
-							*ad << equip.safeCast<Wearable>()->getEquippedSentence();
+							*ad << equip.safeCast<Wearable>()->getEquippedSentence() << eos;
 							if (equip->instanceOf(Inventory)) {
-								*ad << equip.unsafeCast<Inventory>()->getContainingSentence();
+								*ad << equip.unsafeCast<Inventory>()->getContainingSentence() << eos;
 							}
 						}
 					}
 					if (empty)
 						*ad << ( RandomString::get()
-								<< "Your inventory is just empty. " << endr
-								<< "You're poor as a church mouse. " << endr
-								<< "You don't have anything. " << endr );
+								<< "Your inventory is just empty." << endr
+								<< "You're poor as a church mouse." << endr
+								<< "You don't have anything." << endr ) << eos;
 				}, false));
 				
 			list->addAction(new CallbackAction("combat stats", "Prints all your combat stats",
@@ -235,22 +237,22 @@ namespace Dungeon {
 					Alive* me = ad->getAlive();
 					*ad << "Hitpoints: " + to_string(me->getCurrentHp()) + "/" + to_string(me->getMaxHp()) + "\n";
 					*ad << "Attack value: " + to_string(me->getAttack()) + "\n";
-					*ad << "Defense value: " + to_string(me->getDefense());
+					*ad << "Defense value: " + to_string(me->getDefense()) << eos;
 				}, false));
             
             list->addAction(new CallbackAction("self-rename", "",
 				RegexMatcher::matcher("rename( myself)?"),
 				[this] (ActionDescriptor * ad) {
-					*ad << "Well then, what do you want your new name to be?";
+					*ad << "Well then, what do you want your new name to be?" << eos;
 					ad->waitForReply([] (ActionDescriptor *ad, string reply) {
 						((Human*) ad->getAlive())->setUsername(reply)
 								->save();
-						*ad << "OK. You shall now be called " << ad->getAlive()->getName() << ". "; // A common mistake
-						*ad << "I'm just curious, why did you change your name?";
+						*ad << "OK. You shall now be called " << ad->getAlive()->getName() << "." << eos; // A common mistake
+						*ad << "I'm just curious, why did you change your name?" << eos;
 					});
 					// Just to show how dialog can be longer :)
 					ad->waitForReply([] (ActionDescriptor *ad, string reply) {
-						*ad << "Interesting. Now, back to the dungeon!";
+						*ad << "Interesting. Now, back to the dungeon!" << eos;
 					});
 					// Notice that both functions are prepared immediately. They 
 					// can else be created after the reply in the closure, but 

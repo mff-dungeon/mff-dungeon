@@ -50,7 +50,7 @@ namespace Dungeon {
 
 		for (it = this->begin(); it != this->end(); ) {
 			if (!it->second->instanceOf(IDescriptable)) {
-				sentence += "There is an object (" + it->second.getId() + "). ";
+				sentence += "There is an object (" + it->second.getId() + ").";
 				continue;
 			}
 			objectType = objId_getType(it->first);
@@ -72,6 +72,33 @@ namespace Dungeon {
 		
 		return sentence;
 	}
+        
+        void ObjectGroup::explore(ActionDescriptor *ad) {
+            if (this->size() == 0) return;
+            ObjectGroup::iterator it;
+            string objectType = objId_getType(this->begin()->first);
+            vector<ObjectPointer> sameTypeObjects;
 
+            for (it = this->begin(); it != this->end(); ) {
+                    if (!it->second->instanceOf(IDescriptable)) {
+                            *ad << "There is an object (" + it->second.getId() + ")." << eos;
+                            continue;
+                    }
+                    objectType = objId_getType(it->first);
 
+                    while (it != this->end() && objectType == objId_getType(it->first)) {
+                            sameTypeObjects.push_back(it->second);
+                            it++;
+                    }
+
+                    if (sameTypeObjects.empty()) {
+                            continue;
+                    } else if (sameTypeObjects.size() == 1) {
+                            *ad << sameTypeObjects.front().unsafeCast<IDescriptable>()->getDescriptionSentence() << eos;
+                    } else {
+                            *ad << sameTypeObjects.front().unsafeCast<IDescriptable>()->getGroupDescriptionSentence(sameTypeObjects) << eos;
+                    }
+                    sameTypeObjects.clear();
+            }
+        }
 }
