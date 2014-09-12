@@ -39,7 +39,7 @@ namespace Dungeon {
 					if (obj.second->instanceOf(Alive))
 						obj.second.unsafeCast<Alive>()->changeHp(healedHp, ad);
 				}
-				LOGS("Healing", Verbose) << "Healed everything in " << target->getId() << " for " << healedHp << LOGF;
+				LOGS("Healing", Verbose) << "Healed everything in " << target.getId() << " for " << healedHp << LOGF;
 			}
 			
 			save();
