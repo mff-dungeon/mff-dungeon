@@ -50,36 +50,15 @@ namespace Dungeon {
 		return gm && caller && action && driver == this->driver;
 	}
         
-        // courtesy of http://stackoverflow.com/questions/1798112/removing-leading-and-trailing-spaces-from-a-string
-	
-        // trim from left
-        inline std::string& ltrim(std::string& s, const char* t = " \t\n\r\f") {
-            s.erase(0, s.find_first_not_of(t));
-            return s;
-        }
-
-        // trim from right
-        inline std::string& rtrim(std::string& s, const char* t = " \t\n\r\f") {
-            s.erase(s.find_last_not_of(t) + 1);
-            return s;
-        }
-
-        // trim from left & right
-        inline std::string& trim(std::string& s, const char* t = " \t\n\r\f") {
-            return ltrim(rtrim(s, t), t);
-        }
-        
 	void ActionDescriptor::addSentence(string msg) {
-            string trimmed = trim(msg);
+            string trimmed = Utils::trim(msg);
             
             if (trimmed == "") return;
             
-            if (sentences++ > 1) {
-                message += "\n";
+            if (++sentences > 1) {
+                message += " ";
             }
-            
-            sentences++;
-            message += "  - ";            
+                     
             message += trimmed;
 	}
 	

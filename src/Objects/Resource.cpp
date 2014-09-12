@@ -6,7 +6,7 @@ namespace Dungeon {
 	const char* Resource::ResourceName[] = {"gold", "wood", "iron", "dragon skin",
 		"leather", "sand", "white powder", "red powder", "magical stone", "mana shards"};
 	 
-    string Resource::getResourceTypeName(ResourceType type) const {
+    string Resource::getResourceTypeName(ResourceType type) {
         switch (type) {
             case ResourceType::Gold:
                 return "gold";

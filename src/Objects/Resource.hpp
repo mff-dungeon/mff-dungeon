@@ -18,7 +18,8 @@ namespace Dungeon {
 		 * Gold and Mana shards not used yet
 		 */
 		enum ResourceType {
-                    Gold = 0,
+                    BEGIN = 0,
+                    Gold = BEGIN,
                     Wood = 1,
                     Iron = 2,
                     DragonSkin = 3,
@@ -27,7 +28,8 @@ namespace Dungeon {
 					WhitePowder = 6,
 					RedPowder = 7,
 					MagicalStone = 8,
-                    ManaShard = 9
+                    ManaShard = 9,
+                    END // do not use, for iteration purposes only!
                 };
 				
 		static const char* ResourceName[];
@@ -50,6 +52,8 @@ namespace Dungeon {
 
 		Resource* attachSumTrap();
                 
+		static string getResourceTypeName(ResourceType type);
+                
 		virtual void registerProperties(IPropertyStorage& storage);
                 	
 	private:
@@ -57,7 +61,6 @@ namespace Dungeon {
 		int quantity = 0;
 
 		objId getResourceTypeId(ResourceType type) const;
-		string getResourceTypeName(ResourceType type) const;
 		
 	PERSISTENT_DECLARATION(Resource, Item)
 	};
