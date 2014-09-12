@@ -283,11 +283,37 @@ namespace Dungeon {
             }
         }
         
+        Alive* Alive::setResourceQuantity(Resource::ResourceType type, int quantity) {
+            ObjectPointer current = getSingleRelation(R_RESOURCE(type), Relation::Master);
+            
+            if (!!current) {
+                Resource* res = current.unsafeCast<Resource>();
+                res->setQuantity(quantity);
+                res->save();
+            } else {
+                Resource* res = new Resource(type, quantity);
+                GameManager* gm = getGameManager();
+                
+                gm->insertObject(res);
+                res->save();
+                this->setSingleRelation(R_RESOURCE(res->getType()), res);
+            }
+            
+            return this;
+        }
+        
+        Alive* Alive::changeResourceQuantity(Resource::ResourceType type, int deltaQuantity) {
+            int currentQuantity = this->getResourceQuantity(type);
+            this->setResourceQuantity(type, currentQuantity + deltaQuantity);
+            
+            return this;
+        }
+        
         Alive* Alive::addResource(Resource* resource) {
             ObjectPointer current = getSingleRelation(R_RESOURCE(resource->getType()), Relation::Master);
             
             if (!!current) {
-                Resource *res = current.unsafeCast<Resource>();
+                Resource* res = current.unsafeCast<Resource>();
                 res->setQuantity(res->getQuantity() + resource->getQuantity());
                 res->save();
                 

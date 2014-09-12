@@ -25,6 +25,7 @@ namespace Dungeon {
 		
 		Resource() {}
 		Resource(objId id) : Item(id) {}
+                Resource(ResourceType type, int quantity) : Item(getResourceTypeId(type)), resourceType(type), quantity(quantity) {}
 		virtual ~Resource() {}
 		
 		ResourceType getType() const;
@@ -40,14 +41,14 @@ namespace Dungeon {
                 
                 Resource* attachSumTrap();
                 
-		//virtual void getActions(ActionList* list, ObjectPointer callee);
-                
 		virtual void registerProperties(IPropertyStorage& storage);
                 	
 	private:
 		
             ResourceType resourceType;
             int quantity = 0;
+            
+            objId getResourceTypeId(ResourceType type) const;
 		
 	PERSISTENT_DECLARATION(Resource, Item)
 	};

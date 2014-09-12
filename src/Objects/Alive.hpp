@@ -111,6 +111,8 @@ namespace Dungeon
 		}
                 
                 int getResourceQuantity(Resource::ResourceType type);
+                Alive* setResourceQuantity(Resource::ResourceType type, int quantity);
+                Alive* changeResourceQuantity(Resource::ResourceType type, int deltaQuantity);
                 
                 bool hasResourceGreaterThan(Resource::ResourceType type, int quantity) {
                     int actual = getResourceQuantity(type);
