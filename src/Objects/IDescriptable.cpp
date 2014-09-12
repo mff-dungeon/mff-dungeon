@@ -1,4 +1,5 @@
 #include "IDescriptable.hpp"
+#include "../ActionDescriptor.hpp"
 
 namespace Dungeon {
 	
@@ -39,6 +40,19 @@ namespace Dungeon {
 			.have(description, "descriptable-description", "Full description");
 		IObject::registerProperties(storage);
 	}
+	
+	void IDescriptable::getActions(ActionList* list, ObjectPointer callee) {
+		ExamineEction* ex = new ExamineEction();
+		ex->addTarget(this);
+		list->addAction(ex);
+	}
+	
+	void IDescriptable::examine(ActionDescriptor* ad) {
+		triggerTraps("examine", ad);
+		if (ad) {
+			*ad << getDescription();
+		}
+	}
 
     string IDescriptable::getDescriptionSentence() {
         return "There is " + this->getName() + ".";
@@ -59,6 +73,25 @@ namespace Dungeon {
     }
 
 	NONPERSISTENT_IMPLEMENTATION(IDescriptable)
+			
+		
+	bool ExamineEction::matchCommand(string command) {
+		return RegexMatcher::match("(examine?|explore?|look( +(in|to|into|on|onto))?) +(.+)", command, matches);
+	}	
+
+	void ExamineEction::commit(ActionDescriptor* ad) {
+		commitOnBestTarget(ad, matches[4]);
+	}
+
+	void ExamineEction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
+		target.assertType<IDescriptable>("Examining non-examinable object.")
+				.unsafeCast<IDescriptable>()->examine(ad);
+	}
+	
+	void ExamineEction::explain(ActionDescriptor* ad) {
+		*ad << "You can use 'examine ...' to look closer on items you have or see.\n";
+	}
+
 	
 }
 

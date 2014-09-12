@@ -8,6 +8,7 @@
 #include "Inventory.hpp"
 #include "../RandomString.hpp"
 #include "Wearable.hpp"
+#include "../SentenceJoiner.hpp"
 
 namespace Dungeon {
 
@@ -65,6 +66,8 @@ namespace Dungeon {
 		if (pickAction->getTargets().size() > 0) {
 			list->addAction(pickAction);
 		}
+		
+		IDescriptable::getActions(list, callee);
 	}
 
 	string Location::getDescriptionSentence() {
@@ -83,58 +86,32 @@ namespace Dungeon {
 				<< "Seems like you are in " + common << endr;
 	}
 
-	void Location::explore(ActionDescriptor* ad) {
+	void Location::examine(ActionDescriptor* ad) {
 		LOGS("Location", Verbose) << "Exploring " << this->getName() << "." << LOGF;
-		triggerTraps("explore", ad);
+		triggerTraps("examine", ad);
+		if (!ad) return;
 		ObjectPointer alive = ad->getAlive();
 		// Recursively search all items in this room
 		ObjectGroup groupedObjects;
-		queue<ObjectPointer> nested;
+		SentenceJoiner nested;
 
 		// remove myself from the exploration group
 		for (auto obj :  getRelations(Relation::Master, R_INSIDE)) {
 			if (alive == obj.second) {
 				*ad << getInsideSentence();
 			} else if (obj.second->instanceOf(Location)) {
-				nested.push(obj.second);
+				nested << obj.second;
 			} else {
 				groupedObjects.insertObject(obj.second);
 			}
 		}
 		
 		*ad << groupedObjects.explore();
+		*ad << nested.getSentence("", "You may want too look into %.");
 		
 		if (nested.size() + groupedObjects.size() == 0)
 			*ad << getEmptyMessage();
 		
-		if (nested.size() == 0)
-			return;
-		
-		ObjectPointer current = nested.front();
-		
-		*ad << current.unsafeCast<Location>()->getDescriptionSentence();
-		*ad << "Do you want to look into? ";
-		
-		while (nested.size() > 1) {
-			nested.pop();
-			ObjectPointer next = nested.front();
-			ad->waitForReply([current, next] (ActionDescriptor* ad, string reply) {
-				if (StringMatcher::matchTrueFalse(reply)) {
-					current.unsafeCast<Location>()->explore(ad);
-				}
-				*ad << next.unsafeCast<Location>()->getDescriptionSentence();
-				*ad << "Do you want to look into it? ";
-			});
-			current = next;
-		}
-		
-		ad->waitForReply([current] (ActionDescriptor* ad, string reply) {
-			if (StringMatcher::matchTrueFalse(reply)) {
-				current.unsafeCast<Location>()->explore(ad);
-			} else {
-				*ad << "There are no more things. ";
-			}
-		});
 	}
 
 	void Location::registerProperties(IPropertyStorage& storage) {

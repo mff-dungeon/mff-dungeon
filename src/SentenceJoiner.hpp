@@ -73,6 +73,9 @@ namespace Dungeon {
                 return *this  << value.getId();
         }
 
+        int size() {
+            return count;
+        }
     private:
         int count = 0;
         stringstream parts;

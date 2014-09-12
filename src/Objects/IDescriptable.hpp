@@ -3,6 +3,8 @@
 
 #include "../common.hpp"
 #include "../IObject.hpp"
+#include "../Actions/MultiTargetAction.hpp"
+#include "../RegexMatcher.hpp"
 
 namespace Dungeon {
     
@@ -47,13 +49,30 @@ namespace Dungeon {
          */
         virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
         
+        virtual void getActions(ActionList* list, ObjectPointer callee);
+
         virtual void registerProperties(IPropertyStorage& storage);
+        
+        virtual void examine(ActionDescriptor* ad);
 	
         NONPERSISTENT_DECLARATION(IDescriptable, IObject)	
    
     private:
         string name = "", longName = "";
         string description = "";
+    };
+    
+    class ExamineEction : public MultiTargetAction {
+    public:
+        ExamineEction() : MultiTargetAction("examine") { }
+
+        virtual bool matchCommand(string command);
+        virtual void commit(ActionDescriptor* ad);
+        virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
+        virtual void explain(ActionDescriptor* ad);
+
+    private:
+        smatch matches;
     };
 }
 

@@ -68,9 +68,7 @@ namespace Dungeon {
     
     void Alive::getActions(ActionList* list, ObjectPointer callee) {
 		triggerTraps("get-actions", nullptr);
-		if(getState() == State::Dead) {
-			return;
-		}
+		IDescriptable::getActions(list, callee);
 		// Add actions if any will be generic to all alives
     }
 	

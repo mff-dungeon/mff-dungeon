@@ -34,8 +34,6 @@ namespace Dungeon {
         virtual Item* setDropable(bool dropable);
 
         virtual void getActions(ActionList* list, ObjectPointer callee);
-        
-        virtual void examine(ActionDescriptor* ad);
 
         /**
          * Must be inserted to world and be "inside" something to work.
@@ -66,15 +64,6 @@ namespace Dungeon {
 		bool dropable;
 
     PERSISTENT_DECLARATION(Item, IDescriptable)
-    };
-    
-    class ExamineEction : public MultiTargetAction {
-    public:
-        ExamineEction() : MultiTargetAction("examine") { }
-
-        virtual bool matchCommand(string command);
-        virtual void commit(ActionDescriptor* ad);
-        virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
     };
 };
 

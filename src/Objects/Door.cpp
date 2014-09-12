@@ -13,7 +13,8 @@ namespace Dungeon {
 	}
 
 	void Door::getActions(ActionList* list, ObjectPointer callee) {
-		LOGS("Door", Verbose) << "Getting actions on " << this->getId() << "." << LOGF;		
+		LOGS("Door", Verbose) << "Getting actions on " << this->getId() << "." << LOGF;	
+		IDescriptable::getActions(list, callee);
 		// Add move actions to all rooms
 		try{
 			ObjectMap targets = this->getRelations(Relation::Master, R_TARGET);
@@ -22,7 +23,7 @@ namespace Dungeon {
 				if (obj.second != callee.safeCast<Alive>()->getLocation()) {
 					action->addTarget(this);
 					list->addAction(action);
-					return;
+					break;
 				}
 			}
 		}
@@ -50,7 +51,7 @@ namespace Dungeon {
 		ad->getGM()->moveAlive(ad->getAlive(), target);
 		door.unsafeCast<Door>()->onGoThrough(ad);
 		target->triggerTraps("inside", ad);
-		target.unsafeCast<Location>()->explore(ad);
+		target.unsafeCast<Location>()->examine(ad);
 	}
     
 	string Door::getDescriptionSentence() {

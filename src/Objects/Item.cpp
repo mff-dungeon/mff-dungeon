@@ -58,16 +58,7 @@ namespace Dungeon {
 	}
 
 	void Item::getActions(ActionList* list, ObjectPointer callee) {
-		ExamineEction* ex = new ExamineEction();
-		ex->addTarget(this);
-		list->addAction(ex);
-	}
-	
-	void Item::examine(ActionDescriptor* ad) {
-		triggerTraps("examine", ad);
-		if (ad) {
-			*ad << getDescription();
-		}
+		IDescriptable::getActions(list, callee);
 	}
 	
 	Item* Item::respawnEvery(int seconds) {
@@ -129,20 +120,6 @@ namespace Dungeon {
 	}
 	
 	PERSISTENT_IMPLEMENTATION(Item)
-			
-		
-	bool ExamineEction::matchCommand(string command) {
-		return RegexMatcher::match("examine .+", command);
-	}	
-
-	void ExamineEction::commit(ActionDescriptor* ad) {
-		commitOnBestTarget(ad, ad->in_msg.substr(8));
-	}
-
-	void ExamineEction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
-		target.assertType<Item>("Examining not-an item.")
-				.unsafeCast<Item>()->examine(ad);
-	}
 
 
 
