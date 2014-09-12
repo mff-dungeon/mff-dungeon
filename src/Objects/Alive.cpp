@@ -219,7 +219,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::changeHp(int amount, ActionDescriptor* ad) {
-		this->currentHp += amount;
+		setCurrentHp(getCurrentHp() + amount, ad);
 		if(this->currentHp <= 0) {
 			die(ad);
 		}
@@ -229,6 +229,7 @@ namespace Dungeon {
 
 	Alive* Alive::die(ActionDescriptor* ad) {
 		// TODO: Oh no, I'm dead, I should respawn, should be overriden, prolly some basic implement can be here
+		// P.S. The ad can be "for" someone else!
 		return this;
 	}
 
