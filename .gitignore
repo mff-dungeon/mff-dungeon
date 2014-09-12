@@ -9,3 +9,4 @@ dungeon.db
 jabber_sessions
 nbproject/*
 *.log
+dumps/*
