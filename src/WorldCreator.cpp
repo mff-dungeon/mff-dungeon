@@ -61,8 +61,13 @@ namespace Dungeon {
 		Location* baseRoom = createObject<Location>("room/baseRoom")
 				->setRespawnable(true)
 				->setName("Base Camp")
-				->setDescription("Nothing much to be found here, but get familiar with basic commands - try to type 'help'. ")
+				->setDescription("Nothing much to be found here, but get familiar with basic commands - try to type 'help'. By staying here, you are continuously healed a bit.")
 				->save().unsafeCast<Location>();
+		
+		createObject<Healing>("trap/healing/baseRoom")
+				->setRate(100 * Healing::PerHour)
+				->setTarget(baseRoom)
+				->save();
 
 		initAdmins();
 		initTemplates();

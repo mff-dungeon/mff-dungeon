@@ -89,6 +89,7 @@ namespace Dungeon {
 	}
 	
 	void Human::getActions(ActionList* list, ObjectPointer callee) {
+		triggerTraps("get-actions", nullptr);
 		if (this == callee) {
 			// Actions always available 
             list->addAction(new CallbackAction("hello", "hello - When you wanna be polite to your Dungeon",

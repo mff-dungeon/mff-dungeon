@@ -15,6 +15,7 @@
 #include "Objects/ThorsHammer.hpp"
 #include "Objects/Wearable.hpp"
 #include "Traps/AttackTrap.hpp"
+#include "Traps/Healing.hpp"
 #include "Traps/ItemRespawner.hpp"
 #include "Traps/SimpleDamageTrap.hpp"
 #include "Traps/Trap.hpp"
