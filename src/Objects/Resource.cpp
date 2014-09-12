@@ -5,37 +5,12 @@ namespace Dungeon {
    
 	const char* Resource::ResourceName[] = {"gold", "wood", "iron", "dragon skin",
 		"leather", "sand", "white powder", "red powder", "magical stone", "mana shards"};
+        
+        const char* Resource::ResourceIdentifier[] = {"gold", "wood", "iron", "dragon-skin",
+		"leather", "sand", "white-powder", "red-powder", "magical-stone", "mana-shards"};
 	 
-    string Resource::getResourceTypeName(ResourceType type) {
-        switch (type) {
-            case ResourceType::Gold:
-                return "gold";
-            case ResourceType::Wood:
-                return "wood";
-            case ResourceType::Iron:
-                return "iron";
-            case ResourceType::DragonSkin:
-                return "dragonskin";
-            case ResourceType::Leather:
-                return "leather";
-            case ResourceType::Sand:
-                return "sand";
-            case ResourceType::WhitePowder:
-                return "whitepowder";
-            case ResourceType::RedPowder:
-                return "redpowder";
-            case ResourceType::MagicalStone:
-                return "magicstone";
-            case ResourceType::ManaShard:
-                return "manashard";
-            default:
-                // no laughing, this is actually a serious error
-                return "puppies";
-        }
-    }
-    
     objId Resource::getResourceTypeId(ResourceType type) const {
-        return "resource/" + getResourceTypeName(type) + "/" + RANDID;
+        return "resource/" + (string)ResourceIdentifier[(int)type] + "/" + RANDID;
     }
     
     Resource::ResourceType Resource::getType() const {
@@ -57,11 +32,11 @@ namespace Dungeon {
     }
 
     string Resource::getName() const {
-        return to_string(getQuantity()) + " " + getResourceTypeName(getType());
+        return to_string(getQuantity()) + " " + ResourceName[(int)getType()];
     }
 
     string Resource::getLongName() const {
-        return to_string(getQuantity()) + " units of " + getResourceTypeName(getType());
+        return to_string(getQuantity()) + " units of " + ResourceName[(int)getType()];
     }
 
     string Resource::getDescription() const {

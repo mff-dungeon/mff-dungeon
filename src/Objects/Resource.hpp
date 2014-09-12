@@ -33,6 +33,7 @@ namespace Dungeon {
                 };
 				
 		static const char* ResourceName[];
+                static const char* ResourceIdentifier[];
 		
 		Resource() {}
 		Resource(objId id) : Item(id) {}
@@ -51,8 +52,6 @@ namespace Dungeon {
 		virtual string getLongName() const;
 
 		Resource* attachSumTrap();
-                
-		static string getResourceTypeName(ResourceType type);
                 
 		virtual void registerProperties(IPropertyStorage& storage);
                 	
