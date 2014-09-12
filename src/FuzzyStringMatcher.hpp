@@ -185,8 +185,9 @@ namespace Dungeon {
         if (max == 0)
             throw StringMatcher::NoCandidate();
         
-        if (uncertain)
-            throw StringMatcher::Uncertain();
+        // FIXME: if uncommented, everything is uncertain
+        /*if (uncertain)
+            throw StringMatcher::Uncertain();*/
         
         return maxMatch->second;
     }
