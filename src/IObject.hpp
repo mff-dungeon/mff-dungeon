@@ -122,13 +122,13 @@ namespace Dungeon {
          * Returns either master, or slave relations of the object
          * @param master true, if the relation is master relation
          */
-        const RelationList& getRelations(Relation::Dir dir);
+        const RelationList& getRelations(Relation::Dir dir) const;
 
         /**
          * Returns objects with given relation to this object
          * @param master true, if the relation is master relation
          */
-        const ObjectMap getRelations(Relation::Dir dir, string type);
+        const ObjectMap getRelations(Relation::Dir dir, string type) const;
 
         /**
          * Returns the one and only relation of this type.
@@ -138,7 +138,7 @@ namespace Dungeon {
         ObjectPointer getSingleRelation(
                 string type,
                 Relation::Dir dir = Relation::Master,
-                string errMsg = "There are more than one object for single relation.");
+                string errMsg = "There are more than one object for single relation.") const;
 
         /**
          * Sets the one and only relation of this type.

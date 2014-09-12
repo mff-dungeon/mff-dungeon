@@ -176,7 +176,6 @@ namespace Dungeon {
 		}
 		else {
 			creature->die(ad);
-			// TODO: Add drops
 		}
 	}
 	

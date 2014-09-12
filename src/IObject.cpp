@@ -56,7 +56,7 @@ namespace Dungeon {
 		}
 	}
 	
-	void IObject::addRelation(string type, ObjectPointer other, Relation::Dir dir) {
+	void IObject::addRelation(string type, ObjectPointer other, Relation::Dir dir){
 		if (hasRelation(type, other, dir)) return;
 		
 		LOGS("IObject", Verbose) << "Adding relation " << getId() << (dir ? "<--" : "-->") << other.getId() << " type " << type << LOGF;
@@ -71,11 +71,11 @@ namespace Dungeon {
 			other->addRelation(type, this, !dir);
 	}
 
-	const RelationList& IObject::getRelations(Relation::Dir dir) {
+	const RelationList& IObject::getRelations(Relation::Dir dir) const {
 		return dir == Relation::Dir::Master ? relation_master : relation_slave;
 	}
 	
-	const ObjectMap IObject::getRelations(Relation::Dir dir, string type) {
+	const ObjectMap IObject::getRelations(Relation::Dir dir, string type) const {
 		try {
 			return getRelations(dir).at(type);
 		} catch (std::out_of_range& e) {
@@ -83,7 +83,7 @@ namespace Dungeon {
 		}
 	}
 	
-	ObjectPointer IObject::getSingleRelation(string type, Relation::Dir dir, string errMsg) {
+	ObjectPointer IObject::getSingleRelation(string type, Relation::Dir dir, string errMsg) const {
 		try {
 			const ObjectMap& objects = getRelations(dir, type);
 			if (objects.size() > 1)

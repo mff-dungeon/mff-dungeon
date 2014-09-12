@@ -174,6 +174,18 @@ namespace Dungeon {
 						}
 				}));
 				
+			list->addAction(new CallbackAction("fuck", "",
+				RegexMatcher::matcher("fuck.*"),
+				[this] (ActionDescriptor * ad) {
+					*ad << (RandomString::get()
+							<< "Well, you know, fuck you too." << endr
+							<< "Fuck yourself, sir! " << endr
+							<< "Server error. Too much grossness in the message. " << endr
+							<< "Stop behaving like shit and do something useful. " << endr);
+					*ad << "You've been charged 50 hitpoints for server atmosphere reconstruction. ";
+					ad->getAlive()->changeHp(50, ad);
+				}));
+				
 			// TODO - redo to a MTA. add equiped relations and other inventories
 			list->addAction(new CallbackAction("what i own", "what i own - A list of items in backpack",
 				RegexMatcher::matcher("(what i (have|own)|inventory|list items)"),
@@ -197,7 +209,7 @@ namespace Dungeon {
 				}, false));
 				
 			list->addAction(new CallbackAction("combat stats", "Prints all your combat stats",
-				RegexMatcher::matcher(".*combat stats.*"),
+				RegexMatcher::matcher(".*(combat )?stats.*"),
 				[this] (ActionDescriptor* ad) {
 					Alive* me = ad->getAlive();
 					*ad << "Hitpoints: " + to_string(me->getCurrentHp()) + "/" + to_string(me->getMaxHp()) + "\n";

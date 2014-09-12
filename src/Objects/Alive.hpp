@@ -131,6 +131,17 @@ namespace Dungeon
                 
                 Alive* addResource(Resource* resource);
 		
+                virtual string getWeaponName() const
+                {
+                    return weaponName;
+                }
+
+                virtual Alive* setWeaponName(string weaponName)
+                {
+                    this->weaponName = weaponName;
+                    return this;
+                }
+
                 
 	private:
 		// Combat stats
@@ -149,6 +160,8 @@ namespace Dungeon
 		 * Interval, time it takes after death to respawn, -1 is not respawning
 		 */
 		int respawnInterval = -1;
+                
+                string weaponName = "";
 	
 	PERSISTENT_DECLARATION(Alive, IDescriptable)
     };

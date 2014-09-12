@@ -11,12 +11,20 @@ namespace Dungeon {
 		Human *aearsis, *asaru, *petr;
 		ThorsHammer* th;
 		gm->insertObject(th = new ThorsHammer());
-		aearsis = (Human*) gm->addNewFigure(new Human("human/aearsis@eideo.cz", "Aearsis", "aearsis@eideo.cz"));
-		gm->createRelation(aearsis, th, "special-th");
-		asaru = (Human*) gm->addNewFigure(new Human("human/asaru@jabbim.cz", "Salmelu", "asaru@jabbim.cz"));
-		gm->createRelation(asaru, th, "special-th");
-		petr = (Human*) gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"));
-		gm->createRelation(petr, th, "special-th");
+		aearsis = gm->addNewFigure(new Human("human/aearsis@eideo.cz", "Aearsis", "aearsis@eideo.cz"))
+				->setWeaponName("powerful hands of administrator")
+				->setSingleRelation("special-th", th)
+				->save().unsafeCast<Human>();
+		
+		asaru = gm->addNewFigure(new Human("human/asaru@jabbim.cz", "Salmelu", "asaru@jabbim.cz"))
+				->setWeaponName("powerful hands of administrator")
+				->setSingleRelation("special-th", th)
+				->save().unsafeCast<Human>();
+		
+		petr = gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"))
+				->setWeaponName("powerful hands of administrator")
+				->setSingleRelation("special-th", th)
+				->save().unsafeCast<Human>();
 		
 		gm->addNewFigure(new Human("human/luxor@eideo.cz", "luxor@eideo.cz", "luxor@eideo.cz"));
 		// TODO - zvetsit batohy
@@ -48,6 +56,7 @@ namespace Dungeon {
 				->setMaxHp(100)
 				->setCurrentHp(100)
 				->setRespawnInterval(90)
+				->setWeaponName("poisoned bite")
 				->setName("Small spider")
 				->setLongName("A small brown spider")
 				->setDescription("On closer look, it is cute. But I won't touch it!")
@@ -222,6 +231,7 @@ namespace Dungeon {
 				->setMaxHp(300)
 				->setCurrentHp(300)
 				->setRespawnInterval(9000)
+				->setWeaponName("ugly thorny leg")
 				->setName("Big spider")
 				->setLongName("A big ugly black spider")
 				->setDescription("You would even look closer?!")

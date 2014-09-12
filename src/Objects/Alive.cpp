@@ -79,7 +79,8 @@ namespace Dungeon {
 			.have(defense, "alive-defense", "Defense value")
 			.have((int&) currentState, "alive-state", "Current state of alive: 1 - Living, 2 - Dying, 3 - Dead")
 			.have(respawnTime, "alive-respawntime", "Respawn time")
-			.have(respawnInterval, "alive-respawninterval", "Respawn interval");
+			.have(respawnInterval, "alive-respawninterval", "Respawn interval")
+			.have(weaponName, "alive-weaponname", "The name of weapon currently used");
 		IDescriptable::registerProperties(storage);
 	}
 
@@ -206,10 +207,21 @@ namespace Dungeon {
 		if(damage <= 0) return this; 
 		if(ad != 0) {
 			if(ad->getAlive() == this) {
-				*ad << "You have received " + to_string(damage) + " damage from " + attacker->getName() + ". ";
+				if (attacker->getWeaponName() != "")
+					*ad << (RandomString::get()
+							<< "You have received " << damage << " damage from " + attacker->getName() + "'s " + attacker->getWeaponName() + ". " << endr
+							<< attacker->getName() << " caused you " << damage << " damage by its " << attacker->getWeaponName()  << ". " << endr);
+				else
+					*ad << "You have received " + to_string(damage) + " damage from " + attacker->getName() + ". ";
 			}
 			else {
-				*ad << "You have dealt " + to_string(damage) + " to " + this->getName() + ". ";
+				string weapon = ad->getAlive()->getWeaponName();
+				if (weapon != "")
+					*ad << (RandomString::get()
+							<< "You have dealt " << damage << " damage to " + this->getName() + " by your " + weapon + ". " << endr
+							<< "Your " + weapon + " have caused " << damage << " damage to " + this->getName() + ". " << endr);
+				else 
+					*ad << "You have dealt " << damage << " damage to " + this->getName() + ". ";
 			}
 		}
 		changeHp(-damage, ad);
@@ -273,57 +285,57 @@ namespace Dungeon {
 		return this;
 	}
         
-        int Alive::getResourceQuantity(Resource::ResourceType type) {
-            ObjectPointer resource = getSingleRelation(R_RESOURCE(type), Relation::Master);
-            
-            if (!!resource) {
-                return resource.unsafeCast<Resource>()->getQuantity();
-            } else {
-                return 0;
-            }
-        }
-        
-        Alive* Alive::setResourceQuantity(Resource::ResourceType type, int quantity) {
-            ObjectPointer current = getSingleRelation(R_RESOURCE(type), Relation::Master);
-            
-            if (!!current) {
-                Resource* res = current.unsafeCast<Resource>();
-                res->setQuantity(quantity);
-                res->save();
-            } else {
-                Resource* res = new Resource(type, quantity);
-                GameManager* gm = getGameManager();
-                
-                gm->insertObject(res);
-                res->save();
-                this->setSingleRelation(R_RESOURCE(res->getType()), res);
-            }
-            
-            return this;
-        }
-        
-        Alive* Alive::changeResourceQuantity(Resource::ResourceType type, int deltaQuantity) {
-            int currentQuantity = this->getResourceQuantity(type);
-            this->setResourceQuantity(type, currentQuantity + deltaQuantity);
-            
-            return this;
-        }
-        
-        Alive* Alive::addResource(Resource* resource) {
-            ObjectPointer current = getSingleRelation(R_RESOURCE(resource->getType()), Relation::Master);
-            
-            if (!!current) {
-                Resource* res = current.unsafeCast<Resource>();
-                res->setQuantity(res->getQuantity() + resource->getQuantity());
-                res->save();
-                
-                this->getGameManager()->deleteObject(resource);
-            } else {
-                this->setSingleRelation(R_RESOURCE(resource->getType()), resource);
-            }
-            
-            return this;
-        }
+	int Alive::getResourceQuantity(Resource::ResourceType type) {
+		ObjectPointer resource = getSingleRelation(R_RESOURCE(type), Relation::Master);
+
+		if (!!resource) {
+			return resource.unsafeCast<Resource>()->getQuantity();
+		} else {
+			return 0;
+		}
+	}
+
+	Alive* Alive::setResourceQuantity(Resource::ResourceType type, int quantity) {
+		ObjectPointer current = getSingleRelation(R_RESOURCE(type), Relation::Master);
+
+		if (!!current) {
+			Resource* res = current.unsafeCast<Resource>();
+			res->setQuantity(quantity);
+			res->save();
+		} else {
+			Resource* res = new Resource(type, quantity);
+			GameManager* gm = getGameManager();
+
+			gm->insertObject(res);
+			res->save();
+			this->setSingleRelation(R_RESOURCE(res->getType()), res);
+		}
+
+		return this;
+	}
+
+	Alive* Alive::changeResourceQuantity(Resource::ResourceType type, int deltaQuantity) {
+		int currentQuantity = this->getResourceQuantity(type);
+		this->setResourceQuantity(type, currentQuantity + deltaQuantity);
+
+		return this;
+	}
+
+	Alive* Alive::addResource(Resource* resource) {
+		ObjectPointer current = getSingleRelation(R_RESOURCE(resource->getType()), Relation::Master);
+
+		if (!!current) {
+			Resource* res = current.unsafeCast<Resource>();
+			res->setQuantity(res->getQuantity() + resource->getQuantity());
+			res->save();
+
+			this->getGameManager()->deleteObject(resource);
+		} else {
+			this->setSingleRelation(R_RESOURCE(resource->getType()), resource);
+		}
+
+		return this;
+	}
 
 	PERSISTENT_IMPLEMENTATION(Alive)
 }

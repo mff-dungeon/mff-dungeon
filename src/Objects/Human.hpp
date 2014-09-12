@@ -41,7 +41,16 @@ namespace Dungeon {
         string getContact() const;
         Human* setUsername(string username);
         string getUsername() const;
-		
+        
+
+        virtual string getWeaponName() const {
+            Wearable* weapon = getSingleRelation(Wearable::SlotRelations[Wearable::Slot::Weapon]).safeCast<Wearable>();
+            if (weapon)
+                return weapon->getName();
+            return Alive::getWeaponName();
+        }
+
+        
     private:
         string username, contact;
         
