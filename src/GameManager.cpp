@@ -85,8 +85,8 @@ namespace Dungeon {
 	IObject* GameManager::loadObject(objId id) {
 		IObject* r = 0;
 		r = loader->loadObject(id);
-		LOGS("GameManager", Info) << "Loaded object '" << id << "' with class " << r->className() << "." << LOGF;
 		if(r == 0) return 0;
+                LOGS("GameManager", Info) << "Loaded object '" << id << "' with class " << r->className() << "." << LOGF;
 		r->setGameManager(this);
 		
 		// Load the relations
