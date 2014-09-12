@@ -129,7 +129,11 @@ namespace Dungeon {
     template<typename value_type>
     value_type FuzzyStringMatcher<value_type>::find(const string& needle) {
         LOGS("FuzzyMatcher", Verbose) << "Looking for " << needle << LOGF;
+        ofstream debugfile;
+        debugfile.open("debug/fuzzymatcher_thresholds.txt", ios::out | ios::app);
+        debugfile << "> " << needle << "\n";
         int min = -1;
+        string sel = "";
         value_type val = strMap.begin()->second;
         for (auto& pair : strMap) {
                 int d = getDifference(needle, pair.first);
@@ -137,8 +141,12 @@ namespace Dungeon {
                 if (min == -1 || d < min) {
                         min = d;
                         val = pair.second;
+                        sel = pair.first;
                 }
+                debugfile << "\t" << pair.first << ";" << d << "\n";
         }
+        debugfile << "< " << sel << ";" << min << endl;
+        debugfile.close();
         return val;
     }
 

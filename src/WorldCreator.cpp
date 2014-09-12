@@ -17,7 +17,8 @@ namespace Dungeon {
 		gm->createRelation(asaru, th, "special-th");
 		petr = (Human*) gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"));
 		gm->createRelation(petr, th, "special-th");
-
+		
+		gm->addNewFigure(new Human("human/luxor@eideo.cz", "luxor@eideo.cz", "luxor@eideo.cz"));
 		// TODO - zvetsit batohy
 	}
 

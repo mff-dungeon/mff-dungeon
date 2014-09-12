@@ -23,11 +23,17 @@ namespace Dungeon {
 			string message (ad->in_msg);
 			transform(message.begin(), message.end(), message.begin(), ::tolower);
 			
+			ofstream debugfile;
+			debugfile.open("debug/messages.txt", ios::out | ios::app);
+			debugfile << message << ";";
+			
 			for (ActionList::iterator it = alist.begin(); it != alist.end(); ++it) {
 				Action* action = it->second;
 				LOGS("TD", Verbose) << "Matching action " << it->first << LOGF;
 				if (action->matchCommand(message)) {
 					ad->matched(action);
+					debugfile << action->type << endl;
+					debugfile.close();
 					alist.erase(it);
 					break;
 				}
@@ -36,6 +42,8 @@ namespace Dungeon {
 			
 			if (!ad->isValid(this)) {
 				*ad << getDontUnderstandResponse(ad->in_msg);
+				debugfile << "!!!!!" << endl;
+				debugfile.close();
 				return false;
 			}
 			
