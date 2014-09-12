@@ -53,6 +53,13 @@ namespace Dungeon {
 		}
 	}
 	
+	void ItemRespawner::registerProperties(IPropertyStorage& storage) {
+		storage.have(interval, "respawner-interval", "Respawning interval")
+				.have(timestamp, "respawner-timestamp", "Time at which the item respawns", false);
+		Trap::registerProperties(storage);
+	}
+
+	
 	PERSISTENT_IMPLEMENTATION(ItemRespawner)
 }
 

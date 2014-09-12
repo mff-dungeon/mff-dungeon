@@ -1,5 +1,5 @@
 #include "Door.hpp"
-#include "Room.hpp"
+#include "Location.hpp"
 #include "../ObjectPointer.hpp"
 #include "../ActionList.hpp"
 #include "../RegexMatcher.hpp"
@@ -46,11 +46,11 @@ namespace Dungeon {
 			// What a weird door pointing nowhere...
 		}
 
-		target.assertType<Room>("That seems to head nowhere. You've decided not to go there.");
+		target.assertType<Location>("That seems to head nowhere. You've decided not to go there.");
 		ad->getGM()->moveAlive(ad->getAlive(), target);
 		door.unsafeCast<Door>()->onGoThrough(ad);
 		target->triggerTraps("inside", ad);
-		target.unsafeCast<Room>()->explore(ad);
+		target.unsafeCast<Location>()->explore(ad);
 	}
     
 	string Door::getDescriptionSentence() {

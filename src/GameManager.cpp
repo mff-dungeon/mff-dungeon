@@ -255,7 +255,7 @@ namespace Dungeon {
 	void GameManager::moveAlive(Alive* alive, ObjectPointer room) {
 		this->removeRelation(alive->getLocation(), alive, R_INSIDE);
 		this->createRelation(room, alive, R_INSIDE);
-		if(room.safeCast<Room>()->isRespawnable() && alive->isInstanceOf(Human::HumanClassName)) {
+		if(room.safeCast<Location>()->isRespawnable() && alive->isInstanceOf(Human::HumanClassName)) {
 			alive->setRespawnLocation(room);
 		}
 	}

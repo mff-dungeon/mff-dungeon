@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include <math.h>
 #include "Alive.hpp"
-#include "Room.hpp"
+#include "Location.hpp"
 #include "../ActionDescriptor.hpp"
 #include "../ActionList.hpp"
 #include "../RandomString.hpp"
@@ -242,7 +242,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::setRespawnLocation(ObjectPointer room) {
-		room.assertType<Room>("Respawn location can only be a room");
+		room.assertType<Location>("Respawn location can only be a room");
 		setSingleRelation("respawn-location", room, Relation::Master, "Respawn location couldn't be set.");
 		return this;
 	}

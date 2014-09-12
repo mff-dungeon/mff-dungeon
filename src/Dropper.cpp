@@ -52,7 +52,7 @@ namespace Dungeon{
 	}
 	
 	bool Dropper::tryDrop(ObjectPointer loc) {
-		loc.assertExists("You cannot drop item nowhere. ").assertType<Room>("You must drop items in the room. ");
+		loc.assertExists("You cannot drop item nowhere. ").assertType<Location>("You must drop items in the room. ");
 		int random = Utils::getRandomInt(1, 1000000);
 		if(random <= getChance()) { // Let's drop it
 			int amount = Utils::getRandomInt(getMin(), getMax());

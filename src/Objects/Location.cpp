@@ -1,6 +1,6 @@
 #include <exception>
 
-#include "Room.hpp"
+#include "Location.hpp"
 #include "../ObjectPointer.hpp"
 #include "../ObjectGroup.hpp"
 #include "../ActionDescriptor.hpp"
@@ -11,21 +11,33 @@
 
 namespace Dungeon {
 
-	bool Room::contains(ObjectPointer object) {
+	bool Location::contains(ObjectPointer object) {
 		return hasRelation(R_INSIDE, object, Relation::Master);
 	}
 
-	bool Room::isRespawnable() const {
+	bool Location::isRespawnable() const {
 		return respawnable;
 	}
 
-	Room* Room::setRespawnable(bool respawnable) {
+	Location* Location::setRespawnable(bool respawnable) {
 		this->respawnable = respawnable;
 		return this;
 	}
+	
+	string Location::getEmptyMessage() const {
+		return emptyMessage != "" ? emptyMessage
+				: RandomString::get()
+					<< "It is empty. " << endr
+					<< "There is nothing. " << endr;
+	}
+	
+	Location* Location::setEmptyMessage(string emptyMessage) {
+		this->emptyMessage = emptyMessage;
+		return this;
+	}
 
-	void Room::getActions(ActionList* list, ObjectPointer callee) {
-		LOGS("Room", Verbose) << "Getting actions on " << this->getName() << "." << LOGF;
+	void Location::getActions(ActionList* list, ObjectPointer callee) {
+		LOGS("Location", Verbose) << "Getting actions on " << this->getName() << "." << LOGF;
 		// Recursively search all items in this room
 		try {
 			ObjectMap objects = getRelations(Relation::Master, R_INSIDE);
@@ -55,7 +67,15 @@ namespace Dungeon {
 		}
 	}
 
-	string Room::getDescriptionSentence() {
+	string Location::getDescriptionSentence() {
+		string common = this->getLongName() + ". " + this->getDescription();
+		return RandomString::get()
+				<< "There is also " + common << endr
+				<< "You can see " + common << endr
+				<< "You've searched " + this->getLongName() + " too. " + this->getDescription() << endr;
+	}
+	
+	string Location::getInsideSentence() {
 		string common = this->getLongName() + ". " + this->getDescription();
 		return RandomString::get()
 				<< "You are in " + common << endr
@@ -63,30 +83,67 @@ namespace Dungeon {
 				<< "Seems like you are in " + common << endr;
 	}
 
-	void Room::explore(ActionDescriptor* ad) {
-		LOGS("Room", Verbose) << "Exploring " << this->getName() << "." << LOGF;
-		*ad << this->getDescriptionSentence() << " ";
+	void Location::explore(ActionDescriptor* ad) {
+		LOGS("Location", Verbose) << "Exploring " << this->getName() << "." << LOGF;
+		triggerTraps("explore", ad);
+		ObjectPointer alive = ad->getAlive();
 		// Recursively search all items in this room
-		ObjectMap objects = getRelations(Relation::Master, R_INSIDE);
-		ObjectGroup groupedObjects(objects);
+		ObjectGroup groupedObjects;
+		queue<ObjectPointer> nested;
 
 		// remove myself from the exploration group
-		for (ObjectGroup::iterator it = groupedObjects.begin(); it != groupedObjects.end(); it++) {
-			if (it->second.operator==(ad->getAlive())) {
-				groupedObjects.erase(it);
-				break;
+		for (auto obj :  getRelations(Relation::Master, R_INSIDE)) {
+			if (alive == obj.second) {
+				*ad << getInsideSentence();
+			} else if (obj.second->instanceOf(Location)) {
+				nested.push(obj.second);
+			} else {
+				groupedObjects.insertObject(obj.second);
 			}
 		}
-
+		
 		*ad << groupedObjects.explore();
+		
+		if (nested.size() + groupedObjects.size() == 0)
+			*ad << getEmptyMessage();
+		
+		if (nested.size() == 0)
+			return;
+		
+		ObjectPointer current = nested.front();
+		
+		*ad << current.unsafeCast<Location>()->getDescriptionSentence();
+		*ad << "Do you want to look into? ";
+		
+		while (nested.size() > 1) {
+			nested.pop();
+			ObjectPointer next = nested.front();
+			ad->waitForReply([current, next] (ActionDescriptor* ad, string reply) {
+				if (StringMatcher::matchTrueFalse(reply)) {
+					current.unsafeCast<Location>()->explore(ad);
+				}
+				*ad << next.unsafeCast<Location>()->getDescriptionSentence();
+				*ad << "Do you want to look into it? ";
+			});
+			current = next;
+		}
+		
+		ad->waitForReply([current] (ActionDescriptor* ad, string reply) {
+			if (StringMatcher::matchTrueFalse(reply)) {
+				current.unsafeCast<Location>()->explore(ad);
+			} else {
+				*ad << "There are no more things. ";
+			}
+		});
 	}
 
-	void Room::registerProperties(IPropertyStorage& storage) {
-		storage.have(respawnable, "room-respawnable", "True if user can respawn here");
+	void Location::registerProperties(IPropertyStorage& storage) {
+		storage.have(respawnable, "location-respawnable", "True if user can respawn here")
+			.have(emptyMessage, "location-emptymessage", "Message that shows when the location is empty.");
 		IDescriptable::registerProperties(storage);
 	}
 
-	PERSISTENT_IMPLEMENTATION(Room)
+	PERSISTENT_IMPLEMENTATION(Location)
 
 
 	void PickupAction::explain(ActionDescriptor* ad) {
@@ -111,16 +168,19 @@ namespace Dungeon {
 			*ad << "You cannot pick " << item->getName() << ". \n";
 			return;
 		}
+		
+		ObjectPointer backpack = ad->getAlive()
+				->getBackpack();
 
-		Inventory* inventory = ad->getAlive()
-				->getBackpack()
-				.assertType<Inventory>(GameStateInvalid::BackpackNotInventory)
-				.unsafeCast<Inventory>();
-
-		if (!inventory) {
+		if (!backpack) {
 			*ad << "You have no inventory to put " << item->getName() << " in. ";
 			return;
 		}
+		
+		Inventory* inventory = backpack
+				.assertType<Inventory>(GameStateInvalid::BackpackNotInventory)
+				.unsafeCast<Inventory>();
+
 
 		if (inventory->getFreeWeight() < item->getWeight()) {
 			*ad << "Content of " << inventory->getName() << " would be too heavy with " << item->getName() << ". ";
@@ -134,8 +194,8 @@ namespace Dungeon {
 			return;
 		}
 		// Everything is allright, let's add it
-		Room* current = item->getSingleRelation(R_INSIDE, Relation::Slave, "The item is located in more than one room.")
-				.safeCast<Room>();
+		Location* current = item->getSingleRelation(R_INSIDE, Relation::Slave, "The item is located in more than one location.")
+				.safeCast<Location>();
 		if (!current) {
 			LOGS("PickupAction", Error) << "The item is nowhere?!" << LOGF;
 			return;

@@ -19,13 +19,13 @@ namespace Dungeon {
         
     protected:
         GameManager* gm;
-        Door* createDoor(string name, Room* a, Room* b, bool two_way = true);
+        Door* createDoor(string name, Location* a, Location* b, bool two_way = true);
         
         template<typename T>
-        T* createObject(string id, IObject* location = NULL) {
+        T* createObject(string id, ObjectPointer location = nullptr) {
             T* ptr = new T(id);
             gm->insertObject(ptr);
-            if (location) gm->createRelation(location, ptr, R_INSIDE);
+            if (!!location) gm->createRelation(location, ptr, R_INSIDE);
             return ptr;
         }
 		

@@ -9,13 +9,14 @@
 #include "Objects/IDescriptable.hpp"
 #include "Objects/Inventory.hpp"
 #include "Objects/Item.hpp"
+#include "Objects/Location.hpp"
 #include "Objects/Potion.hpp"
 #include "Objects/Recipe.hpp"
-#include "Objects/Room.hpp"
 #include "Objects/ThorsHammer.hpp"
 #include "Objects/Wearable.hpp"
 #include "Traps/AttackTrap.hpp"
 #include "Traps/ItemRespawner.hpp"
+#include "Traps/SimpleDamageTrap.hpp"
 #include "Traps/Trap.hpp"
 
 #endif

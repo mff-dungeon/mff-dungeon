@@ -3,7 +3,7 @@
 
 #include "common.hpp"
 #include "IObject.hpp"
-#include "Objects/Room.hpp"
+#include "Objects/Location.hpp"
 #include "ObjectPointer.hpp"
 
 namespace Dungeon {

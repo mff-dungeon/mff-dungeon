@@ -3,28 +3,35 @@
 
 namespace Dungeon {
 
-	ObjectGroup::ObjectGroup(IObject *obj) : ObjectGroupMap() {
+	ObjectGroup::ObjectGroup() : ObjectGroupMap() { }
+
+
+	ObjectGroup::ObjectGroup(IObject *obj) : ObjectGroup() {
 		this->insert(getPair(obj));
 	}
 
-	ObjectGroup::ObjectGroup(ObjectPointer ptr) : ObjectGroupMap() {
+	ObjectGroup::ObjectGroup(ObjectPointer ptr) : ObjectGroup() {
 		this->insert(getPair(ptr));
 	}
 
-	ObjectGroup::ObjectGroup(const vector<IObject *>& objects) : ObjectGroupMap() {
+	ObjectGroup::ObjectGroup(const vector<IObject *>& objects) : ObjectGroup() {
 		for (IObject *obj : objects) {
 			this->insert(getPair(obj));
 		}
 	}
 
-	ObjectGroup::ObjectGroup(const vector<ObjectPointer>& pointers) : ObjectGroupMap() {
+	ObjectGroup::ObjectGroup(const vector<ObjectPointer>& pointers) : ObjectGroup() {
 		for (ObjectPointer ptr : pointers) {
 			this->insert(getPair(ptr));
 		}
 	}
 
 	ObjectGroup::ObjectGroup(ObjectMap map) : ObjectGroupMap(map.begin(), map.end()) {
- }
+	}
+	
+	ObjectGroupMap::iterator ObjectGroup::insertObject(ObjectPointer ptr) {
+		return ObjectGroupMap::insert(getPair(ptr));
+	}
 
 	ObjectGroupMap::value_type ObjectGroup::getPair(IObject *obj) {
 		return ObjectGroupMap::value_type(obj->getId(), obj);

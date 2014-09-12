@@ -66,6 +66,9 @@ namespace Dungeon
         
         virtual ObjectPointer doRespawn(ObjectPointer location);
         
+        virtual void registerProperties(IPropertyStorage& storage);
+
+        
         PERSISTENT_DECLARATION(ItemRespawner, Trap);
     private:
         int interval = 60, timestamp = Timestamp::Now;

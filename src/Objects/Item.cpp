@@ -111,10 +111,13 @@ namespace Dungeon {
 			items << *i;
 		}
 
+		// TODO we need way more nice sentences cause this is displaying veery often.
 		return RandomString::get()
-				<< items.getSentence("", "You see % lying on the ground. ", "You see %. ") << endr
-				<< items.getSentence("", "There lies %. " , "There lies % on the ground. ") << endr
-				<< items.getSentence("", "% lies nearby. ", "On the ground there are %. ") << endr;
+				<< items.getSentence("", "You see % lying there. ") << endr
+				<< items.getSentence("", "There lies %. " ) << endr
+				<< items.getSentence("", "% lies there. ") << endr
+				<< items.getSentence("", "There is also some %. ", "There are % too. ") << endr
+				<< items.getSentence("", "There is %. ", "There are %. ") << endr;
 	}
 	
 	void Item::registerProperties(IPropertyStorage& storage) {

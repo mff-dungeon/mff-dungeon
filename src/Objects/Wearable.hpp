@@ -5,7 +5,7 @@
 #include "Item.hpp"
 #include "../Actions/MultiTargetAction.hpp"
 #include "../ActionDescriptor.hpp"
-#include "Room.hpp"
+#include "Location.hpp"
 
 namespace Dungeon {
 	

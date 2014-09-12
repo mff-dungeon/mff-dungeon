@@ -1,7 +1,7 @@
 #include "Human.hpp"
 #include "../ActionList.hpp"
 #include "../ActionDescriptor.hpp"
-#include "Room.hpp"
+#include "Location.hpp"
 #include "Inventory.hpp"
 #include <time.h>
 #include "../exceptions.hpp"
@@ -77,7 +77,7 @@ namespace Dungeon {
 		this->setCurrentHp((int) getMaxHp() * 0.75);
 		this->setState(State::Living);
 		if(ad != 0) {
-			*ad << "You have just respawned in " << getRespawnLocation().safeCast<Room>()->getName() << ". ";
+			*ad << "You have just respawned in " << getRespawnLocation().safeCast<Location>()->getName() << ". ";
 		}
 		return this;
 	}
@@ -159,7 +159,7 @@ namespace Dungeon {
 						ObjectMap rooms = getRelations(Relation::Slave, R_INSIDE);
 						for (auto& room : rooms) {
 							ObjectPointer obj = room.second;
-							Room* r = obj.safeCast<Room>();
+							Location* r = obj.safeCast<Location>();
 							if (r) {
 								r->explore(ad);
 							} else {

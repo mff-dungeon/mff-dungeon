@@ -29,6 +29,7 @@ namespace Dungeon {
      */
     class ObjectGroup : public ObjectGroupMap {
     public:
+        ObjectGroup();
         ObjectGroup(ObjectPointer ptr);
         ObjectGroup(const vector<ObjectPointer>& pointers);
         ObjectGroup(ObjectMap map);
@@ -38,6 +39,8 @@ namespace Dungeon {
         
         /** @deprecated */
         ObjectGroup(const vector<IObject *>& objects);
+        
+        ObjectGroupMap::iterator insertObject(ObjectPointer ptr);
         
         string explore();
         

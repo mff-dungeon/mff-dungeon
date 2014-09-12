@@ -32,7 +32,7 @@ namespace Dungeon {
 			shape = "ellipse";
 		} else if (obj->instanceOf(Alive)) {
 			shape = "octagon";
-		} else if (obj->instanceOf(Room)) {
+		} else if (obj->instanceOf(Location)) {
 			shape = "house";
 		} else if (obj->instanceOf(Door)) {
 			shape = "rarrow";

@@ -249,7 +249,7 @@ namespace Dungeon {
 	}
 	
 	void EquipAction::itemPhaseThree(ActionDescriptor* ad) {
-		Room* currentRoom = ad->getAlive()->getLocation().safeCast<Room>();
+		Location* currentRoom = ad->getAlive()->getLocation().safeCast<Location>();
 		if(currentRoom->contains(itemPtr)) {
 			ad->getGM()->removeRelation(currentRoom, itemPtr, R_INSIDE);
 			ad->getAlive()->setSingleRelation(Wearable::SlotRelations[itemPtr.unsafeCast<Wearable>()->getSlot()], itemPtr, Relation::Master, GameStateInvalid::EquippedMoreThanOne);
@@ -377,7 +377,7 @@ namespace Dungeon {
 	}
 	void EquipAction::backpackPhaseThree(ActionDescriptor* ad) {
 		Inventory* newPack = itemPtr.safeCast<Inventory>();
-		Room* currentLoc = ad->getAlive()->getLocation().safeCast<Room>();
+		Location* currentLoc = ad->getAlive()->getLocation().safeCast<Location>();
 		if(currentLoc->contains(itemPtr)) {
 			ad->getGM()->removeRelation(currentLoc, newPack, R_INSIDE);
 		}

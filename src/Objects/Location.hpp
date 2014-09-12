@@ -1,5 +1,5 @@
-#ifndef ROOM_HPP
-#define	ROOM_HPP
+#ifndef LOCATION_HPP
+#define	LOCATION_HPP
 
 #include "../common.hpp"
 #include "IDescriptable.hpp"
@@ -12,13 +12,14 @@ namespace Dungeon {
      * Every alive must be placed into some room.
      * Room can be explored to see what's inside.
      */
-    class Room : public IDescriptable {
+    class Location : public IDescriptable {
     public:
-        Room() {}		// Constructor allowing to load class later
-        Room(objId id) : IDescriptable(id) {}
-        virtual ~Room() {}
+        Location() {}		// Constructor allowing to load class later
+        Location(objId id) : IDescriptable(id) {}
+        virtual ~Location() {}
 
         virtual string getDescriptionSentence();
+        virtual string getInsideSentence();
         virtual void getActions(ActionList* list, ObjectPointer calee);
         virtual void explore(ActionDescriptor* ad);
 
@@ -26,18 +27,21 @@ namespace Dungeon {
 
 		bool contains(ObjectPointer object);
 		bool isRespawnable() const;
-		Room* setRespawnable(bool respawnable);
-		
+		Location* setRespawnable(bool respawnable);
+                string getEmptyMessage() const;
+                Location* setEmptyMessage(string emptyMessage);
+
 	private:
 		bool respawnable = false;
+                string emptyMessage = "";
 	
-    PERSISTENT_DECLARATION(Room, IDescriptable)
+    PERSISTENT_DECLARATION(Location, IDescriptable)
 			
     };
 	
 	class PickupAction : public MultiTargetAction {
 	public:
-		PickupAction(string type = "room-pickup") : MultiTargetAction(type) {}
+		PickupAction(string type = "location-pickup") : MultiTargetAction(type) {}
         
         virtual void explain(ActionDescriptor* ad);
         virtual bool matchCommand(string command);
@@ -47,5 +51,5 @@ namespace Dungeon {
 	};
 }
 
-#endif	/* ROOM_HPP */
+#endif	/* LOCATION_HPP */
 
