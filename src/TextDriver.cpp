@@ -28,7 +28,7 @@ namespace Dungeon {
 
                                                 for (ActionList::iterator it = alist.begin(); it != alist.end(); ++it) {
                                                         Action* action = it->second;
-                                                        LOGS("TD", Verbose) << "Matching action " << it->first << LOGF;
+                                                        LOGS("TextDriver", Verbose) << "Matching action " << it->first << LOGF;
                                                         if (action->match(message, ad)) {
                                                                 ad->matched(action);
                                                                 debugfile << action->type << endl;
@@ -79,7 +79,7 @@ namespace Dungeon {
 			}
 		}
 		catch (GameException& gameException) {
-			LOGS("Driver", Error) << gameException.what() << LOGF;
+			LOGS("TextDriver", Error) << gameException.what() << LOGF;
 			if (ad->getAction() && ad->getAction()->handleException(gameException, ad))
 				return false;
 			*ad << gameException.what() << eos;
