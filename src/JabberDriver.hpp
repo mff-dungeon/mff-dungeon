@@ -70,6 +70,8 @@ namespace Dungeon {
         static int presencePriority() { return 0; }
         static char userFileSeparator() { return ':'; }
         fstream userFile;
+        
+        void createNewFigure(gloox::JID jid);
     };
     
 }

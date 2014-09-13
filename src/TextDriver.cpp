@@ -2,6 +2,7 @@
 #include "ActionDescriptor.hpp"
 #include "RandomString.hpp"
 #include "Traps/Trap.hpp"
+#include "Objects/Human.hpp"
 
 namespace Dungeon {
     
@@ -15,49 +16,50 @@ namespace Dungeon {
 		try { // Catching regular exceptions
 			try { // TrapExceptions to modify life-cycle
 				if (ad->isFinished()) {
-					ad->getAlive()->getAllActions(&alist);
+                                        if (!ad->getAction()) {
+                                                ad->getAlive()->getAllActions(&alist);
 
-					string message (ad->in_msg);
-					transform(message.begin(), message.end(), message.begin(), ::tolower);
+                                                string message (ad->in_msg);
+                                                transform(message.begin(), message.end(), message.begin(), ::tolower);
 
-					ofstream debugfile;
-					debugfile.open("debug/messages.txt", ios::out | ios::app);
-					debugfile << message << ";";
+                                                ofstream debugfile;
+                                                debugfile.open("debug/messages.txt", ios::out | ios::app);
+                                                debugfile << message << ";";
 
+                                                for (ActionList::iterator it = alist.begin(); it != alist.end(); ++it) {
+                                                        Action* action = it->second;
+                                                        LOGS("TD", Verbose) << "Matching action " << it->first << LOGF;
+                                                        if (action->match(message, ad)) {
+                                                                ad->matched(action);
+                                                                debugfile << action->type << endl;
+                                                                debugfile.close();
+                                                                break;
+                                                        }
+                                                }
+                                                alist.clear();
 
-					for (ActionList::iterator it = alist.begin(); it != alist.end(); ++it) {
-						Action* action = it->second;
-						LOGS("TD", Verbose) << "Matching action " << it->first << LOGF;
-						if (action->match(message, ad)) {
-							ad->matched(action);
-							debugfile << action->type << endl;
-							debugfile.close();
-							break;
-						}
-					}
-					alist.clear();
+                                                if (!ad->isValid(this)) {
+                                                        *ad << getDontUnderstandResponse(ad->in_msg) << eos;
+                                                        debugfile << "!!!!!" << endl;
+                                                        debugfile.close();
+                                                        return false;
+                                                }
+                                        }
 
-					if (!ad->isValid(this)) {
-						*ad << getDontUnderstandResponse(ad->in_msg) << eos;
-						debugfile << "!!!!!" << endl;
-						debugfile.close();
-						return false;
-					}
-					
-					ad->getAction()->validate();
+                                        ad->getAction()->validate();
 
-					ad->state = ActionDescriptor::RoundBegin;
-					ad->getAlive()->onBeforeAction(ad);
-					ad->getAlive()->triggerTraps("action-" + ad->getAction()->type, ad);
+                                        ad->state = ActionDescriptor::RoundBegin;
+                                        ad->getAlive()->onBeforeAction(ad);
+                                        ad->getAlive()->triggerTraps("action-" + ad->getAction()->type, ad);
 
-					ad->state = ActionDescriptor::Round;
-					ad->getAction()->commit(ad);
-					
-					ad->state = ActionDescriptor::RoundEnd;
-					ad->getAlive()->onAfterAction(ad);
+                                        ad->state = ActionDescriptor::Round;
+                                        ad->getAction()->commit(ad);
+
+                                        ad->state = ActionDescriptor::RoundEnd;
+                                        ad->getAlive()->onAfterAction(ad);
 				} else { // ! finished
-					ad->state = ActionDescriptor::Round;
-					ad->userReplied(ad->in_msg);
+                                        ad->state = ActionDescriptor::Round;
+                                        ad->userReplied(ad->in_msg);
 				}	
 				return true;
 			} catch (TrapException& te) {
@@ -97,19 +99,22 @@ namespace Dungeon {
 				<< "This is not the thing you are trying to do." << endr;
     }
     
-    string TextDriver::getStrangerResponse(string input) {
-        // TODO: think of something more creative
-        return RandomString::get()
-                << "The Dungeon speaks to no strangers. Add me as a friend and then we'll talk!" << endr
-				<< "Who are you, puny human? Prove yourself to me and add me as a friend!" << endr
-				<< "Do not disturb my peace, stranger. We can parley later upon you befriending me!" << endr;
-    }
-    
-    string TextDriver::getNewUserMessage() {
-        // TODO: think of something more creative
-        return RandomString::get()
-				<< "Greetings, brave warrior! You may now begin your quest."  << endr
-				<< "You have discovered the mighty Dungeon. Choose your words wisely!" << endr
-                << "Beware of the great Dungeon! Ask me a question and I shall answer you." << endr;
+    Action* TextDriver::getCreateAction() {
+        return new CallbackAction("create-user", "",
+				RegexMatcher::matcher(".+"),
+				[this] (ActionDescriptor * ad) {
+					*ad << (RandomString::get()
+                                                << "Greetings, brave warrior! How may I call you?"  << endr
+                                                << "You have discovered the mighty Dungeon. What is thy name?" << endr
+                                                << "Beware of the great Dungeon! How do you wish to be called?" << endr) << eos;
+					ad->waitForReply([] (ActionDescriptor *ad, string reply) {
+						((Human*) ad->getAlive())->setUsername(reply)
+								->save();
+						*ad << "Welcome, " << ad->getAlive()->getName() << "!" << eos; // A common mistake
+						*ad << "You may begin your quest. Ask me and I shall answer you." << eos;
+					});
+					
+                                        // TODO: add other first time questions
+				}, false);
     }
 }

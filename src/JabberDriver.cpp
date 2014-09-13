@@ -19,7 +19,7 @@ namespace Dungeon {
         client->disco()->setVersion("Dungeon", "1.0");
         client->disco()->setIdentity("client", "bot", "Dungeon");
         
-        userFile.open("jabber_sessions", fstream::in | fstream::out | fstream::app);
+        userFile.open("jabber_sessions.db", fstream::in | fstream::out | fstream::app);
     }
     
     JabberDriver::~JabberDriver() {
@@ -68,7 +68,7 @@ namespace Dungeon {
         // Really need to do it on every reply. Alive object could have been disposed in meantime...
         ad->assigned(figure);
 		
-		this->process(ad);
+	this->process(ad);
 
         Message msg(Message::Chat, ad->from, ad->getReply());
         ad->clearReply();
@@ -95,12 +95,7 @@ namespace Dungeon {
             
             objId figureId = this->findFigureId(message.from());
             if (!this->gm->hasObject(figureId)) {
-                
-                Message msg(Message::Chat, message.from(), this->getStrangerResponse(contents));
-                client->send(msg);
-                this->client->rosterManager()->subscribe(message.from(), EmptyString, StringList(), "The Dungeon wants you!");
-                LOGS("JabberDriver", Verbose) << "Unknown JID '" << sender << "' sent a message: '" << contents << "', replying with subscription request..." << LOGF;
-                
+                this->createNewFigure(message.from());
                 return;
             }
 			
@@ -252,6 +247,21 @@ namespace Dungeon {
         LOGS("JabberDriver", Verbose) << "Received presence: '" << typeName << "', sender: '" << sender << "', status: '" << status << "'" << LOGF;
     }
     
+    void JabberDriver::createNewFigure(JID jid) {
+        objId figureId = this->findFigureId(jid);
+        LOGS("JabberDriver", Info) << "Yay! We've got a new player: " << figureId << LOGF;
+        
+        Alive* figure = new Human(figureId, jid.username(), jid.bare());
+        this->gm->addNewFigure(figure);
+        
+        TextActionDescriptor* ad = new TextActionDescriptor(this);
+        dialogs[figureId] = ad;
+        ad->from.assign(jid.bare());
+        ad->matched(this->getCreateAction());
+        
+        queue->enqueue(ad);
+    }
+    
     void JabberDriver::handleSubscription(const Subscription &subscription) {
         string typeName;
         string sender = subscription.from().bare();
@@ -262,15 +272,10 @@ namespace Dungeon {
             {
                 typeName = "subscription request";
                 
-                // create new user if necessary
+                // create new user if necessarydialog
                 objId figureId = this->findFigureId(subscription.from());
-                
                 if (!this->gm->hasObject(figureId)) {
-                    Alive *figure = new Human(figureId, subscription.from().username(), subscription.from().bare());
-                    this->gm->addNewFigure(figure);
-                    
-                    Message msg(Message::Chat, subscription.from(), this->getNewUserMessage());
-                    client->send(msg);
+                    this->createNewFigure(subscription.from());
                 }
                 
                 // acknowledge request and send similar request back

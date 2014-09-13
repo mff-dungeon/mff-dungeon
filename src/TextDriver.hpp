@@ -29,14 +29,9 @@ namespace Dungeon {
         string getDontUnderstandResponse(string input);
         
         /**
-         * Get some fancy response to unregistered user
+         * Action for user's first interaction
          */
-        string getStrangerResponse(string input);
-        
-        /**
-         * Invite new user
-         */
-        string getNewUserMessage();
+        Action* getCreateAction();
     protected:
         map<objId, TextActionDescriptor*> dialogs;
         

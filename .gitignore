@@ -5,8 +5,7 @@ Dungeon.xcodeproj
 doc/Documentation.pdf
 doc/main.aux
 doc/main.log
-dungeon.db
-jabber_sessions
 nbproject/*
 *.log
+*.db
 dumps/*
