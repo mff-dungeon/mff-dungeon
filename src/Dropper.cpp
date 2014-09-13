@@ -1,5 +1,6 @@
 #include "Dropper.hpp"
 #include "Cloner.hpp"
+#include "Objects/Resource.hpp"
 
 namespace Dungeon{
 
@@ -56,11 +57,19 @@ namespace Dungeon{
 		int random = Utils::getRandomInt(1, 1000000);
 		if(random <= getChance()) { // Let's drop it
 			int amount = Utils::getRandomInt(getMin(), getMax());
-			for(int i=1; i<=amount; i++) {
+			if(getItem()->isInstanceOf(Resource::ResourceClassName)) {
 				ObjectPointer item = Cloner::shallowClone(getItem());
-				LOG("Dropper") << "Dropped item. " << LOGF;
+				item.safeCast<Resource>()->setQuantity(amount);
 				item->setSingleRelation(R_INSIDE, loc, Relation::Slave);
 			}
+			else {
+				for(int i=1; i<=amount; i++) {
+					ObjectPointer item = Cloner::shallowClone(getItem());
+					item->setSingleRelation(R_INSIDE, loc, Relation::Slave);
+				}
+			}
+			LOGS("Dropper", Verbose) << "Dropped " << amount
+					<< " items " << getItem().safeCast<IDescriptable>()->getName() << ". " << LOGF;
 			return true;
 		}
 		return false;
