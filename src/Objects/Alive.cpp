@@ -7,6 +7,7 @@
 #include "../RandomString.hpp"
 #include "../SentenceJoiner.hpp"
 #include "../Traps/Healing.hpp"
+#include "Inventory.hpp"
 
 namespace Dungeon {
     
@@ -192,6 +193,26 @@ namespace Dungeon {
 	ObjectPointer Alive::getBackpack() {
 		return getSingleRelation(Wearable::SlotRelations[Wearable::Backpack], Relation::Master, "You've somehow equipped more than backpack.");
 	}	
+
+	bool Alive::hasItemType(string type) {
+		ObjectPointer backpack = getBackpack();
+		if(backpack == 0) return false;
+		if(!backpack->isInstanceOf(Inventory::InventoryClassName)) return false;
+		Inventory* inv = backpack.unsafeCast<Inventory>();
+		
+		try {
+			const ObjectMap& items = inv->getRelations(Relation::Master, R_INVENTORY);
+			for(auto& item : items) {
+				if(item.second->getObjectType().compare(type) == 0)
+					return true;
+			}
+		}
+		catch (const std::out_of_range& e) {
+			
+		}
+		return false;
+	}
+
 
 	Alive* Alive::damageAlive(ObjectPointer attackerPtr, int amount, ActionDescriptor* ad) {
 		Alive* attacker = attackerPtr.safeCast<Alive>();

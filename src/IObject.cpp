@@ -17,7 +17,13 @@ namespace Dungeon {
 		this->id = id;
 		return this;
 	}
-	
+
+	string IObject::getObjectType() const {
+		string type = getId();
+		if(type.find("template/") == 0) type = type.substr(9);
+		return type.substr(0, type.rfind("/"));
+	}
+
 	void IObject::store(Archiver& stream, objId& oid, string& className) const {
 		className = this->className();
 		oid = this->getId();

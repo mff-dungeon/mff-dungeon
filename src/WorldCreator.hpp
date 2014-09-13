@@ -29,9 +29,14 @@ namespace Dungeon {
             return ptr;
         }
 		
-		// TODO: a nicer way to deal with templateId
-		ObjectPointer cloneTemplate(ObjectPointer tmp, IObject* location = NULL) {
+		ObjectPointer deepCloneTemplate(ObjectPointer tmp, IObject* location = NULL) {
 			ObjectPointer clone = Cloner::deepClone(tmp);
+			if(location) clone->setSingleRelation(R_INSIDE, location, Relation::Slave);
+			return clone;
+		}
+		
+		ObjectPointer shallowCloneTemplate(ObjectPointer tmp, IObject* location = NULL) {
+			ObjectPointer clone = Cloner::shallowClone(tmp);
 			if(location) clone->setSingleRelation(R_INSIDE, location, Relation::Slave);
 			return clone;
 		}

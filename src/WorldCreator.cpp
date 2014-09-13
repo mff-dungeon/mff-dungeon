@@ -44,6 +44,12 @@ namespace Dungeon {
 				->setDescription("The vial is untouched, and the color of the liquid is some kind of scary. ")
 				->save();
 		
+		templates["item/trianglekey"] = createObject<Item>("template/item/trianglekey/1", templateRoom)
+				->setName("Triangular key")
+				->setLongName("A small triangular key.")
+				->setDescription("The key seems rather strange, maybe it unlocks something. ")
+				->save();
+		
 		templates["creature/smallspider"] = createObject<Creature>("template/creature/smallspider/1", templateRoom)
 				->drops(templates["potion/greenhealing"], 50 * Dropper::Percent)
 				->drops(templates["potion/greenhealing"], 30 * Dropper::Percent)
@@ -134,6 +140,8 @@ namespace Dungeon {
 					->setDescription("An old, rusty chest. ")
 					->save();
 			
+			shallowCloneTemplate(templates["item/trianglekey"], equipChest).unsafeCast<Item>()->respawnEvery(60)->save();
+			
 			createObject<Crafter>("crafter/anvil/" + RANDID, equipRoom)
 					->addRecipe(createObject<Recipe>("recipe/woodenclub/" + RANDID)
 						->setExperience(10)
@@ -219,11 +227,13 @@ namespace Dungeon {
 				->attachTrap(autoAttack, "inside")
 				->save().unsafeCast<Location>();
 		
-		cloneTemplate(templates["creature/smallspider"], darkRoom);
-		cloneTemplate(templates["creature/smallspider"], darkRoom);
+		deepCloneTemplate(templates["creature/smallspider"], darkRoom);
+		deepCloneTemplate(templates["creature/smallspider"], darkRoom);
 
 		this->createDoor("dark-base", baseRoom, darkRoom)
 				->setGoThroughMessage("You've crawled through that tunnel. It smelled bad. ")
+				->addLock(createObject<DoorLock>("doorlock/dark-base-lock/1")
+						->setKey(templates["item/trianglekey"]))
 				->setName("narrow tunnel")
 				->setLongName("a narrow tunnel with no visible ending")
 				->save();

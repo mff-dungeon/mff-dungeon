@@ -6,6 +6,7 @@
 #include "../ActionDescriptor.hpp"
 #include "../RandomString.hpp"
 #include "../SentenceJoiner.hpp"
+#include "../Traps/DoorLock.hpp"
 
 namespace Dungeon {
 	
@@ -34,6 +35,7 @@ namespace Dungeon {
 	
 	void DoorwalkAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer door) {	
 		door.assertType<Door>("How do you want to walk through door?");
+		door->triggerTraps("doorwalk", ad);
 		ObjectPointer target;
 		try {
 			ObjectMap targets = door->getRelations(Relation::Master, R_TARGET);
@@ -52,6 +54,18 @@ namespace Dungeon {
 		door.unsafeCast<Door>()->onGoThrough(ad);
 		target->triggerTraps("inside", ad);
 		target.unsafeCast<Location>()->examine(ad);
+	}
+
+	Door* Door::addLock(ObjectPointer lock) {
+		lock.assertExists("The lock doesn't exists. ").assertType<DoorLock>("You are locking a door with something strange. ");
+		this->attachTrap(lock, "doorwalk");
+		return this;
+	}
+
+	Door* Door::removeLock(ObjectPointer lock) {
+		lock.assertExists("The lock doesn't exists. ").assertType<DoorLock>("You are unlocking a door with something strange. ");
+		this->detachTrap(lock, "doorwalk");
+		return this;
 	}
     
 	string Door::getDescriptionSentence() {

@@ -7,9 +7,7 @@ namespace Dungeon {
 	ObjectPointer Cloner::getShallowClone() {
 		IObject* cloned = orig->createObject();
 		// Add new Id
-		string newId = objId_getType(orig.getId());
-		if(newId.find("template" == 0)) newId = newId.substr(9);
-		newId += "/" + RANDID;
+		string newId = orig->getObjectType() + "/" + RANDID;
 		cloned->setId(newId);
 		// What if beforeLoad did something with relations...
 		gm->insertObject(cloned);

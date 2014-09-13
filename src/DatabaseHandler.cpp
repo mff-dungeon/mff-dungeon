@@ -43,7 +43,7 @@ namespace Dungeon {
 
 	// Saves object from stringstream into DB, returns 0 if successful
 	int DatabaseHandler::saveObject(objId oid, string cName, string cData) {
-
+		
 		// Count, to find out if we should delete or update
 		const char *countstate = "SELECT COUNT(*) FROM objects WHERE id = ?;";
 		const char *coid = oid.c_str();

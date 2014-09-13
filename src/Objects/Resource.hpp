@@ -32,17 +32,17 @@ namespace Dungeon {
 		virtual ~Resource() {}
 		
 		ResourceType getType() const;
-                Resource* setType(ResourceType type);
-                string getTypeName() const;
-                
-                int getQuantity() const;
-                Resource* setQuantity(int quantity);
-                
-                virtual string getDescription() const;
-                virtual string getName() const;
-                virtual string getLongName() const;
-                
-                Resource* attachSumTrap();
+		Resource* setType(ResourceType type);
+		string getTypeName() const;
+
+		int getQuantity() const;
+		Resource* setQuantity(int quantity);
+
+		virtual string getDescription() const;
+		virtual string getName() const;
+		virtual string getLongName() const;
+
+		Resource* attachSumTrap();
                 
 		virtual void registerProperties(IPropertyStorage& storage);
                 	

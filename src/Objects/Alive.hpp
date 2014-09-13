@@ -99,6 +99,11 @@ namespace Dungeon
 		 * which utilizes operator++
 		 */
 		ObjectPointer getBackpack();
+		
+		/**
+		 * Returns true, whether the user has at least one of required item type
+         */
+		bool hasItemType(string type);
 
 		virtual void registerProperties(IPropertyStorage& storage);
 
@@ -131,22 +136,22 @@ namespace Dungeon
 
 		Alive* addResource(Resource* resource);
 		
-                virtual string getWeaponName() const
-                {
-                    return weaponName;
-                }
+		virtual string getWeaponName() const
+		{
+			return weaponName;
+		}
 
-                virtual Alive* setWeaponName(string weaponName)
-                {
-                    this->weaponName = weaponName;
-                    return this;
-                }
-                
-                /**
-                 * Helper method to set auto-healing trap.
-                 * @see Healing
-                 */
-                virtual Alive* regenerate(int rate);
+		virtual Alive* setWeaponName(string weaponName)
+		{
+			this->weaponName = weaponName;
+			return this;
+		}
+
+		/**
+		 * Helper method to set auto-healing trap.
+		 * @see Healing
+		 */
+		virtual Alive* regenerate(int rate);
 
                 
 	private:

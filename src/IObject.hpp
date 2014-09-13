@@ -80,6 +80,7 @@ namespace Dungeon {
         };
 
         virtual objId getId() const;
+		virtual string getObjectType() const;
 
         /**
          * Which actions can be performed by callee on this object?

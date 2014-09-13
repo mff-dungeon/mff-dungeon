@@ -30,6 +30,9 @@ namespace Dungeon {
             this->goThroughMessage = goThroughMessage;
             return this;
         }
+		
+		Door* addLock(ObjectPointer lock);
+		Door* removeLock(ObjectPointer lock);
 
         virtual void registerProperties(IPropertyStorage& storage);
         
