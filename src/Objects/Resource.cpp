@@ -3,7 +3,8 @@
 
 namespace Dungeon {
    
-	const char* Resource::ResourceName[] = {"gold", "wood", "stone", "food", "mana shards"};
+	const char* Resource::ResourceName[] = {"gold", "wood", "iron", "dragon skin",
+		"leather", "sand", "white powder", "red powder", "magical stone", "mana shards"};
 	 
     string Resource::getResourceTypeName(ResourceType type) const {
         switch (type) {
@@ -11,10 +12,20 @@ namespace Dungeon {
                 return "gold";
             case ResourceType::Wood:
                 return "wood";
-            case ResourceType::Stone:
-                return "stone";
-            case ResourceType::Food:
-                return "food";
+            case ResourceType::Iron:
+                return "iron";
+            case ResourceType::DragonSkin:
+                return "dragonskin";
+            case ResourceType::Leather:
+                return "leather";
+            case ResourceType::Sand:
+                return "sand";
+            case ResourceType::WhitePowder:
+                return "whitepowder";
+            case ResourceType::RedPowder:
+                return "redpowder";
+            case ResourceType::MagicalStone:
+                return "magicstone";
             case ResourceType::ManaShard:
                 return "manashard";
             default:
@@ -54,15 +65,12 @@ namespace Dungeon {
     }
 
     string Resource::getDescription() const {
+		// FIXME add rest of resources
         switch (getType()) {
             case ResourceType::Gold:
                 return "A chunk of great wealth (" + to_string(getQuantity()) + " units).";
             case ResourceType::Wood:
                 return "Smells like forest (" + to_string(getQuantity()) + " units).";
-            case ResourceType::Stone:
-                return "It is a bit heavier than it looks (" + to_string(getQuantity()) + " units).";
-            case ResourceType::Food:
-                return "Tasty and nutricious at the same time (" + to_string(getQuantity()) + " units).";
             case ResourceType::ManaShard:
                 return "It's a kind of magic (" + to_string(getQuantity()) + " units).";
             default:

@@ -15,13 +15,19 @@ namespace Dungeon {
 		/**
 		 * Determines the type of the resource. 
 		 * Mana shard should always be the last as many iterations depend on it
+		 * Gold and Mana shards not used yet
 		 */
 		enum ResourceType {
                     Gold = 0,
                     Wood = 1,
-                    Stone = 2,
-                    Food = 3,
-                    ManaShard = 4
+                    Iron = 2,
+                    DragonSkin = 3,
+					Leather = 4,
+					Sand = 5,
+					WhitePowder = 6,
+					RedPowder = 7,
+					MagicalStone = 8,
+                    ManaShard = 9
                 };
 				
 		static const char* ResourceName[];
@@ -47,12 +53,11 @@ namespace Dungeon {
 		virtual void registerProperties(IPropertyStorage& storage);
                 	
 	private:
-		
-            ResourceType resourceType = Resource::Gold;
-            int quantity = 0;
-            
-            objId getResourceTypeId(ResourceType type) const;
-            string getResourceTypeName(ResourceType type) const;
+		ResourceType resourceType = Resource::Gold;
+		int quantity = 0;
+
+		objId getResourceTypeId(ResourceType type) const;
+		string getResourceTypeName(ResourceType type) const;
 		
 	PERSISTENT_DECLARATION(Resource, Item)
 	};

@@ -152,12 +152,12 @@ namespace Dungeon
 		 * @see Healing
 		 */
 		virtual Alive* regenerate(int rate);
-
                 
 	private:
 		// Combat stats
-        int maxHp = 1000;
-		int currentHp = 1000;
+		const int BASE_HP = 300;
+        int maxHp = 300;
+		int currentHp = 300;
 		int defense = 1;
 		int attack = 1;
 		
@@ -172,7 +172,7 @@ namespace Dungeon
 		 */
 		int respawnInterval = -1;
                 
-                string weaponName = "";
+		string weaponName = "";
 	
 	PERSISTENT_DECLARATION(Alive, IDescriptable)
     };

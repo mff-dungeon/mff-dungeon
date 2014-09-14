@@ -4,7 +4,8 @@
 
 namespace Dungeon {
 
-	const char* Wearable::SlotRelations[] = { "invalid", "equip-weapon", "equip-backpack", "equip-bodyarmor" };
+	const char* Wearable::SlotRelations[] = { "invalid", "equip-weapon", "equip-backpack", "equip-shield",
+		"equip-helmet", "equip-boots", "equip-gloves", "equip-bodyarmor" };
 
 	Wearable::Slot Wearable::getSlot() const {
 		return slot;
@@ -32,15 +33,30 @@ namespace Dungeon {
 		this->defenseBonus = bonus;
 		return this;
 	}
+
+	int Wearable::getHpBonus() const {
+		return hpBonus;
+	}
+
+	Wearable* Wearable::setHpBonus(int bonus) {
+		this->hpBonus = bonus;
+		return this;
+	}
 	
 	string Wearable::getEquippedSentence() const {
 		switch (getSlot()) {
+			// FIXME do a nicer stuff
 			case Slot::Backpack:
 				return "As your backpack, you're using " + getName() + ". ";
 			case Slot::BodyArmor:
+			case Slot::Boots:
+			case Slot::Gloves:
+			case Slot::Helmet:
 				return getName() + " gives you some protection for damage. ";
 			case Slot::Weapon:
 				return getName() + " is your main weapon. ";
+			case Slot::Shield:
+				return "Your defense is boosted by " + getName() + ". ";
 			case Slot::Invalid:
 			default:
 				return getName() + " is fucking out of our tables for some reason. ";
@@ -77,6 +93,7 @@ namespace Dungeon {
 		storage.have((int&) slot, "wearable-slot", "Slot where to wear this item: 1 - Weapon, 2 - Backpack, 3 - Body armor");
 		storage.have(attackBonus, "wearable-attack", "Attack bonus of this item");
 		storage.have(defenseBonus, "wearable-defense", "Defense bonus of this item");
+		storage.have(hpBonus, "wearable-hp", "Hitpoints bonus of this item");
 		Item::registerProperties(storage);
 	}
 	

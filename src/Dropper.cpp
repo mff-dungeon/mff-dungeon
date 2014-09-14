@@ -58,13 +58,15 @@ namespace Dungeon{
 		if(random <= getChance()) { // Let's drop it
 			int amount = Utils::getRandomInt(getMin(), getMax());
 			if(getItem()->isInstanceOf(Resource::ResourceClassName)) {
-				ObjectPointer item = Cloner::shallowClone(getItem());
-				item.safeCast<Resource>()->setQuantity(amount);
+				ObjectPointer item = Cloner::deepClone(getItem());
+				getGameManager()->removeRelation(this, item, "dropper-item");
+				item.safeCast<Resource>()->setQuantity(amount)->attachSumTrap()->save();
 				item->setSingleRelation(R_INSIDE, loc, Relation::Slave);
 			}
 			else {
 				for(int i=1; i<=amount; i++) {
-					ObjectPointer item = Cloner::shallowClone(getItem());
+					ObjectPointer item = Cloner::deepClone(getItem());
+					getGameManager()->removeRelation(this, item, "dropper-item");
 					item->setSingleRelation(R_INSIDE, loc, Relation::Slave);
 				}
 			}

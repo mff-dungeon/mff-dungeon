@@ -67,7 +67,7 @@ namespace Dungeon {
 	}
 
 	int Human::getRequiredExp(int level) {
-		return (int) 42*pow(1.142,level) + 42 * level * level + 42 * level - 42;
+		return (int) 42*pow(1.142,level-1) + 42 * (level-1) * (level-1) + 42 * (level-1) - 42;
 	}
 
 

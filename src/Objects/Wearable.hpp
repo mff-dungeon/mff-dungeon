@@ -21,7 +21,11 @@ namespace Dungeon {
                     Invalid = 0,
                     Weapon = 1,
                     Backpack = 2,
-                    BodyArmor = 3
+					Shield = 3,
+					Helmet = 4,
+					Boots = 5,
+					Gloves = 6,
+                    BodyArmor = 7
                 };
 		/**
 		 * Used for actions
@@ -46,26 +50,26 @@ namespace Dungeon {
 		Wearable* setAttackBonus(int bonus);
 		int getDefenseBonus() const;
 		Wearable* setDefenseBonus(int bonus);
-                
-                                                string getEquippedSentence() const;
-                                                virtual string getDescription() const;
+		int getHpBonus() const;
+		Wearable* setHpBonus(int bonus);
 
-		
-		static bool unequip(ActionDescriptor* ad, ObjectPointer item, Wearable::DesiredAction action = NotKnown);
-		
+		string getEquippedSentence() const;
+		virtual string getDescription() const;
+
 		virtual void getActions(ActionList* list, ObjectPointer callee);
                 
 		virtual void registerProperties(IPropertyStorage& storage);
-                
-                virtual ObjectPointer onEquip(ActionDescriptor* ad) {
-                    triggerTraps("equipped", ad);
-                    return this;
-                }
-                
-                virtual ObjectPointer onUnequip(ActionDescriptor* ad) {
-                    triggerTraps("unequipped", ad);
-                    return this;
-                }
+          
+		static bool unequip(ActionDescriptor* ad, ObjectPointer item, Wearable::DesiredAction action = NotKnown);      
+		virtual ObjectPointer onEquip(ActionDescriptor* ad) {
+			triggerTraps("equipped", ad);
+			return this;
+		}
+
+		virtual ObjectPointer onUnequip(ActionDescriptor* ad) {
+			triggerTraps("unequipped", ad);
+			return this;
+		}
                 	
 	private:
 		
@@ -73,6 +77,7 @@ namespace Dungeon {
 		
 		int attackBonus = 0;
 		int defenseBonus = 0;
+		int hpBonus = 0;
 		
 	PERSISTENT_DECLARATION(Wearable, Item)
 	};

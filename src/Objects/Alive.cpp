@@ -139,8 +139,8 @@ namespace Dungeon {
 		if(hp >= maxHp) hp = maxHp;
 		if(hp <= 0) hp = 0;
 		
-		if(ad != 0 && this->currentHp != currentHp && ad->getAlive() == this) {
-			*ad << "Your current hitpoints have changed to " + to_string(currentHp) + ". ";
+		if(ad != 0 && this->currentHp != hp && ad->getAlive() == this) {
+			*ad << "Your current hitpoints have changed to " + to_string(hp) + ". ";
 		}
 		this->currentHp = hp;
 		return this;
@@ -155,6 +155,7 @@ namespace Dungeon {
 			*ad << "Your maximum hitpoints have changed to " + to_string(maxHp) + ". ";
 		}
 		this->maxHp = hp;
+		if(getCurrentHp() > maxHp) setCurrentHp(maxHp);
 		return this;
 	}
 
@@ -164,9 +165,9 @@ namespace Dungeon {
 
 
 	Alive* Alive::calculateBonuses() {
-		// Base Values
-		int attack = 1; 
-		int defense = 1;
+		int attack = 0; 
+		int defense = 0;
+		int maxhp = BASE_HP;
 		
 		for(int slot = Wearable::Slot::BodyArmor; slot != Wearable::Slot::Invalid; slot--) {
 			try {
@@ -177,6 +178,7 @@ namespace Dungeon {
 							.unsafeCast<Wearable>();
 					attack += wornItem->getAttackBonus();
 					defense += wornItem->getDefenseBonus();
+					maxhp += wornItem->getHpBonus();
 				}
 			}
 			catch (const std::out_of_range& e) {
@@ -184,8 +186,11 @@ namespace Dungeon {
 			}
 		}
 		
+		if(attack < 1) attack = 1;
+		if(defense < 1) defense = 1;
 		this->setAttack(attack)
 			->setDefense(defense)
+			->setMaxHp(maxhp)
 			->save();
 		return this;
 	}
