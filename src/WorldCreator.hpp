@@ -26,10 +26,14 @@ namespace Dungeon {
 		static const int ENEMY_RESPAWN_RATE = 10;
 		// Base value is 5
 		static const int ENEMY_MATS_DROP_RATE = 5;
+		// Base value is 5
+		static const int ENEMY_BOSS_KEY_RATE = 5;
 		// Base value is 2
 		static const int RECIPE_EXP_RATE = 2;
 		// Base value is 5
 		static const int RECIPE_MAT_REQUIRED = 5;
+		// Base value is 1
+		static const int RECIPE_KEY_MAT_REQUIRED = 1;
         
     protected:
         GameManager* gm;

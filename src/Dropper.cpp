@@ -59,14 +59,14 @@ namespace Dungeon{
 			int amount = Utils::getRandomInt(getMin(), getMax());
 			if(getItem()->isInstanceOf(Resource::ResourceClassName)) {
 				ObjectPointer item = Cloner::deepClone(getItem());
-				getGameManager()->removeRelation(this, item, "dropper-item");
+				getGameManager()->clearRelationsOfType(item, "dropper-item", Relation::Slave);
 				item.safeCast<Resource>()->setQuantity(amount)->attachSumTrap()->save();
 				item->setSingleRelation(R_INSIDE, loc, Relation::Slave);
 			}
 			else {
 				for(int i=1; i<=amount; i++) {
 					ObjectPointer item = Cloner::deepClone(getItem());
-					getGameManager()->removeRelation(this, item, "dropper-item");
+					getGameManager()->clearRelationsOfType(item, "dropper-item", Relation::Slave);
 					item->setSingleRelation(R_INSIDE, loc, Relation::Slave);
 				}
 			}
