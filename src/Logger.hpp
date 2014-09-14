@@ -54,8 +54,8 @@ namespace Dungeon {
          @param title   Title of the headline.
          */
         void setHeadline(string title);
-        
-        /** Starts outputting log messages into a new stream.
+         
+       /** Starts outputting log messages into a new stream.
          @param stream      Stream to which the log will be written.
          @param minSeverity All messages below this severity level will be discarded.
          */

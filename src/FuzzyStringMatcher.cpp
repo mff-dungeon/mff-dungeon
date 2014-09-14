@@ -2,7 +2,16 @@
 
 namespace Dungeon {
 	
-	/* Intentionally left blank because of externally linked template code. */
-
+    vector<string> StringMatcher::tokenize(const string& instr) {
+        char * str = strdup(instr.c_str());
+        char * ptr;
+        vector<string> ret;
+		ptr = strtok(str, " .,:()?!");
+		do {
+			ret.push_back(ptr);
+		} while ((ptr = strtok(NULL, " .,:()?!")));
+        free(str);
+        return ret;
+    }
 }
 

@@ -4,6 +4,7 @@
 #include <map>
 #include <algorithm>
 #include <exception>
+#include <cstring>
 #include "common.hpp"
 
 namespace Dungeon {
@@ -21,16 +22,29 @@ namespace Dungeon {
         FuzzyStringMatcher(const FuzzyStringMatcher& orig);
         virtual ~FuzzyStringMatcher() {}
         
+        const static int WordMatch = 100;
+        
         /**
          * Costs are taken as changes needle --> haystack
          */
         int insertCost = 1,
-            deleteCost = 5,
-            substCost = 5,
+            deleteCost = 3,
+            substCost = 4,
             transCost = 1;
         
-        virtual FuzzyStringMatcher<value_type>& add(string searchstring, value_type value);
+        /**
+         * Strings are marked same if this cost insn't exceeded
+         */
+        const static int toleration = 5;
         
+        /**
+         * TODO Get substCost from distance on QWERTY
+         */
+        virtual int getSubstCost(const char& a, const char& b) const;
+        virtual int getWordDistance(const string& needle, const string& haystack) const;
+        
+        virtual int getEqualness(const vector<string>& needle, const vector<string>& haystack) const;
+       
         void clear() {
             strMap.clear();
         }
@@ -39,13 +53,8 @@ namespace Dungeon {
             return strMap.empty();
         }
         
-        /**
-         * TODO Get substCost from distance on QWERTY
-         */
-        virtual int getSubstCost(const char& a, const char& b) const;
-        virtual int getDifference(const string& needle, const string& haystack) const;
         virtual value_type find(const string& needle);
-        
+        virtual FuzzyStringMatcher<value_type>& add(string searchstring, value_type value);
         
     private:
         map<string, value_type> strMap;
@@ -53,8 +62,16 @@ namespace Dungeon {
     
     class StringMatcher {
     public:
-        class Uncertain : public runtime_error { };
-        class NoCandidate : public runtime_error { };
+        class Uncertain : public runtime_error {
+        public:
+            Uncertain() : runtime_error("I'm not sure what you mean.") {}
+            virtual ~Uncertain() {}                
+        };
+        class NoCandidate : public runtime_error {
+        public:
+            NoCandidate() : runtime_error("I'm not sure you know what you mean.") {}
+            virtual ~NoCandidate() {}                
+        };;
         
         static bool matchTrueFalse(const string& text) {
             static FuzzyStringMatcher<bool> matcher;
@@ -75,6 +92,8 @@ namespace Dungeon {
             
             return matcher.find(text);
         }
+        
+        static vector<string> tokenize(const string& str);
     };
     
     
@@ -89,7 +108,7 @@ namespace Dungeon {
     }
 
     template<typename value_type>
-    int FuzzyStringMatcher<value_type>::getDifference(const string& needle, const string& haystack) const {
+    int FuzzyStringMatcher<value_type>::getWordDistance(const string& needle, const string& haystack) const {
         const int nlen = needle.length(),
                   hlen = haystack.length();
         if (hlen == 0) return -1;
@@ -125,29 +144,51 @@ namespace Dungeon {
         }
         return row2.back();
     }
+    
+    template<typename value_type>
+    int FuzzyStringMatcher<value_type>::getEqualness(const vector<string>& needle, const vector<string>& haystack) const {
+        int i = 0, sum = 0, lastmatch = 0;
+        for (const string& nWord : needle) {
+            for (; i < haystack.size(); i++) {
+                int cost = getWordDistance(nWord, haystack[i]);
+                if (cost < std::min(nWord.length(), haystack[i].length())) {
+                    sum += WordMatch - cost;
+                    lastmatch = i + 1;
+                    break; // next word from needle
+                }
+            }
+            i = lastmatch; // this one is missing - let's try another
+        }
+        return sum;
+    }
 
     template<typename value_type>
     value_type FuzzyStringMatcher<value_type>::find(const string& needle) {
         LOGS("FuzzyMatcher", Verbose) << "Looking for " << needle << LOGF;
-        ofstream debugfile;
-        debugfile.open("debug/fuzzymatcher_thresholds.txt", ios::out | ios::app);
-        debugfile << "> " << needle << "\n";
-        int min = -1;
-        string sel = "";
-        value_type val = strMap.begin()->second;
-        for (auto& pair : strMap) {
-                int d = getDifference(needle, pair.first);
-                LOGS("FuzzyMatcher", Verbose) << " in " << pair.first << " -> " << d <<  "difference" << LOGF;
-                if (min == -1 || d < min) {
-                        min = d;
-                        val = pair.second;
-                        sel = pair.first;
-                }
-                debugfile << "\t" << pair.first << ";" << d << "\n";
+        int max = 0;
+        auto maxMatch = strMap.begin();
+        bool uncertain = true;
+        vector<string> nTok = StringMatcher::tokenize(needle);
+        
+        for (auto pair = strMap.begin(); pair != strMap.end(); pair++) {
+            vector<string> hTok = StringMatcher::tokenize(pair->first);
+            int d = getEqualness(nTok, hTok);
+            LOGS("FuzzyMatcher", Verbose) << " in " << pair->first << " -> " << d <<  " equalness" << LOGF;
+            if (d > max) {
+                max = d;
+                maxMatch = pair;
+                uncertain = false;
+            } else if (d == max) {
+                uncertain = true;
+            }
         }
-        debugfile << "< " << sel << ";" << min << endl;
-        debugfile.close();
-        return val;
+        if (max == 0)
+            throw StringMatcher::NoCandidate();
+        
+        if (uncertain)
+            throw StringMatcher::Uncertain();
+        
+        return maxMatch->second;
     }
 
     template<typename value_type>

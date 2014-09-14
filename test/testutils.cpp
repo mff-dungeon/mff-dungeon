@@ -31,6 +31,7 @@ void testing(string _namespace) {
 
 void testStart() {
     Logger::initialize();    
+	//Logger::getInstance().setMinSeverity(cout, Logger::Severity::Verbose);
     LOGH("Tester started");
 }
 
