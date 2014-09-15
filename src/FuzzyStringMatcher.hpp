@@ -62,32 +62,35 @@ namespace Dungeon {
     
     class StringMatcher {
     public:
-        class Uncertain : public runtime_error {
+        class Uncertain : public GameException {
         public:
-            Uncertain() : runtime_error("I'm not sure what you mean.") {}
+            Uncertain() : GameException("I'm not sure what you mean.") {}
             virtual ~Uncertain() {}                
         };
-        class NoCandidate : public runtime_error {
+        class NoCandidate : public GameException {
         public:
-            NoCandidate() : runtime_error("I'm not sure you know what you mean.") {}
+            NoCandidate() : GameException("I'm not sure you know what you mean.") {}
             virtual ~NoCandidate() {}                
         };;
         
         static bool matchTrueFalse(const string& text) {
             static FuzzyStringMatcher<bool> matcher;
             if (matcher.empty()) {
-                matcher.add("true", true)
+                matcher
+                    .add("1", true)
+                    .add("y", true)
+                    .add("ok", true)
                     .add("yes", true)
                     .add("yeah", true)
-                    .add("ok", true)
+                    .add("true", true)
                     .add("of course", true)
-                    .add("1", true)
+                    .add("0", false)
+                    .add("n", false)
                     .add("no", false)
-                    .add("false", false)
-                    .add("nope", false)
                     .add("not", false)
-                    .add("of course not", false)
-                    .add("0", false);
+                    .add("nope", false)
+                    .add("false", false)
+                    .add("of course not", false);
             }
             
             return matcher.find(text);
@@ -179,7 +182,7 @@ namespace Dungeon {
                 maxMatch = pair;
                 uncertain = false;
             } else if (d == max) {
-                uncertain = true;
+                uncertain |= maxMatch->second != pair->second; // The same object with different names
             }
         }
         if (max == 0)
