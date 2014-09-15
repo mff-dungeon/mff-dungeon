@@ -25,9 +25,6 @@ namespace Dungeon {
 				->setWeaponName("powerful hands of administrator")
 				->setSingleRelation("special-th", th)
 				->save().unsafeCast<Human>();
-		
-		gm->addNewFigure(new Human("human/luxor@eideo.cz", "luxor@eideo.cz", "luxor@eideo.cz"));
-		// TODO - zvetsit batohy
 	}
 
 	void WorldCreator::initTemplates() {
@@ -2203,7 +2200,211 @@ namespace Dungeon {
 	}
 
 	void WorldCreator::initDoors() {
-
+		createDoor("landcastle-shadowcliff", rooms["landcastle"], rooms["shadowcliff"], true)
+				->setGoThroughMessage("You climb over the rocks.")
+				->setName("Climb")
+				->setLongName("some climbable rocks")
+				->save();
+		createDoor("appledale-shadowcliff", rooms["appledale"], rooms["shadowcliff"], true)
+				->setGoThroughMessage("You follow the pathway.")
+				->setName("Pathway")
+				->setLongName("a windy stone pathway")
+				->save();
+		createDoor("landcastle-faygrass", rooms["landcastle"], rooms["faygrass"], true)
+				->setGoThroughMessage("You walk over the bridge.")
+				->setName("Bridge")
+				->setLongName("bridge connecting a meadow with the city")
+				->save();
+		createDoor("winddell-faygrass", rooms["winddell"], rooms["faygrass"], true)
+				->setGoThroughMessage("You walk the stairs.")
+				->setName("Stairs")
+				->setLongName("large natural stone stairs")
+				->save();
+		createDoor("winddell-iceedge", rooms["winddell"], rooms["iceedge"], false)
+				->setGoThroughMessage("You slide down on the ice.")
+				->setName("Icy slide")
+				->setLongName("looks like a one way ride")
+				->save();
+		createDoor("iceedge-landcastle", rooms["iceedge"], rooms["landcastle"], false)
+				->setGoThroughMessage("You slide down on the ice and end up at the city gates.")
+				->setName("Icy slide")
+				->setLongName("looks like another one way ride")
+				->save();
+		createDoor("faygrass-estermoor", rooms["faygrass"], rooms["estermoor"], true)
+				->setGoThroughMessage("You carefully use the walkway.")
+				->setName("Muddy walkway")
+				->setLongName("there is mud everywhere, but I could try to use it")
+				->save();
+		createDoor("estermoor-fayden", rooms["estermoor"], rooms["fayden"], false)
+				->setGoThroughMessage("You walk into the cave.")
+				->setName("Cave opening")
+				->setLongName("it leads into some kind of a cave")
+				->save();
+		createDoor("fayden-estermoor", rooms["fayden"], rooms["estermoor"], false)
+				->setGoThroughMessage("You walk out of the cave.")
+				->setName("Moor exit")
+				->setLongName("you see some moor out there.")
+				->save();
+		createDoor("glasscoast-fayden", rooms["glasscoast"], rooms["fayden"], false)
+				->setGoThroughMessage("You walk into the cave.")
+				->setName("Cave opening")
+				->setLongName("it leads into some kind of a cave")
+				->save();
+		createDoor("fayden-glasscoast", rooms["fayden"], rooms["glasscoast"], false)
+				->setGoThroughMessage("You walk out of the cave.")
+				->setName("Sea exit")
+				->setLongName("you see some sea out there.")
+				->save();
+		createDoor("pinelyn-fayden", rooms["pinelyn"], rooms["fayden"], false)
+				->setGoThroughMessage("You walk into the cave.")
+				->setName("Cave opening")
+				->setLongName("it leads into some kind of a cave")
+				->save();
+		createDoor("fayden-pinelyn", rooms["fayden"], rooms["pinelyn"], false)
+				->setGoThroughMessage("You walk out of the cave.")
+				->setName("Forest exit")
+				->setLongName("you see some dense forest out there.")
+				->save(); 
+		createDoor("lightland-pinelyn", rooms["lightland"], rooms["pinelyn"], true)
+				->setGoThroughMessage("You cut through the bushes.")
+				->setName("Ingrown pathway")
+				->setLongName("it is full of bushes, but you may try to cut them down.")
+				->save(); 
+		createDoor("newgate-pinelyn", rooms["newgate"], rooms["pinelyn"], true)
+				->setGoThroughMessage("You carefully walk over the bridge.")
+				->setName("Wooden footbridge")
+				->setLongName("there are some missing logs, but it is still walkable.")
+				->save(); 
+		createDoor("newgate-spidernest", rooms["newgate"], rooms["spidernest"], false)
+				->setGoThroughMessage("You walk through the gate.")
+				->setName("Iron gate")
+				->setLongName("a big gate with a symbol of spider requiring some sort of key.")
+				->save(); 
+		createDoor("spidernest-fayden", rooms["spidernest"], rooms["fayden"], false)
+				->setGoThroughMessage("You manage to crawl through the crevice.")
+				->setName("Narrow crevice")
+				->setLongName("I can barely fit in there, but there is no other option.")
+				->save(); 
+		createDoor("estermoor-millburn", rooms["estermoor"], rooms["millburn"], true)
+				->setGoThroughMessage("You open the gate and walk through it.")
+				->setName("Gate")
+				->setLongName("a small iron gate.")
+				->save(); 
+		createDoor("oldcemetery-millburn", rooms["oldcemetery"], rooms["millburn"], true)
+				->setGoThroughMessage("You jump over the wall.")
+				->setName("Short wall")
+				->setLongName("a wall short enough to jump over it.")
+				->save(); 
+		createDoor("oldcemetery-brightlake", rooms["oldcemetery"], rooms["brightlake"], false)
+				->setGoThroughMessage("You ascend the stairs.")
+				->setName("Stairs")
+				->setLongName("marble stairs leading into a city")
+				->save(); 
+		createDoor("brightlake-oldcemetery", rooms["brightlake"], rooms["oldcemetery"], false)
+				->setGoThroughMessage("You descend the stairs.")
+				->setName("Stairs")
+				->setLongName("marble stairs leading to a cemetery.")
+				->save(); 
+		createDoor("rockshore-oldcemetery", rooms["rockshore"], rooms["oldcemetery"], true)
+				->setGoThroughMessage("You ford the river.")
+				->setName("Ford")
+				->setLongName("a place where the river is narrow and shallow.")
+				->save(); 
+		createDoor("rockshore-seacave", rooms["rockshore"], rooms["seacave"], false)
+				->setGoThroughMessage("You swim through the tunnel. The current helps you a lot, but you won't be able to swim back.")
+				->setName("Underwater tunnel")
+				->setLongName("a tunnel leading underwater.")
+				->save(); 
+		createDoor("seacave-millburn", rooms["seacave"], rooms["millburn"], false)
+				->setGoThroughMessage("You swim through the tunnel.")
+				->setName("Underwater tunnel")
+				->setLongName("another tunnel with the light at the end.")
+				->save(); 
+		createDoor("greenwolf-oldcemetery", rooms["greenwolf"], rooms["oldcemetery"], true)
+				->setGoThroughMessage("You follow the path.")
+				->setName("Wide path")
+				->setLongName("a wide stone path.")
+				->save(); 
+		createDoor("greenwolf-magemoor", rooms["greenwolf"], rooms["magemoor"], true)
+				->setGoThroughMessage("You walk through the gate and admire it silently.")
+				->setName("Natural gate")
+				->setLongName("a huge stone gate.")
+				->save(); 
+		createDoor("greybell-magemoor", rooms["greybell"], rooms["magemoor"], false)
+				->setGoThroughMessage("You walk down the hill.")
+				->setName("Windy path")
+				->setLongName("a descending path into the moor.")
+				->save(); 
+		createDoor("magemoor-greybell", rooms["magemoor"], rooms["greybell"], false)
+				->setGoThroughMessage("You walk up the hill.")
+				->setName("Windy path")
+				->setLongName("an ascending path up the hill.")
+				->save(); 
+		createDoor("littlecave-greybell", rooms["littlecave"], rooms["greybell"], false)
+				->setGoThroughMessage("You exit the cave.")
+				->setName("Cave exit")
+				->setLongName("there is just bright daylight.")
+				->save(); 
+		createDoor("greybell-littlecave", rooms["greybell"], rooms["littlecave"], false)
+				->setGoThroughMessage("You enter the cave.")
+				->setName("Cave entrance")
+				->setLongName("the cave seems quite small.")
+				->save(); 
+		createDoor("brightlake-ashedge", rooms["brightlake"], rooms["ashedge"], false)
+				->setGoThroughMessage("You board the raft and sail down the river.")
+				->setName("Raft")
+				->setLongName("you can use it to sail down the river.")
+				->save(); 
+		createDoor("ashedge-newoak", rooms["ashedge"], rooms["newoak"], false)
+				->setGoThroughMessage("You jump down the ledge.")
+				->setName("Ledge")
+				->setLongName("a not too high ledge, you will be able to jump it down.")
+				->save(); 
+		createDoor("newoak-crafthill", rooms["newoak"], rooms["crafthill"], false)
+				->setGoThroughMessage("You walk up the hill.")
+				->setName("Road")
+				->setLongName("a road, which was build by some fine stonemakers.")
+				->save(); 
+		createDoor("crafthill-newoak", rooms["crafthill"], rooms["newoak"], false)
+				->setGoThroughMessage("You walk down the hill.")
+				->setName("Road")
+				->setLongName("a road, which was build by some fine stonemakers.")
+				->save(); 
+		createDoor("crafthill-brightlake", rooms["crafthill"], rooms["brightlake"], false)
+				->setGoThroughMessage("You enjoy the slide.")
+				->setName("Stone slide")
+				->setLongName("a big slide, you should enjoy a little fun.")
+				->save(); 
+		createDoor("brownpond-brightlake", rooms["brownpond"], rooms["brightlake"], true)
+				->setGoThroughMessage("You walk over the bridge.")
+				->setName("Royal bridge")
+				->setLongName("a wide bridge with many statues.")
+				->save(); 
+		createDoor("brownpond-orangehedge", rooms["brownpond"], rooms["orangehedge"], true)
+				->setGoThroughMessage("You follow the road.")
+				->setName("King's Road")
+				->setLongName("a wide old road.")
+				->save(); 
+		createDoor("stonecircle-orangehedge", rooms["stonecircle"], rooms["orangehedge"], true)
+				->setGoThroughMessage("You follow the path.")
+				->setName("Beaten path")
+				->setLongName("it leads somewhere in the forest")
+				->save(); 
+		createDoor("witchburn-orangehedge", rooms["witchburn"], rooms["orangehedge"], true)
+				->setGoThroughMessage("You carefully open the gate and walk through it.")
+				->setName("Ancient gate")
+				->setLongName("an ancient city gate")
+				->save(); 
+		createDoor("witchburn-unicornforest", rooms["witchburn"], rooms["unicornforest"], false)
+				->setGoThroughMessage("You walk through the door.")
+				->setName("Locked door")
+				->setLongName("a door into a tunnel with some kind of lock and an image of unicorn")
+				->save(); 
+		createDoor("unicornforest-oldcemetery", rooms["unicornforest"], rooms["oldcemetery"], false)
+				->setGoThroughMessage("You use the tunnel to leave the forest.")
+				->setName("Glowing tunnel")
+				->setLongName("a tunnel which emits a faint light somehow")
+				->save(); 
 	}
 
 
@@ -2297,7 +2498,7 @@ namespace Dungeon {
 				->setDescription("The chest is overgrown with some seaweed.")
 				->attachTrap(createObject<SimpleDamageTrap>("simpledamagetrap/sea/1")
 					->setDamage(73)
-					->setJustOnce(false)
+					->setJustOnce()
 					->setDamageMessage("While opening the chest, you didn't notice a crab hiding behind it. It bit you for 73 damage and ran away.")
 					->save(), "explore")
 				->save();
@@ -2350,8 +2551,6 @@ namespace Dungeon {
 				->setTarget(baseRoom)
 				->save();
 
-		initAdmins();
-		LOG("WorldCreator") << "Admins created. " << LOGF;
 		LOGH("Templates");
 		initTemplates();
 		LOG("WorldCreator") << "Templates created. " << LOGF;
@@ -2361,6 +2560,9 @@ namespace Dungeon {
 		LOGH("Doors");
 		initDoors();
 		LOG("WorldCreator") << "Doors created. " << LOGF;
+		LOGH("Admins");
+		initAdmins();
+		LOG("WorldCreator") << "Admins created. " << LOGF;
 		LOGH("World");
 		initObjects();
 		LOG("WorldCreator") << "World created. " << LOGF;

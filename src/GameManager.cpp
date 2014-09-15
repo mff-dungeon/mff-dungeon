@@ -196,26 +196,17 @@ namespace Dungeon {
     Alive* GameManager::addNewFigure(Alive *figure) {
         // TODO: put the figure somewhere, initialize the inventory, and so on...
         this->insertObject(figure);
-        figure->setRespawnLocation(ObjectPointer(this, "room/baseRoom"));
+        figure->setRespawnLocation(ObjectPointer(this, "location/room/landcastle"));
 		
-		Inventory* pack = new Inventory("item/backpack/" + RANDID);
-		pack->setBaseWeight(1000)
-			->setBaseSize(1000)
-			->setSlot(Wearable::Slot::Backpack)
-			->setDropable(true)
-			->setPickable(true)
-			->setName("Leather backpack")
-			->setLongName("common leather backpack")
-			->setDescription("A common leather backpack. Not so big and comfortable, but what would you expect?");
-		this->insertObject(pack);
-		createRelation(getObjectInstance("room/baseRoom"), figure, R_INSIDE);
-		createRelation(figure, pack, Wearable::SlotRelations[Wearable::Slot::Backpack]);
-		pack->onPick(nullptr);
-		pack->onEquip(nullptr);
+		createRelation(figure, 
+				Cloner::shallowClone(getObjectInstance("template/inventory/leatherpack/1")),
+				Wearable::SlotRelations[Wearable::Slot::Backpack]);
+		createRelation(figure,
+				Cloner::shallowClone(getObjectInstance("template/wearable/woodenaxe/1")),
+				Wearable::SlotRelations[Wearable::Slot::Weapon]);
+		createRelation(getObjectInstance("location/room/landcastle"), figure, R_INSIDE);
 		
-		// Warning: loads user's backpack
 		figure->calculateBonuses();
-		
 		return figure;
     }
 	
