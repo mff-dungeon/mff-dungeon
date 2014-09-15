@@ -15,6 +15,9 @@ namespace Dungeon {
         WorldCreator(GameManager* gm);
         void initAdmins();
 		void initTemplates();
+		void initRooms();
+		void initDoors();
+		void initObjects();
         virtual void bigBang();
 		
 		/*
@@ -60,7 +63,8 @@ namespace Dungeon {
 		}
 		
 	private:
-		map<objId, ObjectPointer> templates;		
+		map<string, ObjectPointer> templates;
+		map<string, Location*> rooms;
     };
 
 }

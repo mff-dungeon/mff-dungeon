@@ -1900,6 +1900,7 @@ namespace Dungeon {
 				->drops(templates["potion/smallred"], 60 * Dropper::Percent, 3, 8)
 				->drops(templates["potion/red"], 40 * Dropper::Percent, 1, 4)
 				->drops(templates["inventory/bigleatherpack"], 10 * Dropper::Percent)
+				->drops(templates["item/pentagonalkey"], 25 * Dropper::Percent)
 				->setAttack(117)
 				->setDefense(139)
 				->setMaxHp(180 * ENEMY_HP_RATE)
@@ -1937,6 +1938,7 @@ namespace Dungeon {
 				->drops(templates["potion/bigred"], 40 * Dropper::Percent, 4, 7)
 				->drops(templates["potion/largered"], 25 * Dropper::Percent, 1, 3)
 				->drops(templates["inventory/dragonleatherpack"], 10 * Dropper::Percent)
+				->drops(templates["item/heptagonalkey"], 25 * Dropper::Percent)
 				->setAttack(219)
 				->setDefense(373)
 				->setMaxHp(388 * ENEMY_HP_RATE)
@@ -1986,6 +1988,350 @@ namespace Dungeon {
 				->save();
 	}
 
+	void WorldCreator::initRooms() {
+		AttackTrap* autoAttack = createObject<AttackTrap>("trap/attack1");
+		
+		Location* landcastle = createObject<Location>("location/room/landcastle")
+				->setRespawnable(true)
+				->setName("Landcastle")
+				->setDescription("A nice stone castle, having a magical aura surrounding it. You feel the aura and feel much better here. If you are confused what to do, try typing 'help'.")
+				->save().unsafeCast<Location>();
+		rooms["landcastle"] = landcastle;
+		
+		createObject<Healing>("trap/healing/landcastle")
+				->setRate(300 * Healing::PerHour)
+				->setTarget(landcastle)
+				->save();
+		
+		Location* shadowcliff = createObject<Location>("location/room/shadowcliff")
+				->setName("Shadowcliff")
+				->setDescription("Dark dangerous cliffs. You shouldn't leave the path you are currently on.")
+				->save().unsafeCast<Location>();
+		rooms["shadowcliff"] = shadowcliff;
+		
+		Location* appledale = createObject<Location>("location/room/appledale")
+				->setName("Appledale")
+				->setDescription("A small crafting village.")
+				->save().unsafeCast<Location>();
+		rooms["appledale"] = appledale;
+		
+		Location* faygrass = createObject<Location>("location/room/faygrass")
+				->setName("Faygrass")
+				->setDescription("A vast grass field.")
+				->save().unsafeCast<Location>();
+		rooms["faygrass"] = faygrass;
+		
+		Location* winddell = createObject<Location>("location/room/winddell")
+				->setName("Winddell")
+				->setDescription("A quite windy valley. The birds here seem hungry.")
+				->attachTrap(autoAttack, "inside")
+				->save().unsafeCast<Location>();
+		rooms["winddell"] = winddell;
+		
+		Location* iceedge = createObject<Location>("location/room/iceedge")
+				->setName("Iceedge")
+				->setDescription("A narrow icy edge. It looks like you won't be able to climb back.")
+				->save().unsafeCast<Location>();
+		rooms["iceedge"] = iceedge;
+		
+		Location* estermoor = createObject<Location>("location/room/estermoor")
+				->setName("Estermoor")
+				->setDescription("Dark and dangerous moor. The creatures here are kind of big.")
+				->save().unsafeCast<Location>();
+		rooms["estermoor"] = estermoor;
+		
+		Location* fayden = createObject<Location>("location/room/fayden")
+				->setName("Fayden")
+				->setDescription("An astounding cave with some ancient paintings on the walls.")
+				->save().unsafeCast<Location>();
+		rooms["fayden"] = fayden;
+		
+		Location* glasscoast = createObject<Location>("location/room/glasscoast")
+				->setName("Glasscoat")
+				->setDescription("There is a crystal clean sea and a sand which looks like it is shattered glass.")
+				->save().unsafeCast<Location>();
+		rooms["glasscoast"] = glasscoast;
+		
+		Location* pinelyn = createObject<Location>("location/room/pinelyn")
+				->setName("Pinelyn")
+				->setDescription("A dense pine forest. You sense there may be enraged creatures.")
+				->attachTrap(autoAttack, "inside")
+				->save().unsafeCast<Location>();
+		rooms["pinelyn"] = pinelyn;
+		
+		Location* lightland = createObject<Location>("location/room/lightland")
+				->setRespawnable(true)
+				->setName("Lightland")
+				->setDescription("This looks like a holy clearing. You sense some strange power around which makes you calm and you are starting to feel better.")
+				->save().unsafeCast<Location>();
+		rooms["lightland"] = lightland;
+		
+		createObject<Healing>("trap/healing/lightland")
+				->setRate(350 * Healing::PerHour)
+				->setTarget(lightland)
+				->save();
+		
+		Location* newgate = createObject<Location>("location/room/newgate")
+				->setName("Newgate")
+				->setDescription("A long passage with a big gate at the end. There seem to be some goblin camps around.")
+				->save().unsafeCast<Location>();
+		rooms["newgate"] = newgate;
+		
+		Location* spidernest = createObject<Location>("location/room/spidernest")
+				->setName("Spider nest")
+				->setDescription("The nest of the infamous spider king. Beware!")
+				->save().unsafeCast<Location>();
+		rooms["spidernest"] = spidernest;
+		
+		Location* millburn = createObject<Location>("location/room/millburn")
+				->setName("Millburn")
+				->setDescription("A field with many old stone mills.")
+				->attachTrap(autoAttack, "inside")
+				->save().unsafeCast<Location>();
+		rooms["millburn"] = millburn;
+		
+		Location* oldcemetery = createObject<Location>("location/room/oldcemetery")
+				->setName("Old cemetary")
+				->setDescription("There are many graves around and some of them are opened!")
+				->save().unsafeCast<Location>();
+		rooms["oldcemetery"] = oldcemetery;
+		
+		Location* greenwolf = createObject<Location>("location/room/greenwolf")
+				->setName("Greenwolf")
+				->setDescription("These meadows are known to be ruled by wolfs.")
+				->attachTrap(autoAttack, "inside")
+				->save().unsafeCast<Location>();
+		rooms["greenwolf"] = greenwolf;
+		
+		Location* magemoor = createObject<Location>("location/room/magemoor")
+				->setName("Magemoor")
+				->setDescription("These moors are filled with magical energy.")
+				->save().unsafeCast<Location>();
+		rooms["magemoor"] = magemoor;
+		
+		Location* greybell = createObject<Location>("location/room/greybell")
+				->setName("Greybell")
+				->setDescription("A hill with a big old bell at the top.")
+				->attachTrap(autoAttack, "inside")
+				->save().unsafeCast<Location>();
+		rooms["greybell"] = greybell;
+		
+		Location* littlecave = createObject<Location>("location/room/littlecave")
+				->setName("Little cave")
+				->setDescription("The cave is deserted. The thiefs nearby may use it as a hideout.")
+				->save().unsafeCast<Location>();
+		rooms["littlecave"] = littlecave;
+		
+		Location* rockshore = createObject<Location>("location/room/rockshore")
+				->setName("Rockshore")
+				->setDescription("Rock cliffs at the edge of the sea.")
+				->save().unsafeCast<Location>();
+		rooms["rockshore"] = rockshore;
+		
+		Location* seacave = createObject<Location>("location/room/seacave")
+				->setName("Sea cave")
+				->setDescription("A small cave found underwater.")
+				->save().unsafeCast<Location>();
+		rooms["seacave"] = seacave;
+		
+		Location* brightlake = createObject<Location>("location/room/brightlake")
+				->setRespawnable(true)
+				->setName("Brightlake")
+				->setDescription("A small abandoned village with a healing lake at the town square.")
+				->save().unsafeCast<Location>();
+		rooms["brightlake"] = brightlake;
+		
+		createObject<Healing>("trap/healing/lightland")
+				->setRate(400 * Healing::PerHour)
+				->setTarget(brightlake)
+				->save();
+		
+		Location* ashedge = createObject<Location>("location/room/ashedge")
+				->setName("Ashedge")
+				->setDescription("A desolated warcamp full of mummies.")
+				->save().unsafeCast<Location>();
+		rooms["ashedge"] = ashedge;
+		
+		Location* newoak = createObject<Location>("location/room/newoak")
+				->setName("Newoak")
+				->setDescription("The stands a majestic oak planted recently.")
+				->attachTrap(autoAttack, "inside")
+				->save().unsafeCast<Location>();
+		rooms["newoak"] = newoak;
+		
+		Location* crafthill = createObject<Location>("location/room/crafthill")
+				->setName("Craftsman's Hill")
+				->setDescription("A hill atop Brightlake once used by their finest craftmans.")
+				->save().unsafeCast<Location>();
+		rooms["crafthill"] = crafthill;
+		
+		Location* brownpond = createObject<Location>("location/room/brownpond")
+				->setName("Brownpond")
+				->setDescription("Fairly dirty pond which is full of fish.")
+				->save().unsafeCast<Location>();
+		rooms["brownpond"] = brownpond;
+		
+		Location* orangehedge = createObject<Location>("location/room/orangehedge")
+				->setName("Orangehedge")
+				->setDescription("Hedge lined with many orange trees.")
+				->attachTrap(autoAttack, "inside")
+				->save().unsafeCast<Location>();
+		rooms["orangehedge"] = orangehedge;
+		
+		Location* stonecircle = createObject<Location>("location/room/stonecircle")
+				->setName("Stonecircle")
+				->setDescription("")
+				->save().unsafeCast<Location>();
+		rooms["stonecircle"] = stonecircle;
+		
+		createObject<Healing>("trap/healing/stonecircle")
+				->setRate(500 * Healing::PerHour)
+				->setTarget(stonecircle)
+				->save();
+		
+		Location* witchburn = createObject<Location>("location/room/witchburn")
+				->setName("Witchburn")
+				->setDescription("A once famous home of witches.")
+				->save().unsafeCast<Location>();
+		rooms["witchburn"] = witchburn;
+		
+		Location* unicornforest = createObject<Location>("location/room/unicornforest")
+				->setName("Unicorn's forest")
+				->setDescription("A home of powerful magical unicorn.")
+				->save().unsafeCast<Location>();
+		rooms["unicornforest"] = unicornforest;
+	}
+
+	void WorldCreator::initDoors() {
+
+	}
+
+
+	void WorldCreator::initObjects() {
+		deepCloneTemplate(templates["creature/smallspider"], rooms["shadowcliff"]);
+		deepCloneTemplate(templates["creature/smallspider"], rooms["shadowcliff"]);
+		deepCloneTemplate(templates["creature/rat"], rooms["shadowcliff"]);
+		
+		deepCloneTemplate(templates["crafter/stoneanvil"], rooms["appledale"]);
+		deepCloneTemplate(templates["crafter/tanning"], rooms["appledale"]);
+		deepCloneTemplate(templates["crafter/alchemy"], rooms["appledale"]);
+		
+		deepCloneTemplate(templates["creature/smallspider"], rooms["faygrass"]);
+		deepCloneTemplate(templates["creature/rat"], rooms["faygrass"]);
+		deepCloneTemplate(templates["creature/rat"], rooms["faygrass"]);
+		
+		deepCloneTemplate(templates["creature/raven"], rooms["winddell"]);
+		deepCloneTemplate(templates["creature/raven"], rooms["winddell"]);
+		
+		ObjectPointer iceedgechest = createObject<Location>("location/chest/iceedge", rooms["iceedge"])
+				->setEmptyMessage("There are only some icicles left.")
+				->setName("Frozen chest")
+				->setDescription("It is covered with ice, but it can contain something useful")
+				->attachTrap(createObject<SimpleDamageTrap>("simpledamagetrap/ice/1")
+					->setDamage(37)
+					->setJustOnce(false)
+					->setDamageMessage("You have cut yourself accidentaly with an icicle. You have received 37 damage.")
+					->save(), "explore")
+				->save();
+		deepCloneTemplate(templates["potion/tinyred"], iceedgechest).unsafeCast<Item>()->respawnEvery(120);
+		deepCloneTemplate(templates["potion/tinyred"], iceedgechest).unsafeCast<Item>()->respawnEvery(120);
+		deepCloneTemplate(templates["potion/smallred"], iceedgechest).unsafeCast<Item>()->respawnEvery(210);
+		
+		deepCloneTemplate(templates["creature/bigrat"], rooms["estermoor"]);
+		deepCloneTemplate(templates["creature/bigrat"], rooms["estermoor"]);
+		deepCloneTemplate(templates["creature/snake"], rooms["estermoor"]);
+		
+		deepCloneTemplate(templates["creature/snake"], rooms["fayden"]);
+		deepCloneTemplate(templates["creature/snake"], rooms["fayden"]);
+		deepCloneTemplate(templates["creature/dog"], rooms["fayden"]);
+		
+		deepCloneTemplate(templates["creature/scorpion"], rooms["glasscoast"]);
+		deepCloneTemplate(templates["creature/scorpion"], rooms["glasscoast"]);
+		deepCloneTemplate(templates["creature/scorpion"], rooms["glasscoast"]);
+		
+		deepCloneTemplate(templates["creature/bigspider"], rooms["pinelyn"]);
+		deepCloneTemplate(templates["creature/bigspider"], rooms["pinelyn"]);
+		deepCloneTemplate(templates["creature/bigspider"], rooms["pinelyn"]);
+		
+		deepCloneTemplate(templates["creature/goblin"], rooms["newgate"]);
+		deepCloneTemplate(templates["creature/goblin"], rooms["newgate"]);
+		deepCloneTemplate(templates["creature/goblin"], rooms["newgate"]);
+		
+		deepCloneTemplate(templates["creature/spiderking"], rooms["spidernest"]);
+		
+		deepCloneTemplate(templates["creature/dog"], rooms["millburn"]);
+		deepCloneTemplate(templates["creature/dog"], rooms["millburn"]);
+		
+		deepCloneTemplate(templates["creature/zombie"], rooms["oldcemetery"]);
+		deepCloneTemplate(templates["creature/zombie"], rooms["oldcemetery"]);
+		deepCloneTemplate(templates["creature/skeleton"], rooms["oldcemetery"]);
+		
+		deepCloneTemplate(templates["creature/wolf"], rooms["greenwolf"]);
+		deepCloneTemplate(templates["creature/wolf"], rooms["greenwolf"]);
+		deepCloneTemplate(templates["creature/wolf"], rooms["greenwolf"]);
+		
+		deepCloneTemplate(templates["creature/zombie"], rooms["magemoor"]);
+		deepCloneTemplate(templates["creature/skeleton"], rooms["magemoor"]);
+		deepCloneTemplate(templates["creature/mummy"], rooms["magemoor"]);
+		
+		deepCloneTemplate(templates["creature/thief"], rooms["greybell"]);
+		deepCloneTemplate(templates["creature/thief"], rooms["greybell"]);
+		
+		ObjectPointer littlecavechest = createObject<Location>("location/chest/littlecave", rooms["littlecave"])
+				->setEmptyMessage("You find only a small cockroach. Eww.")
+				->setName("Ornate chest")
+				->setDescription("The are some strange ornaments carved in it.")
+				->save();
+		deepCloneTemplate(templates["potion/smallred"], littlecavechest).unsafeCast<Item>()->respawnEvery(120);
+		deepCloneTemplate(templates["potion/smallred"], littlecavechest).unsafeCast<Item>()->respawnEvery(120);
+		deepCloneTemplate(templates["potion/red"], littlecavechest).unsafeCast<Item>()->respawnEvery(210);
+		deepCloneTemplate(templates["item/spiderkey"], littlecavechest).unsafeCast<Item>()->respawnEvery(1800);
+		
+		deepCloneTemplate(templates["creature/orc"], rooms["rockshore"]);
+		deepCloneTemplate(templates["creature/orc"], rooms["rockshore"]);
+		deepCloneTemplate(templates["creature/orc"], rooms["rockshore"]);
+		
+		ObjectPointer seacavechest = createObject<Location>("location/chest/seacave", rooms["seacave"])
+				->setEmptyMessage("There is only some seaweed left.")
+				->setName("Wet small chest")
+				->setDescription("The chest is overgrown with some seaweed.")
+				->attachTrap(createObject<SimpleDamageTrap>("simpledamagetrap/sea/1")
+					->setDamage(73)
+					->setJustOnce(false)
+					->setDamageMessage("While opening the chest, you didn't notice a crab hiding behind it. It bit you for 73 damage and ran away.")
+					->save(), "explore")
+				->save();
+		deepCloneTemplate(templates["potion/red"], seacavechest).unsafeCast<Item>()->respawnEvery(300);
+		deepCloneTemplate(templates["resource/sand"], seacavechest).unsafeCast<Resource>()->setQuantity(10*ENEMY_MATS_DROP_RATE)->respawnEvery(300);
+		deepCloneTemplate(templates["resource/wood"], seacavechest).unsafeCast<Resource>()->setQuantity(8*ENEMY_MATS_DROP_RATE)->respawnEvery(300);
+		
+		deepCloneTemplate(templates["creature/mummy"], rooms["ashedge"]);
+		deepCloneTemplate(templates["creature/mummy"], rooms["ashedge"]);
+		
+		deepCloneTemplate(templates["creature/grizzlybear"], rooms["newoak"]);
+		deepCloneTemplate(templates["creature/grizzlybear"], rooms["newoak"]);
+		deepCloneTemplate(templates["creature/grizzlybear"], rooms["newoak"]);
+		
+		deepCloneTemplate(templates["crafter/stoneanvil"], rooms["crafthill"]);
+		deepCloneTemplate(templates["crafter/ironanvil"], rooms["crafthill"]);
+		deepCloneTemplate(templates["crafter/tanning"], rooms["crafthill"]);
+		
+		deepCloneTemplate(templates["creature/gnome"], rooms["brownpond"]);
+		deepCloneTemplate(templates["creature/gnome"], rooms["brownpond"]);
+		deepCloneTemplate(templates["creature/gnome"], rooms["brownpond"]);
+		
+		deepCloneTemplate(templates["creature/thief"], rooms["orangehedge"]);
+		deepCloneTemplate(templates["creature/thief"], rooms["orangehedge"]);
+		
+		deepCloneTemplate(templates["crafter/alchemy"], rooms["stonecircle"]);
+		
+		deepCloneTemplate(templates["creature/ghost"], rooms["witchburn"]);
+		deepCloneTemplate(templates["creature/ghost"], rooms["witchburn"]);
+		
+		deepCloneTemplate(templates["creature/unicorn"], rooms["unicornforest"]);
+	}
+
+
 
 	void WorldCreator::bigBang() {
 		LOGH("Big bang");
@@ -2009,7 +2355,16 @@ namespace Dungeon {
 		LOGH("Templates");
 		initTemplates();
 		LOG("WorldCreator") << "Templates created. " << LOGF;
+		LOGH("Rooms");
+		initRooms();
+		LOG("WorldCreator") << "Rooms created. " << LOGF;
+		LOGH("Doors");
+		initDoors();
+		LOG("WorldCreator") << "Doors created. " << LOGF;
 		LOGH("World");
+		initObjects();
+		LOG("WorldCreator") << "World created. " << LOGF;
+		LOGH("Testing stuff");
 
 		AttackTrap* autoAttack = createObject<AttackTrap>("trap/attack");
 
