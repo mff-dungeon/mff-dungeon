@@ -97,11 +97,21 @@ Dalšími obecnými typy objektů jsou:
 
 \paragraph{Alive, Human} Reprezentují žívé objekty a uživatele. Každý živý objekt má své umístění a zbývající počet životů. Dostupně akce na těchto objektech jsou zejména týkající se pouze daného uživatele. Tj. zjišťující aktuální stav, různé nápovědy, přejmenování atp.
 
+\paragraph{Creature} Reprezentují všechny objekty, na které se dá útočit, tedy všechna monstra a živočichy. Akce na tento objekt je zejména attack.
+
 \paragraph{Item} Cokoli, co jde uchopit. Objekt samotný nemá akce, ale má vlastnosti \texttt{size} a \texttt{weight}, udávající velikost a váhu objektu.
 
-\paragraph{Room} Reprezentuje lokaci, ve které se ostatní objekty nacházejí. Tyto lokace jsou spojeny dveřmi. Akce na lokaci jsou zejména průzkumné.
+\paragraph{Wearable} Cokoli, co jde použít jako část oděvu. Tento objekt používají zbraně a různé typy brnění. Umožňuje objektům měnit bojové vlastnosti postav (útočné číslo, obranné číslo, počet životů)
+
+\paragraph{Inventory} Potomek Wearable, přidává navíc akci drop a umožňuje v sobě ukládat předměty.
+
+\paragraph{Location} Reprezentuje lokaci, ve které se ostatní objekty nacházejí. Tyto lokace jsou buď místnosti, které jsou s ostatními místnostmi spojeny dveřmi, nebo truhly, které obsahují předměty. Akce na lokaci jsou zejména průzkumné. 
 
 \paragraph{Door} Jedno nebo obousměrný teleportační tunel mezi dvěma lokacemi. Akcí na tomto objektu je průchod skrz.
+
+\paragraph{Crafter} Speciální objekt, který je používán pro tvorbu věcí. Udržuje v sobě objekty \class{Recipe}, které říkají, jaké věci umí \class{Crafter} vyrobit. Ve hře se vyskytuje například jako kovadlina.
+
+\paragraph{Resource} Potomek třídy \class{Item}, reprezentuje věci, které se seskupují, tedy například peníze, nebo materiály pro \class{Crafter}.
 
 \subsection{Parametrizované akce}
 
@@ -137,12 +147,12 @@ you change your name?
 \end{example}
 
 \subsection{Boj}
-
-% TODO Napsat to a zadokumentovat
+\label{combat}
+Systém boje vznikl krátce po vzniku dialogů a hojně jich využívá. Každá instance třídy \class{Creature} přidá akci \texttt{attack}, která inicializuje boj. Po zavolání akce \texttt{attack} se pustí obslužná metoda, která vždy provede požadovanou akci a v dialogu se zeptá uživatele, co dělat dále. Pokud hráč dosáhne 0 životů, zemře, pokud dosáhne 0 životů \class{Creature}, dostane se do stavu \texttt{Dying}. V tomto stavu je přidána akce kill, která dorazí příšeru.
 
 \subsection{Smrt}
 
-% TODO Napsat to a zadokumentovat
+Smrt nastane, pokud životy hráče nebo nepřátel dosáhnou nuly. Metoda \texttt{changeHp}, která se stará o změnu počtu životů automaticky zavolá obslužnou proceduru \texttt{die}. V případě třídy \class{Human} procedura změní stav hráče na mrtvého, zakáže mu většinu akcí kromě některých výjimek a znemožní mu hrát po stanovený interval. Po uplynutí toho intervalu se může hráč akcí \texttt{respawn} oživit, při oživení je přemístěn do poslední místnostni s flagem \texttt{respawnable}, kterou hráč navštívil. V případě třídy \class{Creature} je na zem puštěna odměna za zabití (pokud nějaká je) a instanci se naplánuje automatický respawn, který je kontrolován (a popřípadě proveden) při zjišťování akcí.
 
 \subsection{Pasti}
 
@@ -231,6 +241,16 @@ O tom jak vypadají dialogy v praxi bylo již psáno v části \ref{dialogs}. Ja
 
 Všechny lambda funkce nemusí být vytvořeny hned, dají se vytvářet postupně. Tento zápis je však přehledný, a z kódu je hned vidět jak dialog probíhá. Zároveň je ale možno udělat dialog, který není lineární, nebo třeba není předem známý - například boj.
 
+\subsection{Cloner}
+
+Původní myšlenkou bylo to, že všechny objekty budeme vytvářet ručně a během hry. Postupem času se však ukázalo, že toto není nejlepší nápad a tak jsme hledali způsob, jak objekty vytvářet rychleji.
+
+Nakonec jsme přišli s třídou \class{Cloner}, která využívá vlastnosti objektů a pomocí \class{IPropertyStorage} je schopen je přečíst. Při jejich čtení si je ukládá do své paměti. Po přečtení využije další metodu naší perzistence a tou je \texttt{createObject}, kterou vytvoří čistou kopii objektu. Poté z uloženého seznamu nahraje všechny vlastnosti nového objektu, změní mu \texttt{id} a vrátí tento objekt. Tuto kopii nazýváme \texttt{shallowCopy}
+
+\class{Cloner} umí vytvořit ještě \texttt{deepCopy}, která navíc zkopíruje všechny relace objektu.
+
+Tuto třídu hojně využíváme při vytváření světa ve třídě \class{WorldCreator}, kde nejprve vytvoříme vzory všech objektů a poté už je jenom rozkopírujeme, kde je potřeba.
+
 \section{Ukázky}
 
 Rádi bychom ukázali nějaké naprosto základní ukázky komunikace s programem.
@@ -258,7 +278,5 @@ ground. You have a Leather backpack with you. There is Red potion.
 \user drop the red potion
 \dung You've dropped Red potion. 
 \end{example}
-
-
 
 \end{document}
