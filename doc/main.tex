@@ -77,11 +77,9 @@ Jednotlivé vlastnosti objektů i relace jsou uchovávány v databázi. Relace j
 
 To ale není jediné využití této metody. Dá se ji podstrčit libovolný objekt implementující \class{IPropertyStorage}, například administrátorský nástroj \class{PropertyEditor}, který je využije k pohodlné úpravě všech vlastností objektu přes libovolné herní rozhraní.
 
-Instance objektů by se vytvářeli snadněji v nějakém dynamickém jazyce
-
 \subsection{Uchovávání v paměti}
 
-Herní svět může bý snadno docela veliký, proto jej nikdy nechceme načítat do paměti celý. Všechny herní objekty se proto načítají na vyžádání v době potřeby, kde to jde tak se používá pouze id objektu, předávané pomocí OP. Pro uchovávání již načtených objektů používáme Splay strom, protože umožňuje rychle přistupovat k objektům, které se používají hodně.
+Herní svět může být snadno docela veliký, proto jej nikdy nechceme načítat do paměti celý. Všechny herní objekty se proto načítají na vyžádání v době potřeby, kde to jde tak se používá pouze id objektu, předávané pomocí OP. Pro uchovávání již načtených objektů používáme Splay strom, protože umožňuje rychle přistupovat k objektům, které se používají hodně.
 
 V současné chvíli to není implementováno, ale je možné tento strom upravit tak, aby objekty v určité hloubce (tedy dlouho nepoužité) zahazoval, a tím uvolnil paměť.
 
@@ -95,13 +93,13 @@ Při zpracovávání akce se v jednu chvíli zjistí akce na všech objektech v 
 
 Dalšími obecnými typy objektů jsou:
 
-\paragraph{Alive, Human} Reprezentují žívé objekty a uživatele. Každý živý objekt má své umístění a zbývající počet životů. Dostupně akce na těchto objektech jsou zejména týkající se pouze daného uživatele. Tj. zjišťující aktuální stav, různé nápovědy, přejmenování atp.
+\paragraph{Alive, Human} Reprezentují žívé objekty a uživatele. Každý živý objekt má své umístění a vlastnosti týkající se boje (tzn. životy, útočné a obranné číslo.) Dostupné akce na těchto objektech jsou ty které se týkají pouze daného uživatele. Tj. zjišťující aktuální stav, různé nápovědy, přejmenování atp.
 
 \paragraph{Creature} Reprezentují všechny objekty, na které se dá útočit, tedy všechna monstra a živočichy. Akce na tento objekt je zejména attack.
 
 \paragraph{Item} Cokoli, co jde uchopit. Objekt samotný nemá akce, ale má vlastnosti \texttt{size} a \texttt{weight}, udávající velikost a váhu objektu.
 
-\paragraph{Wearable} Cokoli, co jde použít jako část oděvu. Tento objekt používají zbraně a různé typy brnění. Umožňuje objektům měnit bojové vlastnosti postav (útočné číslo, obranné číslo, počet životů)
+\paragraph{Wearable} Cokoli, co jde použít jako část oděvu. Tento objekt používají zbraně a různé typy brnění. Umožňuje objektům měnit bojové vlastnosti postav.
 
 \paragraph{Inventory} Potomek Wearable, přidává navíc akci drop a umožňuje v sobě ukládat předměty.
 
@@ -240,6 +238,8 @@ O tom jak vypadají dialogy v praxi bylo již psáno v části \ref{dialogs}. Ja
 \noindent ActionDescriptor umožňuje zařadit do své vnitřní fronty lambda funkci, která bude reagovat na odpověď uživatele. Pokud AD nemá frontu prázdnou, musí si jej Driver někde zapamatovat a vrátit se k němu při přijetí další zprávy.
 
 Všechny lambda funkce nemusí být vytvořeny hned, dají se vytvářet postupně. Tento zápis je však přehledný, a z kódu je hned vidět jak dialog probíhá. Zároveň je ale možno udělat dialog, který není lineární, nebo třeba není předem známý - například boj.
+
+Dialog ale může rozbít atomicitu operací, jelikož při čekání na odpověď od uživatele mohou probíhat jiné akce, je tedy potřeba po získání odpovědi zkontrolovat stav herního světa, aby nedošlo k ilegální úpravě světa.
 
 \subsection{Cloner}
 
