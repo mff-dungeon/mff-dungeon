@@ -48,8 +48,10 @@ namespace Dungeon {
         this->objects.clearTree();
 		
 		LOG("GameManager") << "Creating and initializing tables." << LOGF;
+		DatabaseHandler::getInstance().beginTransaction();
 		WorldCreator wc(this);
 		wc.bigBang();
+		DatabaseHandler::getInstance().endTransaction();
 		
 		/*
 		 * Finish
