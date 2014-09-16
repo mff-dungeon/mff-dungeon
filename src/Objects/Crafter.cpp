@@ -78,13 +78,16 @@ namespace Dungeon {
 		try {
 			const ObjectMap& recipes = target.unsafeCast<Crafter>()->getRelations(Relation::Master, R_RECIPE);
 			if(recipes.empty()) return;
+			int found = 0;
 			for(auto& recipe : recipes) {
 				recipe.second.assertExists("Recipe has disappeared.").assertType<Recipe>("There is a non-recipe registered.");
 				Recipe* r = recipe.second.unsafeCast<Recipe>();
 				if(level >= r->getLevel()) {
 					*ad << r->getDescription() << eos;
+					found++;
 				}
 			}
+			if(!found) *ad << "You cannot craft anything here yet." << eos;
 		}
 		catch (const std::out_of_range& e) {
 			

@@ -106,17 +106,17 @@ namespace Dungeon
 					*ad << "You have fully healed yourself." << eos;
 				}));
 		
-		list->addAction(new CallbackAction("teleport", "teleport to <id> - teleport yourself everywhere.",
+		list->addAction(new CallbackAction("teleport", "teleport <id> - teleport yourself everywhere.",
 				RegexMatcher::matcher("teleport( to)? .+"), 
 				[] (ActionDescriptor* ad) {
 					smatch matches;
 					RegexMatcher::match("^teleport (.*)$", ad->in_msg, matches);
-					if (!ad->getGM()->hasObject(matches[3])) {
+					if (!ad->getGM()->hasObject(matches[1])) {
 						*ad << "404: Object not found :)" << eos;
 						return;
 					}
 					
-					ad->getGM()->moveAlive(ad->getAlive(), ad->getGM()->getObject(matches[3]));
+					ad->getGM()->moveAlive(ad->getAlive(), ad->getGM()->getObject(matches[1]));
 				}));
 				
 		list->addAction(new PropertyEditor);
