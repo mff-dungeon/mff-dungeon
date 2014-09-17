@@ -167,9 +167,41 @@ V této kapitole bychom chtěli vypíchnout některé části kódu, které se n
 
 \subsection{Logování}
 
-Podstatnou částí systému, na kterou jsme patřičně hrdí, je logovací mechanismus.
+Podstatnou částí systému, na kterou jsme patřičně hrdí, je logovací mechanismus. Jeho srdcem je třída \class{Logger}, se kterou aplikace komunikuje během hry v singletonovém režimu použitím několika šikovných maker.
 
-% TODO Petře, vyvětrej svou chlubnou plíci :)
+\begin{lstlisting}
+	LOGS("Loader", Fatal) << "Error saving object "
+	                      << id << ", error code " << err << LOGF;
+	                      
+    LOG("Loader") << ... // default is Severity::Info
+    
+    LOGH("Database cleanup") // creates headline for the next section
+\end{lstlisting} 
+
+\noindent
+Díky přetížení operátoru \texttt{<<} můžeme logovat téměř jakýkoliv druh obsahu. Protože každý záznam uvádí kromě zprávy i důležitost, chyby nezapadnou mezi běžnými záznamy.
+
+Všechny záznamy z logu jsou přesměrovány skrz buffery do výstupů – podtříd \texttt{std::ostream}. Tento objektový přístup je velmi praktický, protože nám umožňuje postavit výstupní soubory na stejnou úroveň jako standardní výstup aplikace. Navíc můžeme pro každý výstup nastavit minimální důležitost, od které události zaznamenává. V současném stavu se log ukládá takto:
+
+\begin{itemize}
+\item na \texttt{stdout} proudí zprávy s důležitostí $>=$ \texttt{Severity::Info}
+\item do souboru \texttt{YYYY-MM-DD-stdout.log} se kopíruje \texttt{stdout}
+\item do souboru \texttt{YYYY-MM-DD-verbose.log} proudí úplně všechny zprávy
+\item do souboru \texttt{YYYY-MM-DD-warnings.log} proudí zprávy s důležitostí $>=$ \texttt{Severity::Warning}
+\end{itemize}
+
+\noindent
+\textit{(soubory jsou opatřeny datem zapnutí aplikace a zapisuje se do nich režimem append)}
+
+\noindent
+V případě potřeby můžeme kdykoliv toto nastavení změnit i za běhu aplikace. Typickým příkladem této operace je parametr \texttt{--verbose}, se kterým se na obrazovku vypisují úplně všechny záznamy. Této změny dosáhneme jedním řádkem kódu:
+
+\begin{lstlisting}
+    Logger::getInstance().setMinSeverity(cout, Logger::Severity::Verbose);
+\end{lstlisting}
+
+\noindent
+Logování je samozřejmě thread-safe, takže se nemůže stát, že by některá vlákna aplikace (například \class{JabberDriver}) mohly začít zapisovat uprostřed zapisování jiného záznamu.
 
 \subsection{Výběr náhodné zprávy}
 
