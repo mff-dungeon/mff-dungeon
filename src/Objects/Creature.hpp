@@ -53,6 +53,8 @@ namespace Dungeon {
 		};
 		
 		CombatAction(string type = "creature-combat") : MultiTargetAction(type) {}
+                virtual ~CombatAction(){}
+
         
         virtual void explain(ActionDescriptor* ad);
         virtual bool match(string command, ActionDescriptor* ad);

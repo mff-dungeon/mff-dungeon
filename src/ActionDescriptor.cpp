@@ -29,7 +29,7 @@ namespace Dungeon {
 	}
 
 	void ActionDescriptor::setAction(Action* action, bool del) {
-		if (this->action && this->action != action)
+		if (del && this->action && this->action != action)
 			delete this->action;
 		if (action && action->getContainedIn())
 			action->getContainedIn()->erase(action->type); // Taking care of deleting
