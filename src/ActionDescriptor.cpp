@@ -28,9 +28,9 @@ namespace Dungeon {
 	}
 
 	void ActionDescriptor::setAction(Action* action) {
-		if (this->action) action->forget();
+		if (action) action->remember();
+		if (this->action) this->action->forget();
 		this->action = action;
-		if (this->action) action->remember();
 	}
 
 	Action* ActionDescriptor::getAction() {
