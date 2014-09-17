@@ -91,7 +91,7 @@ namespace Dungeon {
 		
 		double failRate = 5000*(2-2.0/(levelDiff+2));
 		if(failRate < Utils::getRandomInt(1, 10000)) {
-			*ad << "You have failed creating " << getName() << ". Maybe next time" << eos;
+			*ad << "You have failed creating " << getName() << ". Maybe next time." << eos;
 			crafter->addCraftingExp(getExperience()/10);
 			return;
 		}

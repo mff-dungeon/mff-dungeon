@@ -70,8 +70,9 @@ namespace Dungeon{
 					item->setSingleRelation(R_INSIDE, loc, Relation::Slave);
 				}
 			}
+			string itemName = getItem().safeCast<IDescriptable>()->getName();
 			LOGS("Dropper", Verbose) << "Dropped " << amount
-					<< " items " << getItem().safeCast<IDescriptable>()->getName() << "." << LOGF;
+					<< " items " << itemName << "." << LOGF;
 			return true;
 		}
 		return false;

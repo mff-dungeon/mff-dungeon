@@ -77,9 +77,9 @@ namespace Dungeon {
 		if(ad != 0) { // Let's tell what happened
 			if(ad->getAlive() == this) { // It is me dying
 			// TODO: Write some fancy method to respawn time nicer (probably rounding to highest order is enough)
-				*ad << "Oh no! You have just died."
-					<< "Your soul has moved to another plane of existence where it's currently regaining strength."
-					<< "You cannot play for " << this->getRespawnInterval() << " seconds."
+				*ad << "Oh no! You have just died. "
+					<< "Your soul has moved to another plane of existence where it's currently regaining strength. "
+					<< "You cannot play for " << this->getRespawnInterval() << " seconds. "
 					<< "Type respawn to respawn, when the time comes." << eos;
 			}
 			else {
