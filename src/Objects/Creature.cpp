@@ -151,17 +151,13 @@ namespace Dungeon {
 		*ad << "Use 'kill ...' to kill an almost dead creature.\n" << eos;
 	}
 	
-	bool KillAction::matchCommand(string command) {
-		return RegexMatcher::match("(kill|finish) .+", command);
-	}
-        
-	void KillAction::commit(ActionDescriptor* ad) {	
-		if(ad->in_msg.find("kill ") == 0) {
-			commitOnBestTarget(ad, ad->in_msg.substr(5));
+	bool KillAction::match(string command, ActionDescriptor* ad) {
+		smatch matches;
+		if (RegexMatcher::match("(kill|finish) (.+)", command, matches)) {
+			selectBestTarget(matches[2], ad);
+			return true;
 		}
-		else { // finish
-			commitOnBestTarget(ad, ad->in_msg.substr(7));
-		}
+		return false;
 	}
         
 	void KillAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
@@ -184,12 +180,12 @@ namespace Dungeon {
 		*ad << "Use 'attack ...' to initiate combat with a creature.\n";
 	}
 	
-	bool CombatAction::matchCommand(string command) {
-		return RegexMatcher::match("attack .+", command);
-	}
-        
-	void CombatAction::commit(ActionDescriptor* ad) {	
-		commitOnBestTarget(ad, ad->in_msg.substr(7));
+	bool CombatAction::match(string command, ActionDescriptor* ad) {
+		if (RegexMatcher::match("attack .+", command)) {
+			selectBestTarget(command.substr(7), ad);
+			return true;
+		}
+		return false;
 	}
         
 	void CombatAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {

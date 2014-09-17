@@ -93,8 +93,13 @@ namespace Dungeon {
 		*ad << "go to ... - enter another room." << eos;
 	}
 	
-	bool DoorwalkAction::matchCommand(string command) {
-		return RegexMatcher::match("(go to|cd|walk through) .+", command); // Common mistake :)
+	bool DoorwalkAction::match(string command, ActionDescriptor* ad) {
+		smatch matches;
+		if (RegexMatcher::match("(go to|cd|walk through) (.+)", command, matches)) {
+			selectBestTarget(matches[2], ad);
+			return true;
+		}
+		return false;
 	}
 
 

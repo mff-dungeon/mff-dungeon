@@ -119,11 +119,27 @@ namespace Dungeon
 					ad->getGM()->moveAlive(ad->getAlive(), ad->getGM()->getObject(matches[1]));
 				}));
 				
-		list->addAction(new PropertyEditor);
+		PropertyEditor* pe = new PropertyEditor;
+		for (auto pair : callee.safeCast<Alive>()->getLocation()->getRelations(Relation::Master, R_INSIDE)) {
+			pe->addTarget(pair.second);
+		}
+		list->addAction(pe);
 	}
 	
-	bool ThorsHammer::PropertyEditor::matchCommand(string command) {
-		return RegexMatcher::match("edit .+", command);
+	bool ThorsHammer::PropertyEditor::match(string command, ActionDescriptor* ad) {
+		smatch matches;
+		if (RegexMatcher::match("^edit (properties (of )?)?(.+)$", command, matches)) {
+			GameManager* gm = ad->getGM();
+			if (gm->hasObject(matches[3])) {
+				setTarget(gm->getObject(matches[3]));
+			} else {
+				selectBestTarget(matches[3], ad);
+			}
+			this->ad = ad;
+			LOG("TH") << "Editing " << getTarget().getId() << LOGF;
+			return true;
+		}
+		return false;
 	}
 	
 	bool ThorsHammer::PropertyEditor::handleException(GameException& exception, ActionDescriptor* ad) {
@@ -132,21 +148,12 @@ namespace Dungeon
 	}
 
 	
-	void ThorsHammer::PropertyEditor::commit(ActionDescriptor* ad) {
-		smatch matches;
-		RegexMatcher::match("^edit (properties (of )?)?(.+)$", ad->in_msg, matches);
-		
-		LOG("TH") << "Editing " << matches[3] << LOGF;
-		GameManager* gm = ad->getGM();
-		if (!gm->hasObject(matches[3])) {
-			*ad << "404: Object not found :)" << eos;
-			return;
-		}
-		target = gm->getObject(matches[3]);
+	void ThorsHammer::PropertyEditor::commitOnTarget(ActionDescriptor* ad, ObjectPointer trg) {
 		/**
 		 * Instance of object registers its properties as references,
 		 * and therefore must not be unloaded in between
 		 */
+		target = trg;
 		target.setLock(true);
 		
 		target->beforeLoad(*this);

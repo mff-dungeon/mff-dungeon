@@ -141,17 +141,13 @@ namespace Dungeon {
 		*ad << "take off ... - unequip armor, weapon or whatever." << eos;
 	}
 
-	bool UnequipAction::matchCommand(string command) {
-		return RegexMatcher::match("(take off|unequip) .+", command);
-	}
-
-	void UnequipAction::commit(ActionDescriptor* ad) {
-		if(ad->in_msg.find("take off") == 0) {
-			commitOnBestTarget(ad, ad->in_msg.substr(9));
+	bool UnequipAction::match(string command, ActionDescriptor* ad) {
+		smatch matches;
+		if (RegexMatcher::match("(take off|unequip) (.+)", command, matches)) {
+			selectBestTarget(matches[2], ad);
+			return true;
 		}
-		else { // unequip
-			commitOnBestTarget(ad, ad->in_msg.substr(8));
-		}
+		return false;
 	}
 	
 	void UnequipAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
@@ -191,17 +187,13 @@ namespace Dungeon {
 		*ad << "Use 'wear ...' or 'equip ...' to equip chosen item." << eos;
 	}
 
-	bool EquipAction::matchCommand(string command) {
-		return RegexMatcher::match("(wear|equip) .+", command);
-	}
-
-	void EquipAction::commit(ActionDescriptor* ad) {
-		if(ad->in_msg.find("wear") == 0) {
-			commitOnBestTarget(ad, ad->in_msg.substr(5));
+	bool EquipAction::match(string command, ActionDescriptor* ad) {
+		smatch matches;
+		if (RegexMatcher::match("(wear|equip) (.+)", command, matches)) {
+			selectBestTarget(matches[2], ad);
+			return true;
 		}
-		else { // equip
-			commitOnBestTarget(ad, ad->in_msg.substr(6));
-		}
+		return false;
 	}
 	
 	void EquipAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {

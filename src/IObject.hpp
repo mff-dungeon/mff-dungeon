@@ -76,7 +76,6 @@ namespace Dungeon {
         {
             if (isLocked())
                 LOGS("IObject", Error) << "Locked object is being deleted, something is wrong!" << LOGF;
-            LOG("IObject") << "Deleting " + id << LOGF;
         };
 
         virtual objId getId() const;

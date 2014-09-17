@@ -1,5 +1,6 @@
 #include "ObjectGroup.hpp"
 #include "Objects/IDescriptable.hpp"
+#include "Traps/MTATrap.hpp"
 
 namespace Dungeon {
 

@@ -26,15 +26,15 @@ namespace Dungeon {
          * TODO his really needs to prevent target from unloading in Splay tree,
          * otherwise it could do terrible things!
          */
-        class PropertyEditor : public Action, public IPropertyStorage {
+        class PropertyEditor : public MultiTargetAction, public IPropertyStorage {
         public:
-            PropertyEditor() : Action("property-editor", true) {}
+            PropertyEditor() : MultiTargetAction("property-editor") {}
             
             // Action side
-            virtual void commit(ActionDescriptor* ad);
             virtual void explain(ActionDescriptor* ad);
-            virtual bool matchCommand(string command);
+            virtual bool match(string command, ActionDescriptor* ad);
             virtual bool handleException(GameException& exception, ActionDescriptor* ad);
+        virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 
 
             
@@ -46,7 +46,7 @@ namespace Dungeon {
             void askForNextOne(ActionDescriptor* ad);
 
         private:
-            TextActionDescriptor* ad;
+            ActionDescriptor* ad;
             ObjectPointer target;
             std::queue<string> descriptions;
         };

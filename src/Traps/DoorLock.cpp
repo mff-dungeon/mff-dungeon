@@ -57,9 +57,9 @@ namespace Dungeon {
 		}
 	}
 
-	void DoorLock::exceptionTrigger(ActionDescriptor* ad) {
+	bool DoorLock::exceptionTrigger(ActionDescriptor* ad) {
 		*ad << "You need to have a " << getKey().safeCast<IDescriptable>()->getName() << " to pass this door." << eos;
-		ad->setAction(0);
+		return false;
 	}
 	
 	void DoorLock::registerProperties(IPropertyStorage& storage) {

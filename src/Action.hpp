@@ -5,6 +5,8 @@
 
 namespace Dungeon {
     
+    class ActionList;
+    
     /*
      * The way objects interact with each other.
      */
@@ -15,8 +17,15 @@ namespace Dungeon {
         
         /**
          * Returns true when this action should be commited for this message.
+         * Shall also fetch all needed parameters from the string and store it
+         * inside.
          */
-        virtual bool matchCommand(string command);
+        virtual bool match(string command, ActionDescriptor* ad);
+        
+        /**
+         * Can be overriden to check integrity before commiting.
+         */
+        virtual void validate() {}
         
         /**
          * Commits the action.
@@ -40,9 +49,22 @@ namespace Dungeon {
          */
         virtual bool handleException(GameException& exception, ActionDescriptor *ad);
 
-        string type;
+        string type;       
         
         bool isVisibleInHelp;
+        
+        ActionList* getContainedIn() const
+        {
+            return containedIn;
+        }
+
+        void setContainedIn(ActionList* containedIn)
+        {
+            this->containedIn = containedIn;
+        }
+        
+    private:
+        ActionList* containedIn = nullptr;
     };
 }
 

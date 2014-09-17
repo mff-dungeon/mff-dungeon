@@ -57,12 +57,12 @@ namespace Dungeon {
 		*ad << "Use 'drink ...' to drink a potion you have or see.\n" << eos;
 	}
 	
-	bool DrinkPotionAction::matchCommand(string command) {
-		return RegexMatcher::match("drink .+", command);
-	}
-        
-	void DrinkPotionAction::commit(ActionDescriptor* ad) {	
-		commitOnBestTarget(ad, ad->in_msg.substr(6));
+	bool DrinkPotionAction::match(string command, ActionDescriptor* ad) {
+		if (RegexMatcher::match("drink .+", command)) {
+			selectBestTarget(command.substr(6), ad);
+			return true;
+		}
+		return false;
 	}
         
 	void DrinkPotionAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {

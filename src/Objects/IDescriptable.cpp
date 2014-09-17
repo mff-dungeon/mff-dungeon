@@ -75,13 +75,14 @@ namespace Dungeon {
 	NONPERSISTENT_IMPLEMENTATION(IDescriptable)
 			
 		
-	bool ExamineEction::matchCommand(string command) {
-		return RegexMatcher::match("(investigate?|examine?|explore?|look( closer)?( +(in|to|into|on|onto|at))?) +(.+)", command, matches);
+	bool ExamineEction::match(string command, ActionDescriptor* ad) {
+		smatch matches;
+		if (RegexMatcher::match("(investigate|examine|explore|look( closer)?( +(in|to|into|on|onto|at))?) +(.+)", command, matches)) {
+			selectBestTarget(matches[5], ad);
+			return true;
+		}
+		return false;
 	}	
-
-	void ExamineEction::commit(ActionDescriptor* ad) {
-		commitOnBestTarget(ad, matches[4]);
-	}
 
 	void ExamineEction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		target.assertType<IDescriptable>("Examining non-examinable object.")

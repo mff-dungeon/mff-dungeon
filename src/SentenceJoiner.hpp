@@ -26,7 +26,7 @@ namespace Dungeon {
          */
         string getSentence()
         {
-            return count > 1 ? parts.str() + " and " + last : last;
+            return count > 1 ? parts.str() + lastConjunction + last : last;
         }
 
         /**
@@ -55,7 +55,7 @@ namespace Dungeon {
         SentenceJoiner& operator<<(string value)
         {
             if (value != "") {
-                if (count++ > 1) parts << ", ";
+                if (count++ > 1) parts << conjunction;
                 parts << last;
                 last = value;
             }
@@ -72,6 +72,12 @@ namespace Dungeon {
             else
                 return *this  << value.getId();
         }
+        
+        SentenceJoiner& setConjunction(string all, string last) {
+            conjunction = all;
+            lastConjunction = last;
+            return *this;
+        }
 
         int size() {
             return count;
@@ -80,6 +86,9 @@ namespace Dungeon {
         int count = 0;
         stringstream parts;
         string last = "";
+        
+        string conjunction = ", ";
+        string lastConjunction = " and ";
     };
 }
 

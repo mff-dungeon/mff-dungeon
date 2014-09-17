@@ -128,16 +128,13 @@ namespace Dungeon {
 		*ad << "Use 'pick up ...' to pick the items you see." << eos;
 	}
 
-	bool PickupAction::matchCommand(string command) {
-		return RegexMatcher::match("(pick( up)?|take|grab|obtain|catch|seize) .+", command);
-	}
-
-	void PickupAction::commit(ActionDescriptor* ad) {
-		if (ad->in_msg.find("pick up ") == 0) {
-			commitOnBestTarget(ad, ad->in_msg.substr(8));
-		} else { // take | pick 
-			commitOnBestTarget(ad, ad->in_msg.substr(5));
+	bool PickupAction::match(string command, ActionDescriptor* ad) {
+		smatch matches;
+		if (RegexMatcher::match("(pick( up)?|take|grab|obtain|catch|seize) (.+)", command, matches)) {
+			selectBestTarget(matches[3], ad);
+			return true;
 		}
+		return false;
 	}
 
 	void PickupAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {

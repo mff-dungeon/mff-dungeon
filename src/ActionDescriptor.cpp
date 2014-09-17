@@ -28,9 +28,11 @@ namespace Dungeon {
 		setAction(action);
 	}
 
-	void ActionDescriptor::setAction(Action* action) {
-		if (this->action)
+	void ActionDescriptor::setAction(Action* action, bool del) {
+		if (this->action && this->action != action)
 			delete this->action;
+		if (action && action->getContainedIn())
+			action->getContainedIn()->erase(action->type); // Taking care of deleting
 		this->action = action;
 	}
 

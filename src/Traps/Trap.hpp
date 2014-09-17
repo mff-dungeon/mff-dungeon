@@ -38,14 +38,19 @@ namespace Dungeon
             
             /**
              * This one will be called by driver after throwing TrapException.
-             * Trap MUST take care for the lifecycle of AD as following:
-             *  - if the action shall be repeated, do nothing
-             *  - if no further action shall be processed, set action to null
-             *  - to redirect, just set the action to the new one
+             * Trap can take care for the lifecycle of AD as following:
+             *  - if the action shall be repeated, do nothing & return true
+             *  - if no further action shall be processed, set action to null || return false
+             *  - to redirect, just set the action to the new one & return true
+             * 
+             * The return value was added because you may need to remember 
+             * action while interrupting it's processing.
              * 
              * TL;DR The action in ad, if any, will be run afterwards.
+             * 
+             * @return true if processing should continue, false otherwise
              */
-            virtual void exceptionTrigger(ActionDescriptor* ad);
+            virtual bool exceptionTrigger(ActionDescriptor* ad);
             
             /**
              * This method should never be called on Trap.

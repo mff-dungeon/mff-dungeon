@@ -62,12 +62,12 @@ namespace Dungeon {
 		*ad << "Use 'craft ...' to ask for a recipe list." << eos;
 	}
 	
-	bool CraftAction::matchCommand(string command) {
-		return RegexMatcher::match("craft .+", command);
-	}
-        
-	void CraftAction::commit(ActionDescriptor* ad) {	
-		commitOnBestTarget(ad, ad->in_msg.substr(6));
+	bool CraftAction::match(string command, ActionDescriptor* ad) {
+		if (RegexMatcher::match("craft .+", command)) {
+			selectBestTarget(command.substr(6), ad);
+			return true;
+		}
+		return false;
 	}
         
 	void CraftAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
@@ -98,12 +98,12 @@ namespace Dungeon {
 		*ad << "Use 'create ...' to use a recipe to create something." << eos;
 	}
 	
-	bool CreateAction::matchCommand(string command) {
-		return RegexMatcher::match("create .+", command);
-	}
-        
-	void CreateAction::commit(ActionDescriptor* ad) {	
-		commitOnBestTarget(ad, ad->in_msg.substr(7));
+	bool CreateAction::match(string command, ActionDescriptor* ad) {
+		if (RegexMatcher::match("create .+", command)) {
+			selectBestTarget(command.substr(7), ad);
+			return true;
+		}
+		return false;
 	}
 
 	void CreateAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {

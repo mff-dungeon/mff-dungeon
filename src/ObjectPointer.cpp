@@ -15,8 +15,8 @@ namespace Dungeon
 	}
 
 	const ObjectPointer& ObjectPointer::assertExists(string msg) const {
-		if (!gm->hasObject(id))
-			throw ObjectLost(msg);
+		if (!gm || !gm->hasObject(id))
+			throw ObjectLost(msg + "id: " + id);
 		return *this;
 	}
 	

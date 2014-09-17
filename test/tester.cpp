@@ -57,6 +57,19 @@ void testFSMatcher() {
     matcher.add("Blue potion", 2);
     matcher.add("Green potion", 2);
     assert(matcher.find("blue") == 2, "Potion selection 3");
+	
+	// Bug #9
+	matcher.clear();
+	try {
+		matcher.add("something", 1);
+		matcher.add("", 0);
+		matcher.find("");
+		assert(true, "Bug #9");
+	} catch (std::logic_error& e) {
+		assert(false, "Bug #9");
+	} catch (StringMatcher::NoCandidate& e) {
+		assert(true, "Bug #9");
+	}
 }
 
 void testInstanceOf() {

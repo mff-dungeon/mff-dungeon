@@ -3,13 +3,15 @@
 #include "../ObjectGroup.hpp"
 #include "../FuzzyStringMatcher.hpp"
 #include "../ActionDescriptor.hpp"
+#include "../Traps/MTATrap.hpp"
 
 namespace Dungeon {
 
 	MultiTargetAction::~MultiTargetAction() {
 	}
 
-	MultiTargetAction::MultiTargetAction(string type) : Action(type) {}
+	MultiTargetAction::MultiTargetAction(string type) : Action(type) {
+	}
 
 	void MultiTargetAction::addTarget(ObjectPointer op) {
 		if (targets.find(op.getId()) == targets.end())
@@ -27,36 +29,13 @@ namespace Dungeon {
 		return targets;
 	}
 	
-        void MultiTargetAction::commit(ActionDescriptor* ad) {
-            commitOnBestTarget(ad, ad->in_msg);
-        }
-        
-        void MultiTargetAction::commitOnBestTarget(ActionDescriptor* ad, string str) {
-            ObjectGroup group (targets);
-            ObjectPointer target;
-            try {
-                target = group.match(str);
-                IDescriptable* obj = target.safeCast<IDescriptable>();
-				if (obj) LOGS("MTA", Verbose) << "Selected " << obj->getLongName() << LOGF;
-                commitOnTarget(ad, target);
-            } catch (const StringMatcher::Uncertain& e) {
-                *ad << "I'm sorry, did you say \"" << "\"?" << eos;
-                ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
-                    try {
-                        bool repl = StringMatcher::matchTrueFalse(reply);
-                        if (repl) {
-                            // commitOnTarget(ad, target);
-                        } else {
-                            *ad << "Sorry, i'm sort of dumb last few days. Please say it again." << eos;
-                        }
-                    } catch (const StringMatcher::Uncertain& e) {
-                        *ad << "Nevermind." << eos;
-                    } catch (const StringMatcher::NoCandidate& e) {
-                        *ad << "Nevermind." << eos;
-                    }
-                });
-            } catch (const StringMatcher::NoCandidate& e) {
-                *ad << "No such thing found. Really." << eos;
-            }
-        }
+	void MultiTargetAction::commit(ActionDescriptor* ad) {
+		commitOnTarget(ad, selectedTarget);
+	}
+
+	void MultiTargetAction::selectBestTarget(string str, ActionDescriptor* ad) {
+		ObjectGroup group (targets);
+		ObjectPointer trap = ad->getGM()->getObject("trap/mta");
+		setTarget(trap.unsafeCast<MTATrap>()->wrapFind(group, this, str, ad));
+	}
 }

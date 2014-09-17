@@ -8,7 +8,7 @@ namespace Dungeon {
 	PERSISTENT_IMPLEMENTATION(AttackTrap)
 	
 	void AttackTrap::trigger(string event, ObjectPointer room, ActionDescriptor* ad) {
-		if (!ad || ad->state != ActionDescriptor::RoundEnd) {
+		if (!ad || ad->state != ActionDescriptor::RoundEnd || ad->getAlive()->getState() == Alive::Dead) {
 			LOGS("AttackTrap", Verbose) << "No AD or wrong time"<< LOGF;
 			return;
 		}
@@ -33,7 +33,7 @@ namespace Dungeon {
 		throw TrapException(this);
 	}
 	
-	void AttackTrap::exceptionTrigger(ActionDescriptor* ad) {
+	bool AttackTrap::exceptionTrigger(ActionDescriptor* ad) {
 		string name = target.unsafeCast<Creature>()->getName();
 		*ad << (RandomString::get()
 			<<  name + " has immedietely attacked you." << endr
@@ -41,9 +41,10 @@ namespace Dungeon {
 			<< "Before you could have done anything else, " + name + " striked." << endr) << eos;
 		
 		CombatAction* c = new CombatAction;
-		c->addTarget(target);
+		c->setTarget(target);
 		ad->setAction(c);
 		target = nullptr;
+		return true;
 	}
 }
 

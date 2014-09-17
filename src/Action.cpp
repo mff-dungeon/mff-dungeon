@@ -7,7 +7,7 @@ namespace Dungeon {
 		*ad << "Olala! The action was commited!" << eos;
 	}
 	
-	bool Action::matchCommand(string command) {
+	bool Action::match(string command, ActionDescriptor* ad) {
 		return true;
 	}
 

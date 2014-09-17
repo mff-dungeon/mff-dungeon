@@ -5,11 +5,13 @@
 #include "../Action.hpp"
 
 namespace Dungeon {
-    
+
+    class MTATrap;
+
     /**
      * Action that applies to more elements, merges 
      * with another actions of the same type 
-     * and automatically selects matching target
+     * and helps select matching target
      */
     class MultiTargetAction : public Action {
     public:
@@ -30,7 +32,7 @@ namespace Dungeon {
         virtual void addTarget(ObjectPointer op);
 
         const ObjectMap& getTargets() const;
-
+        
         /**
          * Like commit in general action, but this time with selected target.
          * @param ad
@@ -38,12 +40,32 @@ namespace Dungeon {
          */
         virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target) = 0;
         
+        /**
+         * Does generic object matching to set best target
+         */
+        virtual void selectBestTarget(string str, ActionDescriptor* ad);
+        
+        ObjectPointer getTarget() const
+        {
+            return selectedTarget;
+        }
+
+        void setTarget(const ObjectPointer& selectedTarget)
+        {
+            this->selectedTarget = selectedTarget;
+        }
+        
+        virtual void validate() {
+            if (!this->selectedTarget)
+                throw new GameException("Target must be set prior to committing.");
+        }
+        
         virtual void commit(ActionDescriptor* ad);
 
         
     protected:
-        void commitOnBestTarget(ActionDescriptor* ad, string str);
         ObjectMap targets;
+        ObjectPointer selectedTarget;
     };
 }
 

@@ -87,10 +87,9 @@ namespace Dungeon {
 	public:
 		UnequipAction(string type = "wearable-unequip") : MultiTargetAction(type) {}
 	
-		virtual void commit(ActionDescriptor* ad);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 		virtual void explain(ActionDescriptor* ad);
-		virtual bool matchCommand(string command);
+		virtual bool match(string command, ActionDescriptor* ad);
 	};
 
 	/**
@@ -106,10 +105,9 @@ namespace Dungeon {
 	public:
 		EquipAction(string type = "wearable-equip") : MultiTargetAction(type) {}
 		
-		virtual void commit(ActionDescriptor* ad);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 		virtual void explain(ActionDescriptor* ad);
-		virtual bool matchCommand(string command);
+		virtual bool match(string command, ActionDescriptor* ad);
 		
 		/**
 		 * Phase one handles asking user question and matching the answer

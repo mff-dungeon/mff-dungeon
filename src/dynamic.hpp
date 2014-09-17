@@ -19,6 +19,7 @@
 #include "Traps/DoorLock.hpp"
 #include "Traps/Healing.hpp"
 #include "Traps/ItemRespawner.hpp"
+#include "Traps/MTATrap.hpp"
 #include "Traps/SimpleDamageTrap.hpp"
 #include "Traps/Trap.hpp"
 

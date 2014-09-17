@@ -33,10 +33,8 @@ namespace Dungeon {
 		CraftAction(string type = "crafter-craft") : MultiTargetAction(type) {}
         
         virtual void explain(ActionDescriptor* ad);
-        virtual bool matchCommand(string command);
+        virtual bool match(string command, ActionDescriptor* ad);
         virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
-
-        virtual void commit(ActionDescriptor* ad);
 	};
 	
 	class CreateAction : public MultiTargetAction {
@@ -44,10 +42,8 @@ namespace Dungeon {
 		CreateAction(string type = "crafter-create") : MultiTargetAction(type) {};
         
         virtual void explain(ActionDescriptor* ad);
-        virtual bool matchCommand(string command);
+        virtual bool match(string command, ActionDescriptor* ad);
         virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
-
-        virtual void commit(ActionDescriptor* ad);
 	};
 }
 

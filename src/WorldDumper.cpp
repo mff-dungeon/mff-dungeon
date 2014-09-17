@@ -76,7 +76,10 @@ namespace Dungeon {
 	}
 	
 	IPropertyStorage& DotDumper::have(string& prop, string id, string desc, bool editable) {
-		file << "<b>" << id << "</b>: " << prop << "<br/>";
+		if (prop.length() > 10)
+			file << "<b>" << id << "</b>: (long string)<br/>";
+		else
+			file << "<b>" << id << "</b>: " << prop << "<br/>";
 		return *this;
 	}
 	

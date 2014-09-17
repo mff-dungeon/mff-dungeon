@@ -65,11 +65,16 @@ namespace Dungeon {
         class Uncertain : public GameException {
         public:
             Uncertain() : GameException("I'm not sure what you mean.") {}
-            virtual ~Uncertain() {}                
+            Uncertain(string msg) : GameException(msg) {}
+            Uncertain(vector<ObjectPointer> possibleTargets) : GameException("Please explain it beter."), possibleTargets(possibleTargets) {}
+            virtual ~Uncertain() {} 
+            
+            vector<ObjectPointer> possibleTargets;
         };
         class NoCandidate : public GameException {
         public:
             NoCandidate() : GameException("I'm not sure you know what you mean.") {}
+            NoCandidate(string msg) : GameException(msg) {}
             virtual ~NoCandidate() {}                
         };;
         
@@ -92,7 +97,6 @@ namespace Dungeon {
                     .add("false", false)
                     .add("of course not", false);
             }
-            
             return matcher.find(text);
         }
         
@@ -106,6 +110,10 @@ namespace Dungeon {
 
     template<typename value_type>
     FuzzyStringMatcher<value_type>& FuzzyStringMatcher<value_type>::add(string searchstring, value_type value) {
+        if (searchstring.length() == 0) {
+            LOGS("FSM", Warning) << "Adding empty string." << LOGF;
+            return *this;
+        }
         strMap[searchstring] = value;
         return *this;
     }
@@ -167,6 +175,10 @@ namespace Dungeon {
 
     template<typename value_type>
     value_type FuzzyStringMatcher<value_type>::find(const string& needle) {
+        if (needle.length() == 0) {
+            LOGS("FSM", Warning) << "Tried to find empty string." << LOGF;
+            throw StringMatcher::NoCandidate("You must write something.");
+        }
         LOGS("FuzzyMatcher", Verbose) << "Looking for " << needle << LOGF;
         int max = 0;
         auto maxMatch = strMap.begin();
@@ -182,15 +194,14 @@ namespace Dungeon {
                 maxMatch = pair;
                 uncertain = false;
             } else if (d == max) {
-                uncertain |= maxMatch->second != pair->second; // The same object with different names
+                uncertain = uncertain || maxMatch->second != pair->second; // The same object with different names
             }
         }
         if (max == 0)
             throw StringMatcher::NoCandidate();
         
-        // FIXME: if uncommented, everything is uncertain
-        /*if (uncertain)
-            throw StringMatcher::Uncertain();*/
+        if (uncertain)
+            throw StringMatcher::Uncertain();
         
         return maxMatch->second;
     }

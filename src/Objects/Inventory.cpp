@@ -159,12 +159,12 @@ namespace Dungeon {
 		*ad << "Use 'drop ...' to drop items from your backpack. \n" << eos;
 	}
 	
-	bool DropAction::matchCommand(string command) {
-		return RegexMatcher::match("drop .+", command);
-	}
-        
-	void DropAction::commit(ActionDescriptor* ad) {	
-		commitOnBestTarget(ad, ad->in_msg.substr(5));
+	bool DropAction::match(string command, ActionDescriptor* ad) {
+		if (RegexMatcher::match("drop .+", command)) {
+			selectBestTarget(command.substr(5), ad);
+			return true;
+		}
+		return false;
 	}
         
 	void DropAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {	

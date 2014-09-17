@@ -56,11 +56,11 @@ namespace Dungeon {
         DoorwalkAction(string type = "door-walk") : MultiTargetAction(type) {}
         
         virtual void explain(ActionDescriptor* ad);
-        virtual bool matchCommand(string command);
+        virtual bool match(string command, ActionDescriptor* ad);
         
         /**
          * Will move the target to another Room.
-         * @param target Should be Room.
+         * @param target Must be Door.
          */
         virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
     };

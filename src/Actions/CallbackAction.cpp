@@ -10,7 +10,7 @@ namespace Dungeon {
 		commitCallback(ad);
 	}
 
-	bool CallbackAction::matchCommand(string command) {
+	bool CallbackAction::match(string command, ActionDescriptor* ad) {
 		return matchCallback(command);
 	}
 	

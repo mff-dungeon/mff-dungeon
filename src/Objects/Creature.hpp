@@ -55,10 +55,8 @@ namespace Dungeon {
 		CombatAction(string type = "creature-combat") : MultiTargetAction(type) {}
         
         virtual void explain(ActionDescriptor* ad);
-        virtual bool matchCommand(string command);
+        virtual bool match(string command, ActionDescriptor* ad);
         virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
-
-        virtual void commit(ActionDescriptor* ad);
 		
 		bool checkValidity(ActionDescriptor* ad);
 		void combatLoop(ActionDescriptor* ad, string reply);
@@ -73,10 +71,8 @@ namespace Dungeon {
 		KillAction(string type = "creature-kill") : MultiTargetAction(type) {}
         
         virtual void explain(ActionDescriptor* ad);
-        virtual bool matchCommand(string command);
+        virtual bool match(string command, ActionDescriptor* ad);
         virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
-
-        virtual void commit(ActionDescriptor* ad);
 	};
 }
 

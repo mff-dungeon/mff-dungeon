@@ -2569,7 +2569,7 @@ namespace Dungeon {
 		LOGH("Testing stuff");
 
 		AttackTrap* autoAttack = createObject<AttackTrap>("trap/attack");
-
+		createObject<MTATrap>("trap/mta");
 		/*
 		 ************************     Equip room		************************
 		 */

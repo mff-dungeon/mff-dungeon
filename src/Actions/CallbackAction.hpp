@@ -32,7 +32,7 @@ namespace Dungeon {
 
         virtual void explain(ActionDescriptor* ad);
         virtual void commit(ActionDescriptor* ad);
-        virtual bool matchCommand(string command);
+        virtual bool match(string command, ActionDescriptor* ad);
 
     private:
         string explanation;

@@ -63,10 +63,8 @@ namespace Dungeon {
         DrinkPotionAction(string type = "potion-drink") : MultiTargetAction(type) {}
         
         virtual void explain(ActionDescriptor* ad);
-        virtual bool matchCommand(string command);
+        virtual bool match(string command, ActionDescriptor* ad);
         virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
-
-        virtual void commit(ActionDescriptor* ad);
 
     };
     

@@ -12,55 +12,58 @@ namespace Dungeon {
     }
     
     bool TextDriver::process(TextActionDescriptor* ad) {
-		try {
-			if (!ad->isFinished()) {
-				ad->userReplied(ad->in_msg);
-				return true;
-			}
-			
-			ad->getAlive()->getAllActions(&alist);
+		try { // Catching regular exceptions
+			try { // TrapExceptions to modify life-cycle
+				if (ad->isFinished()) {
+					ad->getAlive()->getAllActions(&alist);
 
-			string message (ad->in_msg);
-			transform(message.begin(), message.end(), message.begin(), ::tolower);
-			
-			ofstream debugfile;
-			debugfile.open("debug/messages.txt", ios::out | ios::app);
-			debugfile << message << ";";
-			
-			for (ActionList::iterator it = alist.begin(); it != alist.end(); ++it) {
-				Action* action = it->second;
-				LOGS("TD", Verbose) << "Matching action " << it->first << LOGF;
-				if (action->matchCommand(message)) {
-					ad->matched(action);
-					debugfile << action->type << endl;
-					debugfile.close();
-					alist.erase(it);
-					break;
-				}
-			}
-			alist.clear();
-			
-			if (!ad->isValid(this)) {
-				*ad << getDontUnderstandResponse(ad->in_msg) << eos;
-				debugfile << "!!!!!" << endl;
-				debugfile.close();
-				return false;
-			}
-			
-			try {
-				ad->state = ActionDescriptor::RoundBegin;
-				ad->getAlive()->onBeforeAction(ad);
-				ad->getAlive()->triggerTraps("action-" + ad->getAction()->type, ad);
+					string message (ad->in_msg);
+					transform(message.begin(), message.end(), message.begin(), ::tolower);
 
-				ad->state = ActionDescriptor::Round;
-				ad->getAction()->commit(ad);
+					ofstream debugfile;
+					debugfile.open("debug/messages.txt", ios::out | ios::app);
+					debugfile << message << ";";
 
-				ad->state = ActionDescriptor::RoundEnd;
-				ad->getAlive()->onAfterAction(ad);
+
+					for (ActionList::iterator it = alist.begin(); it != alist.end(); ++it) {
+						Action* action = it->second;
+						LOGS("TD", Verbose) << "Matching action " << it->first << LOGF;
+						if (action->match(message, ad)) {
+							ad->matched(action);
+							debugfile << action->type << endl;
+							debugfile.close();
+							break;
+						}
+					}
+					alist.clear();
+
+					if (!ad->isValid(this)) {
+						*ad << getDontUnderstandResponse(ad->in_msg) << eos;
+						debugfile << "!!!!!" << endl;
+						debugfile.close();
+						return false;
+					}
+					
+					ad->getAction()->validate();
+
+					ad->state = ActionDescriptor::RoundBegin;
+					ad->getAlive()->onBeforeAction(ad);
+					ad->getAlive()->triggerTraps("action-" + ad->getAction()->type, ad);
+
+					ad->state = ActionDescriptor::Round;
+					ad->getAction()->commit(ad);
+					
+					ad->state = ActionDescriptor::RoundEnd;
+					ad->getAlive()->onAfterAction(ad);
+				} else { // ! finished
+					ad->state = ActionDescriptor::Round;
+					ad->userReplied(ad->in_msg);
+				}	
 				return true;
 			} catch (TrapException& te) {
 				ad->state = ActionDescriptor::Trap;
-				te.getTrap().unsafeCast<Trap>()->exceptionTrigger(ad);
+				if (!te.getTrap().unsafeCast<Trap>()->exceptionTrigger(ad))
+					return true;
 			}
 			
 			while (ad->isValid(this)) {
@@ -68,7 +71,8 @@ namespace Dungeon {
 					ad->getAction()->commit(ad);
 					return true;
 				} catch (TrapException& te) {
-					te.getTrap().unsafeCast<Trap>()->exceptionTrigger(ad);
+					if (!te.getTrap().unsafeCast<Trap>()->exceptionTrigger(ad))
+						return true;
 				}
 			}
 		}

@@ -20,6 +20,7 @@ namespace Dungeon {
 		actionMap::iterator it = find(action->type);
 		if (it == end()) {
 			insert(std::make_pair(action->type, action));
+			action->setContainedIn(this);
 			return action;
 		} else {
 			((MultiTargetAction*) it->second)->merge(action);
@@ -29,6 +30,7 @@ namespace Dungeon {
 	
 	Action* ActionList::addAction(Action* action) {
 		insert(std::make_pair(action->type, action));
+		action->setContainedIn(this);
 		return action;
 	}
 	
