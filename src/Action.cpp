@@ -1,5 +1,6 @@
 #include "Action.hpp"
 #include "ActionDescriptor.hpp"
+#include "Actions/UseAction.hpp"
 
 namespace Dungeon {
 
@@ -20,5 +21,4 @@ namespace Dungeon {
 		*ad << exception.what() << eos;
 		return true;
 	}
-
 }

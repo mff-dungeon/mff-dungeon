@@ -12,8 +12,7 @@ namespace Dungeon {
 	}
 	
 	ActionDescriptor::~ActionDescriptor() {
-		if (action)
-			delete action;
+		if (action) action->forget();
 	}
 
 	void ActionDescriptor::enqueued(GameManager* gm) {
@@ -28,12 +27,10 @@ namespace Dungeon {
 		setAction(action);
 	}
 
-	void ActionDescriptor::setAction(Action* action, bool del) {
-		if (del && this->action && this->action != action)
-			delete this->action;
-		if (action && action->getContainedIn())
-			action->getContainedIn()->erase(action->type); // Taking care of deleting
+	void ActionDescriptor::setAction(Action* action) {
+		if (this->action) action->forget();
 		this->action = action;
+		if (this->action) action->remember();
 	}
 
 	Action* ActionDescriptor::getAction() {

@@ -11,26 +11,27 @@ namespace Dungeon {
 	
 	void ActionList::clear() {
 		for (actionMap::iterator it = begin(); it != end(); it++) {
-            delete it->second;
+            it->second->forget();
 		}
 		actionMap::clear();
 	}
 	
-	Action* ActionList::addAction(MultiTargetAction* action) {
+	MultiTargetAction* ActionList::addAction(MultiTargetAction* action) {
 		actionMap::iterator it = find(action->type);
 		if (it == end()) {
 			insert(std::make_pair(action->type, action));
-			action->setContainedIn(this);
+			action->remember();
 			return action;
 		} else {
 			((MultiTargetAction*) it->second)->merge(action);
-			return it->second;
+			action->remember()->forget(); // Dispose if not used
+			return (MultiTargetAction*) it->second;
 		}
 	}
 	
 	Action* ActionList::addAction(Action* action) {
 		insert(std::make_pair(action->type, action));
-		action->setContainedIn(this);
+		action->remember();
 		return action;
 	}
 	

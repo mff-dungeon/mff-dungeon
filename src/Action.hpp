@@ -53,18 +53,22 @@ namespace Dungeon {
         
         bool isVisibleInHelp;
         
-        ActionList* getContainedIn() const
-        {
-            return containedIn;
+        /**
+         * Basically implementation of shared pointers, 
+         * but with more comfortable syntax
+         */
+        Action* remember() {
+            ptrCount++;
+            return this;
         }
-
-        void setContainedIn(ActionList* containedIn)
-        {
-            this->containedIn = containedIn;
+        
+        void forget() {
+            if (--ptrCount <= 0)
+                delete this;
         }
         
     private:
-        ActionList* containedIn = nullptr;
+        int ptrCount = 0;
     };
 }
 

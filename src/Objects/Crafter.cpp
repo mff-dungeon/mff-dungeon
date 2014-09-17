@@ -1,4 +1,5 @@
 #include "Crafter.hpp"
+#include "../Actions/UseAction.hpp"
 
 namespace Dungeon {
 	
@@ -29,10 +30,10 @@ namespace Dungeon {
 
 	void Crafter::getActions(ActionList* list, ObjectPointer callee) {
 		// Info action
-		CraftAction* craftAct = new CraftAction;
-		craftAct->addTarget(this);
-		list->addAction(craftAct);
-		
+		list->addAction(new CraftAction)
+				->addTarget(this)
+				->useActionFor(this, list);
+				
 		// Recipes action
 		CreateAction* createAct = new CreateAction;
 		try {

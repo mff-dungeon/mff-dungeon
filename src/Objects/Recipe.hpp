@@ -37,7 +37,7 @@ namespace Dungeon {
 		int experience = 0;
 		int* resources;
 
-	PERSISTENT_DECLARATION(Recipe, IObject)
+	PERSISTENT_DECLARATION(Recipe, IDescriptable)
 	};
 }
 

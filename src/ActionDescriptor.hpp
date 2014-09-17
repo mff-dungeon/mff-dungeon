@@ -66,7 +66,7 @@ namespace Dungeon {
          * It will be automatically deleted after replacing or deletign AD.
          * @param del To avoid deleting the action
          */
-        void setAction(Action* action, bool del = true);
+        void setAction(Action* action);
         
         /**
          * Add some text to the reply. @see operator <<

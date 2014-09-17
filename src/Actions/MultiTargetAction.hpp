@@ -29,7 +29,7 @@ namespace Dungeon {
          * Adds another potential target for this action.
          * @param op Target
          */
-        virtual void addTarget(ObjectPointer op);
+        virtual MultiTargetAction* addTarget(ObjectPointer op);
 
         const ObjectMap& getTargets() const;
         
@@ -62,6 +62,7 @@ namespace Dungeon {
         
         virtual void commit(ActionDescriptor* ad);
 
+        void useActionFor(ObjectPointer target, ActionList* list);
         
     protected:
         ObjectMap targets;

@@ -28,9 +28,9 @@ namespace Dungeon {
 	
 	void Potion::getActions(ActionList* list, ObjectPointer callee) {
 		Item::getActions(list, callee);
-		DrinkPotionAction* action = new DrinkPotionAction;
-		action->addTarget(this);
-		list->addAction(action);
+		list->addAction(new DrinkPotionAction)
+			->addTarget(this)
+			->useActionFor(this, list);
 	}
 	
 	string Potion::getDescription() const {

@@ -23,7 +23,8 @@ namespace Dungeon {
 			for (auto& obj : targets) {
 				if (obj.second != callee.safeCast<Alive>()->getLocation()) {
 					action->addTarget(this);
-					list->addAction(action);
+					list->addAction(action)
+							->useActionFor(this, list);
 					break;
 				}
 			}

@@ -78,14 +78,13 @@ namespace Dungeon {
 		// Do I see this equipped or not?
 		
 		if (hasRelation(Wearable::SlotRelations[this->getSlot()], callee, Relation::Slave)) {
-			UnequipAction* action = new UnequipAction;
-			action->addTarget(this);
-			list->addAction(action);
+			list->addAction(new UnequipAction)
+					->addTarget(this);
 		}
 		else {
-			EquipAction* action = new EquipAction;
-			action->addTarget(this);
-			list->addAction(action);
+			list->addAction(new EquipAction)
+					->addTarget(this)
+					->useActionFor(this, list);
 		}
 	}
 

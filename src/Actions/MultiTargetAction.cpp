@@ -13,16 +13,16 @@ namespace Dungeon {
 	MultiTargetAction::MultiTargetAction(string type) : Action(type) {
 	}
 
-	void MultiTargetAction::addTarget(ObjectPointer op) {
+	MultiTargetAction* MultiTargetAction::addTarget(ObjectPointer op) {
 		if (targets.find(op.getId()) == targets.end())
 			targets[op.getId()] = op;
+		return this;
 	}
 	
 	void MultiTargetAction::merge(MultiTargetAction* second) {
 		for (auto& pair : second->getTargets()) {
 			addTarget(pair.second);
 		}
-		delete second;
 	}
 	
 	const ObjectMap& MultiTargetAction::getTargets() const {
@@ -36,5 +36,9 @@ namespace Dungeon {
 	void MultiTargetAction::selectBestTarget(string str, ActionDescriptor* ad) {
 		ObjectPointer trap = ad->getGM()->getObject("trap/mta");
 		setTarget(trap.unsafeCast<MTATrap>()->wrapFind(targets, this, str, ad));
+	}
+
+	void MultiTargetAction::useActionFor(ObjectPointer target, ActionList* list) {
+		UseAction::setFor(target, list, this);
 	}
 }

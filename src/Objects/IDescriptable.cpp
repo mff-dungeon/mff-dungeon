@@ -42,9 +42,8 @@ namespace Dungeon {
 	}
 	
 	void IDescriptable::getActions(ActionList* list, ObjectPointer callee) {
-		ExamineEction* ex = new ExamineEction();
-		ex->addTarget(this);
-		list->addAction(ex);
+		list->addAction(new ExamineEction())
+			->addTarget(this);
 	}
 	
 	void IDescriptable::examine(ActionDescriptor* ad) {

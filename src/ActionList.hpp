@@ -4,6 +4,7 @@
 #include "common.hpp"
 #include "Action.hpp"
 #include "Actions/MultiTargetAction.hpp"
+#include "Actions/UseAction.hpp"
 
 namespace Dungeon {
     typedef std::multimap<string, Action*> actionMap;
@@ -19,7 +20,7 @@ namespace Dungeon {
         virtual ~ActionList();
         
         Action* addAction(Action* action);
-        Action* addAction(MultiTargetAction* action);
+        MultiTargetAction* addAction(MultiTargetAction* action);
         void clear();
     };
 }

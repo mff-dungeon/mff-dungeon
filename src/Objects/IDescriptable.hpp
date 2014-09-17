@@ -66,6 +66,7 @@ namespace Dungeon {
     public:
         ExamineEction() : MultiTargetAction("examine") { }
 
+
         virtual bool match(string command, ActionDescriptor* ad);
         virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
         virtual void explain(ActionDescriptor* ad);

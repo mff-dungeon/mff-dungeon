@@ -101,15 +101,13 @@ namespace Dungeon {
 			}
 		}
 		else if(getState() == State::Dying) {
-			KillAction* kill = new KillAction;
-			kill->addTarget(this);
-			list->addAction(kill);
+			list->addAction(new KillAction)
+					->addTarget(this);
 			return;
 		}
 		
-		CombatAction* combat = new CombatAction;
-		combat->addTarget(this);
-		list->addAction(combat);
+		list->addAction(new CombatAction)
+				->addTarget(this);
 	}
 
 	string Creature::getDescriptionSentence() {
