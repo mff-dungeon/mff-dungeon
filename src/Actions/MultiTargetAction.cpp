@@ -34,8 +34,7 @@ namespace Dungeon {
 	}
 
 	void MultiTargetAction::selectBestTarget(string str, ActionDescriptor* ad) {
-		ObjectGroup group (targets);
 		ObjectPointer trap = ad->getGM()->getObject("trap/mta");
-		setTarget(trap.unsafeCast<MTATrap>()->wrapFind(group, this, str, ad));
+		setTarget(trap.unsafeCast<MTATrap>()->wrapFind(targets, this, str, ad));
 	}
 }

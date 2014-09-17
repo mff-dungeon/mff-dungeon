@@ -7,25 +7,30 @@
 
 namespace Dungeon {
 	
-	ObjectPointer MTATrap::wrapFind(ObjectGroup group, MultiTargetAction* action, string str, ActionDescriptor* ad) {
+	ObjectPointer MTATrap::wrapFind(ObjectMap objects, MultiTargetAction* action, string str, ActionDescriptor* ad) {
 		try {
-			ObjectPointer target = group.match(str);
+			ObjectGroup grp (objects);
+			ObjectPointer target = grp.match(str);
 			IDescriptable* obj = target.safeCast<IDescriptable>();
 			if (obj) LOGS("FMT", Verbose) << "Selected " << obj->getLongName() << LOGF;
 			return target;
-		} catch (const StringMatcher::Uncertain& e) {
+		} catch (const StringMatcher::Uncertain<ObjectPointer>& e) {
 			if (!ad)
 				return ObjectPointer(); // Sorry, no chance
 			
 			ad->matched(action); // Because of thrown exception, this will be skipped
-			this->group = group;
 			this->phase = Selecting;
 			
 			if (e.possibleTargets.size() > 0) {
 				SentenceJoiner targets;
 				targets.setConjunction(", ", " or ");
+				this->objects.clear();
 				for (ObjectPointer obj : e.possibleTargets)
-					targets << obj;
+					this->objects[obj.getId()] = obj;
+				
+				// This time there will be each object only once
+				for (auto& pair : this->objects)
+					targets << pair.second;
 				
 				*ad << "Sorry, did you mean " << targets << "?" << eos;
 			} else {
@@ -44,7 +49,7 @@ namespace Dungeon {
 		switch (phase) {
 			case Selecting:
 				ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
-					target = wrapFind(group, (MultiTargetAction*) ad->getAction(), reply, ad);
+					target = wrapFind(this->objects, (MultiTargetAction*) ad->getAction(), reply, ad);
 					phase = Return;
 					throw TrapException(this);
 				});

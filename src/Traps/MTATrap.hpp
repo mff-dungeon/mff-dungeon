@@ -25,7 +25,7 @@ namespace Dungeon
                 Cancel
             };
 
-            virtual ObjectPointer wrapFind(ObjectGroup group, MultiTargetAction* action, string str, ActionDescriptor* ad);
+            virtual ObjectPointer wrapFind(ObjectMap group, MultiTargetAction* action, string str, ActionDescriptor* ad);
 
             /**
              * It's fucking magic :) Can explain personally if you want.
@@ -34,7 +34,7 @@ namespace Dungeon
             virtual bool exceptionTrigger(ActionDescriptor* ad);
             
         private:
-            ObjectGroup group;
+            ObjectMap objects;
             Phase phase = Selecting;
             ObjectPointer target;
 

@@ -6,6 +6,7 @@
 #include "FuzzyStringMatcher.hpp"
 #include "Objects/IDescriptable.hpp"
 #include "ActionDescriptor.hpp"
+#include "SentenceJoiner.hpp"
 
 namespace Dungeon {
     
@@ -42,9 +43,6 @@ namespace Dungeon {
         ObjectGroup(const vector<IObject *>& objects);
         
         ObjectGroupMap::iterator insertObject(ObjectPointer ptr);
-        
-        /** @deprecated */
-        string explore();
         
         void explore(ActionDescriptor *ad);
         

@@ -2618,6 +2618,14 @@ namespace Dungeon {
 						->setLongName("a red potion in silver vial")
 						->setDescription("The vial has some scratches, but the color of the liquid is just beautiful.")
 						->save();
+
+				createObject<Potion>("potion/redhealing/" + RANDID, potionChest)
+						->setType(Potion::PotionType::Healing)
+						->setStrength(200)
+						->setName("Red elixir")
+						->setLongName("a red elixir to test uncertainity")
+						->setDescription("The vial has some scratches, but the color of the liquid is just beautiful.")
+						->save();
                                 
                                 createObject<Resource>("resource/gold/" + RANDID, potionChest)
                                                 ->setType(Resource::ResourceType::Gold)

@@ -62,15 +62,18 @@ namespace Dungeon {
     
     class StringMatcher {
     public:
+        
+        template <typename value_type>
         class Uncertain : public GameException {
         public:
             Uncertain() : GameException("I'm not sure what you mean.") {}
             Uncertain(string msg) : GameException(msg) {}
-            Uncertain(vector<ObjectPointer> possibleTargets) : GameException("Please explain it beter."), possibleTargets(possibleTargets) {}
+            Uncertain(vector<value_type> possibleTargets) : GameException("Please explain it beter."), possibleTargets(possibleTargets) {}
             virtual ~Uncertain() {} 
             
-            vector<ObjectPointer> possibleTargets;
+            vector<value_type> possibleTargets;
         };
+        
         class NoCandidate : public GameException {
         public:
             NoCandidate() : GameException("I'm not sure you know what you mean.") {}
@@ -183,6 +186,7 @@ namespace Dungeon {
         int max = 0;
         auto maxMatch = strMap.begin();
         bool uncertain = true;
+        vector<value_type> possibleMatches;
         vector<string> nTok = StringMatcher::tokenize(needle);
         
         for (auto pair = strMap.begin(); pair != strMap.end(); pair++) {
@@ -193,15 +197,18 @@ namespace Dungeon {
                 max = d;
                 maxMatch = pair;
                 uncertain = false;
+                possibleMatches.clear();
+                possibleMatches.push_back(pair->second);
             } else if (d == max) {
                 uncertain = uncertain || maxMatch->second != pair->second; // The same object with different names
+                possibleMatches.push_back(pair->second);
             }
         }
         if (max == 0)
             throw StringMatcher::NoCandidate();
         
         if (uncertain)
-            throw StringMatcher::Uncertain();
+            throw StringMatcher::Uncertain<value_type>(possibleMatches);
         
         return maxMatch->second;
     }
