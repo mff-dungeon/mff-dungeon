@@ -41,34 +41,50 @@ namespace Dungeon {
 		templates["resource/wood"] = createObject<Resource>("template/resource/wood/1", templateRoom)
 				->setType(Resource::ResourceType::Wood)
 				->setQuantity(1)
+				->setWeight(1)
+				->setSize(2)
 				->save();
 		templates["resource/iron"] = createObject<Resource>("template/resource/iron/1", templateRoom)
 				->setType(Resource::ResourceType::Iron)
 				->setQuantity(1)
+				->setWeight(7)
+				->setSize(1)
 				->save();
 		templates["resource/dragonskin"] = createObject<Resource>("template/resource/dragonskin/1", templateRoom)
 				->setType(Resource::ResourceType::DragonSkin)
 				->setQuantity(1)
+				->setWeight(2)
+				->setSize(2)
 				->save();
 		templates["resource/leather"] = createObject<Resource>("template/resource/leather/1", templateRoom)
 				->setType(Resource::ResourceType::Leather)
 				->setQuantity(1)
+				->setWeight(1)
+				->setSize(2)
 				->save();
 		templates["resource/sand"] = createObject<Resource>("template/resource/sand/1", templateRoom)
 				->setType(Resource::ResourceType::Sand)
 				->setQuantity(1)
+				->setWeight(1)
+				->setSize(1)
 				->save();
 		templates["resource/whitepowder"] = createObject<Resource>("template/resource/whitepowder/1", templateRoom)
 				->setType(Resource::ResourceType::WhitePowder)
 				->setQuantity(1)
+				->setWeight(1)
+				->setSize(1)
 				->save();
 		templates["resource/redpowder"] = createObject<Resource>("template/resource/redpowder/1", templateRoom)
 				->setType(Resource::ResourceType::RedPowder)
 				->setQuantity(1)
+				->setWeight(1)
+				->setSize(1)
 				->save();
 		templates["resource/magicalstone"] = createObject<Resource>("template/resource/magicalstone/1", templateRoom)
 				->setType(Resource::ResourceType::MagicalStone)
 				->setQuantity(1)
+				->setWeight(3)
+				->setSize(10)
 				->save();
 		LOG("WorldCreator") << "Resource templates created. " << LOGF;
 		
@@ -82,7 +98,7 @@ namespace Dungeon {
 				->setWeight(3500)
 				->setName("Wooden axe")
 				->setLongName("a wooden one-handed axe")
-				->setDescription("...")
+				->setDescription("Maybe it could even kill something.")
 				->save();
 		templates["wearable/woodenaxe2"] = createObject<Wearable>("template/wearable/woodenaxe2/1", templateRoom)
 				->setSlot(Wearable::Slot::Weapon)
@@ -91,7 +107,7 @@ namespace Dungeon {
 				->setWeight(2800)
 				->setName("Broken wooden axe")
 				->setLongName("a broken wooden axe")
-				->setDescription("...")
+				->setDescription("It is cracked, but I can still use it to attack someone.")
 				->save();
 		templates["wearable/club"] = createObject<Wearable>("template/wearable/club/1", templateRoom)
 				->setSlot(Wearable::Slot::Weapon)
@@ -100,7 +116,7 @@ namespace Dungeon {
 				->setWeight(6000)
 				->setName("Club")
 				->setLongName("a weak wooden club")
-				->setDescription("...")
+				->setDescription("A chunk of wood. With enough strength, I will kill somebody.")
 				->save();
 		templates["wearable/club2"] = createObject<Wearable>("template/wearable/club2/1", templateRoom)
 				->setSlot(Wearable::Slot::Weapon)
@@ -109,7 +125,7 @@ namespace Dungeon {
 				->setWeight(5000)
 				->setName("Crude club")
 				->setLongName("a crude wooden club")
-				->setDescription("...")
+				->setDescription("Looks like a strong plank, well, better than bare hands.")
 				->save();
 		templates["wearable/irondagger"] = createObject<Wearable>("template/wearable/irondagger/1", templateRoom)
 				->setSlot(Wearable::Slot::Weapon)
@@ -118,7 +134,7 @@ namespace Dungeon {
 				->setWeight(1800)
 				->setName("Iron dagger")
 				->setLongName("a small iron dagger")
-				->setDescription("...")
+				->setDescription("A dagger made of iron pieces.")
 				->save();
 		templates["wearable/irondagger2"] = createObject<Wearable>("template/wearable/irondagger2/1", templateRoom)
 				->setSlot(Wearable::Slot::Weapon)
@@ -127,7 +143,7 @@ namespace Dungeon {
 				->setWeight(1700)
 				->setName("Blunt iron dagger")
 				->setLongName("a small blunt iron dagger")
-				->setDescription("...")
+				->setDescription("Slashing with this would be a stupid idea.")
 				->save();
 		templates["wearable/ironspear"] = createObject<Wearable>("template/wearable/ironspear/1", templateRoom)
 				->setSlot(Wearable::Slot::Weapon)
@@ -295,7 +311,7 @@ namespace Dungeon {
 				->setSize(25000)
 				->setWeight(10000)
 				->setName("Leather body armor")
-				->setLongName("...")
+				->setLongName("a leather body armor made of leather strips")
 				->setDescription("...")
 				->save();
 		templates["wearable/leatherbody2"] = createObject<Wearable>("template/wearable/leatherbody2/1", templateRoom)
@@ -304,7 +320,7 @@ namespace Dungeon {
 				->setSize(22000)
 				->setWeight(8000)
 				->setName("Torn leather body armor")
-				->setLongName("...")
+				->setLongName("a leather body armor with some holes in it")
 				->setDescription("...")
 				->save();
 		// Weak version is leather body
@@ -655,7 +671,7 @@ namespace Dungeon {
 				->setBaseWeight(2300)
 				->setSlot(Wearable::Backpack)
 				->setName("Leather backpack")
-				->setLongName("...")
+				->setLongName("a small leather backpack")
 				->save();
 		templates["inventory/leatherpack2"] = createObject<Inventory>("template/inventory/leatherpack2/1", templateRoom)
 				->setMaxSpace(6000)
@@ -721,7 +737,7 @@ namespace Dungeon {
 				->setStrength(40)
 				->setName("Tiny light red potion")
 				->setLongName("a faint red potion in tiny vial")
-				->setDescription("...")
+				->setDescription("You think it can heal you, but the color is just weird.")
 				->save();
 		// Weak version is tiny light red
 		templates["potion/tinyred"] = createObject<Potion>("template/potion/tinyred/1", templateRoom)
@@ -729,7 +745,7 @@ namespace Dungeon {
 				->setStrength(120)
 				->setName("Tiny red potion")
 				->setLongName("a red potion in a little vial")
-				->setDescription("...")
+				->setDescription("A small healing potion. Yay.")
 				->save();
 		// Weak version is tiny red
 		templates["potion/smallred"] = createObject<Potion>("template/potion/smallred/1", templateRoom)
@@ -737,7 +753,7 @@ namespace Dungeon {
 				->setStrength(330)
 				->setName("Small red potion")
 				->setLongName("a red potion in a vial")
-				->setDescription("...")
+				->setDescription("This vial is not that small anymore. I wonder how effective its effect is.")
 				->save();
 		// Weak version is small red
 		templates["potion/red"] = createObject<Potion>("template/potion/red/1", templateRoom)
@@ -2430,12 +2446,10 @@ namespace Dungeon {
 				->setDescription("It is covered with ice, but it can contain something useful")
 				->attachTrap(createObject<SimpleDamageTrap>("simpledamagetrap/ice/1")
 					->setDamage(37)
-					->setJustOnce(false)
+					->setJustOnce()
 					->setDamageMessage("You have cut yourself accidentaly with an icicle. You have received 37 damage.")
-					->save(), "explore")
+					->save(), "examine")
 				->save();
-		deepCloneTemplate(templates["potion/tinyred"], iceedgechest).unsafeCast<Item>()->respawnEvery(120);
-		deepCloneTemplate(templates["potion/tinyred"], iceedgechest).unsafeCast<Item>()->respawnEvery(120);
 		deepCloneTemplate(templates["potion/smallred"], iceedgechest).unsafeCast<Item>()->respawnEvery(210);
 		
 		deepCloneTemplate(templates["creature/bigrat"], rooms["estermoor"]);
@@ -2500,7 +2514,7 @@ namespace Dungeon {
 					->setDamage(73)
 					->setJustOnce()
 					->setDamageMessage("While opening the chest, you didn't notice a crab hiding behind it. It bit you for 73 damage and ran away.")
-					->save(), "explore")
+					->save(), "examine")
 				->save();
 		deepCloneTemplate(templates["potion/red"], seacavechest).unsafeCast<Item>()->respawnEvery(300);
 		deepCloneTemplate(templates["resource/sand"], seacavechest).unsafeCast<Resource>()->setQuantity(10*ENEMY_MATS_DROP_RATE)->respawnEvery(300);
@@ -2689,7 +2703,7 @@ namespace Dungeon {
 						->setDamage(42)
 						->setJustOnce()
 						->setDamageMessage("A nail has fallen and caused you 42 damage.")
-						->save(), "explore")
+						->save(), "examine")
 					->save();
 
 
@@ -2762,9 +2776,5 @@ namespace Dungeon {
 		}
 		return d;
 	}
-
-
-
-
 }
 

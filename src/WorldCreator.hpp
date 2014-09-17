@@ -26,7 +26,7 @@ namespace Dungeon {
 		// Base value is 10
 		static const int ENEMY_HP_RATE = 5;
 		// Base value is 10
-		static const int ENEMY_RESPAWN_RATE = 3;
+		static const int ENEMY_RESPAWN_RATE = 5;
 		// Base value is 5
 		static const int ENEMY_MATS_DROP_RATE = 5;
 		// Base value is 5

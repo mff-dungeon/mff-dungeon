@@ -50,6 +50,11 @@ namespace Dungeon {
 		virtual string getDescription() const;
 		virtual string getName() const;
 		virtual string getLongName() const;
+		
+		virtual int getWeight() const;
+		virtual Item* setWeight(int weight);
+		virtual int getSize() const;
+		virtual Item* setSize(int size);
 
 		Resource* attachSumTrap();
                 

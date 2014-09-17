@@ -154,7 +154,12 @@ Smrt nastane, pokud životy hráče nebo nepřátel dosáhnou nuly. Metoda \text
 
 \subsection{Pasti}
 
-% TODO Napsat to a zadokumentovat
+Pasti jsou velmi důležitá součást naší hry. Umožňují nám měnit svět v reakci na události a mít svět dynamičtější. Jednotlivé pasti jsou potomky třídy \class{Trap}. Ta definuje 2 metody:
+\begin{itemize}
+\item metodu \texttt{trigger}, která je zavolána pokaždé, když se vyvolá akce, na kterou je past napojena. V této metodě se rozhodne, jestli se past má pustit a něco udělat, nebo nechat svět plynout dále
+\item metodu \texttt{exceptionTrigger}, ta odchytává výjimky \class{TrapException}. Tato výjimka je vyhozena v metodě \texttt{trigger} a její smysl je měnit probíhající akce. Tato metoda může akci zrušit, nebo ji změnit (například past \class{AttackTrap}, která zahájí boj při vstupu do místnosti.)
+\end{itemize}
+V současné době máme ve hře několik pastí, například \class{HealingTrap} (past, která léčí jednoho uživatele, nebo všechny v místnosti), \class{AttackTrap} (nechá něco zaútočit na uživatele), \class{DoorLock} (past, která se chová jako zámek na dveřích), nebo \class{ItemRespawner} (past, která umožňuje věcem se znovu objevit po určitém intervalu.)
 
 \section{Programová část}
 
@@ -245,7 +250,7 @@ Dialog ale může rozbít atomicitu operací, jelikož při čekání na odpově
 
 Původní myšlenkou bylo to, že všechny objekty budeme vytvářet ručně a během hry. Postupem času se však ukázalo, že toto není nejlepší nápad a tak jsme hledali způsob, jak objekty vytvářet rychleji.
 
-Nakonec jsme přišli s třídou \class{Cloner}, která využívá vlastnosti objektů a pomocí \class{IPropertyStorage} je schopen je přečíst. Při jejich čtení si je ukládá do své paměti. Po přečtení využije další metodu naší perzistence a tou je \texttt{createObject}, kterou vytvoří čistou kopii objektu. Poté z uloženého seznamu nahraje všechny vlastnosti nového objektu, změní mu \texttt{id} a vrátí tento objekt. Tuto kopii nazýváme \texttt{shallowCopy}
+Nakonec jsme přišli s třídou \class{Cloner}, která využívá vlastnosti objektů a pomocí \class{IPropertyStorage} je schopen je přečíst. Při jejich čtení si je ukládá do své paměti. Po přečtení využije další metodu naší perzistence a tou je \texttt{createObject}, kterou vytvoří čistou kopii objektu. Poté z uloženého seznamu nahraje všechny vlastnosti nového objektu, změní mu \texttt{id} a vrátí tento objekt. Tuto kopii nazýváme \texttt{shallowCopy}.
 
 \class{Cloner} umí vytvořit ještě \texttt{deepCopy}, která navíc zkopíruje všechny relace objektu.
 
@@ -254,6 +259,7 @@ Tuto třídu hojně využíváme při vytváření světa ve třídě \class{Wor
 \section{Ukázky}
 
 Rádi bychom ukázali nějaké naprosto základní ukázky komunikace s programem.
+\subsection{Průzkum světa}
 
 \begin{example}
 \user hello
@@ -278,5 +284,49 @@ ground. You have a Leather backpack with you. There is Red potion.
 \user drop the red potion
 \dung You've dropped Red potion. 
 \end{example}
-
+\subsection{Systém boje}
+\begin{example}
+\user explore
+\dung You are in Landcastle. A nice stone castle, having a magical aura surrounding it. You feel the aura and feel much better here. If you are confused what to do, try typing 'help'. Around you are Bridge and Climb. You smell the presence of Aearsis and CiTrus.
+\user go to bridge
+\dung You walk over the bridge. Seems like you are in Faygrass. A vast grass field. You see Rat and Rat wandering around. You see Small spider wandering around. Around you are Muddy walkway, Bridge and Stairs.
+\user attack spider
+\dung You have dealt 7 damage to Small spider by your Wooden axe. Small spider caused you 10 damage by its poisoned bite. Your current hitpoints have changed to 290. Type 'attack' (a) to attack the enemy, 'check' (c) to check its status or 'run' (r) to run from the fight. 
+Small spider: [*******---]     You: [**********]
+\user attack
+\dung Your Wooden axe have caused 7 damage to Small spider. Small spider caused you 10 damage by its poisoned bite. Your current hitpoints have changed to 280. Type 'attack' (a) to attack the enemy, 'check' (c) to check its status or 'run' (r) to run from the fight. 
+Small spider: [****------]     You: [**********]
+\user a
+\dung Your Wooden axe have caused 6 damage to Small spider. Small spider is mortally wounded. Use 'kill ...' to finish it.
+\user kill spider
+\dung Small spider has dropped nothing. You have killed Small spider.
+\end{example}
+\subsection{Resources}
+\begin{example}
+\dung You are in Shadowcliff. Dark dangerous cliffs. You shouldn't leave the path you are currently on. You see Rat wandering around. There lie corpses of Small spider and Small spider. You see Pathway and Climb. You see 58 sand and 78 sand lying there. There lies 41 white powder and 31 white powder.
+\user pick 58 sand
+\dung You've picked up 58 sand.
+\user pick 78 sand
+\dung You've picked up 78 sand.
+\user pick 41 white powder
+\dung You've picked up 41 white powder.
+\user pick 31 white powder
+\dung You've picked up 31 white powder.
+\user list items
+\dung As your backpack, you're using Leather backpack. There are 136 sand and 72 white powder. Wooden axe is your main weapon.
+\end{example}
+\subsection{Výroba věcí}
+\begin{example}
+\user craft table
+\dung Small red potion: 12 white powder and 20 sand. Tiny red potion: 4 white powder and 8 sand.
+\user create small red potion
+\dung You have tried to craft Small red potion but you succeeded just barely. You have acquired a Tiny red potion and put it in your backpack.
+\end{example}
+\subsection{Past}
+\begin{example}
+\user explore chest
+\dung You have cut yourself accidentaly with an icicle. You have received 37 damage. There is also some Small red potion.
+\user pick potion
+\dung You've picked up Small red potion.
+\end{example}
 \end{document}
