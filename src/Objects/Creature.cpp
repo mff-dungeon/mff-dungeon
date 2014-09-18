@@ -136,7 +136,7 @@ namespace Dungeon {
 		
 		return (string) (RandomString::get()
 					<<  living.getSentence("", "You see % wandering around. ") << endr
-					<< living.getSentence("", "There is %. ", "There are %. ") << endr)
+					<< living.getSentence("", "There is %. ", "There is %. ") << endr)
 			+ (string) (RandomString::get()
 					<< dying.getSentence("", "You see % lying on the ground heavy breathing. ") << endr
 					<< dying.getSentence("", "There lies hardly living body of %. ", "There lie hardly living bodies of %. ") << endr)

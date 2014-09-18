@@ -113,7 +113,7 @@ namespace Dungeon {
             int l = val * length / max;
             char buf [length];
             for (int i = 0; i < length; i++)
-                buf[i] = (i <= l ? '*' : '-');
+                buf[i] = (i <= l ? '#' : '-');
             return string(buf, length);
         }
         
@@ -147,6 +147,16 @@ namespace Dungeon {
                     if (!all) break;
                 } else if (isspace(s[i])) {
                     cap = true;
+                }
+            }
+            
+            return s;
+        }
+        
+        static inline std::string& decapitalize(std::string&& s) {
+            for (int i = 0; i <= s.length(); i++) {
+                if (isalpha(s[i])) {
+                    s[i] = tolower(s[i]);
                 }
             }
             

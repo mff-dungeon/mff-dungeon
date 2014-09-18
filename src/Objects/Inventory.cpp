@@ -111,7 +111,7 @@ namespace Dungeon {
 		for(auto& item : getRelations(Relation::Master, R_INVENTORY)) {
 			items << item.second;
 		}
-		return items.getSentence("", "There is %.", "There are %.");
+		return items.getSentence("", "There is %.", "There is %.");
 	}
 	
 	string Inventory::getDescription() const {

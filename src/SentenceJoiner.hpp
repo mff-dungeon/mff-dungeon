@@ -30,16 +30,18 @@ namespace Dungeon {
         }
 
         /**
-         *  Use % to indicate place where to put the parts (or, fourth parameter)
+         *  Use % to indicate place where to put the parts (or, fifth parameter)
          * @return formatted sentence
          */
-        string getSentence(string zero, string one, string more = "", char placeholder = '%')
+        string getSentence(string zero, string one, string more = "", bool decapitalize = true, char placeholder = '%')
         {
             if (count == 0)
                 return zero;
+            
+            string sentence = decapitalize ? Utils::decapitalize(getSentence()) : getSentence();
             if (count == 1 || more == "")
-                return one.replace(one.find(placeholder), 1, getSentence());
-            return more.replace(more.find(placeholder), 1, getSentence());
+                return one.replace(one.find(placeholder), 1, sentence);
+            return more.replace(more.find(placeholder), 1, sentence);
         }
 
         /**

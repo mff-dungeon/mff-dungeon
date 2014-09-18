@@ -80,8 +80,8 @@ namespace Dungeon {
 		}
 
 		return RandomString::get()
-				<< doors.getSentence("", "There is %.", "There are %.") << endr
-				<< doors.getSentence("", "A % is casting a grimm shadow on the floor.", "Around you are %.") << endr
+				<< doors.getSentence("", "There is %.", "There is %.") << endr
+				<< doors.getSentence("", "A % is casting a grimm shadow on the floor.", "Around you is %.") << endr
 				<< doors.getSentence("", "You see the frame of a %.", "You see %.") << endr;
 	}
 	

@@ -97,10 +97,10 @@ namespace Dungeon {
 		}
 
 		return RandomString::get()
-				<< alives.getSentence("", "You recognize %'s figure.", "You recognize %.") << endr
-				<< alives.getSentence("", "% is there with you.", "% are there with you.") << endr
-				<< alives.getSentence("", "You smell the presence of %.") << endr
-				<< alives.getSentence("", "% is nearby.", "% are nearby.") << endr;
+				<< alives.getSentence("", "You recognize %'s figure.", "You recognize %.", false) << endr
+				<< alives.getSentence("", "% is there with you.", "% are there with you.", false) << endr
+				<< alives.getSentence("", "You smell the presence of %.", "You smell the presence of %.", false) << endr
+				<< alives.getSentence("", "% is nearby.", "% are nearby.", false) << endr;
 	}
 
 	ObjectPointer Alive::getLocation() {
@@ -236,8 +236,8 @@ namespace Dungeon {
 			if(ad->getAlive() == this) {
 				if (attacker->getWeaponName() != "")
 					*ad << (RandomString::get()
-							<< "You have received " << damage << " damage from " + attacker->getName() + "'s " + attacker->getWeaponName() + "." << endr
-							<< attacker->getName() << " caused you " << damage << " damage by its " << attacker->getWeaponName()  << "." << endr) << eos;
+							<< "You have received " << damage << " damage from " + attacker->getName() + "'s " + Utils::decapitalize(attacker->getWeaponName()) + "." << endr
+							<< attacker->getName() << " caused you " << damage << " damage with its " << Utils::decapitalize(attacker->getWeaponName()) << "." << endr) << eos;
 				else
 					*ad << "You have received " + to_string(damage) + " damage from " + attacker->getName() + "." << eos;
 			}
@@ -245,8 +245,8 @@ namespace Dungeon {
 				string weapon = ad->getAlive()->getWeaponName();
 				if (weapon != "")
 					*ad << (RandomString::get()
-							<< "You have dealt " << damage << " damage to " + this->getName() + " by your " + weapon + "." << endr
-							<< "Your " + weapon + " have caused " << damage << " damage to " + this->getName() + "." << endr) << eos;
+							<< "You have dealt " << damage << " damage to " + this->getName() + " with your " + Utils::decapitalize(move(weapon))  + "." << endr
+							<< "Your " + Utils::decapitalize(move(weapon)) + " has caused " << damage << " damage to " + this->getName() + "." << endr) << eos;
 				else 
 					*ad << "You have dealt " << damage << " damage to " + this->getName() + "." << eos;
 			}
