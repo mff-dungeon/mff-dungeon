@@ -26,6 +26,10 @@ namespace Dungeon {
         Human(objId id, string username, string contact);
 		
         virtual void getActions(ActionList* list, ObjectPointer callee);
+		
+		virtual Human* learnSpell(ObjectPointer spell);
+		virtual bool knowsSpell(ObjectPointer spell);
+		virtual void addCastableSpells(ActionList* list);
 
 		virtual Alive* die(ActionDescriptor* ad = 0);
 		virtual Alive* respawn(ActionDescriptor* ad = 0);

@@ -3,6 +3,7 @@
 #include "../ActionDescriptor.hpp"
 #include "Location.hpp"
 #include "Inventory.hpp"
+#include "Spell.hpp"
 #include <time.h>
 #include <cmath>
 #include "../exceptions.hpp"
@@ -243,71 +244,68 @@ namespace Dungeon {
 					*ad << "Defense value: " + to_string(me->getDefense()) << eos;
 				}, false));
                                 
-                        list->addAction(new CallbackAction("resource stats", "Prints all your resource stats",
+			list->addAction(new CallbackAction("resource stats", "Prints all your resource stats",
 				RegexMatcher::matcher(".*resource stats|.*resources"),
 				[this] (ActionDescriptor* ad) {
 					Alive* me = ad->getAlive();
-                                        
-                                        *ad << "Here are your current resources:" << eos;
-                                        ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
-                                        for (int type = (int)Resource::ResourceType::BEGIN; type != (int)Resource::ResourceType::END; type++) {
-                                            *ad << Utils::capitalize(Resource::ResourceName[type], true) << ": ";
-                                            
-                                            int quantity = me->getResourceQuantity((Resource::ResourceType)type);
-                                            
-                                            *ad << "[ " << quantity << " ] ";
-                                            
-                                            if (quantity > 10000) {
-                                                *ad << ( RandomString::get() << "huge shitload" << endr
-                                                                             << "worth a fortune" << endr
-                                                                             << "good supply" << endr
-                                                                             << "gazillion" << endr );
-                                            } else if (quantity > 9000) {
-                                                *ad << "OVER NINE THOUSAND!";
-                                            } else if (quantity > 5000) {
-                                                *ad << ( RandomString::get() << "a shitload" << endr
-                                                                             << "small warehouse worth" << endr
-                                                                             << "rich" << endr
-                                                                             << "enough to piss off others" << endr );
-                                            } else if (quantity > 1000) {
-                                                *ad << ( RandomString::get() << "medium supply" << endr
-                                                                             << "good to go" << endr
-                                                                             << "no problemo" << endr
-                                                                             << "enough to mess around" << endr );
-                                            } else if (quantity > 500) {
-                                                *ad << ( RandomString::get() << "low supply" << endr
-                                                                             << "will last a while" << endr
-                                                                             << "don't worry about it now" << endr
-                                                                             << "okay" << endr );
-                                            } else if (quantity > 100) {
-                                                *ad << ( RandomString::get() << "enough for a while" << endr
-                                                                             << "enough to survive" << endr
-                                                                             << "bare minimum" << endr
-                                                                             << "not much" << endr );
-                                            } else if (quantity > 0) {
-                                                *ad << ( RandomString::get() << "almost depleted" << endr
-                                                                             << "really not much" << endr
-                                                                             << "poor" << endr
-                                                                             << "scarse" << endr );
-                                            } else if (quantity == 0) {
-                                                *ad << ( RandomString::get() << "zero" << endr
-                                                                             << "zilch" << endr
-                                                                             << "null" << endr
-                                                                             << "nil" << endr
-                                                                             << "not" << endr
-                                                                             << "nothing" << endr
-                                                                             << "nada" << endr
-                                                                             << "empty" << endr );
-                                            } else {
-                                                *ad << ( RandomString::get() << "impossibru" << endr
-                                                                             << "wait what?!" << endr
-                                                                             << "something wrong" << endr
-                                                                             << "you've broken physics" << endr
-                                                                             << "keep calm and nuke it from orbit" << endr );
-                                            }
-                                            
-                                            *ad << eos;
-                                        }
+
+					*ad << "Here are your current resources:" << eos;
+					ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
+					for (int type = (int)Resource::ResourceType::BEGIN; type != (int)Resource::ResourceType::END; type++) {
+						*ad << Utils::capitalize(Resource::ResourceName[type], true) << ": ";
+						int quantity = me->getResourceQuantity((Resource::ResourceType)type);
+						*ad << "[ " << quantity << " ] ";
+
+						if (quantity > 10000) {
+							*ad << ( RandomString::get() << "huge shitload" << endr
+														 << "worth a fortune" << endr
+														 << "good supply" << endr
+														 << "gazillion" << endr );
+						} else if (quantity > 9000) {
+							*ad << "OVER NINE THOUSAND!";
+						} else if (quantity > 5000) {
+							*ad << ( RandomString::get() << "a shitload" << endr
+														 << "small warehouse worth" << endr
+														 << "rich" << endr
+														 << "enough to piss off others" << endr );
+						} else if (quantity > 1000) {
+							*ad << ( RandomString::get() << "medium supply" << endr
+														 << "good to go" << endr
+														 << "no problemo" << endr
+														 << "enough to mess around" << endr );
+						} else if (quantity > 500) {
+							*ad << ( RandomString::get() << "low supply" << endr
+														 << "will last a while" << endr
+														 << "don't worry about it now" << endr
+														 << "okay" << endr );
+						} else if (quantity > 100) {
+							*ad << ( RandomString::get() << "enough for a while" << endr
+														 << "enough to survive" << endr
+														 << "bare minimum" << endr
+														 << "not much" << endr );
+						} else if (quantity > 0) {
+							*ad << ( RandomString::get() << "almost depleted" << endr
+														 << "really not much" << endr
+														 << "poor" << endr
+														 << "scarse" << endr );
+						} else if (quantity == 0) {
+							*ad << ( RandomString::get() << "zero" << endr
+														 << "zilch" << endr
+														 << "null" << endr
+														 << "nil" << endr
+														 << "not" << endr
+														 << "nothing" << endr
+														 << "nada" << endr
+														 << "empty" << endr );
+						} else {
+							*ad << ( RandomString::get() << "impossibru" << endr
+														 << "wait what?!" << endr
+														 << "something wrong" << endr
+														 << "you've broken physics" << endr
+														 << "keep calm and nuke it from orbit" << endr );
+						}
+						*ad << eos;
+					}
 				}, false));
             
             list->addAction(new CallbackAction("self-rename", "",
@@ -329,8 +327,43 @@ namespace Dungeon {
 					// that render long dialogs overindented and unreadable.
 					// 
 				}, false));
+				
+			addCastableSpells(list);
 		}
 	}
+
+	void Human::addCastableSpells(ActionList* list) {
+		CastAction* casting = new CastAction;
+		try {
+			const ObjectMap& spells = getRelations(Relation::Master, "spell");
+			for(auto& spell : spells) {
+				spell.second.assertExists("You have a relation to non-existing spell.")
+						.assertType<Spell>("You have an invalid relation (spell to non-spell).");
+				casting->addTarget(spell.second);
+			}
+			if(casting->getTargets().size() > 0) {
+				list->addAction(casting);
+			}
+			else {
+				delete casting;
+			}
+		}
+		catch (std::out_of_range& e) {
+			delete casting;
+		}
+	}
+
+	Human* Human::learnSpell(ObjectPointer spell) {
+		spell.assertExists("Trying to learn nothing, huh?")
+				.assertType<Spell>("You want to cast what?");
+		getGameManager()->createRelation(this, spell, "spell");
+		return this;
+	}
+
+	bool Human::knowsSpell(ObjectPointer spell) {
+		return hasRelation("spell", spell, Relation::Master);
+	}
+
 
 
 	PERSISTENT_IMPLEMENTATION(Human)

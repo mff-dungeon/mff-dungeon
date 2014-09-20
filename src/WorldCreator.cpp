@@ -1979,7 +1979,20 @@ namespace Dungeon {
 				->setDescription("...")
 				->save();
 		LOG("WorldCreator") << "Creature templates created. " << LOGF;
-		
+		/*
+		 *	Spells & scrolls created here
+		 */
+		templates["spell/testspell"] = createObject<Spell>("template/spell/nothing/1")
+				->setName("Unknown spell")
+				->setLongName("an unknown spell")
+				->setDescription("A spell that does nothing.")
+				->save().unsafeCast<Spell>();
+		templates["spellscroll/testspell"] = createObject<SpellScroll>("template/spellscroll/nothing/1", templateRoom)
+				->setSpell(templates["spell/testspell"])
+				->setName("Unknown spell scroll")
+				->setLongName("an unknown spell scroll")
+				->setDescription("I wonder what does it do.")
+				->save();
 		/*
 		 * OLD STUFF THERE IS, WILL BE REMOVED LATER, NOW MAY BE USED FOR TESTING
          */
@@ -2451,6 +2464,7 @@ namespace Dungeon {
 					->save(), "examine")
 				->save();
 		deepCloneTemplate(templates["potion/smallred"], iceedgechest).unsafeCast<Item>()->respawnEvery(210);
+		deepCloneTemplate(templates["spellscroll/testspell"], iceedgechest).unsafeCast<Item>()->respawnEvery(600);
 		
 		deepCloneTemplate(templates["creature/bigrat"], rooms["estermoor"]);
 		deepCloneTemplate(templates["creature/bigrat"], rooms["estermoor"]);
