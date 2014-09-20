@@ -24,30 +24,30 @@ namespace Dungeon {
 		
 		/**
 		 * Calculates mana cost depending on caster's stats
-         * @param casterPtr User casting this spell
-         * @return mana cost of the spell
-         */
+		 * @param casterPtr User casting this spell
+		 * @return mana cost of the spell
+		 */
 		int getManaCost(ObjectPointer casterPtr) const;
 		/**
 		 * Calculates effect value depending on caster's stats
-         * @param casterPtr User casting this spell
-         * @return mana cost of the spell
-         */
+		 * @param casterPtr User casting this spell
+		 * @return mana cost of the spell
+		 */
 		int getEffect(ObjectPointer casterPtr) const;
 		
 		/**
 		 * Checks if the spell can be cast. Checks for mana, required stats, 
 		 * and other validity
-         * @param casterPtr User casting this spell
-         * @param ad An AD to message the user, if desired
-         * @return true if the spell can be casted
-         */
+		 * @param casterPtr User casting this spell
+		 * @param ad An AD to message the user, if desired
+		 * @return true if the spell can be casted
+		 */
 		virtual bool checkCast(ObjectPointer casterPtr, ActionDescriptor* ad = 0) const;
 		/**
 		 * Does the actual spell effect, to be overriden
-         * @param casterPtr User casting this spell
-         * @param ad An AD to message the user, if desired
-         */
+		 * @param casterPtr User casting this spell
+		 * @param ad An AD to message the user, if desired
+		 */
 		virtual void cast(ObjectPointer casterPtr, ActionDescriptor* ad = 0);
 		
 		virtual void registerProperties(IPropertyStorage& storage);

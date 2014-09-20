@@ -15,6 +15,10 @@ namespace Dungeon {
 		SpellScroll(objId id);
 		virtual ~SpellScroll();
 		
+		/**
+		 * Sets the spell for this scroll, which will be learned when read
+		 * @param spell spell to be learned
+		 */
 		SpellScroll* setSpell(ObjectPointer spell);
 		ObjectPointer getSpell() const;
 		
@@ -25,6 +29,7 @@ namespace Dungeon {
 	PERSISTENT_DECLARATION(SpellScroll, Item)
 	};
 	
+	// FIXME: Later, read action will be PolyAction (with signs, markers, ...)
 	class ReadScrollAction : public MultiTargetAction {
 	public:
 		ReadScrollAction(string type = "spellscroll-read") : MultiTargetAction(type) {};
