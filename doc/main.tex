@@ -89,7 +89,7 @@ Z databáze načítá objekty \class{ObjectLoader}, ke čtení vlastností se vy
 
 Jak už bylo řečeno, všechny objekty dědí IObject a zpravidla také IDescriptable. Základní vlastností herního objektu je schopnost zjistit akce dostupné na tomto objektu. Tak je dosaženo maximální flexibility světa. Není třeba mít na jednom místě seznam všeho co lze kdykoli provést, a v různém kontextu se mohou stejné zprávy vyhodnotit různě. 
 
-Při zpracovávání akce se v jednu chvíli zjistí akce na všech objektech v okolí uživatele, a postupně se na nich spouští metoda \texttt{matchCommand}. Jakmile se první akce k příkazu přihlásí, je provedena a na ostatní se již nedostane.
+Při zpracovávání akce se v jednu chvíli zjistí akce na všech objektech v okolí uživatele, a postupně se na nich spouští metoda \texttt{match}. Jakmile se první akce k příkazu přihlásí, je provedena a na ostatní se již nedostane.
 
 Dalšími obecnými typy objektů jsou:
 
@@ -117,7 +117,7 @@ Velmi častým požadavkem je, aby akce měla nějaký parametr. Například kdy
 
 Zároveň, pokud je v místnosti pouze jeden lektvar, pak spuštění akce vypije právě ten jeden lektvar i bez bližšího určení.
 
-Při výběru objektů se porovnává editační vzdálenost (Damerau-Levenshteinova) názvu objektu od zadaného textu. Při počítání vzdálenosti je změna znaku pocítána jako větší úprava, než přidání či odebrání. Proto je větší šance, že přidání neurčujících slov (členů, zájmen) a naopak nespecifikování částí názvu (bližší popisy) tolik neovlivní volbu.
+Při výběru objektů se porovnává editační vzdálenost (Damerau-Levenshteinova) slov z názvu objektu od slov ze zadaného textu. Při počítání vzdálenosti je změna znaku pocítána jako větší úprava, než přidání či odebrání. Počítají se pouze dostatečně podobná slova ve správnm pořadí. Proto přidání neurčujících slov (členů, zájmen) neovlivní volbu, a naopak nespecifikování částí názvu (bližší popisy) nemusí nutně znamenat chybu ve výběru. Pokud se nedokáže mechanismus rozhodnout, který objekt vybrat, dá uživateli na výběr.
 
 \section{Další (nejen) herní mechanismy}
 
@@ -156,8 +156,8 @@ Smrt nastane, pokud životy hráče nebo nepřátel dosáhnou nuly. Metoda \text
 
 Pasti jsou velmi důležitá součást naší hry. Umožňují nám měnit svět v reakci na události a mít svět dynamičtější. Jednotlivé pasti jsou potomky třídy \class{Trap}. Ta definuje 2 metody:
 \begin{itemize}
-\item metodu \texttt{trigger}, která je zavolána pokaždé, když se vyvolá akce, na kterou je past napojena. V této metodě se rozhodne, jestli se past má pustit a něco udělat, nebo nechat svět plynout dále
-\item metodu \texttt{exceptionTrigger}, ta odchytává výjimky \class{TrapException}. Tato výjimka je vyhozena v metodě \texttt{trigger} a její smysl je měnit probíhající akce. Tato metoda může akci zrušit, nebo ji změnit (například past \class{AttackTrap}, která zahájí boj při vstupu do místnosti.)
+\item metodu \texttt{trigger}, která je zavolána pokaždé, když se vyvolá akce, na kterou je past napojena. V této metodě se rozhodne, jestli se past má pustit a něco udělat, nebo nechat svět plynout dále.
+\item metodu \texttt{exceptionTrigger}, ta reaguje na výjimky \class{TrapException}. Tato výjimka je vyhozena v metodě \texttt{trigger} a její smysl je měnit probíhající akce. Tato metoda může akci zrušit, nebo ji změnit (například past \class{AttackTrap}, která zahájí boj při vstupu do místnosti.)
 \end{itemize}
 V současné době máme ve hře několik pastí, například \class{HealingTrap} (past, která léčí jednoho uživatele, nebo všechny v místnosti), \class{AttackTrap} (nechá něco zaútočit na uživatele), \class{DoorLock} (past, která se chová jako zámek na dveřích), nebo \class{ItemRespawner} (past, která umožňuje věcem se znovu objevit po určitém intervalu.)
 
@@ -256,7 +256,7 @@ Potřeba použití nečeho takového signalizuje chybu v návrhu, ale pokud chce
 
 \subsection{Dialogy}
 
-O tom jak vypadají dialogy v praxi bylo již psáno v části \ref{dialogs}. Jak se ale dialogy používají? Příklad je celý kód akce na přejmenování uživatele:
+O tom jak vypadají dialogy v praxi bylo již psáno v části \ref{dialogs}. Jak se ale dialogy používají? Příkladem je celý kód akce na přejmenování uživatele:
 
 \begin{lstlisting}
 	*ad << "Well then, what do you want your new name to be?";
@@ -368,5 +368,17 @@ Small spider: [****------]     You: [**********]
 \dung Sorry, did you mean 31 wood or 30 wood?
 \user 31
 \dung You've picked up 31 wood.
+\end{example}
+
+\subsection{Sdružující akce}
+\begin{example}
+\user use the wooden thing
+\dung Sorry, did you mean wooden door, Wooden axe or Wooden club?
+\user axe
+\dung You have successfully equipped Wooden axe.
+\user use the wooden thing
+\dung Sorry, did you mean wooden door or Wooden club?
+\user door
+\dung You've gone through that door...
 \end{example}
 \end{document}

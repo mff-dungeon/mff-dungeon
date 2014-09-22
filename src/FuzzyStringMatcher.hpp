@@ -22,7 +22,7 @@ namespace Dungeon {
         FuzzyStringMatcher(const FuzzyStringMatcher& orig);
         virtual ~FuzzyStringMatcher() {}
         
-        const static int WordMatch = 100;
+        int WordMatch = 100;
         
         /**
          * Costs are taken as changes needle --> haystack
@@ -33,9 +33,9 @@ namespace Dungeon {
             transCost = 1;
         
         /**
-         * Strings are marked same if this cost insn't exceeded
+         * Strings are marked same if this cost isn't exceeded
          */
-        const static int toleration = 5;
+        int maxToleration = 5;
         
         /**
          * TODO Get substCost from distance on QWERTY
@@ -164,8 +164,10 @@ namespace Dungeon {
         int i = 0, sum = 0, lastmatch = 0;
         for (const string& nWord : needle) {
             for (; i < haystack.size(); i++) {
+                int tol = std::min(nWord.length(), haystack[i].length());
+                tol = std::min(maxToleration, tol);
                 int cost = getWordDistance(nWord, haystack[i]);
-                if (cost < std::min(nWord.length(), haystack[i].length())) {
+                if (cost < tol) {
                     sum += WordMatch - cost;
                     lastmatch = i + 1;
                     break; // next word from needle

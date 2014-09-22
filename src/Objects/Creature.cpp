@@ -219,16 +219,21 @@ namespace Dungeon {
 	}
 
 	CombatAction::CombatMatch CombatAction::matchAnswer(string reply) {
-		FuzzyStringMatcher<CombatAction::CombatMatch> matcher;
-		matcher.add("attack", CombatAction::CombatMatch::Attack);
-		matcher.add("a", CombatAction::CombatMatch::Attack);
-		matcher.add("check", CombatAction::CombatMatch::Check);
-		matcher.add("c", CombatAction::CombatMatch::Check);
-		matcher.add("status", CombatAction::CombatMatch::Check);
-		matcher.add("run", CombatAction::CombatMatch::Run);
-		matcher.add("r", CombatAction::CombatMatch::Run);
-		
-		return matcher.find(reply);
+		static FuzzyStringMatcher<CombatAction::CombatMatch> matcher;
+		if (matcher.empty()) {
+			matcher.add("attack", CombatAction::CombatMatch::Attack);
+			matcher.add("a", CombatAction::CombatMatch::Attack);
+			matcher.add("check", CombatAction::CombatMatch::Check);
+			matcher.add("c", CombatAction::CombatMatch::Check);
+			matcher.add("status", CombatAction::CombatMatch::Check);
+			matcher.add("run", CombatAction::CombatMatch::Run);
+			matcher.add("r", CombatAction::CombatMatch::Run);
+		}
+		try {
+			return matcher.find(reply);
+		} catch (GameException& ge) {
+			return CombatAction::CombatMatch::Invalid;
+		}
 	}
 
 
@@ -239,7 +244,9 @@ namespace Dungeon {
 		
 		Creature* creature = creaturePtr.unsafeCast<Creature>();
 		CombatAction::CombatMatch action = matchAnswer(reply);
-		if(action == CombatAction::CombatMatch::Check) {
+		if (action == CombatAction::CombatMatch::Invalid) {
+			*ad << "What was that supposed to be?" << eos;
+		} else if(action == CombatAction::CombatMatch::Check) {
 			if(creature->getPercentageHp() > 0.75) {
 				*ad << creature->getName() << " looks very vital." << eos;
 			}
