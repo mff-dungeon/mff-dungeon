@@ -34,16 +34,15 @@ namespace Dungeon {
             virtual void explain(ActionDescriptor* ad);
             virtual bool match(string command, ActionDescriptor* ad);
             virtual bool handleException(GameException& exception, ActionDescriptor* ad);
-        virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
+			virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 
+			// Property Storage
+			virtual IPropertyStorage& have(string& prop, string id, string desc, bool editable);
+			virtual IPropertyStorage& have(int& prop, string id, string desc, bool editable);
+			virtual IPropertyStorage& have(long& prop, string id, string desc, bool editable);
+			virtual IPropertyStorage& have(bool& prop, string id, string desc, bool editable);
 
-            
-            // Property Storage
-            virtual IPropertyStorage& have(string& prop, string id, string desc, bool editable);
-            virtual IPropertyStorage& have(int& prop, string id, string desc, bool editable);
-            virtual IPropertyStorage& have(bool& prop, string id, string desc, bool editable);
-            
-            void askForNextOne(ActionDescriptor* ad);
+			void askForNextOne(ActionDescriptor* ad);
 
         private:
             ActionDescriptor* ad;

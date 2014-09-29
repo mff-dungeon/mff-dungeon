@@ -37,10 +37,14 @@ namespace Dungeon {
             Archiver& operator<<(int val);
             Archiver& operator>>(int& val);
 
+            Archiver& operator<<(long val);
+            Archiver& operator>>(long& val);
+
             Archiver& operator<<(bool b);
             Archiver& operator>>(bool& b);
             
             virtual IPropertyStorage& have(int& prop, string id, string desc, bool editable = true);
+            virtual IPropertyStorage& have(long& prop, string id, string desc, bool editable = true);
             virtual IPropertyStorage& have(string& prop, string id, string desc, bool editable = true);
             virtual IPropertyStorage& have(bool& prop, string id, string desc, bool editable = true);
 

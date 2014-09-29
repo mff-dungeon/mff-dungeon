@@ -51,6 +51,16 @@ namespace Dungeon {
 		return *this;
 	}
 
+	Archiver& Archiver::operator<<(long val) {
+		write(&val, sizeof(long));
+		return *this;
+	}
+
+	Archiver& Archiver::operator>>(long& val) {
+		read(&val, sizeof(long));
+		return *this;
+	}
+
 	Archiver& Archiver::operator<<(bool b) {
 		write(&b, sizeof(bool));
 		return *this;
@@ -62,6 +72,13 @@ namespace Dungeon {
 	}
 
 	IPropertyStorage& Archiver::have(int& prop, string id, string desc, bool editable) {
+		if (storing) 
+			*this << prop;
+		else *this >> prop;
+		return *this;
+	}
+
+	IPropertyStorage& Archiver::have(long& prop, string id, string desc, bool editable) {
 		if (storing) 
 			*this << prop;
 		else *this >> prop;

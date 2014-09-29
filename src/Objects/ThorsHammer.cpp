@@ -207,6 +207,23 @@ namespace Dungeon
 		return *this;
 	}
 	
+	IPropertyStorage& ThorsHammer::PropertyEditor::have(long& prop, string id, string desc, bool editable) {
+		if (!editable) return *this;
+		std::stringstream ss;
+		ss << desc << "(" << prop << ")";
+		descriptions.push(ss.str());
+		ad->waitForReply([&] (ActionDescriptor* ad, string reply) {
+			target.assertExists();
+			if (reply != ".") {
+				std::istringstream(reply) >> prop;
+				*ad << "Set to '" << prop << "'." << eos;
+				LOG("PropEditor") << "Set property of " << target.getId() << " to " << prop << LOGF;
+			}
+			askForNextOne(ad);
+		});
+		return *this;
+	}
+	
 	IPropertyStorage& ThorsHammer::PropertyEditor::have(bool& prop, string id, string desc, bool editable) {
 		if (!editable) return *this;
 		descriptions.push(desc + "(" + (prop ? "True" : "False") + ")");

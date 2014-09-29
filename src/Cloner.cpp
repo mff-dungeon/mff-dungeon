@@ -89,6 +89,17 @@ namespace Dungeon {
 		return *this;
 	}
 
+	IPropertyStorage& Cloner::have(long& prop, string id, string desc, bool editable) {
+		if(storing) {
+			prop = *((long*) properties.front());
+			properties.pop();
+		}
+		else {
+			properties.push((void*) &prop);
+		}
+		return *this;
+	}
+
 	IPropertyStorage& Cloner::have(string& prop, string id, string desc, bool editable) {
 		if(storing) {
 			prop.assign(*((string*) properties.front()));

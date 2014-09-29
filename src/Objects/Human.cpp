@@ -12,20 +12,26 @@
 namespace Dungeon {
 	Human::Human() {
 		this->setRespawnInterval(DEFAULT_RESPAWN_INTERVAL);	
+		this->stats = new int[Stats::End];
+		for(int i = 0; i<Stats::End; i++) this->stats[i] = 10;
 	}
 	
 	Human::Human(objId id) : Alive(id) {
 		this->setRespawnInterval(DEFAULT_RESPAWN_INTERVAL);	
+		this->stats = new int[Stats::End];
+		for(int i = 0; i<Stats::End; i++) this->stats[i] = 10;
 	}
 
 	Human::Human(objId id, string username, string contact)  :
         Alive(id), username(username), contact(contact) {
 		this->setRespawnInterval(DEFAULT_RESPAWN_INTERVAL);
+		this->stats = new int[Stats::End];
+		for(int i = 0; i<Stats::End; i++) this->stats[i] = 10;
 	}
 
 
 	Human::~Human() {
-		
+		delete[] stats;
 	}
 	
 	string Human::getLongName() const {
@@ -67,10 +73,110 @@ namespace Dungeon {
 		return this;
 	}
 
+	Human* Human::addExperience(int exp, ActionDescriptor* ad) {
+		this->exp += exp;
+		while(getRequiredExp(getCharacterLevel()+1) <= this->exp) {
+			doLevelUp(ad);
+		}
+		return this;
+	}
+
+	void Human::doLevelUp(ActionDescriptor* ad) {
+		this->level++;
+		this->freepoints += LEVEL_STAT_POINTS;
+		if(ad) {
+			// FIXME offer user to raise his/her stats
+			*ad << "You have just advanced to a new level. You have just gained "
+				<< LEVEL_STAT_POINTS 
+				<< " stat points. Distribute them by typing 'raise ...'."
+				<< eos;
+		}
+	}
+
+	int Human::getCharacterLevel() const {
+		return level;
+	}
+
+	Human* Human::changeStatValue(Stats stat, int delta, ActionDescriptor* ad) {
+		if(delta == 0) return this;
+		if(stat == Stats::End) throw GameException("Invalid stat change requested.");
+		if(this->stats[stat] + delta <= 0) throw GameException("Stats must be always positive numbers.");
+		this->stats[stat] += delta;
+		if(ad) {
+			if(delta > 0) {
+				*ad << "Your " << getStatName(stat) << " has been raised";
+				if(delta == 1) {
+					*ad << "." << eos;
+				}
+				else {
+					*ad << " by " << delta << " points." << eos;
+				}
+			}
+			else {
+				*ad << "Your " << getStatName(stat) << "has been lowered";
+				if(delta == -1) {
+					*ad << "." << eos;
+				}
+				else {
+					*ad << " by " << (-delta) << " points." << eos;
+				}
+			}
+		}
+		return this;
+	}
+
+	Human* Human::setStatValue(Stats stat, int value, ActionDescriptor* ad) {
+		if(stat == Stats::End) throw GameException("Invalid stat change requested.");
+		if(value <= 0) throw GameException("Stats must be always positive numbers.");
+		this->stats[stat] = value;
+		if(ad) {
+			*ad << "Your " << getStatName(stat) << " has been changed to " << value << "." << eos;
+		}
+		return this;
+	}
+
+	int Human::getStatValue(Stats stat) const {
+		if(stat == Stats::End) throw GameException("Invalid stat value requested.");
+		return this->stats[stat];
+	}
+
+	int Human::getFreePoints() const {
+		return this->freepoints;
+	}
+
+	string Human::getStatName(Stats stat, bool pure) {
+		switch(stat) {
+			case Stats::Alchemy:
+				if(pure) return "alchemy";
+				else return "Alchemy";
+			case Stats::Crafting:
+				if(pure) return "crafting";
+				else return "Crafting";
+			case Stats::Dexterity:
+				if(pure) return "dexterity";
+				else return "Dexterity";
+			case Stats::Intelligence:
+				if(pure) return "intelligence";
+				else return "Intelligence";
+			case Stats::Strength:
+				if(pure) return "strength";
+				else return "Strength";
+			case Stats::Vitality:
+				if(pure) return "vitality";
+				else return "Vitality";
+			case Stats::Wisdom: 
+				if(pure) return "wisdom";
+				else return "Wisdom";
+			default:
+				if(pure) return "invalid";
+				else return "Invalid";
+		}
+	}
+
+
 	int Human::getRequiredExp(int level) {
 		return (int) 42*pow(1.142,level-1) + 42 * (level-1) * (level-1) + 42 * (level-1) - 42;
 	}
-
 
 	Alive* Human::die(ActionDescriptor* ad) {
 		this->setState(State::Dead);
@@ -80,8 +186,8 @@ namespace Dungeon {
 			// TODO: Write some fancy method to respawn time nicer (probably rounding to highest order is enough)
 				*ad << "Oh no! You have just died. "
 					<< "Your soul has moved to another plane of existence where it's currently regaining strength. "
-					<< "You cannot play for " << this->getRespawnInterval() << " seconds. "
-					<< "Type respawn to respawn, when the time comes." << eos;
+					<< "You cannot play for " << getRoundedTime(this->getRespawnInterval()) << ". "
+					<< "Type 'respawn' to respawn, when the time comes." << eos;
 			}
 			else {
 				// Actually do we want to notify? if not, remove later
@@ -106,7 +212,13 @@ namespace Dungeon {
 		storage.have(username, "human-username", "Username, public available")
 			.have(contact, "human-jid", "Contact JID", false)
 			.have(craftingLvl, "human-craftinglvl", "Human's crafting lvl")
-			.have(craftingExp, "human-craftingexp", "Human's crafting exp");
+			.have(craftingExp, "human-craftingexp", "Human's crafting exp")
+			.have(level, "human-level", "Human's character level")
+			.have(exp, "human-exp", "Human's experience points")
+			.have(freepoints, "human-free-points", "Human's stat points to distribute");
+		for(int i=Stats::Begin; i<Stats::End; i++) {
+			storage.have(stats[i], string("human-stats-") + getStatName(i, true), string("Value of stat ") + getStatName(i));
+		}
 		Alive::registerProperties(storage);
 	}
 	
@@ -137,7 +249,7 @@ namespace Dungeon {
 						}
 						else {
 							*ad << "You cannot respawn yet. Wait for another " 
-								<< (getRespawnTime() - time(0)) << " seconds and try again." << eos;
+								<< getRoundedTime(getRespawnTime() - time(0)) << " and try again." << eos;
 						}
 				}));
 				
@@ -150,7 +262,7 @@ namespace Dungeon {
 							*ad << "Please type 'respawn' to become alive again." << eos;
 						}
 						else {
-							*ad << "Please wait another " << (getRespawnTime() - time(0)) << " seconds and then type respawn." << eos;
+							*ad << "Please wait another " << getRoundedTime(getRespawnTime() - time(0)) << " and then type respawn." << eos;
 						}
 						
 				},false));
@@ -236,13 +348,27 @@ namespace Dungeon {
 				RegexMatcher::matcher(".*combat stats|hitpoints"),
 				[this] (ActionDescriptor* ad) {
 					Alive* me = ad->getAlive();
-                                        *ad << "Here is your current combat profile:" << eos;
-                                        
-                                        ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
+					*ad << "Here is your current combat profile:" << eos;
+					ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
 					*ad << "Hitpoints: " + to_string(me->getCurrentHp()) + "/" + to_string(me->getMaxHp()) << eos;
 					*ad << "Attack value: " + to_string(me->getAttack()) << eos;
 					*ad << "Defense value: " + to_string(me->getDefense()) << eos;
 				}, false));
+				
+			list->addAction(new CallbackAction("character stats", "Prints all your stats",
+				RegexMatcher::matcher(".*character stats|.*human stats"),
+				[this] (ActionDescriptor* ad) {
+					Human* me = (Human*) ad->getAlive();
+					*ad << "My current stats: " << eos;
+					ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
+					for(int i = Human::Stats::Begin; i<Human::Stats::End; i++) {
+						*ad << Human::getStatName(i) << ": " << me->getStatValue(i) << eos;
+					}
+					if(me->getFreePoints() > 0) {
+						ad->setReplyFormat(ActionDescriptor::ReplyFormat::Paragraph);
+						*ad << "I also have " << me->getFreePoints() << " free points to distribute." << eos;
+					}
+				}));
                                 
 			list->addAction(new CallbackAction("resource stats", "Prints all your resource stats",
 				RegexMatcher::matcher(".*resource stats|.*resources"),
@@ -364,7 +490,23 @@ namespace Dungeon {
 		return hasRelation("spell", spell, Relation::Master);
 	}
 
+	string Human::getWeaponName() const {
+		Wearable* weapon = getSingleRelation(Wearable::SlotRelations[Wearable::Slot::Weapon]).safeCast<Wearable>();
+		if (weapon)
+			return weapon->getName();
+		return Alive::getWeaponName();
+	}
 
+	string Human::getRoundedTime(int seconds) {
+		if(seconds < 60) {
+			return to_string(seconds) + " seconds";
+		}
+		else if(seconds < 3600) {
+			return to_string(seconds/60) + " minutes";
+		}
+		else
+			return to_string(seconds/3600) + " hours";
+	}
 
 	PERSISTENT_IMPLEMENTATION(Human)
 }

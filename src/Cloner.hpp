@@ -37,6 +37,7 @@ namespace Dungeon {
 		
 		virtual IPropertyStorage& have(bool& prop, string id, string desc, bool editable);
 		virtual IPropertyStorage& have(int& prop, string id, string desc, bool editable);
+		virtual IPropertyStorage& have(long& prop, string id, string desc, bool editable);
 		virtual IPropertyStorage& have(string& prop, string id, string desc, bool editable);
 		
 	private:		
