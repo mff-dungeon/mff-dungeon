@@ -1,5 +1,6 @@
 #include "Spell.hpp"
 #include "Human.hpp"
+#include <cmath>
 
 namespace Dungeon {
 
@@ -33,22 +34,40 @@ namespace Dungeon {
 		return this;
 	}
 
+	int Spell::getBaseInt() const {
+		return baseInt;
+	}
+
+	Spell* Spell::setBaseInt(int baseInt) {
+		this->baseInt = baseInt;
+		return this;
+	}
+
+	int Spell::getBaseWis() const {
+		return baseWis;
+	}
+
+	Spell* Spell::setBaseWis(int baseWis) {
+		this->baseWis = baseWis;
+		return this;
+	}
+
 	int Spell::getManaCost(ObjectPointer casterPtr) const {
 		casterPtr.assertExists("Who is casting that spell? A ghost?")
 			.assertType<Human>("Only humans can cast spells.");
 		Human* caster = casterPtr.unsafeCast<Human>();
-		
-		// TODO: Add some crazy formula depending on human stats
-		return getBaseManaCost();
+		int manaCost = getBaseManaCost();
+		manaCost = (int) (manaCost * pow(0.8, (caster->getStatValue(Human::Wisdom) - getBaseWis())/10.0));
+		return manaCost;
 	}
 
 	int Spell::getEffect(ObjectPointer casterPtr) const {
 		casterPtr.assertExists("Who is casting that spell? A ghost?")
 			.assertType<Human>("Only humans can cast spells.");
 		Human* caster = casterPtr.unsafeCast<Human>();
-		
-		// TODO: Add some crazy formula depending on human stats
-		return getBaseEffect();
+		int effect = getBaseEffect();
+		effect = (int) (effect * pow(1.2, (caster->getStatValue(Human::Intelligence) - getBaseInt())));
+		return effect;
 	}
 
 	bool Spell::checkCast(ObjectPointer casterPtr, ActionDescriptor* ad) const {
@@ -70,7 +89,9 @@ namespace Dungeon {
 
 	void Spell::registerProperties(IPropertyStorage& storage) {
 		storage.have(manaCost, "spell-mana", "price of the spell")
-				.have(effect, "spell-effect", "effect strength of the spell");
+				.have(effect, "spell-effect", "effect strength of the spell")
+				.have(baseInt, "spell-int", "base intelligence for base effect of the spell")
+				.have(baseWis, "spell-wis", "base wisdom for base cost of the spell");
 		IDescriptable::registerProperties(storage);
 	}
 

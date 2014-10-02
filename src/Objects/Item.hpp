@@ -6,7 +6,7 @@
 #include "../ActionList.hpp"
 
 namespace Dungeon {
-    
+	
     /**
      * An item can be taken and placed into inventory.
      */
@@ -39,22 +39,29 @@ namespace Dungeon {
          * Must be inserted to world and be "inside" something to work.
          */
         virtual Item* respawnEvery(int seconds);
+		
+		/**
+		 * Allows to add a stat requirement to the item. Doesn't take care of checking,
+		 * checking should be done by each item (SpellScroll, Wearable, ...)
+         */
+		virtual Item* addStatReq(ObjectPointer reqPtr);
+		virtual bool checkStatReqs(ObjectPointer userPtr, ActionDescriptor* ad = 0);
 
         virtual string getDescription() const;
         virtual string getDescriptionSentence();
         virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
 		
 		virtual void registerProperties(IPropertyStorage& storage);
-                
-                virtual ObjectPointer onPick(ActionDescriptor* ad) {
-                    triggerTraps("picked", ad);
-                    return this;
-                }
-                
-                virtual ObjectPointer onDrop(ActionDescriptor* ad) {
-                    triggerTraps("dropped", ad);
-                    return this;
-                }
+
+		virtual ObjectPointer onPick(ActionDescriptor* ad) {
+			triggerTraps("picked", ad);
+			return this;
+		}
+
+		virtual ObjectPointer onDrop(ActionDescriptor* ad) {
+			triggerTraps("dropped", ad);
+			return this;
+		}
 		
 	private:
 		int size;

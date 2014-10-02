@@ -199,7 +199,10 @@ namespace Dungeon {
 		target.assertType<Wearable>(GameStateInvalid::EquippedNonWearable);
 		itemPtr = target;
 		Wearable* item = target.unsafeCast<Wearable>();
-		
+		if(!item->checkStatReqs(ad->getAlive(), ad)) {
+			*ad << "You cannot equip " << item->getName() << "." << eos;
+			return;
+		}
 		slot = item->getSlot();
 		slotRelation = Wearable::SlotRelations[slot];
 		

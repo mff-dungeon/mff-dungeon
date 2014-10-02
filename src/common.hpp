@@ -21,6 +21,8 @@
 #define R_DROP "dropper"
 // Creature drops an item
 #define R_RECIPE "crafter-recipe"
+// Something requires a stat
+#define R_REQUIREMENT "stat-req"
 // Alive has gold
 #define R_RESOURCE(type) ( "resource-" + to_string((int)(type)) )
 

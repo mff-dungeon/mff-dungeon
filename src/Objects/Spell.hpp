@@ -21,6 +21,10 @@ namespace Dungeon {
 		Spell* setBaseManaCost(int mana);
 		int getBaseEffect() const;
 		Spell* setBaseEffect(int effect);
+		int getBaseInt() const;
+		Spell* setBaseInt(int baseInt);
+		int getBaseWis() const;
+		Spell* setBaseWis(int baseWis);
 		
 		/**
 		 * Calculates mana cost depending on caster's stats
@@ -55,7 +59,8 @@ namespace Dungeon {
 	private:
 		int manaCost = 0;
 		int effect = 0;
-		// TODO: add some requirements, like high intelligence
+		int baseInt = 1;	// if user's int == spell's int, effect = baseEffect
+		int baseWis = 1;	// similar to int with manaCost
 	PERSISTENT_DECLARATION(Spell, IDescriptable)
 	};
 	

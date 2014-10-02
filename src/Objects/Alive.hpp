@@ -85,7 +85,7 @@ namespace Dungeon
 		 * Probably only important for humans, but to avoid casting to Human*
 		 * implemented here
          */
-		Alive* calculateBonuses();
+		virtual Alive* calculateBonuses();
 		
 		/**
 		 * @return Current location of this being
@@ -155,7 +155,6 @@ namespace Dungeon
                 
 	private:
 		// Combat stats
-		const int BASE_HP = 300;
         int maxHp = 300;
 		int currentHp = 300;
 		int defense = 1;

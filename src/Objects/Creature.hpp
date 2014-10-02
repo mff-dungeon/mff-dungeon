@@ -32,13 +32,17 @@ namespace Dungeon {
 		virtual string getDescriptionSentence();
 		virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
 
-                /**
-                 * Helper method to set the creature drops
-                 * @see Dropper
-                 */
-                virtual Creature* drops(ObjectPointer item, int chance, int min = 1, int max = 1);
+		/**
+		 * Helper method to set the creature drops
+		 * @see Dropper
+		 */
+		virtual Creature* drops(ObjectPointer item, int chance, int min = 1, int max = 1);
+		
+		virtual Creature* setExpReward(int reward);
+		virtual int getExpReward() const;
                 
 	private:
+		int expReward = 0;
 		
 	PERSISTENT_DECLARATION(Creature, Alive)
 	};
@@ -53,9 +57,8 @@ namespace Dungeon {
 		};
 		
 		CombatAction(string type = "creature-combat") : MultiTargetAction(type) {}
-                virtual ~CombatAction(){}
+		virtual ~CombatAction(){}
 
-        
         virtual void explain(ActionDescriptor* ad);
         virtual bool match(string command, ActionDescriptor* ad);
         virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);

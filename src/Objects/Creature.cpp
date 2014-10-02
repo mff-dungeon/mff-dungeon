@@ -3,6 +3,7 @@
 #include "../Dropper.hpp"
 #include "../SentenceJoiner.hpp"
 #include "../Dropper.hpp"
+#include "Human.hpp"
 #include <time.h>
 #include <vector>
 
@@ -53,6 +54,10 @@ namespace Dungeon {
 
 	Alive* Creature::die(ActionDescriptor* ad) {
 		this->calculateDrops(ad);
+		if(ad->getAlive()->instanceOf(Human)) {
+			Human* h = (Human*) ad->getAlive();
+			h->addExperience(getExpReward(), ad);
+		}
 		if(this->getRespawnInterval() == -1) { // Remove
 			// FIXME: Workout a way to tell GM, to delete this after this action
 			this->setState(State::Invalid);
@@ -83,6 +88,15 @@ namespace Dungeon {
 		this->setCurrentHp(getMaxHp());
 		this->setState(State::Living);
 		return this;
+	}
+
+	Creature* Creature::setExpReward(int reward) {
+		this->expReward = reward;
+		return this;
+	}
+
+	int Creature::getExpReward() const {
+		return this->expReward;
 	}
 
 	void Creature::getActions(ActionList* list, ObjectPointer callee) {

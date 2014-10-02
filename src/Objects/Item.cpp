@@ -1,6 +1,8 @@
 #include <cstring>
+#include <stdexcept>
 
 #include "Item.hpp"
+#include "Human.hpp"
 #include "../Actions/CallbackAction.hpp"
 #include "../ActionDescriptor.hpp"
 #include "../RandomString.hpp"
@@ -60,7 +62,36 @@ namespace Dungeon {
 	void Item::getActions(ActionList* list, ObjectPointer callee) {
 		IDescriptable::getActions(list, callee);
 	}
-	
+
+	Item* Item::addStatReq(ObjectPointer reqPtr) {
+		reqPtr.assertExists("The requirement doesn't exist.")
+				.assertType<StatReq>("You can only add a stat requirement");
+		StatReq* req = reqPtr.unsafeCast<StatReq>();
+		getGameManager()->createRelation(this, req, R_REQUIREMENT);
+		return this;
+	}
+
+	bool Item::checkStatReqs(ObjectPointer userPtr, ActionDescriptor* ad) {
+		userPtr.assertExists("The human is weird.")
+				.assertType<Human>("Only a human has stats.");
+		Human* user = userPtr.unsafeCast<Human>();
+		try {
+			const ObjectMap& reqs = getRelations(Relation::Master, R_REQUIREMENT);
+			for(auto& req : reqs) {
+				req.second.assertType<StatReq>("Only a requirement is supposed to be there.");
+				StatReq* r = req.second.unsafeCast<StatReq>();
+				if(user->getStatValue(r->getStat()) < r->getValue()) {
+					*ad << "Your " << user->getStatName(r->getStat()) << " is not high enough." << eos;
+					return false;
+				}
+			}
+		}
+		catch(std::out_of_range& e) {
+			
+		}
+		return true;
+	}
+
 	Item* Item::respawnEvery(int seconds) {
 		ObjectPointer item (this);
 		item.assertExists("Item must exist to be respawnable");

@@ -165,33 +165,6 @@ namespace Dungeon {
 
 
 	Alive* Alive::calculateBonuses() {
-		int attack = 0; 
-		int defense = 0;
-		int maxhp = BASE_HP;
-		
-		for(int slot = Wearable::Slot::BodyArmor; slot != Wearable::Slot::Invalid; slot--) {
-			try {
-				ObjectPointer worn = getSingleRelation(Wearable::SlotRelations[slot], Relation::Master, GameStateInvalid::EquippedMoreThanOne);
-				if(!!worn) {
-					Wearable* wornItem = worn
-							.assertType<Wearable>(GameStateInvalid::EquippedNonWearable)
-							.unsafeCast<Wearable>();
-					attack += wornItem->getAttackBonus();
-					defense += wornItem->getDefenseBonus();
-					maxhp += wornItem->getHpBonus();
-				}
-			}
-			catch (const std::out_of_range& e) {
-				
-			}
-		}
-		
-		if(attack < 1) attack = 1;
-		if(defense < 1) defense = 1;
-		this->setAttack(attack)
-			->setDefense(defense)
-			->setMaxHp(maxhp)
-			->save();
 		return this;
 	}
 	

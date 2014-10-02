@@ -8,6 +8,7 @@
 #include <cmath>
 #include "../exceptions.hpp"
 #include "../RandomString.hpp"
+#include "../FuzzyStringMatcher.hpp"
 
 namespace Dungeon {
 	Human::Human() {
@@ -58,19 +59,6 @@ namespace Dungeon {
 
     string Human::getUsername() const {
     	return username;
-	}
-
-	int Human::getCraftingLevel() const {
-		return craftingLvl;
-	}
-
-	Human* Human::addCraftingExp(int exp) {
-		this->craftingExp += exp;
-		// Recalculate level
-		while(getRequiredExp(getCraftingLevel()+1) <= craftingExp) {
-			craftingLvl++;
-		}
-		return this;
 	}
 
 	Human* Human::addExperience(int exp, ActionDescriptor* ad) {
@@ -144,6 +132,14 @@ namespace Dungeon {
 		return this->freepoints;
 	}
 
+	Human* Human::useStatPoint(Stats stat, ActionDescriptor* ad) {
+		if(getFreePoints() <= 0) return this;
+		if(stat == Stats::End) return this;
+		this->freepoints--;
+		changeStatValue(stat, 1, ad);
+		return this;
+	}
+
 	string Human::getStatName(Stats stat, bool pure) {
 		switch(stat) {
 			case Stats::Alchemy:
@@ -173,11 +169,41 @@ namespace Dungeon {
 		}
 	}
 
-
 	int Human::getRequiredExp(int level) {
 		return (int) 42*pow(1.142,level-1) + 42 * (level-1) * (level-1) + 42 * (level-1) - 42;
 	}
 
+	Alive* Human::calculateBonuses() {
+		int attack = this->getStatValue(Stats::Strength)/10; 
+		int defense = this->getStatValue(Stats::Dexterity)/10;
+		int maxhp = this->getStatValue(Stats::Vitality)*20+100;
+		
+		for(int slot = Wearable::Slot::BodyArmor; slot != Wearable::Slot::Invalid; slot--) {
+			try {
+				ObjectPointer worn = getSingleRelation(Wearable::SlotRelations[slot], Relation::Master, GameStateInvalid::EquippedMoreThanOne);
+				if(!!worn) {
+					Wearable* wornItem = worn
+							.assertType<Wearable>(GameStateInvalid::EquippedNonWearable)
+							.unsafeCast<Wearable>();
+					attack += wornItem->getAttackBonus();
+					defense += wornItem->getDefenseBonus();
+					maxhp += wornItem->getHpBonus();
+				}
+			}
+			catch (const std::out_of_range& e) {
+				 
+			}
+		}
+		
+		if(attack < 1) attack = 1;
+		if(defense < 1) defense = 1;
+		this->setAttack(attack)
+			->setDefense(defense)
+			->setMaxHp(maxhp)
+			->save();
+		return this;
+	}
+	
 	Alive* Human::die(ActionDescriptor* ad) {
 		this->setState(State::Dead);
 		this->setRespawnTime(time(0) + getRespawnInterval());
@@ -266,8 +292,6 @@ namespace Dungeon {
 						}
 						
 				},false));
-				// Omit the rest
-				return;
 			}
 			
 			list->addAction(new CallbackAction("suicide", "commit suicide - If you just dont want to live on this planet anymore.",
@@ -305,7 +329,7 @@ namespace Dungeon {
 								for(auto& o : objects) {
 									*ad << "\t" + o.first + "\n";
 								}
-                                                                *ad << eos;
+								*ad << eos;
 							}
 						}
 				}));
@@ -369,6 +393,8 @@ namespace Dungeon {
 						*ad << "I also have " << me->getFreePoints() << " free points to distribute." << eos;
 					}
 				}));
+				
+			list->addAction(new RaiseStatAction);
                                 
 			list->addAction(new CallbackAction("resource stats", "Prints all your resource stats",
 				RegexMatcher::matcher(".*resource stats|.*resources"),
@@ -509,4 +535,75 @@ namespace Dungeon {
 	}
 
 	PERSISTENT_IMPLEMENTATION(Human)
+			
+
+	void RaiseStatAction::explain(ActionDescriptor* ad) {
+		*ad << "Use raise ... to raise your character stat." << eos;
+	}
+
+	bool RaiseStatAction::match(string command, ActionDescriptor* ad) {
+		if (RegexMatcher::match("raise .+", command)) {
+			selectStat(command.substr(6), ad);
+			return true;
+		}
+		return false;
+	}
+
+	void RaiseStatAction::selectStat(string statName, ActionDescriptor* ad) {
+		FuzzyStringMatcher<Human::Stats> matcher;
+		matcher.add("strength", Human::Strength)
+			.add("str", Human::Strength)
+			.add("dexterity", Human::Dexterity)
+			.add("dex", Human::Dexterity)
+			.add("vitality", Human::Vitality)
+			.add("vit", Human::Vitality)
+			.add("intelligence", Human::Intelligence)
+			.add("int", Human::Intelligence)
+			.add("wisdom", Human::Wisdom)
+			.add("wis", Human::Wisdom)
+			.add("crafting", Human::Crafting)
+			.add("craft", Human::Crafting)
+			.add("alchemy", Human::Alchemy)
+			.add("alch", Human::Alchemy);
+		try {
+			this->selectedStat = matcher.find(statName);
+		}
+		catch (exception e) {
+			
+		}
+	}
+
+	void RaiseStatAction::commit(ActionDescriptor* ad) {
+		if(selectedStat == Human::End) {
+			*ad << "There was no such stat found." << eos;
+			return;
+		}
+		if(!ad->getAlive()->instanceOf(Human)) return;
+		Human* h = (Human*) ad->getAlive();
+		if(h->getFreePoints() == 0) {
+			*ad << "You have no free points to distribute." << eos;
+			return;
+		}
+		h->useStatPoint(selectedStat);
+	}
+
+	Human::Stats StatReq::getStat() const {
+		return stat;
+	}
+	
+	StatReq* StatReq::setStat(Human::Stats stat) {
+		this->stat = stat;
+		return this;
+	}
+
+	int StatReq::getValue() const {
+		return value;
+	}
+	
+	StatReq* StatReq::setValue(int value) {
+		this->value = value;
+		return this;
+	}
+
+	PERSISTENT_IMPLEMENTATION(StatReq)
 }

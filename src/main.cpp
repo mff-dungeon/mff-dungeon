@@ -121,13 +121,14 @@ int main(int argc, char** argv) {
 	 *	Process command line parameters, if any found
 	 */
 	for (int a = 1; a < argc; a++) {
-		if (strcmp(argv[a], "cleanDB") == 0 || strcmp(argv[a], "--cleanDB") == 0) {
+		string arg = string(argv[a]);
+		if (arg == "cleanDB" || arg == "--cleanDB") {
 			dbRestart();
-        } else if (strcmp(argv[a], "--verbose") == 0 || strcmp(argv[a], "verbose") == 0 || strcmp(argv[a], "-v") == 0) {
+        } else if (arg == "--verbose" || arg == "verbose" || arg == "-v") {
             LOG("main") << "User has requested verbose logging on stdout by launch argument." << LOGF;
             Logger::getInstance().setMinSeverity(cout, Logger::Severity::Verbose);
 		} else
-			LOG("main") << "Unknown argument: " << argv[a];
+			LOG("main") << "Unknown argument: " << argv[a] << LOGF;
 	}
 	/*
 	 *	Regular dungeon start 

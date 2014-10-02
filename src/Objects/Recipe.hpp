@@ -2,6 +2,7 @@
 #define	RECIPE_HPP
 
 #include "IDescriptable.hpp"
+#include "Human.hpp"
 
 namespace Dungeon {
 	/**
@@ -25,6 +26,12 @@ namespace Dungeon {
 		Recipe* setBadItem(ObjectPointer item);
 		ObjectPointer getGoodItem();
 		Recipe* setGoodItem(ObjectPointer item);
+		Human::Stats getMainStat() const;
+		Recipe* setMainStat(Human::Stats stat);
+		int getMainStatReq() const;
+		
+		Recipe* addStatReq(ObjectPointer reqPtr);
+		bool checkStatReqs(ObjectPointer userPtr, ActionDescriptor* ad = 0);
 		
 		void tryCraft(ActionDescriptor* ad);
 		
@@ -35,6 +42,7 @@ namespace Dungeon {
 	private:
 		int level = 1;
 		int experience = 0;
+		Human::Stats mainStat = Human::Crafting;
 		int* resources;
 
 	PERSISTENT_DECLARATION(Recipe, IDescriptable)

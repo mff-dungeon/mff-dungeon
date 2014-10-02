@@ -54,6 +54,10 @@ namespace Dungeon {
 		target.assertExists("Are you reading air?").assertType<SpellScroll>("You cannot read this.");
 		SpellScroll* scroll = target.unsafeCast<SpellScroll>();
 		ObjectPointer spell = scroll->getSpell();
+		if(!scroll->checkStatReqs(ad->getAlive(), ad)) {
+			*ad << "You cannot read this scroll now." << eos;
+			return;
+		}
 		
 		if(reader->knowsSpell(spell)) {
 			*ad << "You already learned " << spell.safeCast<IDescriptable>()->getName() << "." << eos;

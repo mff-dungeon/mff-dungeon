@@ -76,7 +76,65 @@ namespace Dungeon {
 		return this;
 	}
 
+	Human::Stats Recipe::getMainStat() const {
+		return mainStat;
+	}
+
+	Recipe* Recipe::setMainStat(Human::Stats stat) {
+		this->mainStat = stat;
+		return this;
+	}
+
+	int Recipe::getMainStatReq() const {
+		int retVal = 0;
+		try {
+			const ObjectMap& reqs = getRelations(Relation::Master, R_REQUIREMENT);
+			for(auto& req : reqs) {
+				req.second.assertType<StatReq>("Only a requirement is supposed to be there.");
+				StatReq* r = req.second.unsafeCast<StatReq>();
+				if(r->getStat() == getMainStat()) {
+					if(retVal < r->getValue()) retVal = r->getValue();
+				}
+			}
+		}
+		catch(std::out_of_range& e) {
+			
+		}
+		return retVal;
+	}
+
+	Recipe* Recipe::addStatReq(ObjectPointer reqPtr) {
+		reqPtr.assertExists("The requirement doesn't exist.")
+				.assertType<StatReq>("You can only add a stat requirement");
+		StatReq* req = reqPtr.unsafeCast<StatReq>();
+		getGameManager()->createRelation(this, req, R_REQUIREMENT);
+		return this;
+	}
+	
+	bool Recipe::checkStatReqs(ObjectPointer userPtr, ActionDescriptor* ad) {
+		userPtr.assertExists("The human is weird.")
+				.assertType<Human>("Only a human has stats.");
+		Human* user = userPtr.unsafeCast<Human>();
+		try {
+			const ObjectMap& reqs = getRelations(Relation::Master, R_REQUIREMENT);
+			for(auto& req : reqs) {
+				req.second.assertType<StatReq>("Only a requirement is supposed to be there.");
+				StatReq* r = req.second.unsafeCast<StatReq>();
+				if(user->getStatValue(r->getStat()) < r->getValue()) {
+					*ad << "Your " << user->getStatName(r->getStat()) << " is not high enough." << eos;
+					return false;
+				}
+			}
+		}
+		catch(std::out_of_range& e) {
+			
+		}
+		return true;
+	}
+
 	void Recipe::tryCraft(ActionDescriptor* ad) {
+		if(!ad->getAlive()->instanceOf(Human)) return;	// Only humans can craft
+		if(!checkStatReqs(ad->getAlive(), ad)) return;	// Stats not high enough
 		for(int i = Resource::ManaShard; i>=0; i--) {
 			if(!ad->getAlive()->hasResourceGreaterThan((Resource::ResourceType) i, getResource(i))) {
 				*ad << "You don't have enough " << Resource::ResourceName[i] << " to craft " << getName() << "." << eos;
@@ -87,12 +145,12 @@ namespace Dungeon {
 			ad->getAlive()->changeResourceQuantity((Resource::ResourceType) i, -getResource(i));
 		}
 		Human* crafter = (Human*) ad->getAlive();
-		int levelDiff = crafter->getCraftingLevel() - getLevel();
+		int levelDiff = crafter->getStatValue(getMainStat()) - getMainStatReq();
 		
 		double failRate = 5000*(2-2.0/(levelDiff+2));
 		if(failRate < Utils::getRandomInt(1, 10000)) {
 			*ad << "You have failed creating " << getName() << ". Maybe next time." << eos;
-			crafter->addCraftingExp(getExperience()/10);
+			crafter->addExperience(getExperience()/10);
 			return;
 		}
 		
@@ -104,14 +162,14 @@ namespace Dungeon {
 			created = getBadItem().assertExists("The crafting template doesn't exist")
 							.assertType<Item>("What is that? Crafting a non-item?")
 							->shallowClone().safeCast<Item>();
-			crafter->addCraftingExp(getExperience()/2);
+			crafter->addExperience(getExperience()/2);
 		}
 		else {
 			*ad << "You have managed to craft " << getName() << "!" << eos;
 			created = getGoodItem().assertExists("The crafting template doesn't exist")
 							.assertType<Item>("What is that? Crafting a non-item?")
 							->shallowClone().safeCast<Item>();
-			crafter->addCraftingExp(getExperience());
+			crafter->addExperience(getExperience());
 		}
 		
 		Inventory* backpack = crafter->getBackpack().safeCast<Inventory>();
@@ -128,7 +186,8 @@ namespace Dungeon {
 
 	void Recipe::registerProperties(IPropertyStorage& storage) {
 		storage.have(level, "recipe-level", "Level required to craft the item.")
-				.have(experience, "recipe-exp", "Experience gained for crafting this item.");
+				.have(experience, "recipe-exp", "Experience gained for crafting this item.")
+				.have((int&) mainStat, "recipe-mainstat", "Main stat required for this recipe (affects success).");
 		for(int i=Resource::ManaShard; i>=0; i--) {
 			storage.have(resources[i], string("recipe-resource-") + Resource::ResourceName[i],
 					string("Resource ") + Resource::ResourceName[i] + " required.");

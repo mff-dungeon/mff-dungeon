@@ -61,7 +61,7 @@ namespace Dungeon {
     void Logger::linkStream(std::ostream& stream, Severity minSeverity) {
         stream.flush();
         stream << "[" << this->getTimestamp() << "] Logging began with minimal severity level: ";
-        stream << getSeverityName(minSeverity) << endl << endl;
+        stream << getSeverityName(minSeverity) << endl;
         stream.flush();
         
         buffer.addBuffer(stream.rdbuf(), minSeverity);
@@ -74,7 +74,7 @@ namespace Dungeon {
         if (buffer.setBufferSeverity(stream.rdbuf(), minSeverity)) {
             stream.flush();
             stream << "[" << this->getTimestamp() << "] Changed minimal log severity level to: ";
-            stream << getSeverityName(minSeverity) << endl << endl;
+            stream << getSeverityName(minSeverity) << endl;
             stream.flush();
             
             result = true;

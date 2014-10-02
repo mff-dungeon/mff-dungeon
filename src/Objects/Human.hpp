@@ -2,6 +2,7 @@
 #define	HUMAN_HPP
 
 #include "../common.hpp"
+#include "../IObject.hpp"
 #include "Alive.hpp"
 
 namespace Dungeon {
@@ -51,18 +52,10 @@ namespace Dungeon {
 
 		virtual Alive* die(ActionDescriptor* ad = 0);
 		virtual Alive* respawn(ActionDescriptor* ad = 0);
-
-		/**
-		 * @deprecated
-         */
-		virtual int getCraftingLevel() const;
-		/**
-		 * @deprecated
-         */
-		virtual Human* addCraftingExp(int exp);
 		
 		virtual int getCharacterLevel() const;
 		virtual int getFreePoints() const;
+		virtual Human* useStatPoint(Stats stat, ActionDescriptor* ad = 0);
 		virtual int getStatValue(Stats stat) const;
 		virtual int getStatValue(int stat) const {
 			return getStatValue(Stats(stat));
@@ -80,6 +73,7 @@ namespace Dungeon {
 		static string getStatName(int stat, bool pure = false) {
 			return getStatName(Stats(stat), pure);
 		};
+		virtual Alive* calculateBonuses();
 
         virtual string getName() const;
         virtual string getLongName() const;
@@ -132,6 +126,41 @@ namespace Dungeon {
     PERSISTENT_DECLARATION(Human, Alive)
 
     };
+	
+	class StatReq : public IObject {
+	public:
+		StatReq() {};
+		StatReq(objId id) : IObject(id) {};
+		~StatReq() {};
+		StatReq(Human::Stats stat, int value) {
+			this->stat = stat;
+			this->value = value;
+		};
+		
+		virtual void getActions(ActionList * list, ObjectPointer callee) {};
+		int getValue() const;
+		StatReq* setValue(int value);
+		Human::Stats getStat() const;
+		StatReq* setStat(Human::Stats stat);
+	private:
+		int value;
+		Human::Stats stat;
+		
+	PERSISTENT_DECLARATION(StatReq, IObject);
+	};
+	
+	class RaiseStatAction : public Action {
+	public:
+		RaiseStatAction(string type = "raise-stat") : Action(type) {};
+
+		void selectStat(string statName, ActionDescriptor* ad);
+		
+		virtual bool match(string command, ActionDescriptor* ad);
+		virtual void commit(ActionDescriptor* ad);
+		virtual void explain(ActionDescriptor* ad);
+	private:
+		Human::Stats selectedStat = Human::End;
+	};
 }
 
 #endif	/* HUMAN_HPP */

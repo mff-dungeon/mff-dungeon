@@ -38,12 +38,11 @@ namespace Dungeon {
 		CreateAction* createAct = new CreateAction;
 		try {
 			callee.assertType<Human>("Only humans can craft.");
-			int level = callee.unsafeCast<Human>()->getCraftingLevel();
 			
 			const ObjectMap& recipes = getRelations(Relation::Master, R_RECIPE);
 			for(auto& recipe : recipes) {
 				recipe.second.assertExists("Recipe somehow disappeared.").assertType<Recipe>("This is not a recipe! ");
-				if(recipe.second.unsafeCast<Recipe>()->getLevel() <= level) {
+				if(recipe.second.unsafeCast<Recipe>()->checkStatReqs(callee)) {
 					createAct->addTarget(recipe.second);
 				}
 			}
@@ -75,7 +74,6 @@ namespace Dungeon {
 		target.assertExists("Crafter is not found.").assertType<Crafter>("You can ask only a crafter for a craft list.");
 		if(!ad->getAlive()->isInstanceOf(Human::HumanClassName)) return;
 		
-		int level = ((Human*) ad->getAlive())->getCraftingLevel();
 		try {
 			const ObjectMap& recipes = target.unsafeCast<Crafter>()->getRelations(Relation::Master, R_RECIPE);
 			if(recipes.empty()) return;
@@ -83,12 +81,12 @@ namespace Dungeon {
 			for(auto& recipe : recipes) {
 				recipe.second.assertExists("Recipe has disappeared.").assertType<Recipe>("There is a non-recipe registered.");
 				Recipe* r = recipe.second.unsafeCast<Recipe>();
-				if(level >= r->getLevel()) {
+				if(r->checkStatReqs(ad->getAlive())) {
 					*ad << r->getDescription() << eos;
 					found++;
 				}
 			}
-			if(!found) *ad << "You cannot craft anything here yet." << eos;
+			if(!found) *ad << "You cannot craft anything here yet. Try to raise your stats." << eos;
 		}
 		catch (const std::out_of_range& e) {
 			
@@ -112,10 +110,9 @@ namespace Dungeon {
 		if(!ad->getAlive()->isInstanceOf(Human::HumanClassName)) return;
 		
 		Recipe* r = target.unsafeCast<Recipe>();
-		int level = ((Human*) ad->getAlive())->getCraftingLevel();
-		if(r->getLevel() > level) {
+		if(!r->checkStatReqs(ad->getAlive(), ad)) {
 			*ad << "You cannot craft this item yet." << eos;
-			LOGS("Crafter", Error) << "Somehow, a unsuitable item got to the create action." << LOGF;
+			LOGS("Crafter", Error) << "Somehow, an unsuitable item got to the create action." << LOGF;
 		}
 		else {
 			r->tryCraft(ad);
