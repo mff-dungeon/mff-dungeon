@@ -28,6 +28,9 @@ namespace Dungeon {
 		this->setRespawnInterval(DEFAULT_RESPAWN_INTERVAL);
 		this->stats = new int[Stats::End];
 		for(int i = 0; i<Stats::End; i++) this->stats[i] = 10;
+                
+                // Creation is the first interaction
+                this->markInteraction();
 	}
 
 

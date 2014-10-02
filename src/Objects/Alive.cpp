@@ -82,7 +82,8 @@ namespace Dungeon {
 			.have((int&) currentState, "alive-state", "Current state of alive: 1 - Living, 2 - Dying, 3 - Dead")
 			.have(respawnTime, "alive-respawntime", "Respawn time")
 			.have(respawnInterval, "alive-respawninterval", "Respawn interval")
-			.have(weaponName, "alive-weaponname", "The name of weapon currently used");
+			.have(weaponName, "alive-weaponname", "The name of weapon currently used")
+                        .have(lastInteraction, "alive-last-interaction", "UNIX timestamp of last interaction");
 		IDescriptable::registerProperties(storage);
 	}
 
@@ -284,6 +285,23 @@ namespace Dungeon {
 		this->currentState = newState;
 		return this;
 	}
+        
+        Alive::Presence Alive::getPresence() {
+            long unseenTime = (long)time(0) - this->lastInteraction;
+            
+            if (unseenTime < 60 * 10) {
+                return Presence::Present;
+            } else if (unseenTime < 40 * 10) {
+                return Presence::Away;
+            } else {
+                return Presence::Offline;
+            }
+        }
+
+        Alive* Alive::markInteraction() {
+            this->lastInteraction = (long)time(0);
+            return this;
+        }
         
 	int Alive::getResourceQuantity(Resource::ResourceType type) {
 		ObjectPointer resource = getSingleRelation(R_RESOURCE(type), Relation::Master);
