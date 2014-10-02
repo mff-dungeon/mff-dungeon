@@ -10,6 +10,7 @@
 #include "ActionDescriptor.hpp"
 #include "GameManager.hpp"
 #include "Objects/Alive.hpp"
+#include "Objects/Human.hpp"
 
 
 namespace Dungeon {

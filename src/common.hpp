@@ -72,6 +72,7 @@ namespace Dungeon {
     class IObject;
     class IDescriptable;
     class Alive;
+    class Human;
     class Item;
     class Resource;
     class Potion;

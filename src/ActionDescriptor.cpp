@@ -19,8 +19,8 @@ namespace Dungeon {
 		this->gm = gm;
 	}
 
-	void ActionDescriptor::assigned(Alive* alive) {
-		this->caller = alive;
+	void ActionDescriptor::assigned(Human* human) {
+		this->caller = human;
 	}
 
 	void ActionDescriptor::matched(Action* action) {
@@ -37,7 +37,7 @@ namespace Dungeon {
 		return action;
 	}
 
-	Alive* ActionDescriptor::getAlive() {
+	Human* ActionDescriptor::getCaller() {
 		return caller;
 	}
 

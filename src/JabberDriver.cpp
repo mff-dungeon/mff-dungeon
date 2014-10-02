@@ -67,7 +67,7 @@ namespace Dungeon {
     void JabberDriver::processDescriptor(ActionDescriptor* descriptor) {
         TextActionDescriptor* ad = (TextActionDescriptor*) descriptor;
         objId figureId = this->findFigureId(ad->from);
-        Alive* figure = gm->getObject(figureId)
+        Human* figure = gm->getObject(figureId)
 				.assertType<Human>("I work only with Humans.")
 				.unsafeCast<Human>();
         // Really need to do it on every reply. Alive object could have been disposed in meantime...

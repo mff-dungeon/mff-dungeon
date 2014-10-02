@@ -69,19 +69,19 @@ namespace Dungeon {
 		target.assertType<Potion>("You're too drunk. Hic.");
 		Potion* potion = target.unsafeCast<Potion>();
 		*ad << "You've drunk " + potion->getName() + "." << eos;
-		int lastHp = ad->getAlive()->getCurrentHp();
+		int lastHp = ad->getCaller()->getCurrentHp();
 		switch(potion->getType()) {
 			case Potion::PotionType::Healing:
-				ad->getAlive()->changeHp(potion->getStrength());
+				ad->getCaller()->changeHp(potion->getStrength());
 				break; 
 			case Potion::PotionType::Poison:
-				ad->getAlive()->changeHp(-potion->getStrength());
+				ad->getCaller()->changeHp(-potion->getStrength());
 				break; 
 			case Potion::PotionType::NoEffect:
 			default:
 				*ad << "... and it did nothing." << eos;
 		}
-		int curHp =  ad->getAlive()->getCurrentHp();
+		int curHp =  ad->getCaller()->getCurrentHp();
 		if (curHp > lastHp) 
 			*ad << "You've healed " <<  curHp - lastHp << " hitpoints." << eos;
 		else if (lastHp > curHp)

@@ -2,7 +2,7 @@
 #define	CONSOLEDRIVER_HPP
 
 #include "TextDriver.hpp"
-#include "Objects/Alive.hpp"
+#include "Objects/Human.hpp"
 #include "common.hpp"
 #include <thread>
 
@@ -13,7 +13,7 @@ namespace Dungeon {
      */
     class ConsoleDriver : public TextDriver {
     public:
-        ConsoleDriver(ActionQueue* queue, Alive* figure);
+        ConsoleDriver(ActionQueue* queue, Human* figure);
         virtual ~ConsoleDriver();
         void run();
         
@@ -22,7 +22,7 @@ namespace Dungeon {
     private:
         void worker();
         thread *workerThread;
-        Alive* figure;
+        Human* figure;
     };
 
 }

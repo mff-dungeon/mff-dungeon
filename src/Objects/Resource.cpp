@@ -1,5 +1,6 @@
 #include "Resource.hpp"
 #include "Alive.hpp"
+#include "../ActionDescriptor.hpp"
 
 namespace Dungeon {
    
@@ -105,7 +106,7 @@ namespace Dungeon {
         target.assertType<Resource>("Tried to sum non-resource.");
 
         Resource* newResource = target.safeCast<Resource>();            
-        Alive* sender = ad->getAlive();
+        Human* sender = ad->getCaller();
             
         sender->addResource(newResource);
     }

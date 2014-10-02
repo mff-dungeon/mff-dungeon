@@ -6,6 +6,7 @@
 #include "Human.hpp"
 #include <time.h>
 #include <vector>
+#include "../ActionDescriptor.hpp"
 
 namespace Dungeon {
 
@@ -54,10 +55,7 @@ namespace Dungeon {
 
 	Alive* Creature::die(ActionDescriptor* ad) {
 		this->calculateDrops(ad);
-		if(ad->getAlive()->instanceOf(Human)) {
-			Human* h = (Human*) ad->getAlive();
-			h->addExperience(getExpReward(), ad);
-		}
+		ad->getCaller()->addExperience(getExpReward(), ad);
 		if(this->getRespawnInterval() == -1) { // Remove
 			// FIXME: Workout a way to tell GM, to delete this after this action
 			this->setState(State::Invalid);
@@ -175,7 +173,7 @@ namespace Dungeon {
 	void KillAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		target.assertExists("The target doesn't exist");
 		target.assertType<Creature>("You can attack only enemy creatures.");
-		target.assertRelation(R_INSIDE, ad->getAlive()->getLocation(), Relation::Slave, "The creature is not here.");
+		target.assertRelation(R_INSIDE, ad->getCaller()->getLocation(), Relation::Slave, "The creature is not here.");
 		Creature* creature = target.unsafeCast<Creature>();
 		if(creature->getState() == Alive::State::Living) {
 			*ad << creature->getName() << " is too healthy to be killed." << eos;
@@ -208,7 +206,7 @@ namespace Dungeon {
 	bool CombatAction::checkValidity(ActionDescriptor* ad) {
 		creaturePtr.assertExists("The target doesn't exist");
 		creaturePtr.assertType<Creature>("You can attack only enemy creatures.");
-		creaturePtr.assertRelation(R_INSIDE, ad->getAlive()->getLocation(), Relation::Slave, "The creature is not here.");
+		creaturePtr.assertRelation(R_INSIDE, ad->getCaller()->getLocation(), Relation::Slave, "The creature is not here.");
 		Creature* creature = creaturePtr.unsafeCast<Creature>();
 		if(creature->getState() == Alive::State::Dying) {
 			*ad << creature->getName() << " is hardly breathing. Finish him!" << eos;
@@ -260,24 +258,24 @@ namespace Dungeon {
 			});
 		}
 		else if(action == CombatAction::CombatMatch::Run) {
-			ad->getAlive()->damageAlive(creaturePtr, creature->getAttack(), ad);
-			if(ad->getAlive()->getState() == Alive::State::Living) {
+			ad->getCaller()->damageAlive(creaturePtr, creature->getAttack(), ad);
+			if(ad->getCaller()->getState() == Alive::State::Living) {
 				*ad << "You have managed to run from " << creature->getName() 
 					<< ". Be warned though, as any other action than leaving this room would reinitiate attack." << eos;
 			}
 		}
 		else {
-			creature->damageAlive(ad->getAlive(), ad->getAlive()->getAttack(), ad);
+			creature->damageAlive(ad->getCaller(), ad->getCaller()->getAttack(), ad);
 			if(creature->getState() == Alive::State::Dying) {
 				*ad << creature->getName() << " is mortally wounded. Use 'kill ...' to finish it." << eos;
 				return;
 			}
-			ad->getAlive()->damageAlive(creaturePtr, creature->getAttack(), ad);
-			if(ad->getAlive()->getState() != Alive::State::Living) return;
+			ad->getCaller()->damageAlive(creaturePtr, creature->getAttack(), ad);
+			if(ad->getCaller()->getState() != Alive::State::Living) return;
 			// Should be able to use potion, or so (later)
 			*ad << text;
 			*ad << "\n" << creature->getName() << ": [" << Utils::progressBar(creature->getCurrentHp(), creature->getMaxHp(), 10) << "]"
-				<< "     You: [" << Utils::progressBar(ad->getAlive()->getCurrentHp(), ad->getAlive()->getMaxHp(), 10) << "]" << eos;
+				<< "     You: [" << Utils::progressBar(ad->getCaller()->getCurrentHp(), ad->getCaller()->getMaxHp(), 10) << "]" << eos;
 			ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
 				this->combatLoop(ad, reply);
 			});

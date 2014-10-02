@@ -114,8 +114,8 @@ namespace Dungeon {
 				.assertType<Spell>("You are casting something weird");
 		Spell* spell = target.unsafeCast<Spell>();
 		
-		if(spell->checkCast(ad->getAlive(), ad)) {
-			spell->cast(ad->getAlive(), ad);
+		if(spell->checkCast(ad->getCaller(), ad)) {
+			spell->cast(ad->getCaller(), ad);
 		}
 	}
 }

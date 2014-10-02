@@ -50,11 +50,11 @@ namespace Dungeon {
 	}
         
 	void ReadScrollAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
-		Human* reader = ((Human*) ad->getAlive());
+		Human* reader = ad->getCaller();
 		target.assertExists("Are you reading air?").assertType<SpellScroll>("You cannot read this.");
 		SpellScroll* scroll = target.unsafeCast<SpellScroll>();
 		ObjectPointer spell = scroll->getSpell();
-		if(!scroll->checkStatReqs(ad->getAlive(), ad)) {
+		if(!scroll->checkStatReqs(ad->getCaller(), ad)) {
 			*ad << "You cannot read this scroll now." << eos;
 			return;
 		}

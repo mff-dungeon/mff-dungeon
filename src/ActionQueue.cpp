@@ -32,7 +32,7 @@ namespace Dungeon {
 		bool flawless = false;
 		try {
                         // Record interaction
-                        ad->getAlive()->markInteraction()->save();
+                        ad->getCaller()->markInteraction()->save();
                     
 			ad->driver->processDescriptor(ad);
 			flawless = true;

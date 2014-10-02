@@ -133,18 +133,17 @@ namespace Dungeon {
 	}
 
 	void Recipe::tryCraft(ActionDescriptor* ad) {
-		if(!ad->getAlive()->instanceOf(Human)) return;	// Only humans can craft
-		if(!checkStatReqs(ad->getAlive(), ad)) return;	// Stats not high enough
+		if(!checkStatReqs(ad->getCaller(), ad)) return;	// Stats not high enough
 		for(int i = Resource::ManaShard; i>=0; i--) {
-			if(!ad->getAlive()->hasResourceGreaterThan((Resource::ResourceType) i, getResource(i))) {
+			if(!ad->getCaller()->hasResourceGreaterThan((Resource::ResourceType) i, getResource(i))) {
 				*ad << "You don't have enough " << Resource::ResourceName[i] << " to craft " << getName() << "." << eos;
 				return;
 			}
 		}
 		for(int i = Resource::ManaShard; i>=0; i--) {
-			ad->getAlive()->changeResourceQuantity((Resource::ResourceType) i, -getResource(i));
+			ad->getCaller()->changeResourceQuantity((Resource::ResourceType) i, -getResource(i));
 		}
-		Human* crafter = (Human*) ad->getAlive();
+		Human* crafter = ad->getCaller();
 		int levelDiff = crafter->getStatValue(getMainStat()) - getMainStatReq();
 		
 		double failRate = 5000*(2-2.0/(levelDiff+2));

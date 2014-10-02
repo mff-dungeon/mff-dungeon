@@ -30,7 +30,7 @@ namespace Dungeon
 				RegexMatcher::match("^dump (relations )?(of )?(.*)$", ad->in_msg, matches);
 				ObjectPointer target;
 				if (matches[3] == "") {
-					target = ad->getAlive();
+					target = ad->getCaller();
 				} else {
 					if (!ad->getGM()->hasObject(matches[3])) {
 						*ad << "404: Object not found :)" << eos;
@@ -102,7 +102,7 @@ namespace Dungeon
 		list->addAction(new CallbackAction("heal", "heal yourself - heals you to full hp.",
 				RegexMatcher::matcher("heal( myself| me)?"),
 				[] (ActionDescriptor* ad) {
-					ad->getAlive()->setCurrentHp(ad->getAlive()->getMaxHp());
+					ad->getCaller()->setCurrentHp(ad->getCaller()->getMaxHp());
 					*ad << "You have fully healed yourself." << eos;
 				}));
 		
@@ -116,7 +116,7 @@ namespace Dungeon
 						return;
 					}
 					
-					ad->getGM()->moveAlive(ad->getAlive(), ad->getGM()->getObject(matches[1]));
+					ad->getGM()->moveAlive(ad->getCaller(), ad->getGM()->getObject(matches[1]));
 				}));
 				
 		PropertyEditor* pe = new PropertyEditor;

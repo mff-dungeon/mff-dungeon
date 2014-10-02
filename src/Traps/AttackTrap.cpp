@@ -8,7 +8,7 @@ namespace Dungeon {
 	PERSISTENT_IMPLEMENTATION(AttackTrap)
 	
 	void AttackTrap::trigger(string event, ObjectPointer room, ActionDescriptor* ad) {
-		if (!ad || ad->state != ActionDescriptor::RoundEnd || ad->getAlive()->getState() == Alive::Dead) {
+		if (!ad || ad->state != ActionDescriptor::RoundEnd || ad->getCaller()->getState() == Alive::Dead) {
 			LOGS("AttackTrap", Verbose) << "No AD or wrong time"<< LOGF;
 			return;
 		}

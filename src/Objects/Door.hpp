@@ -5,6 +5,7 @@
 #include "IDescriptable.hpp"
 #include "../Actions/MultiTargetAction.hpp"
 #include "../ActionDescriptor.hpp"
+#include "Human.hpp"
 
 namespace Dungeon {
 

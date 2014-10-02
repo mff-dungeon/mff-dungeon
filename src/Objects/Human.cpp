@@ -211,7 +211,7 @@ namespace Dungeon {
 		this->setState(State::Dead);
 		this->setRespawnTime(time(0) + getRespawnInterval());
 		if(ad != 0) { // Let's tell what happened
-			if(ad->getAlive() == this) { // It is me dying
+			if(ad->getCaller() == this) { // It is me dying
 			// TODO: Write some fancy method to respawn time nicer (probably rounding to highest order is enough)
 				*ad << "Oh no! You have just died. "
 					<< "Your soul has moved to another plane of existence where it's currently regaining strength. "
@@ -265,7 +265,7 @@ namespace Dungeon {
             list->addAction(new CallbackAction("who am i", "who am i - In case you forget your identity",
 				RegexMatcher::matcher("who( )?am( )?i"),
 				[this] (ActionDescriptor * ad) {
-					*ad << "You are " + ad->getAlive()->getName() + "." << eos;
+					*ad << "You are " + ad->getCaller()->getName() + "." << eos;
 				}, false));
 				
 			// Dead related actions, do not add rest if user is dead	
@@ -346,7 +346,7 @@ namespace Dungeon {
 							<< "Server error. Too much grossness in the message." << endr
 							<< "Stop behaving like shit and do something useful." << endr) << eos;
 					*ad << "You've been charged 50 hitpoints for server atmosphere reconstruction." << eos;
-					ad->getAlive()->changeHp(50, ad);
+					ad->getCaller()->changeHp(50, ad);
 				}));
 				
 			// TODO - redo to a MTA. add equiped relations and other inventories
@@ -374,7 +374,7 @@ namespace Dungeon {
 			list->addAction(new CallbackAction("combat stats", "Prints all your combat stats",
 				RegexMatcher::matcher(".*combat stats|hitpoints"),
 				[this] (ActionDescriptor* ad) {
-					Alive* me = ad->getAlive();
+					Human* me = ad->getCaller();
 					*ad << "Here is your current combat profile:" << eos;
 					ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
 					*ad << "Hitpoints: " + to_string(me->getCurrentHp()) + "/" + to_string(me->getMaxHp()) << eos;
@@ -385,7 +385,7 @@ namespace Dungeon {
 			list->addAction(new CallbackAction("character stats", "Prints all your stats",
 				RegexMatcher::matcher(".*character stats|.*human stats"),
 				[this] (ActionDescriptor* ad) {
-					Human* me = (Human*) ad->getAlive();
+					Human* me = ad->getCaller();
 					*ad << "My current stats: " << eos;
 					ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
 					for(int i = Human::Stats::Begin; i<Human::Stats::End; i++) {
@@ -402,7 +402,7 @@ namespace Dungeon {
 			list->addAction(new CallbackAction("resource stats", "Prints all your resource stats",
 				RegexMatcher::matcher(".*resource stats|.*resources"),
 				[this] (ActionDescriptor* ad) {
-					Alive* me = ad->getAlive();
+					Human* me = ad->getCaller();
 
 					*ad << "Here are your current resources:" << eos;
 					ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
@@ -468,9 +468,9 @@ namespace Dungeon {
 				[this] (ActionDescriptor * ad) {
 					*ad << "Well then, what do you want your new name to be?" << eos;
 					ad->waitForReply([] (ActionDescriptor *ad, string reply) {
-						((Human*) ad->getAlive())->setUsername(reply)
+						ad->getCaller()->setUsername(reply)
 								->save();
-						*ad << "OK. You shall now be called " << ad->getAlive()->getName() << "." << eos; // A common mistake
+						*ad << "OK. You shall now be called " << ad->getCaller()->getName() << "." << eos; // A common mistake
 						*ad << "I'm just curious, why did you change your name?" << eos;
 					});
 					// Just to show how dialog can be longer :)
@@ -581,8 +581,7 @@ namespace Dungeon {
 			*ad << "There was no such stat found." << eos;
 			return;
 		}
-		if(!ad->getAlive()->instanceOf(Human)) return;
-		Human* h = (Human*) ad->getAlive();
+		Human* h =  ad->getCaller();
 		if(h->getFreePoints() == 0) {
 			*ad << "You have no free points to distribute." << eos;
 			return;

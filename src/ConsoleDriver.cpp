@@ -1,7 +1,7 @@
 #include "ConsoleDriver.hpp"
 
 namespace Dungeon {
-    ConsoleDriver::ConsoleDriver(ActionQueue* queue, Alive* figure) : TextDriver(queue), figure(figure) {
+    ConsoleDriver::ConsoleDriver(ActionQueue* queue, Human* figure) : TextDriver(queue), figure(figure) {
         
     }
 

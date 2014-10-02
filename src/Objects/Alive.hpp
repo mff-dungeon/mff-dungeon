@@ -4,7 +4,6 @@
 #include "../common.hpp"
 #include "../Actions/CallbackAction.hpp"
 #include "IDescriptable.hpp"
-#include "Wearable.hpp"
 #include "Resource.hpp"
 
 namespace Dungeon

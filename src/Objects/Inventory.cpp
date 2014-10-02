@@ -185,7 +185,7 @@ namespace Dungeon {
 		}
 		
 		backpack->removeItem(target);
-		ad->getGM()->createRelation(ad->getAlive()->getLocation(), item, R_INSIDE);
+		ad->getGM()->createRelation(ad->getCaller()->getLocation(), item, R_INSIDE);
 		*ad << "You've dropped " + item->getName() + "." << eos;
 		item->onDrop(ad);
 	}

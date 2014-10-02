@@ -7,6 +7,7 @@
 #include "common.hpp"
 #include "Driver.hpp"
 #include "RandomString.hpp"
+#include "Objects/Human.hpp"
 
 namespace Dungeon {
     
@@ -24,7 +25,7 @@ namespace Dungeon {
         virtual ~ActionDescriptor();
 
         Action* getAction();
-        Alive* getAlive();
+        Human* getCaller();
         GameManager* getGM();
         
         Driver* driver;
@@ -52,9 +53,9 @@ namespace Dungeon {
         void enqueued(GameManager* gm);
         
         /**
-         * Is called when there's an alive to take responsibility.
+         * Is called when there's a human to take responsibility.
          */
-        void assigned(Alive* alive);
+        void assigned(Human* human);
         
         /**
          * Is called when appropriate action is matched.
@@ -131,7 +132,7 @@ namespace Dungeon {
     private:
         Action* action;
         GameManager* gm;
-        Alive* caller;
+        Human* caller;
         int id;
         
         queue<dialogReply> dialogReplies;

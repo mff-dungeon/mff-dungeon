@@ -41,7 +41,7 @@ namespace Dungeon {
 		try {
 			ObjectMap targets = door->getRelations(Relation::Master, R_TARGET);
 			for (auto& obj : targets) {
-				if (obj.second != ad->getAlive()->getLocation()) {
+				if (obj.second != ad->getCaller()->getLocation()) {
 					target = obj.second;
 				}
 			}
@@ -51,7 +51,7 @@ namespace Dungeon {
 		}
 
 		target.assertType<Location>("That seems to head nowhere. You've decided not to go there.");
-		ad->getGM()->moveAlive(ad->getAlive(), target);
+		ad->getGM()->moveAlive(ad->getCaller(), target);
 		door.unsafeCast<Door>()->onGoThrough(ad);
 		target->triggerTraps("inside", ad);
 		target.unsafeCast<Location>()->examine(ad);

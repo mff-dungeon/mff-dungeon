@@ -1,5 +1,6 @@
 #include "Crafter.hpp"
 #include "../Actions/UseAction.hpp"
+#include "../ActionDescriptor.hpp"
 
 namespace Dungeon {
 	
@@ -72,7 +73,6 @@ namespace Dungeon {
         
 	void CraftAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		target.assertExists("Crafter is not found.").assertType<Crafter>("You can ask only a crafter for a craft list.");
-		if(!ad->getAlive()->isInstanceOf(Human::HumanClassName)) return;
 		
 		try {
 			const ObjectMap& recipes = target.unsafeCast<Crafter>()->getRelations(Relation::Master, R_RECIPE);
@@ -81,7 +81,7 @@ namespace Dungeon {
 			for(auto& recipe : recipes) {
 				recipe.second.assertExists("Recipe has disappeared.").assertType<Recipe>("There is a non-recipe registered.");
 				Recipe* r = recipe.second.unsafeCast<Recipe>();
-				if(r->checkStatReqs(ad->getAlive())) {
+				if(r->checkStatReqs(ad->getCaller())) {
 					*ad << r->getDescription() << eos;
 					found++;
 				}
@@ -107,10 +107,9 @@ namespace Dungeon {
 
 	void CreateAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		target.assertExists("Recipe doesn't exists.").assertType<Recipe>("You are trying to craft from a non-recipe.");
-		if(!ad->getAlive()->isInstanceOf(Human::HumanClassName)) return;
 		
 		Recipe* r = target.unsafeCast<Recipe>();
-		if(!r->checkStatReqs(ad->getAlive(), ad)) {
+		if(!r->checkStatReqs(ad->getCaller(), ad)) {
 			*ad << "You cannot craft this item yet." << eos;
 			LOGS("Crafter", Error) << "Somehow, an unsuitable item got to the create action." << LOGF;
 		}

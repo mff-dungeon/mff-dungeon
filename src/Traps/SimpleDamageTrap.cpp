@@ -5,13 +5,13 @@
 namespace Dungeon {
 	
 	void SimpleDamageTrap::trigger(string event, ObjectPointer target, ActionDescriptor* ad) {
-		if (justOnce && hasRelation("damage-dealt", ad->getAlive()))
+		if (justOnce && hasRelation("damage-dealt", ad->getCaller()))
 			return;
 		
 		*ad << getDamageMessage() << eos;
-		ad->getAlive()->changeHp(-getDamage());
+		ad->getCaller()->changeHp(-getDamage());
 		if (justOnce)
-			ad->getGM()->createRelation(this, ad->getAlive(), "damage-dealt");
+			ad->getGM()->createRelation(this, ad->getCaller(), "damage-dealt");
 	}
 	
 	void SimpleDamageTrap::registerProperties(IPropertyStorage& storage) {

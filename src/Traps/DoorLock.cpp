@@ -35,11 +35,11 @@ namespace Dungeon {
 	}
 
 	void DoorLock::trigger(string event, ObjectPointer target, ActionDescriptor* ad) {
-		if(!ad->getAlive()->hasItemType(getKey()->getObjectType())) {
+		if(!ad->getCaller()->hasItemType(getKey()->getObjectType())) {
 			throw TrapException(this);
 		}
 		if(consumesKey()) {
-			ObjectPointer backpack = ad->getAlive()->getBackpack();
+			ObjectPointer backpack = ad->getCaller()->getBackpack();
 			backpack.assertExists("Where do you keep your key?")
 					.assertType<Inventory>("You have equipped a non-backpack. How? ");
 			const ObjectMap& items = backpack.unsafeCast<Inventory>()->getRelations(Relation::Master, R_INVENTORY);

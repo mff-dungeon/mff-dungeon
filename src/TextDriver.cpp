@@ -17,7 +17,7 @@ namespace Dungeon {
 			try { // TrapExceptions to modify life-cycle
 				if (ad->isFinished()) {
                                         if (!ad->getAction()) {
-                                                ad->getAlive()->getAllActions(&alist);
+                                                ad->getCaller()->getAllActions(&alist);
 
                                                 string message (ad->in_msg);
                                                 transform(message.begin(), message.end(), message.begin(), ::tolower);
@@ -49,14 +49,14 @@ namespace Dungeon {
                                         ad->getAction()->validate();
 
                                         ad->state = ActionDescriptor::RoundBegin;
-                                        ad->getAlive()->onBeforeAction(ad);
-                                        ad->getAlive()->triggerTraps("action-" + ad->getAction()->type, ad);
+                                        ad->getCaller()->onBeforeAction(ad);
+                                        ad->getCaller()->triggerTraps("action-" + ad->getAction()->type, ad);
 
                                         ad->state = ActionDescriptor::Round;
                                         ad->getAction()->commit(ad);
 
                                         ad->state = ActionDescriptor::RoundEnd;
-                                        ad->getAlive()->onAfterAction(ad);
+                                        ad->getCaller()->onAfterAction(ad);
 				} else { // ! finished
                                         ad->state = ActionDescriptor::Round;
                                         ad->userReplied(ad->in_msg);
@@ -108,9 +108,9 @@ namespace Dungeon {
                                                 << "You have discovered the mighty Dungeon. What is thy name?" << endr
                                                 << "Beware of the great Dungeon! How do you wish to be called?" << endr) << eos;
 					ad->waitForReply([] (ActionDescriptor *ad, string reply) {
-						((Human*) ad->getAlive())->setUsername(reply)
+						((Human*) ad->getCaller())->setUsername(reply)
 								->save();
-						*ad << "Welcome, " << ad->getAlive()->getName() << "!" << eos; // A common mistake
+						*ad << "Welcome, " << ad->getCaller()->getName() << "!" << eos; // A common mistake
 						*ad << "You may begin your quest. Ask me and I shall answer you." << eos;
 					});
 					

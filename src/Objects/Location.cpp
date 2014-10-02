@@ -90,7 +90,7 @@ namespace Dungeon {
 		LOGS("Location", Verbose) << "Exploring " << this->getName() << "." << LOGF;
 		triggerTraps("examine", ad);
 		if (!ad) return;
-		ObjectPointer alive = ad->getAlive();
+		ObjectPointer alive = ad->getCaller();
 		// Recursively search all items in this room
 		ObjectGroup groupedObjects;
 		SentenceJoiner nested;
@@ -144,7 +144,7 @@ namespace Dungeon {
 			return;
 		}
 		
-		ObjectPointer backpack = ad->getAlive()
+		ObjectPointer backpack = ad->getCaller()
 				->getBackpack();
 
 		if (!backpack) {

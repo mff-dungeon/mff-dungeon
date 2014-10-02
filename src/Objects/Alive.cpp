@@ -2,6 +2,7 @@
 #include <math.h>
 #include "Alive.hpp"
 #include "Location.hpp"
+#include "Wearable.hpp"
 #include "../ActionDescriptor.hpp"
 #include "../ActionList.hpp"
 #include "../RandomString.hpp"
@@ -113,7 +114,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::setAttack(int attack, ActionDescriptor* ad) {
-		if(ad != 0 && this->attack != attack && ad->getAlive() == this) {
+		if(ad != 0 && this->attack != attack && ad->getCaller() == this) {
 			*ad << "Your attack value has changed to " + to_string(attack) + "." << eos;
 		}
 		this->attack = attack;
@@ -125,7 +126,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::setDefense(int defense, ActionDescriptor* ad) {
-		if(ad != 0 && this->defense != defense && ad->getAlive() == this) {
+		if(ad != 0 && this->defense != defense && ad->getCaller() == this) {
 			*ad << "Your defense value has changed to " + to_string(defense) + "." << eos;
 		}
 		this->defense = defense;
@@ -140,7 +141,7 @@ namespace Dungeon {
 		if(hp >= maxHp) hp = maxHp;
 		if(hp <= 0) hp = 0;
 		
-		if(ad != 0 && this->currentHp != hp && ad->getAlive() == this) {
+		if(ad != 0 && this->currentHp != hp && ad->getCaller() == this) {
 			*ad << "Your current hitpoints have changed to " + to_string(hp) + "." << eos;
 		}
 		this->currentHp = hp;
@@ -152,7 +153,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::setMaxHp(int hp, ActionDescriptor* ad) {
-		if(ad != 0 && this->maxHp != maxHp && ad->getAlive() == this) {
+		if(ad != 0 && this->maxHp != maxHp && ad->getCaller() == this) {
 			*ad << "Your maximum hitpoints have changed to " + to_string(maxHp) + "." << eos;
 		}
 		this->maxHp = hp;
@@ -207,7 +208,7 @@ namespace Dungeon {
 		int damage = (int) (multiplier * rnd / 100 *(amount - getDefense() * 0.2));
 		if(damage <= 0) return this; 
 		if(ad != 0) {
-			if(ad->getAlive() == this) {
+			if(ad->getCaller() == this) {
 				if (attacker->getWeaponName() != "")
 					*ad << (RandomString::get()
 							<< "You have received " << damage << " damage from " + attacker->getName() + "'s " + Utils::decapitalize(attacker->getWeaponName()) + "." << endr
@@ -216,7 +217,7 @@ namespace Dungeon {
 					*ad << "You have received " + to_string(damage) + " damage from " + attacker->getName() + "." << eos;
 			}
 			else {
-				string weapon = ad->getAlive()->getWeaponName();
+				string weapon = ad->getCaller()->getWeaponName();
 				if (weapon != "")
 					*ad << (RandomString::get()
 							<< "You have dealt " << damage << " damage to " + this->getName() + " with your " + Utils::decapitalize(move(weapon))  + "." << endr

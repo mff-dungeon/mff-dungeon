@@ -4,6 +4,7 @@
 #include "../common.hpp"
 #include "Item.hpp"
 #include "../Traps/Trap.hpp"
+#include "../GameManager.hpp"
 
 namespace Dungeon {
 	
