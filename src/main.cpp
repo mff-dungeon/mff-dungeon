@@ -87,7 +87,8 @@ void start() {
 	LOG("main") << "This is Jabber Dungeon starting." << LOGF;
 	gm = new GameManager(initWorld);
 
-	jabber = new JabberDriver(gm, "dungeon@eideo.cz", "somemagicshit");
+	//jabber = new JabberDriver(gm, "dungeon@eideo.cz", "somemagicshit");
+	jabber = new JabberDriver(gm, "dungeon-test@eideo.cz", "losethegame");
 	jabber->run();
 	LOG("main") << "Drivers started, starting queue." << LOGF;
 

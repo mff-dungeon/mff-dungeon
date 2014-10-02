@@ -310,11 +310,12 @@ namespace Dungeon {
 						ActionList list;
 						this->getAllActions(&list);
                                                 
-                                                ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
+						ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
 						for (auto& a : list) {
                             if (!a.second->isVisibleInHelp) continue;
 							a.second->explain(ad);
 						}
+						ad->setReplyFormat(ActionDescriptor::ReplyFormat::Paragraph);
 				}, false));
 
 			list->addAction(new CallbackAction("explore", "explore - List items you can see in your current location",

@@ -287,22 +287,22 @@ namespace Dungeon {
 		return this;
 	}
         
-        Alive::Presence Alive::getPresence() {
-            long unseenTime = (long)time(0) - this->lastInteraction;
-            
-            if (unseenTime < 60 * 10) {
-                return Presence::Present;
-            } else if (unseenTime < 40 * 10) {
-                return Presence::Away;
-            } else {
-                return Presence::Offline;
-            }
-        }
+	Alive::Presence Alive::getPresence() {
+		long unseenTime = (long)time(0) - this->lastInteraction;
 
-        Alive* Alive::markInteraction() {
-            this->lastInteraction = (long)time(0);
-            return this;
-        }
+		if (unseenTime < 60 * 10) {
+			return Presence::Present;
+		} else if (unseenTime < 40 * 10) {
+			return Presence::Away;
+		} else {
+			return Presence::Offline;
+		}
+	}
+
+	Alive* Alive::markInteraction() {
+		this->lastInteraction = (long) time(0);
+		return this;
+	}
         
 	int Alive::getResourceQuantity(Resource::ResourceType type) {
 		ObjectPointer resource = getSingleRelation(R_RESOURCE(type), Relation::Master);
