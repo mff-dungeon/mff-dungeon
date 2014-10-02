@@ -31,10 +31,11 @@ namespace Dungeon {
 
 		bool flawless = false;
 		try {
+			ad->driver->processDescriptor(ad);
+
                         // Record interaction
                         ad->getCaller()->markInteraction()->save();
                     
-			ad->driver->processDescriptor(ad);
 			flawless = true;
 		}		catch (GameException& ge) {
 			LOGS("ActionQueue", Error) << "Game exception occured and Driver missed it." << ge.what() << LOGF;
