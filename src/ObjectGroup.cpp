@@ -42,7 +42,7 @@ namespace Dungeon {
 		return ObjectGroupMap::value_type(ptr.getId(), ptr);
 	}
         
-	void ObjectGroup::explore(ActionDescriptor *ad) {
+	void ObjectGroup::explore(ActionDescriptor *ad, bool ignoreOfflineUsers) {
 		if (this->size() == 0) return;
 		ObjectGroup::iterator it;
 		string objectType = objId_getType(this->begin()->first);
@@ -52,7 +52,10 @@ namespace Dungeon {
 				if (!it->second->instanceOf(IDescriptable)) {
 						*ad << "There is an object (" + it->second.getId() + ")." << eos;
 						continue;
-				}
+				} else if (it->second->instanceOf(Alive) && it->second.unsafeCast<Alive>()->getPresence() == Alive::Presence::Offline) {
+                                    // These aren't the Alives we're looking for.
+                                    continue;
+                                }
 				objectType = objId_getType(it->first);
 
 				while (it != this->end() && objectType == objId_getType(it->first)) {
