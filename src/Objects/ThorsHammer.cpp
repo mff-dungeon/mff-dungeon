@@ -23,7 +23,7 @@ namespace Dungeon
 	}
 
 	void ThorsHammer::getActions(ActionList* list, ObjectPointer callee) {
-		list->addAction(new CallbackAction("dump", "dump - If you want to get some info...",
+		list->addAction(new CallbackAction("dump", "(TH) dump - If you want to get some info...",
 		RegexMatcher::matcher("^dump( relations)?( of)?(.*)$"),
 		[this] (ActionDescriptor * ad) {
 				smatch matches;
@@ -70,14 +70,14 @@ namespace Dungeon
                                 *ad << eos;
 		}));
 		
-		list->addAction(new CallbackAction("shutdown", "server shutdown - Shutdown's the server.",
+		list->addAction(new CallbackAction("shutdown", "(TH) server shutdown - Shutdown's the server.",
 				RegexMatcher::matcher("server shutdown"), 
 				[] (ActionDescriptor* ad) {
 					ad->getGM()->shutdown();
 					*ad << "OK. I will just finish the queue. Bye!" << eos;
 				}));
 		
-		list->addAction(new CallbackAction("dot-dump", "server dump dot - generate game graph in dot format.",
+		list->addAction(new CallbackAction("dot-dump", "(TH) server dump dot - generate game graph in dot format.",
 				RegexMatcher::matcher("server dump dot"), 
 				[] (ActionDescriptor* ad) {
 					DotDumper dd;
@@ -91,7 +91,7 @@ namespace Dungeon
 					dd.endDump();
 				}));
 		
-		list->addAction(new CallbackAction("bigBang", "server initialize - Delete & recreate tables.",
+		list->addAction(new CallbackAction("bigBang", "(TH) server initialize - Delete & recreate tables.",
 				RegexMatcher::matcher("server initialize"), 
 				[] (ActionDescriptor* ad) {
 					*ad << "Cross your fingers!" << eos;
@@ -99,14 +99,14 @@ namespace Dungeon
 					*ad << "... can you hear me? Yes? It worked!" << eos;
 				}));
 				
-		list->addAction(new CallbackAction("heal", "heal yourself - heals you to full hp.",
+		list->addAction(new CallbackAction("heal", "(TH) heal yourself - heals you to full hp.",
 				RegexMatcher::matcher("heal( myself| me)?"),
 				[] (ActionDescriptor* ad) {
 					ad->getCaller()->setCurrentHp(ad->getCaller()->getMaxHp());
 					*ad << "You have fully healed yourself." << eos;
 				}));
 		
-		list->addAction(new CallbackAction("teleport", "teleport <id> - teleport yourself everywhere.",
+		list->addAction(new CallbackAction("teleport", "(TH) teleport <id> - teleport yourself everywhere.",
 				RegexMatcher::matcher("teleport( to)? .+"), 
 				[] (ActionDescriptor* ad) {
 					smatch matches;
@@ -117,6 +117,7 @@ namespace Dungeon
 					}
 					
 					ad->getGM()->moveAlive(ad->getCaller(), ad->getGM()->getObject(matches[1]));
+					*ad << "You have teleported to " << matches[1] << eos;
 				}));
 				
 		PropertyEditor* pe = new PropertyEditor;

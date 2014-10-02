@@ -1,4 +1,5 @@
 #include "UseAction.hpp"
+#include "../ActionDescriptor.hpp"
 #include "../RegexMatcher.hpp"
 #include "../ActionList.hpp"
 
@@ -16,6 +17,10 @@ namespace Dungeon {
 	void UseAction::setFor(ObjectPointer target, ActionList* list, MultiTargetAction* action) {
 		((UseAction*) list->addAction(new UseAction))
 				->addTarget(target, action);
+	}
+
+	void UseAction::explain(ActionDescriptor* ad) {
+		*ad << "use ... - Uses the object." << eos;
 	}
 
 }

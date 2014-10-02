@@ -10,13 +10,13 @@ namespace Dungeon
 	class UseAction : public Polyaction
 	{
 	public:
-            UseAction() : Polyaction("use") {};
-            virtual ~UseAction() {}
+		UseAction() : Polyaction("use") {};
+		virtual ~UseAction() {}
 
-            virtual bool match(string command, ActionDescriptor* ad);
-            
-            static void setFor(ObjectPointer target, ActionList* list, MultiTargetAction* action);
+		virtual bool match(string command, ActionDescriptor* ad);
+		virtual void explain(ActionDescriptor* ad);
 
+		static void setFor(ObjectPointer target, ActionList* list, MultiTargetAction* action);
 	};
 }
 

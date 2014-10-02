@@ -5,6 +5,7 @@
 #include "Item.hpp"
 #include "../Traps/Trap.hpp"
 #include "../GameManager.hpp"
+#include "../RandomString.hpp"
 
 namespace Dungeon {
 	
@@ -60,6 +61,57 @@ namespace Dungeon {
 		Resource* attachSumTrap();
                 
 		virtual void registerProperties(IPropertyStorage& storage);
+		
+		static inline std::string getResourceAmountWord(int amount) {
+			if (amount > 10000) {
+				return (RandomString::get() << "huge shitload" << endr
+											 << "worth a fortune" << endr
+											 << "good supply" << endr
+											 << "gazillion" << endr);
+			} else if (amount > 9000) {
+				return "OVER NINE THOUSAND!";
+			} else if (amount > 5000) {
+				return (RandomString::get() << "a shitload" << endr
+											 << "small warehouse worth" << endr
+											 << "rich" << endr
+											 << "enough to piss off others" << endr);
+			} else if (amount > 1000) {
+				return (RandomString::get() << "medium supply" << endr
+											 << "good to go" << endr
+											 << "no problemo" << endr
+											 << "enough to mess around" << endr);
+			} else if (amount > 500) {
+				return (RandomString::get() << "low supply" << endr
+											 << "will last a while" << endr
+											 << "don't worry about it now" << endr
+											 << "okay" << endr);
+			} else if (amount > 100) {
+				return (RandomString::get() << "enough for a while" << endr
+											 << "enough to survive" << endr
+											 << "bare minimum" << endr
+											 << "not much" << endr);
+			} else if (amount > 0) {
+				return (RandomString::get() << "almost depleted" << endr
+											 << "really not much" << endr
+											 << "poor" << endr
+											 << "scarse" << endr);
+			} else if (amount == 0) {
+				return (RandomString::get() << "zero" << endr
+											 << "zilch" << endr
+											 << "null" << endr
+											 << "nil" << endr
+											 << "not" << endr
+											 << "nothing" << endr
+											 << "nada" << endr
+											 << "empty" << endr);
+			} else {
+				return (RandomString::get() << "impossibru" << endr
+											 << "wait what?!" << endr
+											 << "something wrong" << endr
+											 << "you've broken physics" << endr
+											 << "keep calm and nuke it from orbit" << endr);
+			}
+		}
                 	
 	private:
 		ResourceType resourceType = Resource::Gold;

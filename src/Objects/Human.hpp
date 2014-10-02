@@ -142,6 +142,8 @@ namespace Dungeon {
 		StatReq* setValue(int value);
 		Human::Stats getStat() const;
 		StatReq* setStat(Human::Stats stat);
+		
+        virtual void registerProperties(IPropertyStorage& storage);
 	private:
 		int value;
 		Human::Stats stat;

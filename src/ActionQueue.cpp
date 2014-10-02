@@ -33,8 +33,8 @@ namespace Dungeon {
 		try {
 			ad->driver->processDescriptor(ad);
 
-                        // Record interaction
-                        ad->getCaller()->markInteraction()->save();
+			// Record interaction
+			ad->getCaller()->markInteraction()->save();
                     
 			flawless = true;
 		}		catch (GameException& ge) {

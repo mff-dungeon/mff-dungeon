@@ -270,7 +270,7 @@ namespace Dungeon {
 				
 			// Dead related actions, do not add rest if user is dead	
 			if(getState() == State::Dead) {
-				list->addAction(new CallbackAction("respawn", "respawn user", 
+				list->addAction(new CallbackAction("respawn", "respawn - respawns you in the city", 
 					RegexMatcher::matcher("respawn"),
 					[this] (ActionDescriptor* ad) {
 						if(time(0) >= getRespawnTime()) {
@@ -348,7 +348,7 @@ namespace Dungeon {
 							<< "Stop behaving like shit and do something useful." << endr) << eos;
 					*ad << "You've been charged 50 hitpoints for server atmosphere reconstruction." << eos;
 					ad->getCaller()->changeHp(50, ad);
-				}));
+				}, false));
 				
 			// TODO - redo to a MTA. add equiped relations and other inventories
 			list->addAction(new CallbackAction("what do i own", "what do i own - A list of items in backpack",
@@ -387,7 +387,7 @@ namespace Dungeon {
 				RegexMatcher::matcher(".*character stats|.*human stats"),
 				[this] (ActionDescriptor* ad) {
 					Human* me = ad->getCaller();
-					*ad << "My current stats: " << eos;
+					*ad << "My current level is " << me->getCharacterLevel() << ". My current stats are: " << eos;
 					ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
 					for(int i = Human::Stats::Begin; i<Human::Stats::End; i++) {
 						*ad << Human::getStatName(i) << ": " << me->getStatValue(i) << eos;
@@ -396,7 +396,7 @@ namespace Dungeon {
 						ad->setReplyFormat(ActionDescriptor::ReplyFormat::Paragraph);
 						*ad << "I also have " << me->getFreePoints() << " free points to distribute." << eos;
 					}
-				}));
+				}, false));
 				
 			list->addAction(new RaiseStatAction);
                                 
@@ -410,57 +410,7 @@ namespace Dungeon {
 					for (int type = (int)Resource::ResourceType::BEGIN; type != (int)Resource::ResourceType::END; type++) {
 						*ad << Utils::capitalize(Resource::ResourceName[type], true) << ": ";
 						int quantity = me->getResourceQuantity((Resource::ResourceType)type);
-						*ad << "[ " << quantity << " ] ";
-
-						if (quantity > 10000) {
-							*ad << ( RandomString::get() << "huge shitload" << endr
-														 << "worth a fortune" << endr
-														 << "good supply" << endr
-														 << "gazillion" << endr );
-						} else if (quantity > 9000) {
-							*ad << "OVER NINE THOUSAND!";
-						} else if (quantity > 5000) {
-							*ad << ( RandomString::get() << "a shitload" << endr
-														 << "small warehouse worth" << endr
-														 << "rich" << endr
-														 << "enough to piss off others" << endr );
-						} else if (quantity > 1000) {
-							*ad << ( RandomString::get() << "medium supply" << endr
-														 << "good to go" << endr
-														 << "no problemo" << endr
-														 << "enough to mess around" << endr );
-						} else if (quantity > 500) {
-							*ad << ( RandomString::get() << "low supply" << endr
-														 << "will last a while" << endr
-														 << "don't worry about it now" << endr
-														 << "okay" << endr );
-						} else if (quantity > 100) {
-							*ad << ( RandomString::get() << "enough for a while" << endr
-														 << "enough to survive" << endr
-														 << "bare minimum" << endr
-														 << "not much" << endr );
-						} else if (quantity > 0) {
-							*ad << ( RandomString::get() << "almost depleted" << endr
-														 << "really not much" << endr
-														 << "poor" << endr
-														 << "scarse" << endr );
-						} else if (quantity == 0) {
-							*ad << ( RandomString::get() << "zero" << endr
-														 << "zilch" << endr
-														 << "null" << endr
-														 << "nil" << endr
-														 << "not" << endr
-														 << "nothing" << endr
-														 << "nada" << endr
-														 << "empty" << endr );
-						} else {
-							*ad << ( RandomString::get() << "impossibru" << endr
-														 << "wait what?!" << endr
-														 << "something wrong" << endr
-														 << "you've broken physics" << endr
-														 << "keep calm and nuke it from orbit" << endr );
-						}
-						*ad << eos;
+						*ad << "[ " << quantity << " ] " << Resource::getResourceAmountWord(quantity) << eos;
 					}
 				}, false));
             
@@ -542,7 +492,7 @@ namespace Dungeon {
 			
 
 	void RaiseStatAction::explain(ActionDescriptor* ad) {
-		*ad << "Use raise ... to raise your character stat." << eos;
+		*ad << "raise ... - raise your character stat." << eos;
 	}
 
 	bool RaiseStatAction::match(string command, ActionDescriptor* ad) {
@@ -606,6 +556,11 @@ namespace Dungeon {
 	StatReq* StatReq::setValue(int value) {
 		this->value = value;
 		return this;
+	}
+
+	void StatReq::registerProperties(IPropertyStorage& storage) {
+		storage.have((int&) stat, "statreq-type", "The required stat.")
+				.have(value, "statreq-value", "The required stat value.");
 	}
 
 	PERSISTENT_IMPLEMENTATION(StatReq)
