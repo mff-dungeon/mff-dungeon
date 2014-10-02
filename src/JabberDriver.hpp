@@ -72,6 +72,8 @@ namespace Dungeon {
         fstream userFile;
         
         void createNewFigure(gloox::JID jid);
+        
+        bool shuttingDown;
     };
     
 }

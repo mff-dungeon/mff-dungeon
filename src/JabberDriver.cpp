@@ -1,5 +1,6 @@
 #include <netdb.h>
 #include <unistd.h>
+#include <chrono>
 
 #include "JabberDriver.hpp"
 #include "ActionDescriptor.hpp"
@@ -8,7 +9,7 @@
 using namespace gloox;
 
 namespace Dungeon {
-    JabberDriver::JabberDriver(GameManager* gm, string jabberUsername, string jabberPassword) : TextDriver(gm->getQueue()), connected(false), gm(gm) {
+    JabberDriver::JabberDriver(GameManager* gm, string jabberUsername, string jabberPassword) : TextDriver(gm->getQueue()), connected(false), gm(gm), shuttingDown(false) {
         // initialize Jabber client with credentials
         JID jid(jabberUsername);
 		char hostname[1024];
@@ -49,12 +50,16 @@ namespace Dungeon {
     }
     
     void JabberDriver::stop() {
+        shuttingDown = true;
+        
         // disconnect client
         client->setPresence(Presence::Unavailable, presencePriority(), "I will be back.");
         client->disconnect();
     }
     
     void JabberDriver::run() {
+        shuttingDown = false;
+        
         // create thread with worker()
         this->workerThread = new thread(&JabberDriver::worker, this);
     }
@@ -152,8 +157,16 @@ namespace Dungeon {
     }
     
     void JabberDriver::onDisconnect(ConnectionError e) {
-        LOG("JabberDriver") << "Connection closed. Error: " << e << LOGF;
         connected = false;
+        
+        if (!shuttingDown) {
+            LOGS("JabberDriver", Error) << "Connection lost, retrying. Error: " << e << LOGF;
+            
+            this_thread::sleep_for(chrono::seconds(10));
+            client->connect(true);
+        } else {
+            LOG("JabberDriver") << "Connection closed. Error: " << e << LOGF;
+        }
     }
     
     bool JabberDriver::onTLSConnect(const CertInfo& info) {
