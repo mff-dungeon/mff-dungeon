@@ -54,6 +54,7 @@ namespace Dungeon {
 		virtual Alive* respawn(ActionDescriptor* ad = 0);
 		
 		virtual int getCharacterLevel() const;
+		virtual int getExperience() const;
 		virtual int getFreePoints() const;
 		virtual Human* useStatPoint(Stats stat, ActionDescriptor* ad = 0);
 		virtual int getStatValue(Stats stat) const;

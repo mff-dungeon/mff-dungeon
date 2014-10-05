@@ -10,14 +10,16 @@
 namespace Dungeon {
    
     class GameManager {
-        friend struct ObjectPointer;
-    private:
-        SplayTree objects;
-        ObjectLoader *loader;
-        ActionQueue* aqueue;
+		friend struct ObjectPointer;
 
     public:
+		enum GameMode {
+			Normal = 0,			// The basic intented game mode
+			Hardcore = 1,		// Hardcore mode, if you die, you must restart the game
+			Test = 2			// Can implement testing specific features
+		};
         GameManager(bool init = false);
+		GameMode getGameMode() const;
         void initWorld(bool askOnConsole = true);
         bool hasObject(objId id);
         bool hasObjectLoaded(objId id);
@@ -113,6 +115,11 @@ namespace Dungeon {
          * @param relation type of the relation
          */
         void addRelation(ObjectPointer master, ObjectPointer slave, string relation);
+	private:
+		GameMode gameMode;
+        SplayTree objects;
+        ObjectLoader *loader;
+        ActionQueue* aqueue;
     };
 }
 

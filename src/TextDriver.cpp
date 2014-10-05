@@ -16,50 +16,50 @@ namespace Dungeon {
 		try { // Catching regular exceptions
 			try { // TrapExceptions to modify life-cycle
 				if (ad->isFinished()) {
-                                        if (!ad->getAction()) {
-                                                ad->getCaller()->getAllActions(&alist);
+					if (!ad->getAction()) {
+						ad->getCaller()->getAllActions(&alist);
 
-                                                string message (ad->in_msg);
-                                                transform(message.begin(), message.end(), message.begin(), ::tolower);
+						string message (ad->in_msg);
+						transform(message.begin(), message.end(), message.begin(), ::tolower);
 
-                                                ofstream debugfile;
-                                                debugfile.open("debug/messages.txt", ios::out | ios::app);
-                                                debugfile << message << ";";
+						ofstream debugfile;
+						debugfile.open("debug/messages.txt", ios::out | ios::app);
+						debugfile << message << ";";
+						
+						for (ActionList::iterator it = alist.begin(); it != alist.end(); ++it) {
+							Action* action = it->second;
+							LOGS("TextDriver", Verbose) << "Matching action " << it->first << LOGF;
+							if (action->match(message, ad)) {
+								ad->matched(action);
+								debugfile << action->type << endl;
+								debugfile.close();
+								break;
+							}
+						}
+						alist.clear();
 
-                                                for (ActionList::iterator it = alist.begin(); it != alist.end(); ++it) {
-                                                        Action* action = it->second;
-                                                        LOGS("TextDriver", Verbose) << "Matching action " << it->first << LOGF;
-                                                        if (action->match(message, ad)) {
-                                                                ad->matched(action);
-                                                                debugfile << action->type << endl;
-                                                                debugfile.close();
-                                                                break;
-                                                        }
-                                                }
-                                                alist.clear();
+						if (!ad->isValid(this)) {
+							*ad << getDontUnderstandResponse(ad->in_msg) << eos;
+							debugfile << "!!!!!" << endl;
+							debugfile.close();
+							return false;
+						}
+					}
 
-                                                if (!ad->isValid(this)) {
-                                                        *ad << getDontUnderstandResponse(ad->in_msg) << eos;
-                                                        debugfile << "!!!!!" << endl;
-                                                        debugfile.close();
-                                                        return false;
-                                                }
-                                        }
+					ad->getAction()->validate();
 
-                                        ad->getAction()->validate();
+					ad->state = ActionDescriptor::RoundBegin;
+					ad->getCaller()->onBeforeAction(ad);
+					ad->getCaller()->triggerTraps("action-" + ad->getAction()->type, ad);
 
-                                        ad->state = ActionDescriptor::RoundBegin;
-                                        ad->getCaller()->onBeforeAction(ad);
-                                        ad->getCaller()->triggerTraps("action-" + ad->getAction()->type, ad);
+					ad->state = ActionDescriptor::Round;
+					ad->getAction()->commit(ad);
 
-                                        ad->state = ActionDescriptor::Round;
-                                        ad->getAction()->commit(ad);
-
-                                        ad->state = ActionDescriptor::RoundEnd;
-                                        ad->getCaller()->onAfterAction(ad);
+					ad->state = ActionDescriptor::RoundEnd;
+					ad->getCaller()->onAfterAction(ad);
 				} else { // ! finished
-                                        ad->state = ActionDescriptor::Round;
-                                        ad->userReplied(ad->in_msg);
+					ad->state = ActionDescriptor::Round;
+					ad->userReplied(ad->in_msg);
 				}	
 				return true;
 			} catch (TrapException& te) {

@@ -7,6 +7,7 @@
 #define COMMON_HPP
 
 #define DB_NAME "dungeon.db"
+#define CONFIG_GAME_MODE 0
 
 /**
  * Relation types used a lot

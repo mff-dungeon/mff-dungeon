@@ -19,6 +19,7 @@
 #include "Objects/Wearable.hpp"
 #include "Traps/AttackTrap.hpp"
 #include "Traps/DoorLock.hpp"
+#include "Traps/HardcoreRespawn.hpp"
 #include "Traps/Healing.hpp"
 #include "Traps/ItemRespawner.hpp"
 #include "Traps/MTATrap.hpp"

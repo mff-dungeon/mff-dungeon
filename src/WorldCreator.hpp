@@ -50,6 +50,13 @@ namespace Dungeon {
             return ptr;
         }
 		
+		ObjectPointer statReq(Human::Stats stat, int value) {
+			StatReq* req = new StatReq("statreq/rand/" + RANDID);
+			gm->insertObject(req);
+			req->setStat(stat)->setValue(value)->save();
+			return req;
+		}
+		
 		ObjectPointer deepCloneTemplate(ObjectPointer tmp, IObject* location = NULL) {
 			ObjectPointer clone = Cloner::deepClone(tmp);
 			if(location) clone->setSingleRelation(R_INSIDE, location, Relation::Slave);

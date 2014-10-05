@@ -73,7 +73,7 @@ namespace Dungeon {
         // Really need to do it on every reply. Alive object could have been disposed in meantime...
         ad->assigned(figure);
 		
-	this->process(ad);
+		this->process(ad);
 
         Message msg(Message::Chat, ad->from, ad->getReply());
         ad->clearReply();

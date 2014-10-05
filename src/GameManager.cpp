@@ -9,6 +9,11 @@ namespace Dungeon {
 
 	GameManager::GameManager(bool init) {
         LOG("GameManager") << "Created." << LOGF;
+		if(CONFIG_GAME_MODE != 0 && CONFIG_GAME_MODE != 1 && CONFIG_GAME_MODE != 2) {
+			LOGS("GameManager", Fatal) << "Invalid game mode set in config, exiting." << LOGF;
+			exit(2);
+		}
+		gameMode = (GameMode) CONFIG_GAME_MODE;
 		loader = new ObjectLoader();
 		
 		int dbCode = DatabaseHandler::getInstance().checkDatabase();
@@ -26,6 +31,10 @@ namespace Dungeon {
 		}
 		
 		aqueue = new ActionQueue(this);
+	}
+
+	GameManager::GameMode GameManager::getGameMode() const {
+		return gameMode;
 	}
 
 	void GameManager::initWorld(bool askOnConsole) {

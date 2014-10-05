@@ -31,18 +31,18 @@ namespace Dungeon
 			Dead = 3
 		};
                 
-                /**
-                 * Describes presence in game.
-                 * Meanings:
-                 *  Present - Alive has sent a message in last 10 minutes
-                 *  Away - There was no interaction for 40 minutes
-                 *  Offline - After hour of no interaction
-                 */
-                enum Presence {
-                    Present = 0,
-                    Away = 1,
-                    Offline = 2
-                };
+		/**
+		 * Describes presence in game.
+		 * Meanings:
+		 *  Present - Alive has sent a message in last 10 minutes
+		 *  Away - There was no interaction for 40 minutes
+		 *  Offline - After hour of no interaction
+		 */
+		enum Presence {
+			Present = 0,
+			Away = 1,
+			Offline = 2
+		};
 		
         Alive() {}		// Constructor allowing to load class later
         Alive(objId id);
@@ -165,15 +165,15 @@ namespace Dungeon
 		 */
 		virtual Alive* regenerate(int rate);
                 
-                /**
-                 * Finds out whether the guy is online.
-                 */
-                Presence getPresence();
-                
-                /**
-                 * Use this method to mark every last interaction this guy makes.
-                 */
-                Alive* markInteraction();
+		/**
+		 * Finds out whether the guy is online.
+		 */
+		Presence getPresence();
+
+		/**
+		 * Use this method to mark every last interaction this guy makes.
+		 */
+		Alive* markInteraction();
                 
 	private:
 		// Combat stats

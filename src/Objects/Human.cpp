@@ -9,6 +9,7 @@
 #include "../exceptions.hpp"
 #include "../RandomString.hpp"
 #include "../FuzzyStringMatcher.hpp"
+#include "../Traps/HardcoreRespawn.hpp"
 
 namespace Dungeon {
 	Human::Human() {
@@ -72,6 +73,10 @@ namespace Dungeon {
 		return this;
 	}
 
+	int Human::getExperience() const {
+		return exp;
+	}
+	
 	void Human::doLevelUp(ActionDescriptor* ad) {
 		this->level++;
 		this->freepoints += LEVEL_STAT_POINTS;
@@ -209,10 +214,20 @@ namespace Dungeon {
 	
 	Alive* Human::die(ActionDescriptor* ad) {
 		this->setState(State::Dead);
+		if(getGameManager()->getGameMode() == GameManager::Hardcore) {
+			HardcoreRespawn* trap = new HardcoreRespawn("HardcoreRespawn/trap/" + RANDID);
+			attachTrap(trap, "get-all-actions");
+			if(ad) {
+				*ad << "You have died and your life has ended. We hope you have enjoyed the Dungeon. "
+					<< "If you are brave enough, you can always try again. "
+					<< "To restart your journey, simply type anything. "
+					<< "Otherwise, goodbye for now. " << eos;
+			}
+			return this;
+		}
 		this->setRespawnTime(time(0) + getRespawnInterval());
-		if(ad != 0) { // Let's tell what happened
+		if(ad) { // Let's tell what happened
 			if(ad->getCaller() == this) { // It is me dying
-			// TODO: Write some fancy method to respawn time nicer (probably rounding to highest order is enough)
 				*ad << "Oh no! You have just died. "
 					<< "Your soul has moved to another plane of existence where it's currently regaining strength. "
 					<< "You cannot play for " << getRoundedTime(this->getRespawnInterval()) << ". "
@@ -227,6 +242,7 @@ namespace Dungeon {
 	}
 	
 	Alive* Human::respawn(ActionDescriptor* ad) {
+		if(getGameManager()->getGameMode() == GameManager::Hardcore) return this;
 		getRespawnLocation().assertExists("No respawning room available");
 		getGameManager()->moveAlive(this, getRespawnLocation());
 		this->setCurrentHp((int) getMaxHp() * 0.75);
@@ -347,7 +363,7 @@ namespace Dungeon {
 							<< "Server error. Too much grossness in the message." << endr
 							<< "Stop behaving like shit and do something useful." << endr) << eos;
 					*ad << "You've been charged 50 hitpoints for server atmosphere reconstruction." << eos;
-					ad->getCaller()->changeHp(50, ad);
+					ad->getCaller()->changeHp(-50, ad);
 				}, false));
 				
 			// TODO - redo to a MTA. add equiped relations and other inventories
@@ -387,7 +403,13 @@ namespace Dungeon {
 				RegexMatcher::matcher(".*character stats|.*human stats"),
 				[this] (ActionDescriptor* ad) {
 					Human* me = ad->getCaller();
-					*ad << "My current level is " << me->getCharacterLevel() << ". My current stats are: " << eos;
+					*ad << "Your current level is " << me->getCharacterLevel() << "." << eos;
+					int lastExp, nextExp, progress;
+					lastExp = getRequiredExp(me->getCharacterLevel());
+					nextExp = getRequiredExp(me->getCharacterLevel()+1);
+					progress = ((me->getExperience() - lastExp)*100/(nextExp-lastExp));
+					*ad << "You have already received " << progress << "% of experience required for next level up." << eos;
+					*ad << "Your current stats are: " << eos;
 					ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
 					for(int i = Human::Stats::Begin; i<Human::Stats::End; i++) {
 						*ad << Human::getStatName(i) << ": " << me->getStatValue(i) << eos;
