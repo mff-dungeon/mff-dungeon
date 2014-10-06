@@ -51,6 +51,7 @@ namespace Dungeon {
 		for (it = this->begin(); it != this->end(); ) {
 				if (!it->second->instanceOf(IDescriptable)) {
 						*ad << "There is an object (" + it->second.getId() + ")." << eos;
+						it++;
 						continue;
 				} else if (it->second->instanceOf(Alive) && it->second.unsafeCast<Alive>()->getPresence() == Alive::Presence::Offline) {
 					// These aren't the Alives we're looking for.
