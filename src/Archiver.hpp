@@ -14,8 +14,8 @@ namespace Dungeon {
      * Class implementing the archivation of objects into a stringstream
      * Holds private stringstream, which is converted to string when required by
      *	ObjectLoader.
-     * Defines operator << and >> for all data types to define converting to 
-     *  different data types.
+     * Defines operator << and >> for all supported data types to define 
+	 *  converting to different data types.
      * Storing variable defines the direction - if true, Archiver is saving 
      * 
      * TODO - rewrite it so directions aren't necessary using referenced parameters

@@ -57,7 +57,6 @@ namespace Dungeon {
 	}
 
     string Resource::getDescription() const {
-		// FIXME add rest of resources
         switch (getType()) {
             case ResourceType::Gold:
                 return "A chunk of great wealth (" + to_string(getQuantity()) + " units).";

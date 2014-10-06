@@ -21,15 +21,16 @@ namespace Dungeon
 	}
 	
 	const ObjectPointer& ObjectPointer::assertRelation(string type, ObjectPointer other, Relation::Dir master, string msg) const {
-		/* TODO gm has no such method :)
 		if (isLoaded()) {
 			if (!get()->hasRelation(type, other, master))
 				throw ObjectLost(msg);
 		} else {
-			gm->hasRelation(...)
-		}*/
-		if (!get()->hasRelation(type, other, master))
-			throw GameStateChanged(msg);
+			bool found = (master == Relation::Master) 
+					? gm->hasRelation(*this, other, type)
+					: gm->hasRelation(other, *this, type);
+			if(!found)
+				throw GameStateChanged(msg);
+		}
 		return *this;
 	}
 

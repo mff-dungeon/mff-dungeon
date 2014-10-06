@@ -89,7 +89,6 @@ namespace Dungeon {
     }
     
     string TextDriver::getDontUnderstandResponse(string input) {
-        // TODO: think of something more creative
         return RandomString::get()
                 << "What do you mean \"" + input + "\"?" << endr
                 << "The day may come when I understand \"" + input + "\" but it's not this day." << endr
@@ -114,7 +113,7 @@ namespace Dungeon {
 						*ad << "You may begin your quest. Ask me and I shall answer you." << eos;
 					});
 					
-                                        // TODO: add other first time questions
+					// TODO: add other first time questions
 				}, false);
     }
 }

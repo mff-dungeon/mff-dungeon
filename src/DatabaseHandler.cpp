@@ -206,7 +206,29 @@ namespace Dungeon {
 			return E_DELETE_ERROR;
 		return E_OK;
 	}
-	
+
+	int DatabaseHandler::hasRelation(Relation* rel, bool& found) {
+		const string qtmp = rel->getSelectQuery();
+		if(qtmp == "") {
+			sqlite3_close(dbConnection);
+			return E_INVALID_QUERY;
+		}
+		
+		const char* cquery = qtmp.c_str();
+		sqlite3_prepare(dbConnection, cquery, strlen(cquery), &dbStatement, 0);
+		sqlCode = sqlite3_step(dbStatement);
+		
+		if(sqlCode == SQLITE_ROW) {
+			found = true;
+		}
+		else {
+			found = false;
+		}
+		
+		finalize();
+		return E_OK;
+	}
+
 	int DatabaseHandler::checkDatabase() {
 		const char* check = "SELECT COUNT(*) FROM sqlite_master WHERE type = ?;";
 		sqlite3_prepare_v2(dbConnection, check, strlen(check), &dbStatement, 0);
@@ -233,7 +255,7 @@ namespace Dungeon {
 		const char* create1 = "CREATE TABLE objects (" \
 			"id TEXT NOT NULL," \
 			"className TEXT NOT NULL," \
-			"data BLOB NOT NULL);";		// TODO: change to TEXT NOT NULL later
+			"data BLOB NOT NULL);";
 		const char* create2 = "CREATE TABLE relations (" \
 			"pid TEXT NOT NULL," \
 			"pclass TEXT NOT NULL," \

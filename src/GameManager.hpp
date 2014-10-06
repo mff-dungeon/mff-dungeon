@@ -53,7 +53,16 @@ namespace Dungeon {
          * @param rel Relation to be added
          */
         void addRelation(Relation* rel);
-	
+		
+		/**
+		 * Checks if the relation exists either in the DB, or in the world
+		 * @param master Master
+		 * @param slave Slave
+		 * @param relation Relation Type
+		 * @return 
+		 */
+		bool hasRelation(ObjectPointer master, ObjectPointer slave, string relation);
+			
         /**
          * Creates relation on already loaded objects
          * @param master Master

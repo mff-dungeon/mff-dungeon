@@ -138,6 +138,14 @@ namespace Dungeon {
          * @return DatabaseHandler state value
          */
 		int deleteRelation(Relation* rel);
+		
+		/**
+		 * 
+         * @param rel Relation to be found
+         * @param found is set to true, if the relation was found
+         * @return DatabaseHandler state value
+         */
+		int hasRelation(Relation* rel, bool& found);
                 
                 
                 /**

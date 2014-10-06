@@ -205,7 +205,6 @@ namespace Dungeon {
 	}
     
     Alive* GameManager::addNewFigure(Alive *figure) {
-        // TODO: put the figure somewhere, initialize the inventory, and so on...
         this->insertObject(figure);
         figure->setRespawnLocation(ObjectPointer(this, "location/room/landcastle"));
 		
@@ -243,6 +242,20 @@ namespace Dungeon {
 			for (const ObjectMap::value_type& pair : rel.second) {
 				obj->eraseRelation(relation, pair.second, master);
 			}
+		}
+	}
+
+	bool GameManager::hasRelation(ObjectPointer master, ObjectPointer slave, string relation) {
+		if(master->hasRelation(relation, slave, Relation::Master) && slave->hasRelation(relation, master, Relation::Slave)) 
+			return true;
+		else {
+			Relation* refRel = new Relation(master.getId(), slave.getId(), "0", "0", relation);
+			bool found = false;
+			DatabaseHandler::getInstance().hasRelation(refRel, found);
+			delete refRel;
+			if(found)
+				return true;
+			else return false;
 		}
 	}
 	

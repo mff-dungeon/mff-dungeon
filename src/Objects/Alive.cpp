@@ -240,13 +240,12 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::die(ActionDescriptor* ad) {
-		// TODO: Oh no, I'm dead, I should respawn, should be overriden, prolly some basic implement can be here
-		// P.S. The ad can be "for" someone else!
+		// Should be overriden, this one does nothing
 		return this;
 	}
 
 	Alive* Alive::respawn(ActionDescriptor* ad) {
-		// TODO: Respawn, should be overriden, prolly some basic implement can be here
+		// Should be overriden, this one does nothing
 		return this;
 	}	
 	

@@ -244,7 +244,6 @@ namespace Dungeon {
 	}	
 	
 	void EquipAction::itemPhaseTwo(ActionDescriptor* ad) {
-		//TODO: Add doc, this one removes current item
 		// Get it all again in case it doesn't exist
 		// FIXME: Should check, if the action is still valid (someone else did something with the item)
 		itemPtr.assertExists("Item which was going to be equiped somehow disappeared");
@@ -260,6 +259,8 @@ namespace Dungeon {
 	}
 	
 	void EquipAction::itemPhaseThree(ActionDescriptor* ad) {
+		// FIXME doesn't handle items in chests atm, throws exceptions
+		// Need a way to find/check the item and remove it from there
 		Location* currentRoom = ad->getCaller()->getLocation().safeCast<Location>();
 		if(currentRoom->contains(itemPtr)) {
 			ad->getGM()->removeRelation(currentRoom, itemPtr, R_INSIDE);

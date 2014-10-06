@@ -81,7 +81,6 @@ namespace Dungeon {
 		this->level++;
 		this->freepoints += LEVEL_STAT_POINTS;
 		if(ad) {
-			// FIXME offer user to raise his/her stats
 			*ad << "You have just advanced to a new level. You have just gained "
 				<< LEVEL_STAT_POINTS 
 				<< " stat points. Distribute them by typing 'raise ...'."
@@ -366,7 +365,6 @@ namespace Dungeon {
 					ad->getCaller()->changeHp(-50, ad);
 				}, false));
 				
-			// TODO - redo to a MTA. add equiped relations and other inventories
 			list->addAction(new CallbackAction("what do i own", "what do i own - A list of items in backpack",
 				RegexMatcher::matcher("(what (do )?i (have|own)|inventory|list items)"),
 				[this] (ActionDescriptor* ad) {
