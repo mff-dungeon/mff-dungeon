@@ -42,7 +42,7 @@ namespace Dungeon {
         enum ReplyFormat {
             Paragraph,
             List
-        } replyFormat;
+        };
         
         /** Special type to indicate EOS - @see eos*/
         class EndOfSentence { };
@@ -133,6 +133,7 @@ namespace Dungeon {
         Action* action;
         GameManager* gm;
         Human* caller;
+		ReplyFormat replyFormat = ReplyFormat::Paragraph;
         int id;
         
         queue<dialogReply> dialogReplies;

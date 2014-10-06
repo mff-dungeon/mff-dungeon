@@ -202,6 +202,8 @@ namespace Dungeon {
 	
 	void GameManager::shutdown() {
 		this->aqueue->stop();
+		if(getGameMode() == GameMode::Test)
+			this->objects.clearTree();
 	}
     
     Alive* GameManager::addNewFigure(Alive *figure) {

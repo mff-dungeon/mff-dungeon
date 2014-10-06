@@ -60,11 +60,13 @@ namespace Dungeon {
 					pickAction->addTarget(itemObj.second);
 				}
 			}
-		}		catch (const std::out_of_range& e) {
+		} catch (const std::out_of_range& e) {
 
 		}
 		if (pickAction->getTargets().size() > 0) {
 			list->addAction(pickAction);
+		} else {
+			delete pickAction;
 		}
 		
 		IDescriptable::getActions(list, callee);

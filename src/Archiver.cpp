@@ -37,7 +37,7 @@ namespace Dungeon {
 		char* pChars = &mem[0];
 		read(pChars, sizeof(char) * l);
 		mem[l] = 0;
-		s = pChars;
+		s = pChars;		// FIXME: Leaks!!!
 		return *this;
 	}
 

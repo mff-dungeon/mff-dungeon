@@ -143,6 +143,9 @@ namespace Dungeon {
 		if(action->getTargets().size() > 0) {
 			list->addAction(action);
 		}
+		else {
+			delete action;
+		}
 	}
 	
 	void Inventory::registerProperties(IPropertyStorage& storage) {

@@ -34,6 +34,7 @@ namespace Dungeon {
 			ad->driver->processDescriptor(ad);
 
 			// Record interaction
+			// FIXME uninitialised caller -> memory error
 			ad->getCaller()->markInteraction()->save();
                     
 			flawless = true;

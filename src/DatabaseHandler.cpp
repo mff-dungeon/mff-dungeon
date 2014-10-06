@@ -158,10 +158,10 @@ namespace Dungeon {
 		sqlCode = sqlite3_step(dbStatement);
 		while(sqlCode == SQLITE_ROW) {
 			Relation* r = new Relation(objId((char *) sqlite3_column_text(dbStatement, 0)),
-					objId((char *) sqlite3_column_text(dbStatement, 2)),
+					objId((char *) sqlite3_column_text(dbStatement, 2)),	// FIXME: Leaks!!!
 					string((char *) sqlite3_column_text(dbStatement, 1)),
 					string((char *) sqlite3_column_text(dbStatement, 3)),
-					string((char *) sqlite3_column_text(dbStatement, 4)));
+					string((char *) sqlite3_column_text(dbStatement, 4)));	// FIXME: Leaks!!! leaves unallocated memory somehow
 			result.push_back(r);
 			sqlCode = sqlite3_step(dbStatement);
 		}

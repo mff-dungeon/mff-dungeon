@@ -330,7 +330,6 @@ namespace Dungeon {
                             if (!a.second->isVisibleInHelp) continue;
 							a.second->explain(ad);
 						}
-						ad->setReplyFormat(ActionDescriptor::ReplyFormat::Paragraph);
 				}, false));
 
 			list->addAction(new CallbackAction("explore", "explore - List items you can see in your current location",

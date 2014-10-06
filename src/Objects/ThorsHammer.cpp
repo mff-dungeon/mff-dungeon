@@ -10,9 +10,11 @@
 namespace Dungeon
 {
 	ThorsHammer::ThorsHammer() : Item("special/thorshammer") {
-		setName("Thor's Hammer");
-		setLongName("The most horrifying item in the world.");
-		setDescription("It reflect's so much light that it cannot be explored further.");
+		// WARNING - Following leaks may be connected to Archiver, as all of them are surrounded by archiver leaks although 
+		// all three of them should be done consecutively by the program
+		setName("Thor's Hammer");	// FIXME: Leaks!!! - leaves a trace in valgrind (38B)
+		setLongName("The most horrifying item in the world.");	// FIXME: Leaks!!! - leave a trace in valgrind (63B)
+		setDescription("It reflect's so much light that it cannot be explored further.");	//FIXME: Leaks!!! - leaves a trace in valgrind (87B)
 		setPickable(false);
 		setDropable(false);
 		setWeight(0);
