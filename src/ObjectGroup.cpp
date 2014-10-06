@@ -53,9 +53,10 @@ namespace Dungeon {
 						*ad << "There is an object (" + it->second.getId() + ")." << eos;
 						continue;
 				} else if (it->second->instanceOf(Alive) && it->second.unsafeCast<Alive>()->getPresence() == Alive::Presence::Offline) {
-                                    // These aren't the Alives we're looking for.
-                                    continue;
-                                }
+					// These aren't the Alives we're looking for.
+					it++;
+					continue;
+				}
 				objectType = objId_getType(it->first);
 
 				while (it != this->end() && objectType == objId_getType(it->first)) {
