@@ -70,6 +70,8 @@ namespace Dungeon {
 			ss << "It adds " << getAttackBonus() << " to your attack.";
 		if (getDefenseBonus())
 			ss << "It adds " << getDefenseBonus() << " to your defense.";
+		if (getHpBonus())
+			ss << "It raises your maximum hitpoints by " << getHpBonus << ".";
 		return ss.str();
 	}
 
