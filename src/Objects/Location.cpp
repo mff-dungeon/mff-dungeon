@@ -109,7 +109,7 @@ namespace Dungeon {
 			}
 		}
 		
-		groupedObjects.explore(ad);
+		groupedObjects.explore(ad, true, alive.safeCast<Human>());
 		*ad << nested.getSentence("", "You may want to look into %.") << eos;
 		
 		if (nested.size() + groupedObjects.size() == 0)

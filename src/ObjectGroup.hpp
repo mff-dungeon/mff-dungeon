@@ -44,7 +44,7 @@ namespace Dungeon {
         
         ObjectGroupMap::iterator insertObject(ObjectPointer ptr);
         
-        void explore(ActionDescriptor *ad, bool ignoreOfflineUsers = true);
+        void explore(ActionDescriptor *ad, bool ignoreOfflineUsers = true, Human* beholder = nullptr);
         
         ObjectPointer match(string name) {
             FuzzyStringMatcher<ObjectPointer> matcher;

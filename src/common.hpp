@@ -25,7 +25,10 @@
 // Something requires a stat
 #define R_REQUIREMENT "stat-req"
 // Alive has gold
-#define R_RESOURCE(type) ( "resource-" + to_string((int)(type)) )
+#define R_RESOURCE(type) ( "resource-" + (string)(Resource::ResourceIdentifier[(int)type]) )
+// Alive explores stuff
+#define R_SEEN "seen"
+
 
 /*
  *  Logging

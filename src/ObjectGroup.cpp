@@ -1,6 +1,7 @@
 #include "ObjectGroup.hpp"
 #include "Objects/IDescriptable.hpp"
 #include "Traps/MTATrap.hpp"
+#include "Objects/Human.hpp"
 
 namespace Dungeon {
 
@@ -42,7 +43,7 @@ namespace Dungeon {
 		return ObjectGroupMap::value_type(ptr.getId(), ptr);
 	}
         
-	void ObjectGroup::explore(ActionDescriptor *ad, bool ignoreOfflineUsers) {
+	void ObjectGroup::explore(ActionDescriptor *ad, bool ignoreOfflineUsers, Human* beholder) {
 		if (this->size() == 0) return;
 		ObjectGroup::iterator it;
 		string objectType = objId_getType(this->begin()->first);
@@ -63,6 +64,15 @@ namespace Dungeon {
 				while (it != this->end() && objectType == objId_getType(it->first)) {
 						sameTypeObjects.push_back(it->second);
 						it++;
+				}
+
+				if (beholder) {
+					GameManager* gm = ad->getGM();
+					for (auto ptr = sameTypeObjects.begin(); ptr != sameTypeObjects.end(); ptr++) {
+						if (!gm->hasRelation(beholder, *ptr, R_SEEN)) {
+							gm->createRelation(beholder, *ptr, R_SEEN);
+						}
+					}
 				}
 
 				if (sameTypeObjects.empty()) {
