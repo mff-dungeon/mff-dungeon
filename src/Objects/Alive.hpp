@@ -6,17 +6,16 @@
 #include "IDescriptable.hpp"
 #include "Resource.hpp"
 
-namespace Dungeon
-{
+namespace Dungeon {
 
-    /**
-     * Basic class for everything alive. Not only humans, but also NPCs.
-     * Basic property of alive is its health and location.
-     * This class should implement "the death".
-     */
-    class Alive : public IDescriptable
-    {
-    public:
+	/**
+	 * Basic class for everything alive. Not only humans, but also NPCs.
+	 * Basic property of alive is its health and location.
+	 * This class should implement "the death".
+	 */
+	class Alive : public IDescriptable {
+	public:
+
 		/**
 		 * State representing current status of Alive
 		 * Meanings:
@@ -30,7 +29,7 @@ namespace Dungeon
 			Dying = 2,
 			Dead = 3
 		};
-                
+
 		/**
 		 * Describes presence in game.
 		 * Meanings:
@@ -43,15 +42,14 @@ namespace Dungeon
 			Away = 1,
 			Offline = 2
 		};
-		
-        Alive() {}		// Constructor allowing to load class later
-        Alive(objId id);
-        void getAllActions(ActionList* list);
-        virtual void getActions(ActionList* list, ObjectPointer callee);
-        
-        virtual string getDescriptionSentence();
-        virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
-	
+		Alive() { } // Constructor allowing to load class later
+		Alive(objId id);
+		void getAllActions(ActionList* list);
+		virtual void getActions(ActionList* list, ObjectPointer callee);
+
+		virtual string getDescriptionSentence();
+		virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
+
 		virtual int getCurrentHp() const;
 		virtual Alive* setCurrentHp(int hp, ActionDescriptor* ad = 0);
 		virtual int getMaxHp() const;
@@ -61,25 +59,25 @@ namespace Dungeon
 		virtual Alive* setAttack(int attack, ActionDescriptor* ad = 0);
 		virtual int getDefense() const;
 		virtual Alive* setDefense(int defense, ActionDescriptor* ad = 0);
-		
+
 		/**
 		 * Calls method to damage alive. Calculates the actual damage and calls reduceHp
-         * @param amount The attacker's attack value
-         */
+		 * @param amount The attacker's attack value
+		 */
 		virtual Alive* damageAlive(ObjectPointer attackerPtr, int amount, ActionDescriptor* ad = 0);
-		
+
 		/**
 		 * Adds (or removes) hitpoints. Checks for death or full hitpoints.
-         * @param amount The amount to increase (reduce, if negative)
-         */
+		 * @param amount The amount to increase (reduce, if negative)
+		 */
 		virtual Alive* changeHp(int amount, ActionDescriptor* ad = 0);
-		
+
 		/**
 		 * Implements the dying procedures
-         */
+		 */
 		virtual Alive* die(ActionDescriptor* ad = 0);
 		virtual Alive* respawn(ActionDescriptor* ad = 0);
-		
+
 		virtual State getState() const;
 		virtual Alive* setState(State newState);
 		virtual int getRespawnTime() const;
@@ -91,14 +89,14 @@ namespace Dungeon
 		 */
 		virtual ObjectPointer getRespawnLocation();
 		virtual Alive* setRespawnLocation(ObjectPointer room);
-		
+
 		/**
 		 * Recalculates this alive's attack and defense values due to equip changes
 		 * Probably only important for humans, but to avoid casting to Human*
 		 * implemented here
-         */
+		 */
 		virtual Alive* calculateBonuses();
-		
+
 		/**
 		 * @return Current location of this being
 		 */
@@ -111,50 +109,41 @@ namespace Dungeon
 		 * which utilizes operator++
 		 */
 		ObjectPointer getBackpack();
-		
+
 		/**
 		 * Returns true, whether the user has at least one of required item type
-         */
+		 */
 		bool hasItemType(string type);
 
 		virtual void registerProperties(IPropertyStorage& storage);
-
 		virtual void onBeforeAction(ActionDescriptor* ad) {
 			getLocation()->triggerTraps("inside", ad);
 		}
-
 		virtual void onAfterAction(ActionDescriptor* ad) {
 			getLocation()->triggerTraps("inside", ad);
 		}
-                
+
 		int getResourceQuantity(Resource::ResourceType type);
 		Alive* setResourceQuantity(Resource::ResourceType type, int quantity);
 		Alive* changeResourceQuantity(Resource::ResourceType type, int deltaQuantity);
-
 		bool hasResourceGreaterThan(Resource::ResourceType type, int quantity) {
 			int actual = getResourceQuantity(type);
 			return actual >= quantity;
 		}
-
-		bool hasResourceLowerThan(Resource::ResourceType type, int quantity)  {
+		bool hasResourceLowerThan(Resource::ResourceType type, int quantity) {
 			int actual = getResourceQuantity(type);
 			return actual <= quantity;
 		}
-
 		bool hasResourceEqual(Resource::ResourceType type, int quantity) {
 			int actual = getResourceQuantity(type);
 			return actual == quantity;
-		}    
-
-		Alive* addResource(Resource* resource);
-		
-		virtual string getWeaponName() const
-		{
-			return weaponName;
 		}
 
-		virtual Alive* setWeaponName(string weaponName)
-		{
+		Alive* addResource(Resource* resource);
+		virtual string getWeaponName() const {
+			return weaponName;
+		}
+		virtual Alive* setWeaponName(string weaponName) {
 			this->weaponName = weaponName;
 			return this;
 		}
@@ -164,7 +153,7 @@ namespace Dungeon
 		 * @see Healing
 		 */
 		virtual Alive* regenerate(int rate);
-                
+
 		/**
 		 * Finds out whether the guy is online.
 		 */
@@ -174,14 +163,14 @@ namespace Dungeon
 		 * Use this method to mark every last interaction this guy makes.
 		 */
 		Alive* markInteraction();
-                
+
 	private:
 		// Combat stats
-        int maxHp = 300;
+		int maxHp = 300;
 		int currentHp = 300;
 		int defense = 1;
 		int attack = 1;
-		
+
 		// Respawn related stats
 		State currentState = State::Living;
 		/**
@@ -192,17 +181,16 @@ namespace Dungeon
 		 * Interval, time it takes after death to respawn, -1 is not respawning
 		 */
 		int respawnInterval = -1;
-                
-		string weaponName = "";
-                
-                /**
-                 Presence tracking
-                 */
-                long lastInteraction = 0;
-	
-	PERSISTENT_DECLARATION(Alive, IDescriptable)
-    };
 
+		string weaponName = "";
+
+		/**
+		 Presence tracking
+		 */
+		long lastInteraction = 0;
+
+		PERSISTENT_DECLARATION(Alive, IDescriptable)
+	};
 }
 
 #endif	/* ALIVE_HPP */

@@ -2,6 +2,7 @@
 #define	SENTENCEJOINER_HPP
 
 #include "common.hpp"
+#include "Objects/IDescriptable.hpp"
 #include <ios>
 
 namespace Dungeon {

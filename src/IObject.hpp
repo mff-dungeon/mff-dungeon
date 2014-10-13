@@ -4,7 +4,6 @@
 #define	IOBJECT_HPP
 
 #include "Archiver.hpp"
-#include "ObjectList.hpp"
 #include "AddIObject.hpp"
 #include "IPropertyStorage.hpp"
 #include "Relation.hpp"

@@ -3,6 +3,8 @@
 
 #include "common.hpp"
 #include "SplayTree.hpp"
+#include "ActionQueue.hpp"
+#include "Objects/Alive.hpp"
 #include "ObjectLoader.hpp"
 #include "ObjectPointer.hpp"
 #include "DatabaseHandler.hpp"

@@ -13,7 +13,7 @@ namespace Dungeon {
 		}
 		return false;
 	}
-	
+
 	void UseAction::setFor(ObjectPointer target, ActionList* list, MultiTargetAction* action) {
 		((UseAction*) list->addAction(new UseAction))
 				->addTarget(target, action);

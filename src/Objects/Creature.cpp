@@ -1,40 +1,38 @@
 #include "Creature.hpp"
+#include "Human.hpp"
 #include "../RandomString.hpp"
 #include "../Dropper.hpp"
 #include "../SentenceJoiner.hpp"
 #include "../Dropper.hpp"
-#include "Human.hpp"
+#include "../RegexMatcher.hpp"
+#include "../ActionDescriptor.hpp"
 #include <time.h>
 #include <vector>
-#include "../ActionDescriptor.hpp"
-
 namespace Dungeon {
 
 	Creature* Creature::calculateDrops(ActionDescriptor* ad) {
 		bool dropped = false;
 		try {
 			ObjectMap drops = getRelations(Relation::Master, R_DROP);
-			if(!drops.empty()) {
-				for(auto& dropIt : drops) {
+			if (!drops.empty()) {
+				for (auto& dropIt : drops) {
 					ObjectPointer dropPtr = dropIt.second
 							.assertExists("Creature has a non-existing drop")
 							.assertType<Dropper>("Create has an invalid drop");
 					Dropper* drop = dropPtr.unsafeCast<Dropper>();
-					if(drop->tryDrop(this->getLocation())) {
+					if (drop->tryDrop(this->getLocation())) {
 						dropped = true;
 					}
 				}
 			}
+		} catch (const std::out_of_range& e) {
+
 		}
-		catch (const std::out_of_range& e) {
-			
-		}
-		
-		if(ad != 0) {
-			if(dropped) {
+
+		if (ad != 0) {
+			if (dropped) {
 				*ad << this->getName() << " has dropped some items on the ground!" << eos;
-			}
-			else {
+			} else {
 				*ad << this->getName() << " has dropped nothing." << eos;
 			}
 		}
@@ -46,7 +44,7 @@ namespace Dungeon {
 		getGameManager()->createRelation(this, drop, R_DROP);
 		return this;
 	}
-	
+
 	Creature* Creature::detachDrop(ObjectPointer drop) {
 		drop.assertType<Dropper>("You can only detach instances of class Dropper");
 		getGameManager()->removeRelation(this, drop, R_DROP);
@@ -56,26 +54,25 @@ namespace Dungeon {
 	Alive* Creature::die(ActionDescriptor* ad) {
 		this->calculateDrops(ad);
 		ad->getCaller()->addExperience(getExpReward(), ad);
-		if(this->getRespawnInterval() == -1) { // Remove
+		if (this->getRespawnInterval() == -1) { // Remove
 			// FIXME: Workout a way to tell GM, to delete this after this action
 			this->setState(State::Invalid);
 			return 0;
-		}
-		else {
+		} else {
 			this->setRespawnTime(time(0) + getRespawnInterval());
 			this->setState(State::Dead);
 		}
-		if(ad != 0) {
+		if (ad != 0) {
 			*ad << "You have killed " << getName() << "." << eos;
 		}
 		save();
-		
+
 		return this;
 	}
-	
+
 	Alive* Creature::changeHp(int amount, ActionDescriptor* ad) {
 		setCurrentHp(getCurrentHp() + amount);
-		if(getCurrentHp() <= 0) {
+		if (getCurrentHp() <= 0) {
 			setState(Alive::State::Dying);
 		}
 		save();
@@ -99,37 +96,35 @@ namespace Dungeon {
 
 	void Creature::getActions(ActionList* list, ObjectPointer callee) {
 		// FIXME: The object should be removed, not in the world anymore - check method die()
-		if(getState() == State::Invalid) return;
+		if (getState() == State::Invalid) return;
 		Alive::getActions(list, callee);
-		
+
 		// Something like examine should be here - can also be used on dead body (with different explaining)
-		if(getState() == State::Dead) {
-			if(time(0) >= getRespawnTime()) {
+		if (getState() == State::Dead) {
+			if (time(0) >= getRespawnTime()) {
 				respawn();
 				save();
-			}
-			else {
+			} else {
 				return;
 			}
-		}
-		else if(getState() == State::Dying) {
+		} else if (getState() == State::Dying) {
 			list->addAction(new KillAction)
 					->addTarget(this);
 			return;
 		}
-		
+
 		list->addAction(new CombatAction)
 				->addTarget(this);
 	}
 
 	string Creature::getDescriptionSentence() {
-		return getGroupDescriptionSentence({ this });
+		return getGroupDescriptionSentence({this});
 	}
 
 	string Creature::getGroupDescriptionSentence(vector<ObjectPointer> others) {
 		SentenceJoiner living, dying, dead;
-		
-		for (auto i = others.begin(); i != others.end() ; i++) {
+
+		for (auto i = others.begin(); i != others.end(); i++) {
 			Creature* cr = i->assertType<Creature>().unsafeCast<Creature>();
 			switch (cr->getState()) {
 				case Alive::State::Living:
@@ -145,22 +140,22 @@ namespace Dungeon {
 					LOG("Creature") << "Some invalid creature would like to be explored." << LOGF;
 			}
 		}
-		
+
 		return (string) (RandomString::get()
-					<<  living.getSentence("", "You see % wandering around. ") << endr
-					<< living.getSentence("", "There is %. ", "There is %. ") << endr)
-			+ (string) (RandomString::get()
-					<< dying.getSentence("", "You see % lying on the ground heavy breathing. ") << endr
-					<< dying.getSentence("", "There lies hardly living body of %. ", "There lie hardly living bodies of %. ") << endr)
-			+ (string) (RandomString::get()
-					<< dead.getSentence("", "% was killed here.", "% were killed here.") << endr
-					<< dead.getSentence("", "There lies corpse of %.", "There lie corpses of %.") << endr);
+				<< living.getSentence("", "You see % wandering around. ") << endr
+				<< living.getSentence("", "There is %. ", "There is %. ") << endr)
+				+ (string) (RandomString::get()
+				<< dying.getSentence("", "You see % lying on the ground heavy breathing. ") << endr
+				<< dying.getSentence("", "There lies hardly living body of %. ", "There lie hardly living bodies of %. ") << endr)
+				+ (string) (RandomString::get()
+				<< dead.getSentence("", "% was killed here.", "% were killed here.") << endr
+				<< dead.getSentence("", "There lies corpse of %.", "There lie corpses of %.") << endr);
 	}
-	
+
 	void KillAction::explain(ActionDescriptor* ad) {
 		*ad << "Use 'kill ...' to kill an almost dead creature.\n" << eos;
 	}
-	
+
 	bool KillAction::match(string command, ActionDescriptor* ad) {
 		smatch matches;
 		if (RegexMatcher::match("(kill|finish) (.+)", command, matches)) {
@@ -169,27 +164,25 @@ namespace Dungeon {
 		}
 		return false;
 	}
-        
+
 	void KillAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		target.assertExists("The target doesn't exist");
 		target.assertType<Creature>("You can attack only enemy creatures.");
 		target.assertRelation(R_INSIDE, ad->getCaller()->getLocation(), Relation::Slave, "The creature is not here.");
 		Creature* creature = target.unsafeCast<Creature>();
-		if(creature->getState() == Alive::State::Living) {
+		if (creature->getState() == Alive::State::Living) {
 			*ad << creature->getName() << " is too healthy to be killed." << eos;
-		}
-		else if(creature->getState() == Alive::State::Dead || creature->getState() == Alive::State::Invalid) {
+		} else if (creature->getState() == Alive::State::Dead || creature->getState() == Alive::State::Invalid) {
 			*ad << creature->getName() << " is already dead." << eos;
-		}
-		else {
+		} else {
 			creature->die(ad);
 		}
 	}
-	
+
 	void CombatAction::explain(ActionDescriptor* ad) {
 		*ad << "Use 'attack ...' to initiate combat with a creature.\n";
 	}
-	
+
 	bool CombatAction::match(string command, ActionDescriptor* ad) {
 		if (RegexMatcher::match("attack .+", command)) {
 			selectBestTarget(command.substr(7), ad);
@@ -197,7 +190,7 @@ namespace Dungeon {
 		}
 		return false;
 	}
-        
+
 	void CombatAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		this->creaturePtr = target;
 		this->combatLoop(ad, "attack");
@@ -208,10 +201,10 @@ namespace Dungeon {
 		creaturePtr.assertType<Creature>("You can attack only enemy creatures.");
 		creaturePtr.assertRelation(R_INSIDE, ad->getCaller()->getLocation(), Relation::Slave, "The creature is not here.");
 		Creature* creature = creaturePtr.unsafeCast<Creature>();
-		if(creature->getState() == Alive::State::Dying) {
+		if (creature->getState() == Alive::State::Dying) {
 			*ad << creature->getName() << " is hardly breathing. Finish him!" << eos;
 			return false;
-		} else if(creature->getState() == Alive::State::Dead) {
+		} else if (creature->getState() == Alive::State::Dead) {
 			*ad << creature->getName() << " is already dead." << eos;
 			return false;
 		}
@@ -236,59 +229,53 @@ namespace Dungeon {
 		}
 	}
 
-
 	void CombatAction::combatLoop(ActionDescriptor* ad, string reply) {
-		if(!checkValidity(ad)) {
+		if (!checkValidity(ad)) {
 			return;
 		}
-		
+
 		Creature* creature = creaturePtr.unsafeCast<Creature>();
 		CombatAction::CombatMatch action = matchAnswer(reply);
 		if (action == CombatAction::CombatMatch::Invalid) {
 			*ad << "What was that supposed to be?" << eos;
-		} else if(action == CombatAction::CombatMatch::Check) {
-			if(creature->getPercentageHp() > 0.75) {
+		} else if (action == CombatAction::CombatMatch::Check) {
+			if (creature->getPercentageHp() > 0.75) {
 				*ad << creature->getName() << " looks very vital." << eos;
-			}
-			else if(creature->getPercentageHp() > 0.50) {
+			} else if (creature->getPercentageHp() > 0.50) {
 				*ad << creature->getName() << " is still vital, but you can see some scratches there." << eos;
-			}
-			else if(creature->getPercentageHp() > 0.25) {
+			} else if (creature->getPercentageHp() > 0.25) {
 				*ad << creature->getName() << " is wounded, but it is still standing still." << eos;
-			}
-			else {
+			} else {
 				*ad << creature->getName() << " is seriously wounded, finish it while you can!" << eos;
 			}
 			*ad << text;
 			ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
 				this->combatLoop(ad, reply);
 			});
-		}
-		else if(action == CombatAction::CombatMatch::Run) {
+		} else if (action == CombatAction::CombatMatch::Run) {
 			ad->getCaller()->damageAlive(creaturePtr, creature->getAttack(), ad);
-			if(ad->getCaller()->getState() == Alive::State::Living) {
-				*ad << "You have managed to run from " << creature->getName() 
-					<< ". Be warned though, as any other action than leaving this room would reinitiate attack." << eos;
+			if (ad->getCaller()->getState() == Alive::State::Living) {
+				*ad << "You have managed to run from " << creature->getName()
+						<< ". Be warned though, as any other action than leaving this room would reinitiate attack." << eos;
 			}
-		}
-		else {
+		} else {
 			creature->damageAlive(ad->getCaller(), ad->getCaller()->getAttack(), ad);
-			if(creature->getState() == Alive::State::Dying) {
+			if (creature->getState() == Alive::State::Dying) {
 				*ad << creature->getName() << " is mortally wounded. Use 'kill ...' to finish it." << eos;
 				return;
 			}
 			ad->getCaller()->damageAlive(creaturePtr, creature->getAttack(), ad);
-			if(ad->getCaller()->getState() != Alive::State::Living) return;
+			if (ad->getCaller()->getState() != Alive::State::Living) return;
 			// Should be able to use potion, or so (later)
 			*ad << text;
 			*ad << "\n" << creature->getName() << ": [" << Utils::progressBar(creature->getCurrentHp(), creature->getMaxHp(), 10) << "]"
-				<< "     You: [" << Utils::progressBar(ad->getCaller()->getCurrentHp(), ad->getCaller()->getMaxHp(), 10) << "]" << eos;
+					<< "     You: [" << Utils::progressBar(ad->getCaller()->getCurrentHp(), ad->getCaller()->getMaxHp(), 10) << "]" << eos;
 			ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
 				this->combatLoop(ad, reply);
 			});
 		}
 	}
-	
+
 	Creature* Creature::drops(ObjectPointer item, int chance, int min, int max) {
 		Dropper* dropper = new Dropper("dropper/" + getId() + "/" + RANDID);
 		dropper->setChance(chance)

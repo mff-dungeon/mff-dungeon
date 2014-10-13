@@ -4,7 +4,6 @@
 #include "common.hpp"
 #include "Action.hpp"
 #include "Actions/MultiTargetAction.hpp"
-#include "Actions/UseAction.hpp"
 
 namespace Dungeon {
     typedef std::multimap<string, Action*> actionMap;

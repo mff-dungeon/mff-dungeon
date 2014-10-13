@@ -2,14 +2,15 @@
 
 #include "MTATrap.hpp"
 #include "../SentenceJoiner.hpp"
+#include "../ObjectGroup.hpp"
 #include "../ActionDescriptor.hpp"
 #include "../Actions/MultiTargetAction.hpp"
 
 namespace Dungeon {
-	
+
 	ObjectPointer MTATrap::wrapFind(ObjectMap objects, MultiTargetAction* action, string str, ActionDescriptor* ad) {
 		try {
-			ObjectGroup grp (objects);
+			ObjectGroup grp(objects);
 			ObjectPointer target = grp.match(str);
 			IDescriptable* obj = target.safeCast<IDescriptable>();
 			if (obj) LOGS("FMT", Verbose) << "Selected " << obj->getLongName() << LOGF;
@@ -17,26 +18,26 @@ namespace Dungeon {
 		} catch (const StringMatcher::Uncertain<ObjectPointer>& e) {
 			if (!ad)
 				return ObjectPointer(); // Sorry, no chance
-			
+
 			ad->matched(action); // Because of thrown exception, this will be skipped
 			this->phase = Selecting;
-			
+
 			if (e.possibleTargets.size() > 0) {
 				SentenceJoiner targets;
 				targets.setConjunction(", ", " or ");
 				this->objects.clear();
 				for (ObjectPointer obj : e.possibleTargets)
 					this->objects[obj.getId()] = obj;
-				
+
 				// This time there will be each object only once
 				for (auto& pair : this->objects)
 					targets << pair.second;
-				
+
 				*ad << "Sorry, did you mean " << targets << "?" << eos;
 			} else {
 				*ad << "Sorry, I don't know what you mean. Please try to explain it better." << eos;
 			}
-			
+
 			throw TrapException(this);
 		} catch (const StringMatcher::NoCandidate& e) {
 			*ad << "No such thing found. Really." << eos;
@@ -44,14 +45,14 @@ namespace Dungeon {
 			throw TrapException(this);
 		}
 	}
-	
+
 	bool MTATrap::exceptionTrigger(ActionDescriptor* ad) {
 		switch (phase) {
 			case Selecting:
 				ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
 					target = wrapFind(this->objects, (MultiTargetAction*) ad->getAction(), reply, ad);
 					phase = Return;
-					throw TrapException(this);
+							throw TrapException(this);
 				});
 			case Cancel:
 				return false;
@@ -62,10 +63,8 @@ namespace Dungeon {
 				return true;
 		}
 	}
-	
-	
-	PERSISTENT_IMPLEMENTATION(MTATrap)
 
+	PERSISTENT_IMPLEMENTATION(MTATrap)
 
 }
 

@@ -2,6 +2,7 @@
 #include "../ActionDescriptor.hpp"
 
 namespace Dungeon {
+
 	void CallbackAction::explain(ActionDescriptor* ad) {
 		*ad << explanation << eos;
 	}
@@ -13,5 +14,5 @@ namespace Dungeon {
 	bool CallbackAction::match(string command, ActionDescriptor* ad) {
 		return matchCallback(command);
 	}
-	
+
 }

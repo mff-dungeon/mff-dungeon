@@ -1,20 +1,15 @@
 #include "SpellScroll.hpp"
 #include "Human.hpp"
 #include "Spell.hpp"
+#include "../RegexMatcher.hpp"
 
 namespace Dungeon {
-	
-	SpellScroll::SpellScroll() {
-		
-	}
 
-	SpellScroll::SpellScroll(objId id) : Item(id) {
-		
-	}
+	SpellScroll::SpellScroll() { }
 
-	SpellScroll::~SpellScroll() {
-		
-	}
+	SpellScroll::SpellScroll(objId id) : Item(id) { }
+
+	SpellScroll::~SpellScroll() { }
 
 	SpellScroll* SpellScroll::setSpell(ObjectPointer spell) {
 		spell.assertExists("What will be that scroll doing again? Operating a black hole?")
@@ -29,18 +24,18 @@ namespace Dungeon {
 
 	void SpellScroll::getActions(ActionList* list, ObjectPointer callee) {
 		Item::getActions(list, callee);
-	
+
 		list->addAction(new ReadScrollAction)
-			->addTarget(this)
-			->useActionFor(this, list);
+				->addTarget(this)
+				->useActionFor(this, list);
 	}
-	
+
 	PERSISTENT_IMPLEMENTATION(SpellScroll)
 
 	void ReadScrollAction::explain(ActionDescriptor* ad) {
 		*ad << "Use 'read ...' to read the scroll." << eos;
 	}
-	
+
 	bool ReadScrollAction::match(string command, ActionDescriptor* ad) {
 		if (RegexMatcher::match("read .+", command)) {
 			selectBestTarget(command.substr(5), ad);
@@ -48,23 +43,22 @@ namespace Dungeon {
 		}
 		return false;
 	}
-        
+
 	void ReadScrollAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		Human* reader = ad->getCaller();
 		target.assertExists("Are you reading air?").assertType<SpellScroll>("You cannot read this.");
 		SpellScroll* scroll = target.unsafeCast<SpellScroll>();
 		ObjectPointer spell = scroll->getSpell();
-		if(!scroll->checkStatReqs(ad->getCaller(), ad)) {
+		if (!scroll->checkStatReqs(ad->getCaller(), ad)) {
 			*ad << "You cannot read this scroll now." << eos;
 			return;
 		}
-		
-		if(reader->knowsSpell(spell)) {
+
+		if (reader->knowsSpell(spell)) {
 			*ad << "You already learned " << spell.safeCast<IDescriptable>()->getName() << "." << eos;
-		}
-		else {
+		} else {
 			reader->learnSpell(spell);
-			*ad << "You have learnt " << spell.safeCast<IDescriptable>()->getName() 
+			*ad << "You have learnt " << spell.safeCast<IDescriptable>()->getName()
 					<< " and the " << scroll->getName() << " has disappeared." << eos;
 			ad->getGM()->deleteObject(scroll);
 		}

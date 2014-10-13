@@ -5,17 +5,18 @@
 #include "Human.hpp"
 
 namespace Dungeon {
+
 	/**
 	 * A recipe for the crafter, controls the item creation
-     */
+	 */
 	class Recipe : public IDescriptable {
 	public:
 		Recipe();
 		Recipe(objId id);
 		virtual ~Recipe();
-		
+
 		virtual string getDescription() const;
-		
+
 		int getLevel() const;
 		Recipe* setLevel(int level);
 		int getExperience() const;
@@ -29,14 +30,13 @@ namespace Dungeon {
 		Human::Stats getMainStat() const;
 		Recipe* setMainStat(Human::Stats stat);
 		int getMainStatReq() const;
-		
+
 		Recipe* addStatReq(ObjectPointer reqPtr);
 		bool checkStatReqs(ObjectPointer userPtr, ActionDescriptor* ad = 0);
-		
+
 		void tryCraft(ActionDescriptor* ad);
-		
-		virtual void getActions(ActionList* list, ObjectPointer callee) {};
-		
+		virtual void getActions(ActionList* list, ObjectPointer callee) { };
+
 		virtual void registerProperties(IPropertyStorage& storage);
 
 	private:
@@ -45,7 +45,7 @@ namespace Dungeon {
 		Human::Stats mainStat = Human::Crafting;
 		int* resources;
 
-	PERSISTENT_DECLARATION(Recipe, IDescriptable)
+		PERSISTENT_DECLARATION(Recipe, IDescriptable)
 	};
 }
 

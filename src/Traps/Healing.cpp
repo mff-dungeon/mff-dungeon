@@ -3,7 +3,7 @@
 #include "../Objects/Alive.hpp"
 
 namespace Dungeon {
-	
+
 	Healing* Healing::setTarget(ObjectPointer target) {
 		if (target->instanceOf(Location)) {
 			target->attachTrap(this, "inside");
@@ -18,18 +18,18 @@ namespace Dungeon {
 		setSingleRelation(R_TARGET, target);
 		return this;
 	}
-	
+
 	void Healing::trigger(string event, ObjectPointer trigger, ActionDescriptor* ad) {
 		if (timestamp == 0) {
-            timestamp = std::time(nullptr);
+			timestamp = std::time(nullptr);
 		}
-		
+
 		int difference = std::time(nullptr) - timestamp;
 		int healedHp = difference * rate / PerSec;
 		if (healedHp > 0) {
 			difference = healedHp * PerSec / rate; // "floor" the last seconds which gave partial hp
 			timestamp += difference;
-			
+
 			ObjectPointer target = getTarget();
 			if (target->instanceOf(Alive)) {
 				target.unsafeCast<Alive>()->changeHp(healedHp, ad);
@@ -41,19 +41,17 @@ namespace Dungeon {
 				}
 				LOGS("Healing", Verbose) << "Healed everything in " << target.getId() << " for " << healedHp << LOGF;
 			}
-			
+
 			save();
 		}
 	}
-	
+
 	void Healing::registerProperties(IPropertyStorage& storage) {
 		storage.have(rate, "healing-rate", "Heal rate - hp per hour")
 				.have(timestamp, "healing-timestamp", "Last full life given", false);
 		Trap::registerProperties(storage);
 	}
-	
+
 	PERSISTENT_IMPLEMENTATION(Healing)
-
-
 }
 

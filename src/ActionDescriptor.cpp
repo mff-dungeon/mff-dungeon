@@ -10,7 +10,7 @@ namespace Dungeon {
 		caller = 0;
 		action = 0;
 	}
-	
+
 	ActionDescriptor::~ActionDescriptor() {
 		if (action) action->forget();
 	}
@@ -48,69 +48,67 @@ namespace Dungeon {
 	bool ActionDescriptor::isValid(Driver* driver) {
 		return gm && caller && action && driver == this->driver;
 	}
-        
+
 	void ActionDescriptor::addSentence(string msg) {
-            string trimmed = Utils::trim(msg);
-            if (trimmed == "") return;
-            
-            if (replyFormat == ReplyFormat::List) {
-                if (++sentences > 1) {
-                    message += "\n";
-                }
+		string trimmed = Utils::trim(msg);
+		if (trimmed == "") return;
 
-                message += "  - ";
-                message += trimmed;
-            } else {
-                if (++sentences > 1) {
-                    message += " ";
-                }
+		if (replyFormat == ReplyFormat::List) {
+			if (++sentences > 1) {
+				message += "\n";
+			}
 
-                message += trimmed;
-            }
+			message += "  - ";
+			message += trimmed;
+		} else {
+			if (++sentences > 1) {
+				message += " ";
+			}
+
+			message += trimmed;
+		}
 	}
-	
-	ActionDescriptor& ActionDescriptor::operator<< (const string& msg){
+
+	ActionDescriptor& ActionDescriptor::operator<<(const string& msg) {
 		currentSentence << msg;
 		return *this;
 	}
-	
-	ActionDescriptor& ActionDescriptor::operator<< (char const* msg){
+
+	ActionDescriptor& ActionDescriptor::operator<<(char const* msg) {
 		currentSentence << msg;
 		return *this;
 	}
-	
-	ActionDescriptor& ActionDescriptor::operator<< (const int& msg){
+
+	ActionDescriptor& ActionDescriptor::operator<<(const int& msg) {
 		currentSentence << msg;
 		return *this;
 	}
-        
-        ActionDescriptor::EndOfSentence *eos() {
-            throw "Method eos is not callable.";
-        }
-        
-        ActionDescriptor& ActionDescriptor::operator <<(ActionDescriptor::EndOfSentence*(*endofsentence)()) {
-            this->addSentence(currentSentence.str());
-            currentSentence.str("");
-            return *this;
-        }
-        
-        ActionDescriptor* ActionDescriptor::setReplyFormat(ReplyFormat format) {
-            *this << eos;
-            replyFormat = format;
-            return this;
-        }
 
+	ActionDescriptor::EndOfSentence *eos() {
+		throw "Method eos is not callable.";
+	}
 
-	TextActionDescriptor::TextActionDescriptor(Driver* driver) : ActionDescriptor(driver) {}
+	ActionDescriptor& ActionDescriptor::operator <<(ActionDescriptor::EndOfSentence*(*endofsentence)()) {
+		this->addSentence(currentSentence.str());
+		currentSentence.str("");
+		return *this;
+	}
+
+	ActionDescriptor* ActionDescriptor::setReplyFormat(ReplyFormat format) {
+		*this << eos;
+		replyFormat = format;
+		return this;
+	}
+
+	TextActionDescriptor::TextActionDescriptor(Driver* driver) : ActionDescriptor(driver) { }
 
 	string TextActionDescriptor::getReply() {
-            return message;
-	}
-	
-	void TextActionDescriptor::clearReply() {
-            message = "";
+		return message;
 	}
 
+	void TextActionDescriptor::clearReply() {
+		message = "";
+	}
 
 }
 

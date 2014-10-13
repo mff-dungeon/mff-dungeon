@@ -1,20 +1,16 @@
 #include "Dropper.hpp"
 #include "Cloner.hpp"
+#include "GameManager.hpp"
 #include "Objects/Resource.hpp"
+#include "Objects/Location.hpp"
 
-namespace Dungeon{
+namespace Dungeon {
 
-	Dropper::Dropper() {
+	Dropper::Dropper() { }
 
-	}
-	
-	Dropper::Dropper(objId id) : IObject(id) {
-		
-	}
+	Dropper::Dropper(objId id) : IObject(id) { }
 
-	Dropper::~Dropper() {
-
-	}
+	Dropper::~Dropper() { }
 
 	ObjectPointer Dropper::getItem() {
 		return getSingleRelation("dropper-item", Relation::Master);
@@ -51,20 +47,19 @@ namespace Dungeon{
 		this->min = min;
 		return this;
 	}
-	
+
 	bool Dropper::tryDrop(ObjectPointer loc) {
 		loc.assertExists("You cannot drop item nowhere.").assertType<Location>("You must drop items in the room.");
 		int random = Utils::getRandomInt(1, 1000000);
-		if(random <= getChance()) { // Let's drop it
+		if (random <= getChance()) { // Let's drop it
 			int amount = Utils::getRandomInt(getMin(), getMax());
-			if(getItem()->isInstanceOf(Resource::ResourceClassName)) {
+			if (getItem()->isInstanceOf(Resource::ResourceClassName)) {
 				ObjectPointer item = Cloner::deepClone(getItem());
 				getGameManager()->clearRelationsOfType(item, "dropper-item", Relation::Slave);
 				item.safeCast<Resource>()->setQuantity(amount)->attachSumTrap()->save();
 				item->setSingleRelation(R_INSIDE, loc, Relation::Slave);
-			}
-			else {
-				for(int i=1; i<=amount; i++) {
+			} else {
+				for (int i = 1; i <= amount; i++) {
 					ObjectPointer item = Cloner::deepClone(getItem());
 					getGameManager()->clearRelationsOfType(item, "dropper-item", Relation::Slave);
 					item->setSingleRelation(R_INSIDE, loc, Relation::Slave);
@@ -81,16 +76,12 @@ namespace Dungeon{
 	void Dropper::registerProperties(IPropertyStorage& storage) {
 		IObject::registerProperties(storage);
 		storage.have(chance, "dropper-chance", "Chance of the drop")
-			.have(min, "dropper-min", "Minimum amount of dropped items")
-			.have(max, "dropper-max", "Maximum amount of dropped items");
+				.have(min, "dropper-min", "Minimum amount of dropped items")
+				.have(max, "dropper-max", "Maximum amount of dropped items");
 	}
 
-	void Dropper::getActions(ActionList* list, ObjectPointer callee) {
-		
-	}
+	void Dropper::getActions(ActionList* list, ObjectPointer callee) { }
 
-
-	
 	PERSISTENT_IMPLEMENTATION(Dropper)
 }
 

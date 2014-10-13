@@ -12,7 +12,6 @@
 
 #include <functional>
 #include "../common.hpp"
-#include "../RegexMatcher.hpp"
 #include "../Action.hpp"
 
 #define CALLBACK(className, methodName) std::bind(&className::methodName, this, std::placeholders::_1)

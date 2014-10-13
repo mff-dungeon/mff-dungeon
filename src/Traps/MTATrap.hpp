@@ -2,48 +2,43 @@
 #define	FUZZYMATCHTRAP_HPP
 
 #include "../common.hpp"
+#include "../ActionDescriptor.hpp"
+#include "../Actions/MultiTargetAction.hpp"
 #include "Trap.hpp"
-#include "../ObjectGroup.hpp"
 
-namespace Dungeon
-{
+namespace Dungeon {
 
-        /**
-         * Violating the rules, this trap is used to fetch additional information
-         * when the match is too fuzzy.
-         */
-	class MTATrap : public Trap
-	{
+	/**
+	 * Violating the rules, this trap is used to fetch additional information
+	 * when the match is too fuzzy.
+	 */
+	class MTATrap : public Trap {
 	public:
-            MTATrap() : Trap() {}
-            MTATrap(string id) : Trap(id) {}
-            virtual ~MTATrap() {}
-            
-            enum Phase {
-                Selecting,
-                Return,
-                Cancel
-            };
+		MTATrap() : Trap() { }
+		MTATrap(objId id) : Trap(id) { }
+		virtual ~MTATrap() { }
 
-            virtual ObjectPointer wrapFind(ObjectMap group, MultiTargetAction* action, string str, ActionDescriptor* ad);
+		enum Phase {
+			Selecting,
+			Return,
+			Cancel
+		};
 
-            /**
-             * It's fucking magic :) Can explain personally if you want.
-             * @param ad
-             */
-            virtual bool exceptionTrigger(ActionDescriptor* ad);
-            
-        private:
-            ObjectMap objects;
-            Phase phase = Selecting;
-            ObjectPointer target;
+		virtual ObjectPointer wrapFind(ObjectMap group, MultiTargetAction* action, string str, ActionDescriptor* ad);
 
-            PERSISTENT_DECLARATION(MTATrap, Trap)
+		/**
+		 * It's fucking magic :) Can explain personally if you want.
+		 * @param ad
+		 */
+		virtual bool exceptionTrigger(ActionDescriptor* ad);
+
+	private:
+		ObjectMap objects;
+		Phase phase = Selecting;
+		ObjectPointer target;
+
+		PERSISTENT_DECLARATION(MTATrap, Trap)
 	};
-        
-        class FuzzyMatchTrapAction : public Action {
-            
-        };
 }
 
 #endif

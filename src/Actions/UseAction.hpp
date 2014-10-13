@@ -4,14 +4,12 @@
 #include "../common.hpp"
 #include "Polyaction.hpp"
 
-namespace Dungeon
-{
+namespace Dungeon {
 
-	class UseAction : public Polyaction
-	{
+	class UseAction : public Polyaction {
 	public:
-		UseAction() : Polyaction("use") {};
-		virtual ~UseAction() {}
+		UseAction() : Polyaction("use") { };
+		virtual ~UseAction() { }
 
 		virtual bool match(string command, ActionDescriptor* ad);
 		virtual void explain(ActionDescriptor* ad);

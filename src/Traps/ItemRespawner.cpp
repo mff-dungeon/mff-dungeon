@@ -2,16 +2,16 @@
 #include "../GameManager.hpp"
 
 namespace Dungeon {
-	
+
 	ObjectPointer ItemRespawner::getTemplate() {
 		return getSingleRelation("template");
 	}
-	
+
 	ObjectPointer ItemRespawner::setTemplate(ObjectPointer templ) {
 		setSingleRelation("template", templ);
 		return this;
 	}
-	
+
 	ObjectPointer ItemRespawner::doRespawn(ObjectPointer location) {
 		ObjectPointer templ = getTemplate().assertExists("Template for respawn does not exist.");
 		ObjectPointer inst = templ->deepClone();
@@ -23,14 +23,13 @@ namespace Dungeon {
 		return inst;
 	}
 
-	
 	void ItemRespawner::trigger(string event, ObjectPointer location, ActionDescriptor* ad) {
 		if (event == "picked") {
 			location->detachTrap(this, "picked");
 			setTimestamp(Timestamp::Auto)->save();
 			return;
 		}
-		
+
 		if (mode == AfterDisappear) {
 			ObjectPointer lastCreated = getSingleRelation("last-created");
 
@@ -40,9 +39,9 @@ namespace Dungeon {
 				return;
 			}
 		}
-		
+
 		if (getTimestamp() == Timestamp::NotNow) return;
-		
+
 		if (getTimestamp() <= std::time(nullptr)) {
 			doRespawn(location);
 			setTimestamp(Timestamp::Auto);
@@ -52,14 +51,14 @@ namespace Dungeon {
 			return;
 		}
 	}
-	
+
 	void ItemRespawner::registerProperties(IPropertyStorage& storage) {
 		storage.have(interval, "respawner-interval", "Respawning interval")
 				.have(timestamp, "respawner-timestamp", "Time at which the item respawns", false);
 		Trap::registerProperties(storage);
 	}
 
-	
+
 	PERSISTENT_IMPLEMENTATION(ItemRespawner)
 }
 

@@ -1,4 +1,5 @@
 #include "MultiTargetAction.hpp"
+#include "UseAction.hpp"
 #include "../ObjectPointer.hpp"
 #include "../ObjectGroup.hpp"
 #include "../FuzzyStringMatcher.hpp"
@@ -7,28 +8,26 @@
 
 namespace Dungeon {
 
-	MultiTargetAction::~MultiTargetAction() {
-	}
+	MultiTargetAction::~MultiTargetAction() { }
 
-	MultiTargetAction::MultiTargetAction(string type) : Action(type) {
-	}
+	MultiTargetAction::MultiTargetAction(string type) : Action(type) { }
 
 	MultiTargetAction* MultiTargetAction::addTarget(ObjectPointer op) {
 		if (targets.find(op.getId()) == targets.end())
 			targets[op.getId()] = op;
 		return this;
 	}
-	
+
 	void MultiTargetAction::merge(MultiTargetAction* second) {
 		for (auto& pair : second->getTargets()) {
 			addTarget(pair.second);
 		}
 	}
-	
+
 	const ObjectMap& MultiTargetAction::getTargets() const {
 		return targets;
 	}
-	
+
 	void MultiTargetAction::commit(ActionDescriptor* ad) {
 		commitOnTarget(ad, selectedTarget);
 	}

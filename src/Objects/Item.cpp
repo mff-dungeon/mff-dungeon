@@ -10,33 +10,31 @@
 #include "../Traps/ItemRespawner.hpp"
 
 namespace Dungeon {
-	
+
 	Item::Item() {
 		this->setDropable(true)->setPickable(true)->setSize(0)->setWeight(0);
 	}
-	
+
 	Item::Item(objId id) : IDescriptable(id) {
 		this->setDropable(true)->setPickable(true)->setSize(0)->setWeight(0);
 	}
 
-	Item::~Item() {
+	Item::~Item() { }
 
-	}
-	
 	Item* Item::setSize(int size) {
 		this->size = size;
 		return this;
 	}
-	
+
 	int Item::getSize() const {
 		return this->size;
 	}
-	
+
 	Item* Item::setWeight(int weight) {
 		this->weight = weight;
 		return this;
 	}
-	
+
 	int Item::getWeight() const {
 		return this->weight;
 	}
@@ -77,28 +75,27 @@ namespace Dungeon {
 		Human* user = userPtr.unsafeCast<Human>();
 		try {
 			const ObjectMap& reqs = getRelations(Relation::Master, R_REQUIREMENT);
-			for(auto& req : reqs) {
+			for (auto& req : reqs) {
 				req.second.assertType<StatReq>("Only a requirement is supposed to be there.");
 				StatReq* r = req.second.unsafeCast<StatReq>();
-				if(user->getStatValue(r->getStat()) < r->getValue()) {
+				if (user->getStatValue(r->getStat()) < r->getValue()) {
 					*ad << "Your " << user->getStatName(r->getStat()) << " is not high enough." << eos;
 					return false;
 				}
 			}
-		}
-		catch(std::out_of_range& e) {
-			
+		} catch (std::out_of_range& e) {
+
 		}
 		return true;
 	}
 
 	Item* Item::respawnEvery(int seconds) {
-		ObjectPointer item (this);
+		ObjectPointer item(this);
 		item.assertExists("Item must exist to be respawnable");
 		ObjectPointer location = getSingleRelation(R_INSIDE, Relation::Slave);
 		if (!location)
 			throw new GameException("Item must be inside something to be respawnable.");
-		
+
 		ItemRespawner* trap = new ItemRespawner("trap/respawn/" + getId());
 		trap->setInterval(seconds);
 		this->getGameManager()->insertObject(trap);
@@ -108,13 +105,12 @@ namespace Dungeon {
 		return this;
 	}
 
-	
 	string Item::getDescription() const {
 		stringstream ss;
 		ss << IDescriptable::getDescription();
 		if (getWeight())
 			ss << "It weights " << Utils::weightStr(getWeight()) << ".";
-		else ss << "It weights almost nothing."; 
+		else ss << "It weights almost nothing.";
 		if (!isPickable())
 			ss << "It cannot be taken.";
 		if (!isDropable())
@@ -122,11 +118,10 @@ namespace Dungeon {
 		return ss.str();
 	}
 
-	
 	string Item::getDescriptionSentence() {
-		return getGroupDescriptionSentence({ this });
+		return getGroupDescriptionSentence({this});
 	}
-	
+
 	string Item::getGroupDescriptionSentence(vector<ObjectPointer> others) {
 		SentenceJoiner items;
 		for (auto i = others.begin(); i != others.end(); i++) {
@@ -136,20 +131,20 @@ namespace Dungeon {
 		// TODO we need way more nice sentences cause this is displaying very often.
 		return RandomString::get()
 				<< items.getSentence("", "You see % lying there.") << endr
-				<< items.getSentence("", "There lies %." ) << endr
+				<< items.getSentence("", "There lies %.") << endr
 				<< items.getSentence("", "% lies there.") << endr
 				<< items.getSentence("", "There is also some %.", "There is % too.") << endr
 				<< items.getSentence("", "There is %.", "There is %.") << endr;
 	}
-	
+
 	void Item::registerProperties(IPropertyStorage& storage) {
 		storage.have(size, "item-size", "Item size")
-			.have(weight, "item-weight", "Item weight")
-			.have(pickable, "item-pickable", "Item Pick-ability")
-			.have(dropable, "item-dropable", "Item Drop-ability");
+				.have(weight, "item-weight", "Item weight")
+				.have(pickable, "item-pickable", "Item Pick-ability")
+				.have(dropable, "item-dropable", "Item Drop-ability");
 		IDescriptable::registerProperties(storage);
 	}
-	
+
 	PERSISTENT_IMPLEMENTATION(Item)
 
 

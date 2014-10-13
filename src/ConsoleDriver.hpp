@@ -1,29 +1,29 @@
 #ifndef CONSOLEDRIVER_HPP
 #define	CONSOLEDRIVER_HPP
 
+#include "common.hpp"
 #include "TextDriver.hpp"
 #include "Objects/Human.hpp"
-#include "common.hpp"
 #include <thread>
 
 namespace Dungeon {
-    
-    /**
-     * Takes commands from stdin, outputs replies to stdout
-     */
-    class ConsoleDriver : public TextDriver {
-    public:
-        ConsoleDriver(ActionQueue* queue, Human* figure);
-        virtual ~ConsoleDriver();
-        void run();
-        
-        virtual void processDescriptor(ActionDescriptor* ad);
-        
-    private:
-        void worker();
-        thread *workerThread;
-        Human* figure;
-    };
+
+	/**
+	 * Takes commands from stdin, outputs replies to stdout
+	 */
+	class ConsoleDriver : public TextDriver {
+	public:
+		ConsoleDriver(ActionQueue* queue, Human* figure);
+		virtual ~ConsoleDriver();
+		void run();
+
+		virtual void processDescriptor(ActionDescriptor* ad);
+
+	private:
+		void worker();
+		thread *workerThread;
+		Human* figure;
+	};
 
 }
 

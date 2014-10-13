@@ -14,12 +14,12 @@ namespace Dungeon {
 		DoorLock();
 		DoorLock(objId id);
 		virtual ~DoorLock();
-		
+
 		ObjectPointer getKey() const;
 		DoorLock* setKey(ObjectPointer key);
 		bool consumesKey() const;
 		DoorLock* setConsumesKey(bool consumesKey);
-		
+
 		virtual void trigger(string event, ObjectPointer target, ActionDescriptor* ad);
 		virtual bool exceptionTrigger(ActionDescriptor* ad);
 
@@ -29,7 +29,7 @@ namespace Dungeon {
 		string keyId = "";
 		bool consumeKey = false;
 
-	PERSISTENT_DECLARATION(DoorLock, Trap)
+		PERSISTENT_DECLARATION(DoorLock, Trap)
 	};
 }
 

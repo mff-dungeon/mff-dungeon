@@ -16,7 +16,7 @@ namespace Dungeon {
 		Spell();
 		Spell(objId id);
 		virtual ~Spell();
-		
+
 		int getBaseManaCost() const;
 		Spell* setBaseManaCost(int mana);
 		int getBaseEffect() const;
@@ -25,7 +25,7 @@ namespace Dungeon {
 		Spell* setBaseInt(int baseInt);
 		int getBaseWis() const;
 		Spell* setBaseWis(int baseWis);
-		
+
 		/**
 		 * Calculates mana cost depending on caster's stats
 		 * @param casterPtr User casting this spell
@@ -38,7 +38,7 @@ namespace Dungeon {
 		 * @return mana cost of the spell
 		 */
 		int getEffect(ObjectPointer casterPtr) const;
-		
+
 		/**
 		 * Checks if the spell can be cast. Checks for mana, required stats, 
 		 * and other validity
@@ -53,24 +53,25 @@ namespace Dungeon {
 		 * @param ad An AD to message the user, if desired
 		 */
 		virtual void cast(ObjectPointer casterPtr, ActionDescriptor* ad = 0);
-		
+
 		virtual void registerProperties(IPropertyStorage& storage);
-		
+
 	private:
 		int manaCost = 0;
 		int effect = 0;
-		int baseInt = 1;	// if user's int == spell's int, effect = baseEffect
-		int baseWis = 1;	// similar to int with manaCost
-	PERSISTENT_DECLARATION(Spell, IDescriptable)
+		int baseInt = 1; // if user's int == spell's int, effect = baseEffect
+		int baseWis = 1; // similar to int with manaCost
+
+		PERSISTENT_DECLARATION(Spell, IDescriptable)
 	};
-	
+
 	class CastAction : public MultiTargetAction {
 	public:
-		CastAction(string type = "spell-cast") : MultiTargetAction(type) {};
-        
-        virtual void explain(ActionDescriptor* ad);
-        virtual bool match(string command, ActionDescriptor* ad);
-        virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
+		CastAction(string type = "spell-cast") : MultiTargetAction(type) { };
+
+		virtual void explain(ActionDescriptor* ad);
+		virtual bool match(string command, ActionDescriptor* ad);
+		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 	};
 }
 

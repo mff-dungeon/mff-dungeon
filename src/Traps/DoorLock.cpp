@@ -4,17 +4,11 @@
 
 namespace Dungeon {
 
-	DoorLock::DoorLock() {
+	DoorLock::DoorLock() { }
 
-	}
-	
-	DoorLock::DoorLock(objId id) : Trap(id) {
+	DoorLock::DoorLock(objId id) : Trap(id) { }
 
-	}
-
-	DoorLock::~DoorLock() {
-
-	}
+	DoorLock::~DoorLock() { }
 
 	ObjectPointer DoorLock::getKey() const {
 		return this->getSingleRelation("keytemplate", Relation::Master);
@@ -35,24 +29,23 @@ namespace Dungeon {
 	}
 
 	void DoorLock::trigger(string event, ObjectPointer target, ActionDescriptor* ad) {
-		if(!ad->getCaller()->hasItemType(getKey()->getObjectType())) {
+		if (!ad->getCaller()->hasItemType(getKey()->getObjectType())) {
 			throw TrapException(this);
 		}
-		if(consumesKey()) {
+		if (consumesKey()) {
 			ObjectPointer backpack = ad->getCaller()->getBackpack();
 			backpack.assertExists("Where do you keep your key?")
 					.assertType<Inventory>("You have equipped a non-backpack. How? ");
 			const ObjectMap& items = backpack.unsafeCast<Inventory>()->getRelations(Relation::Master, R_INVENTORY);
-			for(auto& item : items) {
-				if(item.second->getObjectType() == getKey()->getObjectType()) {
+			for (auto& item : items) {
+				if (item.second->getObjectType() == getKey()->getObjectType()) {
 					backpack.unsafeCast<Inventory>()->removeItem(item.second);
 					break;
 				}
 			}
 			*ad << "As you use your " << getKey().safeCast<IDescriptable>()->getName()
-				<< " it disappears." << eos;
-		}
-		else {
+					<< " it disappears." << eos;
+		} else {
 			*ad << "You use your " << getKey().safeCast<IDescriptable>()->getName() << "." << eos;
 		}
 	}
@@ -61,7 +54,7 @@ namespace Dungeon {
 		*ad << "You need to have a " << getKey().safeCast<IDescriptable>()->getName() << " to pass this door." << eos;
 		return false;
 	}
-	
+
 	void DoorLock::registerProperties(IPropertyStorage& storage) {
 		storage.have(consumeKey, "doorlock-consumekey", "True when unlocking the door removes the key.")
 				.have(keyId, "doorlock-keyid", "Item type of the required key");

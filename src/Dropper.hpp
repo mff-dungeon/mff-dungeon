@@ -3,7 +3,6 @@
 
 #include "common.hpp"
 #include "IObject.hpp"
-#include "Objects/Location.hpp"
 #include "ObjectPointer.hpp"
 
 namespace Dungeon {
@@ -13,6 +12,7 @@ namespace Dungeon {
 	 */
 	class Dropper : public IObject {
 	public:
+
 		enum DropChance {
 			Always = 1000000,
 			Half = 500000,
@@ -23,7 +23,7 @@ namespace Dungeon {
 		Dropper();
 		Dropper(objId id);
 		virtual ~Dropper();
-		
+
 		ObjectPointer getItem();
 		Dropper* setItem(ObjectPointer item);
 		int getChance() const;
@@ -32,7 +32,7 @@ namespace Dungeon {
 		Dropper* setMin(int min);
 		int getMax() const;
 		Dropper* setMax(int max);
-		
+
 		/**
 		 * Calculates a drop and creates that item, if it succeeds
 		 * @param loc Location to put the drop to
@@ -43,13 +43,13 @@ namespace Dungeon {
 		virtual void registerProperties(IPropertyStorage& storage);
 
 		virtual void getActions(ActionList* list, ObjectPointer callee);
-		
+
 	private:
 		int chance = 0; // 1000000 = 100%
 		int min = 1;
 		int max = 1;
-		
-	PERSISTENT_DECLARATION(Dropper, IObject)
+
+		PERSISTENT_DECLARATION(Dropper, IObject)
 	};
 }
 

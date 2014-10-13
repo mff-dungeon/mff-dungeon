@@ -9,15 +9,14 @@
 #include "../Traps/DoorLock.hpp"
 
 namespace Dungeon {
-	
-	Door::Door() {
-	}
+
+	Door::Door() { }
 
 	void Door::getActions(ActionList* list, ObjectPointer callee) {
-		LOGS("Door", Verbose) << "Getting actions on " << this->getId() << "." << LOGF;	
+		LOGS("Door", Verbose) << "Getting actions on " << this->getId() << "." << LOGF;
 		IDescriptable::getActions(list, callee);
 		// Add move actions to all rooms
-		try{
+		try {
 			ObjectMap targets = this->getRelations(Relation::Master, R_TARGET);
 			DoorwalkAction* action = new DoorwalkAction;
 			for (auto& obj : targets) {
@@ -28,13 +27,12 @@ namespace Dungeon {
 					break;
 				}
 			}
-		}
-		catch (const std::out_of_range& e) {
+		} catch (const std::out_of_range& e) {
 			// What a weird door pointing nowhere...
 		}
 	}
-	
-	void DoorwalkAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer door) {	
+
+	void DoorwalkAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer door) {
 		door.assertType<Door>("How do you want to walk through door?");
 		door->triggerTraps("doorwalk", ad);
 		ObjectPointer target;
@@ -45,8 +43,7 @@ namespace Dungeon {
 					target = obj.second;
 				}
 			}
-		}
-		catch (const std::out_of_range& e) {
+		} catch (const std::out_of_range& e) {
 			// What a weird door pointing nowhere...
 		}
 
@@ -68,9 +65,9 @@ namespace Dungeon {
 		this->detachTrap(lock, "doorwalk");
 		return this;
 	}
-    
+
 	string Door::getDescriptionSentence() {
-		return getGroupDescriptionSentence({ this });
+		return getGroupDescriptionSentence({this});
 	}
 
 	string Door::getGroupDescriptionSentence(vector<ObjectPointer> others) {
@@ -84,16 +81,16 @@ namespace Dungeon {
 				<< doors.getSentence("", "A % is casting a grimm shadow on the floor.", "Around you is %.") << endr
 				<< doors.getSentence("", "You see the frame of a %.", "You see %.") << endr;
 	}
-	
+
 	void Door::registerProperties(IPropertyStorage& storage) {
 		storage.have(goThroughMessage, "door-gothrough", "Message that will be displayed when user goes through");
 		IDescriptable::registerProperties(storage);
-	}	
+	}
 
 	void DoorwalkAction::explain(ActionDescriptor* ad) {
 		*ad << "go to ... - enter another room." << eos;
 	}
-	
+
 	bool DoorwalkAction::match(string command, ActionDescriptor* ad) {
 		smatch matches;
 		if (RegexMatcher::match("(go to|cd|walk through|enter) (.+)", command, matches)) {

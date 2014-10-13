@@ -1,17 +1,14 @@
 #ifndef ACTIONQUEUE_HPP
 #define	ACTIONQUEUE_HPP
 
-#include <queue>
+#include "common.hpp"
+#include "Driver.hpp" //
+#include "ActionDescriptor.hpp"//
+#include "GameManager.hpp"//
+#include <queue>//
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-#include "common.hpp"
-#include "Action.hpp"
-#include "ActionDescriptor.hpp"
-#include "GameManager.hpp"
-#include "Objects/Alive.hpp"
-#include "Objects/Human.hpp"
-
 
 namespace Dungeon {
     

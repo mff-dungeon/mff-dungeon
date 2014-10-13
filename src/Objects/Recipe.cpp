@@ -8,13 +8,13 @@
 namespace Dungeon {
 
 	Recipe::Recipe() {
-		this->resources = new int[Resource::ManaShard+1];
-		for(int i = 0; i<=Resource::ManaShard; i++) resources[i] = 0;
+		this->resources = new int[Resource::ManaShard + 1];
+		for (int i = 0; i <= Resource::ManaShard; i++) resources[i] = 0;
 	}
-	
+
 	Recipe::Recipe(objId id) : IDescriptable(id) {
-		this->resources = new int[Resource::ManaShard+1];
-		for(int i = 0; i<=Resource::ManaShard; i++) resources[i] = 0;
+		this->resources = new int[Resource::ManaShard + 1];
+		for (int i = 0; i <= Resource::ManaShard; i++) resources[i] = 0;
 	}
 
 	Recipe::~Recipe() {
@@ -51,7 +51,7 @@ namespace Dungeon {
 	ObjectPointer Recipe::getGoodItem() {
 		return getSingleRelation("recipeitem-good", Relation::Master);
 	}
-	
+
 	Recipe* Recipe::setGoodItem(ObjectPointer item) {
 		setSingleRelation("recipeitem-good", item, Relation::Master);
 		return this;
@@ -59,8 +59,8 @@ namespace Dungeon {
 
 	string Recipe::getDescription() const {
 		SentenceJoiner joiner;
-		for(int i = Resource::ManaShard; i>=0; i--) {
-			if(getResource(i) > 0) {
+		for (int i = Resource::ManaShard; i >= 0; i--) {
+			if (getResource(i) > 0) {
 				joiner << to_string(getResource(i)) + " " + Resource::ResourceName[i];
 			}
 		}
@@ -89,16 +89,15 @@ namespace Dungeon {
 		int retVal = 0;
 		try {
 			const ObjectMap& reqs = getRelations(Relation::Master, R_REQUIREMENT);
-			for(auto& req : reqs) {
+			for (auto& req : reqs) {
 				req.second.assertType<StatReq>("Only a requirement is supposed to be there.");
 				StatReq* r = req.second.unsafeCast<StatReq>();
-				if(r->getStat() == getMainStat()) {
-					if(retVal < r->getValue()) retVal = r->getValue();
+				if (r->getStat() == getMainStat()) {
+					if (retVal < r->getValue()) retVal = r->getValue();
 				}
 			}
-		}
-		catch(std::out_of_range& e) {
-			
+		}		catch (std::out_of_range& e) {
+
 		}
 		return retVal;
 	}
@@ -110,74 +109,71 @@ namespace Dungeon {
 		getGameManager()->createRelation(this, req, R_REQUIREMENT);
 		return this;
 	}
-	
+
 	bool Recipe::checkStatReqs(ObjectPointer userPtr, ActionDescriptor* ad) {
 		userPtr.assertExists("The human is weird.")
 				.assertType<Human>("Only a human has stats.");
 		Human* user = userPtr.unsafeCast<Human>();
 		try {
 			const ObjectMap& reqs = getRelations(Relation::Master, R_REQUIREMENT);
-			for(auto& req : reqs) {
+			for (auto& req : reqs) {
 				req.second.assertType<StatReq>("Only a requirement is supposed to be there.");
 				StatReq* r = req.second.unsafeCast<StatReq>();
-				if(user->getStatValue(r->getStat()) < r->getValue()) {
+				if (user->getStatValue(r->getStat()) < r->getValue()) {
 					*ad << "Your " << user->getStatName(r->getStat()) << " is not high enough." << eos;
 					return false;
 				}
 			}
-		}
-		catch(std::out_of_range& e) {
-			
+		}		catch (std::out_of_range& e) {
+
 		}
 		return true;
 	}
 
 	void Recipe::tryCraft(ActionDescriptor* ad) {
-		if(!checkStatReqs(ad->getCaller(), ad)) return;	// Stats not high enough
-		for(int i = Resource::ManaShard; i>=0; i--) {
-			if(!ad->getCaller()->hasResourceGreaterThan((Resource::ResourceType) i, getResource(i))) {
+		if (!checkStatReqs(ad->getCaller(), ad)) return; // Stats not high enough
+		for (int i = Resource::ManaShard; i >= 0; i--) {
+			if (!ad->getCaller()->hasResourceGreaterThan((Resource::ResourceType) i, getResource(i))) {
 				*ad << "You don't have enough " << Resource::ResourceName[i] << " to craft " << getName() << "." << eos;
 				return;
 			}
 		}
-		for(int i = Resource::ManaShard; i>=0; i--) {
+		for (int i = Resource::ManaShard; i >= 0; i--) {
 			ad->getCaller()->changeResourceQuantity((Resource::ResourceType) i, -getResource(i));
 		}
 		Human* crafter = ad->getCaller();
 		int levelDiff = crafter->getStatValue(getMainStat()) - getMainStatReq();
-		
-		double failRate = 5000*(2-2.0/(levelDiff+2));
-		if(failRate < Utils::getRandomInt(1, 10000)) {
+
+		double failRate = 5000 * (2 - 2.0 / (levelDiff + 2));
+		if (failRate < Utils::getRandomInt(1, 10000)) {
 			*ad << "You have failed creating " << getName() << ". Maybe next time." << eos;
-			crafter->addExperience(getExperience()/10);
+			crafter->addExperience(getExperience() / 10);
 			return;
 		}
-		
+
 		Item* created = 0;
-		double successRate = 10000*(1-10.0/(levelDiff+11));
-		if(getBadItem() == nullptr) successRate = 10000; // Always do the good item
-		if(successRate < Utils::getRandomInt(1, 10000)) {
+		double successRate = 10000 * (1 - 10.0 / (levelDiff + 11));
+		if (getBadItem() == nullptr) successRate = 10000; // Always do the good item
+		if (successRate < Utils::getRandomInt(1, 10000)) {
 			*ad << "You have tried to craft " << getName() << " but you succeeded just barely." << eos;
 			created = getBadItem().assertExists("The crafting template doesn't exist")
-							.assertType<Item>("What is that? Crafting a non-item?")
-							->shallowClone().safeCast<Item>();
-			crafter->addExperience(getExperience()/2);
-		}
-		else {
+					.assertType<Item>("What is that? Crafting a non-item?")
+					->shallowClone().safeCast<Item>();
+			crafter->addExperience(getExperience() / 2);
+		} else {
 			*ad << "You have managed to craft " << getName() << "!" << eos;
 			created = getGoodItem().assertExists("The crafting template doesn't exist")
-							.assertType<Item>("What is that? Crafting a non-item?")
-							->shallowClone().safeCast<Item>();
+					.assertType<Item>("What is that? Crafting a non-item?")
+					->shallowClone().safeCast<Item>();
 			crafter->addExperience(getExperience());
 		}
-		
+
 		Inventory* backpack = crafter->getBackpack().safeCast<Inventory>();
-		if(backpack->canAdd(created)) {
+		if (backpack->canAdd(created)) {
 			backpack->addItem(created);
 			*ad << "You have acquired a " << created->getName() << " and put it in your backpack." << eos;
-		}
-		else {
-			*ad << "You have created a " << created->getName() << " but as you don't have free space in your backpack " 
+		} else {
+			*ad << "You have created a " << created->getName() << " but as you don't have free space in your backpack "
 					<< "you have dropped it on the ground." << eos;
 			created->setSingleRelation(R_INSIDE, crafter->getLocation(), Relation::Slave);
 		}
@@ -187,7 +183,7 @@ namespace Dungeon {
 		storage.have(level, "recipe-level", "Level required to craft the item.")
 				.have(experience, "recipe-exp", "Experience gained for crafting this item.")
 				.have((int&) mainStat, "recipe-mainstat", "Main stat required for this recipe (affects success).");
-		for(int i=Resource::ManaShard; i>=0; i--) {
+		for (int i = Resource::ManaShard; i >= 0; i--) {
 			storage.have(resources[i], string("recipe-resource-") + Resource::ResourceName[i],
 					string("Resource ") + Resource::ResourceName[i] + " required.");
 		}

@@ -3,7 +3,6 @@
 
 #include "ObjectPointer.hpp"
 #include "IPropertyStorage.hpp"
-#include "GameManager.hpp"
 #include <queue>
 
 namespace Dungeon {
@@ -13,9 +12,7 @@ namespace Dungeon {
      */
 	class Cloner : IPropertyStorage {
 	public:
-		Cloner(ObjectPointer original) : orig(original) {
-			gm = orig->getGameManager();
-		}
+		Cloner(ObjectPointer original) : orig(original) { }
 		
 		ObjectPointer getShallowClone();
 		ObjectPointer getDeepClone();
@@ -43,7 +40,6 @@ namespace Dungeon {
 	private:		
 		ObjectPointer orig;
 		IObject* cloned;
-		GameManager* gm;
 		std::queue<void*> properties;
 		bool storing = false;
 	};

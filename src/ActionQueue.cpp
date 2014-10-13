@@ -1,6 +1,5 @@
 #include "ActionQueue.hpp"
 #include "Driver.hpp"
-#include "Objects/Alive.hpp"
 #include <algorithm>
 
 namespace Dungeon {
@@ -36,9 +35,9 @@ namespace Dungeon {
 			// Record interaction
 			// FIXME uninitialised caller -> memory error
 			ad->getCaller()->markInteraction()->save();
-                    
+
 			flawless = true;
-		}		catch (GameException& ge) {
+		} catch (GameException& ge) {
 			LOGS("ActionQueue", Error) << "Game exception occured and Driver missed it." << ge.what() << LOGF;
 		}
 		/* Disabled for debugging, enable on production

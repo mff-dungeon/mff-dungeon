@@ -9,6 +9,7 @@
 #include "ActionQueue.hpp"
 #include "Objects/Alive.hpp"
 #include "ActionList.hpp"
+#include "RegexMatcher.hpp"
 
 namespace Dungeon {
     

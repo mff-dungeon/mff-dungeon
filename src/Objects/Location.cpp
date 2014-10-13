@@ -1,14 +1,16 @@
 #include <exception>
-
 #include "Location.hpp"
+#include "Item.hpp"
+#include "Inventory.hpp"
+#include "Wearable.hpp"
 #include "../ObjectPointer.hpp"
 #include "../ObjectGroup.hpp"
 #include "../ActionDescriptor.hpp"
-#include "Item.hpp"
-#include "Inventory.hpp"
 #include "../RandomString.hpp"
-#include "Wearable.hpp"
 #include "../SentenceJoiner.hpp"
+#include "../RegexMatcher.hpp"
+
+using namespace std;
 
 namespace Dungeon {
 
@@ -24,14 +26,14 @@ namespace Dungeon {
 		this->respawnable = respawnable;
 		return this;
 	}
-	
+
 	string Location::getEmptyMessage() const {
 		return emptyMessage != "" ? emptyMessage
 				: RandomString::get()
-					<< "It is empty." << endr
-					<< "There is nothing." << endr;
+				<< "It is empty." << endr
+				<< "There is nothing." << endr;
 	}
-	
+
 	Location* Location::setEmptyMessage(string emptyMessage) {
 		this->emptyMessage = emptyMessage;
 		return this;
@@ -47,7 +49,7 @@ namespace Dungeon {
 					item.second->triggerTraps("get-actions", nullptr)
 					->getActions(list, callee);
 			}
-		}		catch (const std::out_of_range& e) {
+		} catch (const std::out_of_range& e) {
 
 		}
 
@@ -68,7 +70,7 @@ namespace Dungeon {
 		} else {
 			delete pickAction;
 		}
-		
+
 		IDescriptable::getActions(list, callee);
 	}
 
@@ -79,7 +81,7 @@ namespace Dungeon {
 				<< "You can see " + common << endr
 				<< "You've searched " + this->getLongName() + " too." + this->getDescription() << endr;
 	}
-	
+
 	string Location::getInsideSentence() {
 		string name = this->getLongName();
 		return RandomString::get()
@@ -98,28 +100,28 @@ namespace Dungeon {
 		SentenceJoiner nested;
 
 		// remove myself from the exploration group
-		for (auto obj :  getRelations(Relation::Master, R_INSIDE)) {
+		for (auto obj : getRelations(Relation::Master, R_INSIDE)) {
 			if (alive == obj.second) {
 				*ad << getInsideSentence() << eos;
-                                *ad << getDescription() << eos;
+				*ad << getDescription() << eos;
 			} else if (obj.second->instanceOf(Location)) {
 				nested << obj.second;
 			} else {
 				groupedObjects.insertObject(obj.second);
 			}
 		}
-		
+
 		groupedObjects.explore(ad, true, alive.safeCast<Human>());
 		*ad << nested.getSentence("", "You may want to look into %.") << eos;
-		
+
 		if (nested.size() + groupedObjects.size() == 0)
 			*ad << getEmptyMessage() << eos;
-		
+
 	}
 
 	void Location::registerProperties(IPropertyStorage& storage) {
 		storage.have(respawnable, "location-respawnable", "True if user can respawn here")
-			.have(emptyMessage, "location-emptymessage", "Message that shows when the location is empty.");
+				.have(emptyMessage, "location-emptymessage", "Message that shows when the location is empty.");
 		IDescriptable::registerProperties(storage);
 	}
 
@@ -145,7 +147,7 @@ namespace Dungeon {
 			*ad << "You cannot pick " << item->getName() << ". \n" << eos;
 			return;
 		}
-		
+
 		ObjectPointer backpack = ad->getCaller()
 				->getBackpack();
 
@@ -153,7 +155,7 @@ namespace Dungeon {
 			*ad << "You have no inventory to put " << item->getName() << " in." << eos;
 			return;
 		}
-		
+
 		Inventory* inventory = backpack
 				.assertType<Inventory>(GameStateInvalid::BackpackNotInventory)
 				.unsafeCast<Inventory>();

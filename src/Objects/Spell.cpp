@@ -1,20 +1,15 @@
 #include "Spell.hpp"
 #include "Human.hpp"
+#include "../RegexMatcher.hpp"
 #include <cmath>
 
 namespace Dungeon {
 
-	Spell::Spell() {
-		
-	}
-	
-	Spell::Spell(objId id) : IDescriptable(id) {
-		
-	}
+	Spell::Spell() { }
 
-	Spell::~Spell() {
+	Spell::Spell(objId id) : IDescriptable(id) { }
 
-	}
+	Spell::~Spell() { }
 
 	int Spell::getBaseEffect() const {
 		return effect;
@@ -54,16 +49,16 @@ namespace Dungeon {
 
 	int Spell::getManaCost(ObjectPointer casterPtr) const {
 		casterPtr.assertExists("Who is casting that spell? A ghost?")
-			.assertType<Human>("Only humans can cast spells.");
+				.assertType<Human>("Only humans can cast spells.");
 		Human* caster = casterPtr.unsafeCast<Human>();
 		int manaCost = getBaseManaCost();
-		manaCost = (int) (manaCost * pow(0.8, (caster->getStatValue(Human::Wisdom) - getBaseWis())/10.0));
+		manaCost = (int) (manaCost * pow(0.8, (caster->getStatValue(Human::Wisdom) - getBaseWis()) / 10.0));
 		return manaCost;
 	}
 
 	int Spell::getEffect(ObjectPointer casterPtr) const {
 		casterPtr.assertExists("Who is casting that spell? A ghost?")
-			.assertType<Human>("Only humans can cast spells.");
+				.assertType<Human>("Only humans can cast spells.");
 		Human* caster = casterPtr.unsafeCast<Human>();
 		int effect = getBaseEffect();
 		effect = (int) (effect * pow(1.2, (caster->getStatValue(Human::Intelligence) - getBaseInt())));
@@ -72,10 +67,10 @@ namespace Dungeon {
 
 	bool Spell::checkCast(ObjectPointer casterPtr, ActionDescriptor* ad) const {
 		casterPtr.assertExists("Who is casting that spell? A ghost?")
-			.assertType<Human>("Only humans can cast spells.");
+				.assertType<Human>("Only humans can cast spells.");
 		Human* caster = casterPtr.unsafeCast<Human>();
-		
-		if(!caster->hasResourceGreaterThan(Resource::ManaShard, getManaCost(casterPtr))) {
+
+		if (!caster->hasResourceGreaterThan(Resource::ManaShard, getManaCost(casterPtr))) {
 			*ad << "You don't have enough mana to cast " << getName() << "." << eos;
 			return false;
 		}
@@ -96,11 +91,11 @@ namespace Dungeon {
 	}
 
 	PERSISTENT_IMPLEMENTATION(Spell)
-			
+
 	void CastAction::explain(ActionDescriptor* ad) {
 		*ad << "Use 'cast ...' to cast a spell." << eos;
 	}
-	
+
 	bool CastAction::match(string command, ActionDescriptor* ad) {
 		if (RegexMatcher::match("cast .+", command)) {
 			selectBestTarget(command.substr(5), ad);
@@ -108,13 +103,13 @@ namespace Dungeon {
 		}
 		return false;
 	}
-        
+
 	void CastAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		target.assertExists("The spell doesn't exist")
 				.assertType<Spell>("You are casting something weird");
 		Spell* spell = target.unsafeCast<Spell>();
-		
-		if(spell->checkCast(ad->getCaller(), ad)) {
+
+		if (spell->checkCast(ad->getCaller(), ad)) {
 			spell->cast(ad->getCaller(), ad);
 		}
 	}
