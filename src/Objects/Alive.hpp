@@ -29,19 +29,7 @@ namespace Dungeon {
 			Dying = 2,
 			Dead = 3
 		};
-
-		/**
-		 * Describes presence in game.
-		 * Meanings:
-		 *  Present - Alive has sent a message in last 10 minutes
-		 *  Away - There was no interaction for 40 minutes
-		 *  Offline - After hour of no interaction
-		 */
-		enum Presence {
-			Present = 0,
-			Away = 1,
-			Offline = 2
-		};
+		
 		Alive() { } // Constructor allowing to load class later
 		Alive(objId id);
 		void getAllActions(ActionList* list);
@@ -61,8 +49,13 @@ namespace Dungeon {
 		virtual Alive* setDefense(int defense, ActionDescriptor* ad = 0);
 
 		/**
-		 * Calls method to damage alive. Calculates the actual damage and calls reduceHp
+		 * Calculates the actual damage depending on attack/defense values
 		 * @param amount The attacker's attack value
+		 */
+		virtual int calculateDamage(ObjectPointer attackerPtr, int amount);
+		/**
+		 * Calls method to damage alive. Fills ad and calls reduceHp
+		 * @param amount the damage to be done
 		 */
 		virtual Alive* damageAlive(ObjectPointer attackerPtr, int amount, ActionDescriptor* ad = 0);
 
@@ -154,16 +147,6 @@ namespace Dungeon {
 		 */
 		virtual Alive* regenerate(int rate);
 
-		/**
-		 * Finds out whether the guy is online.
-		 */
-		Presence getPresence();
-
-		/**
-		 * Use this method to mark every last interaction this guy makes.
-		 */
-		Alive* markInteraction();
-
 	private:
 		// Combat stats
 		int maxHp = 300;
@@ -183,11 +166,6 @@ namespace Dungeon {
 		int respawnInterval = -1;
 
 		string weaponName = "";
-
-		/**
-		 Presence tracking
-		 */
-		long lastInteraction = 0;
 
 		PERSISTENT_DECLARATION(Alive, IDescriptable)
 	};

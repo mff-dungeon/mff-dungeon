@@ -79,8 +79,7 @@ namespace Dungeon {
 				.have((int&) currentState, "alive-state", "Current state of alive: 1 - Living, 2 - Dying, 3 - Dead")
 				.have(respawnTime, "alive-respawntime", "Respawn time")
 				.have(respawnInterval, "alive-respawninterval", "Respawn interval")
-				.have(weaponName, "alive-weaponname", "The name of weapon currently used")
-				.have(lastInteraction, "alive-last-interaction", "UNIX timestamp of last interaction");
+				.have(weaponName, "alive-weaponname", "The name of weapon currently used");
 		IDescriptable::registerProperties(storage);
 	}
 
@@ -187,9 +186,9 @@ namespace Dungeon {
 		return false;
 	}
 
-	Alive* Alive::damageAlive(ObjectPointer attackerPtr, int amount, ActionDescriptor* ad) {
+	int Alive::calculateDamage(ObjectPointer attackerPtr, int amount) {
 		Alive* attacker = attackerPtr.safeCast<Alive>();
-		if (attacker == 0) return this;
+		if (attacker == 0) return 0;
 		double multiplier = 10;
 		if (getDefense() != 0) { // Division by zero
 			multiplier = (double) sqrt(amount / getDefense());
@@ -199,26 +198,32 @@ namespace Dungeon {
 		int rnd = Utils::getRandomInt(90, 110);
 
 		int damage = (int) (multiplier * rnd / 100 * (amount - getDefense() * 0.2));
-		if (damage <= 0) return this;
+		if (damage <= 0) return 0;
+		return damage;
+	}
+
+	Alive* Alive::damageAlive(ObjectPointer attackerPtr, int amount, ActionDescriptor* ad) {
+		Alive* attacker = attackerPtr.safeCast<Alive>();
+		if (amount <= 0) return this;
 		if (ad != 0) {
 			if (ad->getCaller() == this) {
 				if (attacker->getWeaponName() != "")
 					*ad << (RandomString::get()
-						<< "You have received " << damage << " damage from " + attacker->getName() + "'s " + Utils::decapitalize(attacker->getWeaponName()) + "." << endr
-						<< attacker->getName() << " caused you " << damage << " damage with its " << Utils::decapitalize(attacker->getWeaponName()) << "." << endr) << eos;
+						<< "You have received " << amount << " damage from " + attacker->getName() + "'s " + Utils::decapitalize(attacker->getWeaponName()) + "." << endr
+						<< attacker->getName() << " caused you " << amount << " damage with its " << Utils::decapitalize(attacker->getWeaponName()) << "." << endr) << eos;
 				else
-					*ad << "You have received " + to_string(damage) + " damage from " + attacker->getName() + "." << eos;
+					*ad << "You have received " + to_string(amount) + " damage from " + attacker->getName() + "." << eos;
 			} else {
 				string weapon = ad->getCaller()->getWeaponName();
 				if (weapon != "")
 					*ad << (RandomString::get()
-						<< "You have dealt " << damage << " damage to " + this->getName() + " with your " + Utils::decapitalize(move(weapon)) + "." << endr
-						<< "Your " + Utils::decapitalize(move(weapon)) + " has caused " << damage << " damage to " + this->getName() + "." << endr) << eos;
+						<< "You have dealt " << amount << " damage to " + this->getName() + " with your " + Utils::decapitalize(move(weapon)) + "." << endr
+						<< "Your " + Utils::decapitalize(move(weapon)) + " has caused " << amount << " damage to " + this->getName() + "." << endr) << eos;
 				else
-					*ad << "You have dealt " << damage << " damage to " + this->getName() + "." << eos;
+					*ad << "You have dealt " << amount << " damage to " + this->getName() + "." << eos;
 			}
 		}
-		changeHp(-damage, ad);
+		changeHp(-amount, ad);
 		return this;
 	}
 
@@ -275,23 +280,6 @@ namespace Dungeon {
 
 	Alive* Alive::setState(State newState) {
 		this->currentState = newState;
-		return this;
-	}
-
-	Alive::Presence Alive::getPresence() {
-		long unseenTime = (long) time(0) - this->lastInteraction;
-
-		if (unseenTime < 60 * 10) {
-			return Presence::Present;
-		} else if (unseenTime < 40 * 10) {
-			return Presence::Away;
-		} else {
-			return Presence::Offline;
-		}
-	}
-
-	Alive* Alive::markInteraction() {
-		this->lastInteraction = (long) time(0);
 		return this;
 	}
 

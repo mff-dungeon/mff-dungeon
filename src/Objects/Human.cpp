@@ -208,6 +208,23 @@ namespace Dungeon {
 		return this;
 	}
 
+	Human::Presence Human::getPresence() {
+		long unseenTime = (long) time(0) - this->lastInteraction;
+
+		if (unseenTime < 60 * 10) {
+			return Presence::Present;
+		} else if (unseenTime < 40 * 10) {
+			return Presence::Away;
+		} else {
+			return Presence::Offline;
+		}
+	}
+
+	Human* Human::markInteraction() {
+		this->lastInteraction = (long) time(0);
+		return this;
+	}
+
 	Alive* Human::die(ActionDescriptor* ad) {
 		this->setState(State::Dead);
 		if (getGameManager()->getGameMode() == GameManager::Hardcore) {
@@ -255,7 +272,8 @@ namespace Dungeon {
 				.have(craftingExp, "human-craftingexp", "Human's crafting exp")
 				.have(level, "human-level", "Human's character level")
 				.have(exp, "human-exp", "Human's experience points")
-				.have(freepoints, "human-free-points", "Human's stat points to distribute");
+				.have(freepoints, "human-free-points", "Human's stat points to distribute")
+				.have(lastInteraction, "alive-last-interaction", "UNIX timestamp of last interaction");
 		for (int i = Stats::Begin; i < Stats::End; i++) {
 			storage.have(stats[i], string("human-stats-") + getStatName(i, true), string("Value of stat ") + getStatName(i));
 		}

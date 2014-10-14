@@ -29,6 +29,7 @@ namespace Dungeon {
 
 		virtual void getActions(ActionList* list, ObjectPointer callee);
 
+		virtual void examine(ActionDescriptor* ad);
 		virtual string getDescriptionSentence();
 		virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
 

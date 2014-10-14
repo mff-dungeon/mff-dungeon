@@ -21,7 +21,6 @@ namespace Dungeon {
 
 	/**
 	 * A player's representation in Dung world.
-	 * Bears only contact information.
 	 * 
 	 * Can be overriden with another "human", this one 
 	 * is to be driven by jabber.
@@ -39,6 +38,19 @@ namespace Dungeon {
 			Crafting = 5, // crafting skills
 			Alchemy = 6, // potion skills
 			End = 7
+		};
+
+		/**
+		 * Describes presence in game.
+		 * Meanings:
+		 *  Present - Alive has sent a message in last 10 minutes
+		 *  Away - There was no interaction for 40 minutes
+		 *  Offline - After hour of no interaction
+		 */
+		enum Presence {
+			Present = 0,
+			Away = 1,
+			Offline = 2
 		};
 
 		Human();
@@ -88,11 +100,26 @@ namespace Dungeon {
 		Human* setUsername(string username);
 		string getUsername() const;
 
+		/**
+		 * Finds out whether the guy is online.
+		 */
+		Presence getPresence();
+
+		/**
+		 * Use this method to mark every last interaction this guy makes.
+		 */
+		Human* markInteraction();
+
 		virtual string getWeaponName() const;
 
 
 	private:
 		string username, contact;
+
+		/**
+		 Presence tracking
+		 */
+		long lastInteraction = 0;
 
 		// Level stats
 		// @deprecated

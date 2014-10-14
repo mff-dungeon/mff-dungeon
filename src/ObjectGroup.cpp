@@ -54,7 +54,7 @@ namespace Dungeon {
 						*ad << "There is an object (" + it->second.getId() + ")." << eos;
 						it++;
 						continue;
-				} else if (it->second->instanceOf(Alive) && it->second.unsafeCast<Alive>()->getPresence() == Alive::Presence::Offline) {
+				} else if (it->second->instanceOf(Human) && it->second.unsafeCast<Human>()->getPresence() == Human::Presence::Offline) {
 					// These aren't the Alives we're looking for.
 					it++;
 					continue;

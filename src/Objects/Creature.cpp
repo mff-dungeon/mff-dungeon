@@ -116,6 +116,24 @@ namespace Dungeon {
 		list->addAction(new CombatAction)
 				->addTarget(this);
 	}
+	
+	void Creature::examine(ActionDescriptor* ad) {
+		triggerTraps("examine", ad);
+		if (ad) {
+			*ad << getDescription();
+			double percent = (double) ad->getCaller()->calculateDamage(this, getAttack())/ad->getCaller()->getMaxHp();
+			if(percent > 0.5) {
+				*ad << "This thing is a killer, I should not come any closer!";
+			}
+			else if(percent > 0.2) {
+				*ad << "It's definitely strong, but I could make it with some friends.";
+			} 
+			else if(percent > 0.07) {
+				*ad << "I should be careful when attacking this.";
+			}
+			*ad << eos;
+		}
+	}
 
 	string Creature::getDescriptionSentence() {
 		return getGroupDescriptionSentence({this});
@@ -253,18 +271,18 @@ namespace Dungeon {
 				this->combatLoop(ad, reply);
 			});
 		} else if (action == CombatAction::CombatMatch::Run) {
-			ad->getCaller()->damageAlive(creaturePtr, creature->getAttack(), ad);
+			ad->getCaller()->damageAlive(creaturePtr, ad->getCaller()->calculateDamage(creaturePtr, creature->getAttack()), ad);
 			if (ad->getCaller()->getState() == Alive::State::Living) {
 				*ad << "You have managed to run from " << creature->getName()
 						<< ". Be warned though, as any other action than leaving this room would reinitiate attack." << eos;
 			}
 		} else {
-			creature->damageAlive(ad->getCaller(), ad->getCaller()->getAttack(), ad);
+			creature->damageAlive(ad->getCaller(), creature->calculateDamage(ad->getCaller(), ad->getCaller()->getAttack()), ad);
 			if (creature->getState() == Alive::State::Dying) {
 				*ad << creature->getName() << " is mortally wounded. Use 'kill ...' to finish it." << eos;
 				return;
 			}
-			ad->getCaller()->damageAlive(creaturePtr, creature->getAttack(), ad);
+			ad->getCaller()->damageAlive(creaturePtr, ad->getCaller()->calculateDamage(creaturePtr, creature->getAttack()), ad);
 			if (ad->getCaller()->getState() != Alive::State::Living) return;
 			// Should be able to use potion, or so (later)
 			*ad << text;
