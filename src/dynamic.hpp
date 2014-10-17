@@ -13,7 +13,6 @@
 #include "Objects/Potion.hpp"
 #include "Objects/Recipe.hpp"
 #include "Objects/Resource.hpp"
-#include "Objects/Spell.hpp"
 #include "Objects/SpellScroll.hpp"
 #include "Objects/ThorsHammer.hpp"
 #include "Objects/Wearable.hpp"
@@ -25,5 +24,8 @@
 #include "Traps/MTATrap.hpp"
 #include "Traps/SimpleDamageTrap.hpp"
 #include "Traps/Trap.hpp"
+#include "Spells/HealingSpell.hpp"
+#include "Spells/Spell.hpp"
+#include "Spells/TeleportSpell.hpp"
 
 #endif

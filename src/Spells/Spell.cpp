@@ -1,5 +1,5 @@
 #include "Spell.hpp"
-#include "Human.hpp"
+#include "../Objects/Human.hpp"
 #include "../RegexMatcher.hpp"
 #include <cmath>
 

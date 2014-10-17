@@ -2,7 +2,7 @@
 #define	SPELL_HPP
 
 #include "../common.hpp"
-#include "IDescriptable.hpp"
+#include "../Objects/IDescriptable.hpp"
 #include "../Actions/MultiTargetAction.hpp"
 #include "../ActionDescriptor.hpp"
 
@@ -35,7 +35,7 @@ namespace Dungeon {
 		/**
 		 * Calculates effect value depending on caster's stats
 		 * @param casterPtr User casting this spell
-		 * @return mana cost of the spell
+		 * @return effect strength of the spell
 		 */
 		int getEffect(ObjectPointer casterPtr) const;
 

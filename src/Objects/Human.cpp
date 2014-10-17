@@ -1,7 +1,7 @@
 #include "Human.hpp"
 #include "Location.hpp"
 #include "Inventory.hpp"
-#include "Spell.hpp"
+#include "../Spells/Spell.hpp"
 #include "../ActionList.hpp"
 #include "../ActionDescriptor.hpp"
 #include "../RandomString.hpp"

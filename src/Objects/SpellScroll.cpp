@@ -1,6 +1,6 @@
 #include "SpellScroll.hpp"
 #include "Human.hpp"
-#include "Spell.hpp"
+#include "../Spells/Spell.hpp"
 #include "../RegexMatcher.hpp"
 
 namespace Dungeon {

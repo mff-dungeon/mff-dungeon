@@ -9,7 +9,7 @@ namespace Dungeon {
 		stringstream cDataStream;
 		string cName;
 		int err = DatabaseHandler::getInstance().loadObject(oid, cName, cDataStream);
-		if(err != 0) {
+		if (err != 0) {
 			LOG("Loader") << "Error loading object, id " << oid << ". Error code: " << err << LOGF;
 			return 0;
 		}
@@ -32,11 +32,11 @@ namespace Dungeon {
 
 		int err = DatabaseHandler::getInstance().saveObject(id, cName, cData);
 		delete cDataStream;
-		if(err != DatabaseHandler::E_OK) {
+		if (err != DatabaseHandler::E_OK) {
 			LOGS("Loader", Fatal) << "Error saving object " << id << ", error code " << err << LOGF;
 		}
 	}
-	
+
 	vector<objId> ObjectLoader::getObjectList() {
 		vector<objId> list;
 		DatabaseHandler::getInstance().getObjectList(list);

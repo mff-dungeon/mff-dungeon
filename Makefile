@@ -1,7 +1,7 @@
 CC := g++
 CC := clang
 SRCDIR := src
-DYNDIR := src/Objects/*.hpp src/Traps/*.hpp
+DYNDIR := src/Objects/*.hpp src/Traps/*.hpp src/Spells/*.hpp
 BUILDDIR := build
 TARGET := bin/dungeon
 
