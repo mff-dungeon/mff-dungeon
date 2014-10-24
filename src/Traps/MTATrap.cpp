@@ -27,7 +27,7 @@ namespace Dungeon {
 				targets.setConjunction(", ", " or ");
 				this->objects.clear();
 				for (ObjectPointer obj : e.possibleTargets)
-					this->objects[obj.getId()] = obj;
+					this->objects.insert(pair<objId, ObjectPointer>(obj.getId(),obj));
 
 				// This time there will be each object only once
 				for (auto& pair : this->objects)

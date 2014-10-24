@@ -70,16 +70,7 @@ namespace Dungeon {
     class Driver;
     class AddIObject;
     class ActionList;
-    class Inventory;
     struct ObjectPointer;
-    
-    class IObject;
-    class IDescriptable;
-    class Alive;
-    class Human;
-    class Item;
-    class Resource;
-    class Potion;
     
     /**
      * Should be value type (struct), comparable

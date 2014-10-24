@@ -41,26 +41,26 @@ namespace Dungeon {
 						target = ad->getGM()->getObject(matches[3]);
 					}
 					*ad << "So you want to know something? Relations which " << target.getId() << " master:\n";
-							RelationList r = target->getRelations(Relation::Master);
+					const RelationList& r = target->getRelations(Relation::Master);
 					for (auto& type : r) {
 						*ad << "=== " << type.first + ":\n";
 						for (auto& obj : type.second) {
 							if (obj.second->instanceOf(IDescriptable)) {
 								IDescriptable* objptr = obj.second.unsafeCast<IDescriptable>();
-										*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
+								*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
 							} else {
 								*ad << "\t" << obj.first << "\n";
 							}
 						}
 					}
 					*ad << "Slave:\n";
-							r = target->getRelations(Relation::Slave);
-					for (auto& type : r) {
+					const RelationList& s = target->getRelations(Relation::Slave);
+					for (auto& type : s) {
 						*ad << "=== " << type.first + ":\n";
 						for (auto& obj : type.second) {
 							if (obj.second->instanceOf(IDescriptable)) {
 								IDescriptable* objptr = obj.second.unsafeCast<IDescriptable>();
-										*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
+								*ad << "\t" << objptr->getName() << "  ...  " << obj.first << "\n";
 							} else {
 								*ad << "\t" << obj.first << "\n";
 							}
@@ -183,7 +183,7 @@ namespace Dungeon {
 			target.assertExists();
 			if (reply != ".") {
 				prop = reply;
-						LOG("PropEditor") << "Set property of " << target.getId() << " to " << prop << LOGF;
+				LOG("PropEditor") << "Set property of " << target.getId() << " to " << prop << LOGF;
 			}
 			askForNextOne(ad);
 		});
@@ -199,8 +199,8 @@ namespace Dungeon {
 			target.assertExists();
 			if (reply != ".") {
 				std::istringstream(reply) >> prop;
-						*ad << "Set to '" << prop << "'." << eos;
-						LOG("PropEditor") << "Set property of " << target.getId() << " to " << prop << LOGF;
+				*ad << "Set to '" << prop << "'." << eos;
+				LOG("PropEditor") << "Set property of " << target.getId() << " to " << prop << LOGF;
 			}
 			askForNextOne(ad);
 		});
@@ -216,8 +216,8 @@ namespace Dungeon {
 			target.assertExists();
 			if (reply != ".") {
 				std::istringstream(reply) >> prop;
-						*ad << "Set to '" << prop << "'." << eos;
-						LOG("PropEditor") << "Set property of " << target.getId() << " to " << prop << LOGF;
+				*ad << "Set to '" << prop << "'." << eos;
+				LOG("PropEditor") << "Set property of " << target.getId() << " to " << prop << LOGF;
 			}
 			askForNextOne(ad);
 		});
@@ -231,8 +231,8 @@ namespace Dungeon {
 			target.assertExists();
 			if (reply != ".") {
 				prop = StringMatcher::matchTrueFalse(reply);
-						*ad << "Set to " << (prop ? "True" : "False") << "." << eos;
-						LOG("PropEditor") << "Set property of " << target.getId() << " to " << (prop ? "True" : "False") << LOGF;
+				*ad << "Set to " << (prop ? "True" : "False") << "." << eos;
+				LOG("PropEditor") << "Set property of " << target.getId() << " to " << (prop ? "True" : "False") << LOGF;
 			}
 			askForNextOne(ad);
 		});

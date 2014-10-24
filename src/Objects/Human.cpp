@@ -194,7 +194,7 @@ namespace Dungeon {
 					defense += wornItem->getDefenseBonus();
 					maxhp += wornItem->getHpBonus();
 				}
-			}			catch (const std::out_of_range& e) {
+			} catch (const std::out_of_range& e) {
 
 			}
 		}

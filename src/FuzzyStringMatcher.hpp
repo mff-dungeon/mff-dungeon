@@ -113,7 +113,7 @@ namespace Dungeon {
 			LOGS("FSM", Warning) << "Adding empty string." << LOGF;
 			return *this;
 		}
-		strMap[searchstring] = value;
+		strMap.insert(pair<string, value_type>(searchstring,value));
 		return *this;
 	}
 	

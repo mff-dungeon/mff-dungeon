@@ -85,7 +85,8 @@ namespace Dungeon {
 	}
 
 	ActionDescriptor::EndOfSentence *eos() {
-		throw "Method eos is not callable.";
+		LOGS("ActionDescriptor", Error) << "Tried to call invalid method eos." << LOGF;
+		throw GameException("AD: Method eos is not callable.");
 	}
 
 	ActionDescriptor& ActionDescriptor::operator <<(ActionDescriptor::EndOfSentence*(*endofsentence)()) {

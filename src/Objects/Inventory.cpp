@@ -128,7 +128,7 @@ namespace Dungeon {
 		// Drop action, adding only if there is anything to drop
 		DropAction* action = new DropAction;
 		try {
-			ObjectMap itemsIn = this->getRelations(Relation::Master, R_INVENTORY);
+			const ObjectMap& itemsIn = this->getRelations(Relation::Master, R_INVENTORY);
 			for (auto& item : itemsIn) {
 				item.second->getActions(list, callee);
 				action->addTarget(item.second);

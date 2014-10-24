@@ -13,7 +13,7 @@ namespace Dungeon {
 	Creature* Creature::calculateDrops(ActionDescriptor* ad) {
 		bool dropped = false;
 		try {
-			ObjectMap drops = getRelations(Relation::Master, R_DROP);
+			const ObjectMap& drops = getRelations(Relation::Master, R_DROP);
 			if (!drops.empty()) {
 				for (auto& dropIt : drops) {
 					ObjectPointer dropPtr = dropIt.second

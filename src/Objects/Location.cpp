@@ -43,7 +43,7 @@ namespace Dungeon {
 		LOGS("Location", Verbose) << "Getting actions on " << this->getName() << "." << LOGF;
 		// Recursively search all items in this room
 		try {
-			ObjectMap objects = getRelations(Relation::Master, R_INSIDE);
+			const ObjectMap& objects = getRelations(Relation::Master, R_INSIDE);
 			for (auto& item : objects) {
 				if (item.second != callee)
 					item.second->triggerTraps("get-actions", nullptr)
@@ -100,7 +100,7 @@ namespace Dungeon {
 		SentenceJoiner nested;
 
 		// remove myself from the exploration group
-		for (auto obj : getRelations(Relation::Master, R_INSIDE)) {
+		for (auto& obj : getRelations(Relation::Master, R_INSIDE)) {
 			if (alive == obj.second) {
 				*ad << getInsideSentence() << eos;
 				*ad << getDescription() << eos;

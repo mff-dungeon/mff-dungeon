@@ -166,12 +166,12 @@ namespace Dungeon {
 		*ad << "Do you want to drop " + item->getName() + ", or do you want to put it into your backpack?" << eos;
 		ad->waitForReply([this, item] (ActionDescriptor *ad, string reply) {
 			FuzzyStringMatcher<Wearable::DesiredAction> matcher;
-			matcher.add("drop", Wearable::DesiredAction::Drop);
-					matcher.add("ground", Wearable::DesiredAction::Drop);
-					matcher.add("drop on the ground", Wearable::DesiredAction::Drop);
-					matcher.add("keep", Wearable::DesiredAction::Keep);
-					matcher.add("put", Wearable::DesiredAction::Keep);
-					matcher.add("put in backpack", Wearable::DesiredAction::Keep);
+			matcher.add("drop", Wearable::DesiredAction::Drop)
+					.add("ground", Wearable::DesiredAction::Drop)
+					.add("drop on the ground", Wearable::DesiredAction::Drop)
+					.add("keep", Wearable::DesiredAction::Keep)
+					.add("put", Wearable::DesiredAction::Keep)
+					.add("put in backpack", Wearable::DesiredAction::Keep);
 					Wearable::DesiredAction dAction = matcher.find(reply);
 
 			if (!Wearable::unequip(ad, item, dAction)) {
@@ -230,15 +230,15 @@ namespace Dungeon {
 				<< ", or do you want to put it into your backpack?" << eos;
 		ad->waitForReply([this] (ActionDescriptor *ad, string reply) {
 			FuzzyStringMatcher<Wearable::DesiredAction> matcher;
-			matcher.add("drop", Wearable::DesiredAction::Drop);
-					matcher.add("ground", Wearable::DesiredAction::Drop);
-					matcher.add("drop on the ground", Wearable::DesiredAction::Drop);
-					matcher.add("keep", Wearable::DesiredAction::Keep);
-					matcher.add("put", Wearable::DesiredAction::Keep);
-					matcher.add("put in backpack", Wearable::DesiredAction::Keep);
-					matcher.add("backpack", Wearable::DesiredAction::Keep);
-					this->dAction = matcher.find(reply);
-					itemPhaseTwo(ad);
+			matcher.add("drop", Wearable::DesiredAction::Drop)
+					.add("ground", Wearable::DesiredAction::Drop)
+					.add("drop on the ground", Wearable::DesiredAction::Drop)
+					.add("keep", Wearable::DesiredAction::Keep)
+					.add("put", Wearable::DesiredAction::Keep)
+					.add("put in backpack", Wearable::DesiredAction::Keep)
+					.add("backpack", Wearable::DesiredAction::Keep);
+			this->dAction = matcher.find(reply);
+			itemPhaseTwo(ad);
 		});
 	}
 
@@ -300,17 +300,17 @@ namespace Dungeon {
 				<< " or leave all items in " << currentPack->getName() << " and drop it?" << eos;
 		ad->waitForReply([this] (ActionDescriptor *ad, string reply) {
 			FuzzyStringMatcher<Wearable::DesiredAction> matcher;
-			matcher.add("move keep", Wearable::DesiredAction::MoveAndKeep);
-					matcher.add("move and keep", Wearable::DesiredAction::MoveAndKeep);
-					matcher.add("keep", Wearable::DesiredAction::MoveAndKeep);
-					matcher.add("move drop", Wearable::DesiredAction::MoveAndDrop);
-					matcher.add("move and drop", Wearable::DesiredAction::MoveAndDrop);
-					matcher.add("leave", Wearable::DesiredAction::Drop);
-					matcher.add("drop", Wearable::DesiredAction::Drop);
-					matcher.add("leave and drop", Wearable::DesiredAction::Drop);
+			matcher.add("move keep", Wearable::DesiredAction::MoveAndKeep)
+					.add("move and keep", Wearable::DesiredAction::MoveAndKeep)
+					.add("keep", Wearable::DesiredAction::MoveAndKeep)
+					.add("move drop", Wearable::DesiredAction::MoveAndDrop)
+					.add("move and drop", Wearable::DesiredAction::MoveAndDrop)
+					.add("leave", Wearable::DesiredAction::Drop)
+					.add("drop", Wearable::DesiredAction::Drop)
+					.add("leave and drop", Wearable::DesiredAction::Drop);
 
-					dAction = matcher.find(reply);
-					this->backpackPhaseTwo(ad);
+			dAction = matcher.find(reply);
+			this->backpackPhaseTwo(ad);
 		});
 	}
 
@@ -352,7 +352,7 @@ namespace Dungeon {
 			}
 			// Let's move the items
 			try {
-				ObjectMap inventory = currentPack->getRelations(Relation::Master, R_INVENTORY);
+				const ObjectMap& inventory = currentPack->getRelations(Relation::Master, R_INVENTORY);
 				for (auto& i : inventory) {
 					if (!i.second->isInstanceOf(Item::ItemClassName)) continue;
 					Item* it = i.second.unsafeCast<Item>();
@@ -363,7 +363,7 @@ namespace Dungeon {
 						currentPack->removeItem(it);
 					}
 				}
-			}			catch (const std::out_of_range& e) {
+			} catch (const std::out_of_range& e) {
 
 			}
 

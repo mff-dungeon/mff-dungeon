@@ -14,7 +14,7 @@ namespace Dungeon {
 
 	MultiTargetAction* MultiTargetAction::addTarget(ObjectPointer op) {
 		if (targets.find(op.getId()) == targets.end())
-			targets[op.getId()] = op;
+			targets.insert(pair<objId, ObjectPointer>(op.getId(),op));
 		return this;
 	}
 

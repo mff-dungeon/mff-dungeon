@@ -11,7 +11,7 @@ namespace Dungeon {
 		action->remember(); // If action == actionMap[id], it could be deleted in forget
 		if (actionMap.find(op.getId()) != actionMap.end())
 			actionMap[op.getId()]->forget();
-		actionMap[op.getId()] = action;
+		actionMap.insert(pair<objId, MultiTargetAction*>(op.getId(),action));
 		return this;
 	}
 

@@ -20,7 +20,7 @@ namespace Dungeon {
 	void ObjectList::addIObject(string className, const IObject* o) {
 		map<string, const IObject*>::const_iterator it = names.find(className);
 		if (it == names.end()) {
-			names[className] = o;
+			names.insert(pair<string, const IObject*>(className,o));
 		}
 	}
 

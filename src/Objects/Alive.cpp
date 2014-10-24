@@ -29,7 +29,7 @@ namespace Dungeon {
 		// Get actions for the inventory items - thors hammer
 		LOGS("Alive", Verbose) << "Getting actions on inventory - " << this->getId() << "." << LOGF;
 		try {
-			RelationList mastering = getRelations(Relation::Master);
+			const RelationList& mastering = getRelations(Relation::Master);
 			for (auto& pair : mastering)
 				for (auto& item : pair.second) {
 					LOGS("Alive", Verbose) << "Getting actions " << item.second << "." << LOGF;
@@ -55,7 +55,7 @@ namespace Dungeon {
 		LOGS("Alive", Verbose) << "Getting actions in location - " << this->getId() << "." << LOGF;
 		// Find objects in current location
 		try {
-			ObjectMap room = getRelations(Relation::Slave, R_INSIDE);
+			const ObjectMap& room = getRelations(Relation::Slave, R_INSIDE);
 			for (auto& item : room) {
 				item.second->triggerTraps("get-actions", nullptr)
 						->getActions(list, this);

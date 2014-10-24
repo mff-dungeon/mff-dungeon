@@ -17,7 +17,7 @@ namespace Dungeon {
 		IDescriptable::getActions(list, callee);
 		// Add move actions to all rooms
 		try {
-			ObjectMap targets = this->getRelations(Relation::Master, R_TARGET);
+			const ObjectMap& targets = this->getRelations(Relation::Master, R_TARGET);
 			DoorwalkAction* action = new DoorwalkAction;
 			for (auto& obj : targets) {
 				if (obj.second != callee.safeCast<Alive>()->getLocation()) {
@@ -37,7 +37,7 @@ namespace Dungeon {
 		door->triggerTraps("doorwalk", ad);
 		ObjectPointer target;
 		try {
-			ObjectMap targets = door->getRelations(Relation::Master, R_TARGET);
+			const ObjectMap& targets = door->getRelations(Relation::Master, R_TARGET);
 			for (auto& obj : targets) {
 				if (obj.second != ad->getCaller()->getLocation()) {
 					target = obj.second;

@@ -186,8 +186,5 @@ namespace Dungeon {
 		return Cloner::shallowClone(this);
 	}
 
-
-
 	NONPERSISTENT_IMPLEMENTATION(IObject)
-
 }

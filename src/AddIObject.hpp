@@ -11,6 +11,12 @@ namespace Dungeon {
 	 * This class is a simple class 
 	 * for static registration of objects into ObjectList
 	 */
+	
+	/*
+	 * This class needs to know that IObject exists and IObject needs to use 
+	 * this in its macro
+	 */
+    class IObject;
 
 	class AddIObject {
 	private:
