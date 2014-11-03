@@ -148,4 +148,9 @@ namespace Dungeon {
     };
 }
 
+inline ostream& operator << (ostream& ostream, Dungeon::ObjectPointer obj) {
+    ostream << obj.getId();
+    return ostream;
+}
+
 #endif
