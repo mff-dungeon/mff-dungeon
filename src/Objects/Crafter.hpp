@@ -2,8 +2,8 @@
 #define	CRAFTER_HPP
 
 #include "../common.hpp"
-#include "IDescriptable.hpp"
 #include "../Actions/MultiTargetAction.hpp"
+#include "Virtual/IDescriptable.hpp"
 
 namespace Dungeon {
 

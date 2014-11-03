@@ -1,5 +1,5 @@
 #include "CallbackAction.hpp"
-#include "../ActionDescriptor.hpp"
+#include "../Game/ActionDescriptor.hpp"
 
 namespace Dungeon {
 

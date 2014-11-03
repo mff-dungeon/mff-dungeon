@@ -2,9 +2,9 @@
 #define	CREATURE_HPP
 
 #include "../common.hpp"
-#include "Alive.hpp"
+#include "../Utils/FuzzyStringMatcher.hpp"
 #include "../Actions/MultiTargetAction.hpp"
-#include "../FuzzyStringMatcher.hpp"
+#include "Alive.hpp"
 
 namespace Dungeon {
 

@@ -1,12 +1,12 @@
 #include <sstream>
 #include "ThorsHammer.hpp"
-#include "../GameManager.hpp"
+#include "../Utils/RegexMatcher.hpp"
+#include "../Utils/FuzzyStringMatcher.hpp"
 #include "../Actions/CallbackAction.hpp"
-#include "../ActionDescriptor.hpp"
-#include "../ActionList.hpp"
-#include "../RegexMatcher.hpp"
-#include "../WorldDumper.hpp"
-#include "../FuzzyStringMatcher.hpp"
+#include "../Persistence/WorldDumper.hpp"
+#include "../Game/ActionDescriptor.hpp"
+#include "../Game/ActionList.hpp"
+#include "../Game/GameManager.hpp"
 
 namespace Dungeon {
 

@@ -1,7 +1,7 @@
 #include "UseAction.hpp"
-#include "../ActionDescriptor.hpp"
-#include "../RegexMatcher.hpp"
-#include "../ActionList.hpp"
+#include "../Utils/RegexMatcher.hpp"
+#include "../Game/ActionDescriptor.hpp"
+#include "../Game/ActionList.hpp"
 
 namespace Dungeon {
 

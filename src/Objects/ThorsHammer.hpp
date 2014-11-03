@@ -3,8 +3,8 @@
 
 #include <queue>
 #include "../common.hpp"
-#include "../Action.hpp"
-#include "../ActionDescriptor.hpp"
+#include "../Actions/Action.hpp"
+#include "../Game/ActionDescriptor.hpp"
 #include "Item.hpp"
 
 namespace Dungeon {

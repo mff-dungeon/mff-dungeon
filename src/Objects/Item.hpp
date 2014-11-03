@@ -2,8 +2,8 @@
 #define	ITEM_HPP
 
 #include "../common.hpp"
-#include "IDescriptable.hpp"
-#include "../ActionList.hpp"
+#include "Virtual/IDescriptable.hpp"
+#include "../Game/ActionList.hpp"
 
 namespace Dungeon {
 

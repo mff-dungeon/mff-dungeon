@@ -1,9 +1,10 @@
 #include "Crafter.hpp"
-#include "Human.hpp"
-#include "Recipe.hpp"
+#include "../Utils/RegexMatcher.hpp"
 #include "../Actions/UseAction.hpp"
-#include "../ActionDescriptor.hpp"
-#include "../RegexMatcher.hpp"
+#include "../Game/ActionDescriptor.hpp"
+#include "../Game/GameManager.hpp"
+#include "Virtual/Recipe.hpp"
+#include "Human.hpp"
 
 namespace Dungeon {
 

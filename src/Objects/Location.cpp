@@ -1,14 +1,14 @@
 #include <exception>
+#include "../Utils/RandomString.hpp"
+#include "../Utils/SentenceJoiner.hpp"
+#include "../Utils/RegexMatcher.hpp"
+#include "../Game/ObjectPointer.hpp"
+#include "../Game/ObjectGroup.hpp"
+#include "../Game/ActionDescriptor.hpp"
 #include "Location.hpp"
 #include "Item.hpp"
 #include "Inventory.hpp"
 #include "Wearable.hpp"
-#include "../ObjectPointer.hpp"
-#include "../ObjectGroup.hpp"
-#include "../ActionDescriptor.hpp"
-#include "../RandomString.hpp"
-#include "../SentenceJoiner.hpp"
-#include "../RegexMatcher.hpp"
 
 using namespace std;
 

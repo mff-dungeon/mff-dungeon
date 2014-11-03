@@ -1,8 +1,9 @@
 #include "Wearable.hpp"
+#include "../Utils/FuzzyStringMatcher.hpp"
+#include "../Utils/RegexMatcher.hpp"
+#include "../Game/GameManager.hpp"
 #include "Inventory.hpp"
 #include "Location.hpp"
-#include "../FuzzyStringMatcher.hpp"
-#include "../RegexMatcher.hpp"
 
 namespace Dungeon {
 

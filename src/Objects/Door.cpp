@@ -1,12 +1,13 @@
 #include "Door.hpp"
+#include "../Utils/RegexMatcher.hpp"
+#include "../Utils/RandomString.hpp"
+#include "../Utils/SentenceJoiner.hpp"
+#include "../Game/ObjectPointer.hpp"
+#include "../Game/ActionList.hpp"
+#include "../Game/ActionDescriptor.hpp"
+#include "../Game/GameManager.hpp"
+#include "Traps/DoorLock.hpp"
 #include "Location.hpp"
-#include "../ObjectPointer.hpp"
-#include "../ActionList.hpp"
-#include "../RegexMatcher.hpp"
-#include "../ActionDescriptor.hpp"
-#include "../RandomString.hpp"
-#include "../SentenceJoiner.hpp"
-#include "../Traps/DoorLock.hpp"
 
 namespace Dungeon {
 

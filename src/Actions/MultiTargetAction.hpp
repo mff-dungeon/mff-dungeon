@@ -2,7 +2,7 @@
 #define	MULTITARGETACTION_HPP
 
 #include "../common.hpp"
-#include "../Action.hpp"
+#include "Action.hpp"
 
 namespace Dungeon {
 

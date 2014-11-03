@@ -1,7 +1,8 @@
 #include "Potion.hpp"
+#include "../Utils/RegexMatcher.hpp"
 #include "../Actions/CallbackAction.hpp"
-#include "../ActionDescriptor.hpp"
-#include "../RegexMatcher.hpp"
+#include "../Game/ActionDescriptor.hpp"
+#include "../Game/GameManager.hpp"
 
 namespace Dungeon {
 

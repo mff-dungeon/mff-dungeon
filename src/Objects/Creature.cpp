@@ -1,11 +1,12 @@
 #include "Creature.hpp"
 #include "Human.hpp"
-#include "../RandomString.hpp"
-#include "../Dropper.hpp"
-#include "../SentenceJoiner.hpp"
-#include "../Dropper.hpp"
-#include "../RegexMatcher.hpp"
-#include "../ActionDescriptor.hpp"
+#include "../Utils/RandomString.hpp"
+#include "../Utils/SentenceJoiner.hpp"
+#include "../Utils/RegexMatcher.hpp"
+#include "../Game/ActionDescriptor.hpp"
+#include "../Game/GameManager.hpp"
+#include "Virtual/Dropper.hpp"
+#include "Virtual/Dropper.hpp"
 #include <time.h>
 #include <vector>
 namespace Dungeon {

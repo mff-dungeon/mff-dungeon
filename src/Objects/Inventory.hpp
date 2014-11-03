@@ -2,7 +2,7 @@
 #define	INVENTORY_HPP
 
 #include "../common.hpp"
-#include "../ActionDescriptor.hpp"
+#include "../Game/ActionDescriptor.hpp"
 #include "../Actions/MultiTargetAction.hpp"
 #include "Wearable.hpp"
 

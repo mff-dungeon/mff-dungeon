@@ -1,14 +1,15 @@
 #include <stdexcept>
 #include <math.h>
+#include "../Utils/RandomString.hpp"
+#include "../Utils/SentenceJoiner.hpp"
+#include "../Game/ActionDescriptor.hpp"
+#include "../Game/GameManager.hpp"
+#include "../Game/ActionList.hpp"
+#include "Traps/Healing.hpp"
+#include "Inventory.hpp"
 #include "Alive.hpp"
 #include "Location.hpp"
 #include "Wearable.hpp"
-#include "../ActionDescriptor.hpp"
-#include "../ActionList.hpp"
-#include "../RandomString.hpp"
-#include "../SentenceJoiner.hpp"
-#include "../Traps/Healing.hpp"
-#include "Inventory.hpp"
 
 namespace Dungeon {
 

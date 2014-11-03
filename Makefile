@@ -1,14 +1,13 @@
 CC := g++
 CC := clang
 SRCDIR := src
-DYNDIR := src/Objects/*.hpp src/Traps/*.hpp src/Spells/*.hpp
 BUILDDIR := build
 TARGET := bin/dungeon
 
 SRCEXT := cpp
 HEADEREXT := hpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT) -not -name "main.cpp")
-DYNAMICS := $(shell echo $(DYNDIR))
+DYNAMICS := $(shell find $(SRCDIR)/Objects/ -type f -iname "*.$(HEADEREXT)")
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -std=c++11 -g -Wall -I/usr/local/include
 LDFLAGS := -lstdc++ -lpthread -lsqlite3 -L/usr/local/lib -lgloox -lm

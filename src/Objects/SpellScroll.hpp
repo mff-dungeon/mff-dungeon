@@ -2,8 +2,8 @@
 #define	SPELLSCROLL_HPP
 
 #include "../common.hpp"
-#include "Item.hpp"
 #include "../Actions/MultiTargetAction.hpp"
+#include "Item.hpp"
 
 namespace Dungeon {
 

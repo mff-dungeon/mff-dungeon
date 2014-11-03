@@ -1,6 +1,7 @@
 #include "Resource.hpp"
+#include "../Game/ActionDescriptor.hpp"
+#include "../Game/GameManager.hpp"
 #include "Alive.hpp"
-#include "../ActionDescriptor.hpp"
 
 namespace Dungeon {
 

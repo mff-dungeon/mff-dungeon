@@ -1,14 +1,15 @@
 #include "Human.hpp"
+#include "../Utils/RandomString.hpp"
+#include "../Utils/RegexMatcher.hpp"
+#include "../Utils/FuzzyStringMatcher.hpp"
+#include "../Game/ActionList.hpp"
+#include "../Game/ActionDescriptor.hpp"
+#include "../Game/GameManager.hpp"
+#include "../exceptions.hpp"
+#include "Traps/HardcoreRespawn.hpp"
 #include "Location.hpp"
 #include "Inventory.hpp"
-#include "../Spells/Spell.hpp"
-#include "../ActionList.hpp"
-#include "../ActionDescriptor.hpp"
-#include "../RandomString.hpp"
-#include "../RegexMatcher.hpp"
-#include "../FuzzyStringMatcher.hpp"
-#include "../Traps/HardcoreRespawn.hpp"
-#include "../exceptions.hpp"
+#include "Spells/Spell.hpp"
 #include <time.h>
 #include <cmath>
 

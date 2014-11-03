@@ -2,12 +2,13 @@
 #include <stdexcept>
 
 #include "Item.hpp"
-#include "Human.hpp"
+#include "../Utils/RandomString.hpp"
+#include "../Utils/SentenceJoiner.hpp"
 #include "../Actions/CallbackAction.hpp"
-#include "../ActionDescriptor.hpp"
-#include "../RandomString.hpp"
-#include "../SentenceJoiner.hpp"
-#include "../Traps/ItemRespawner.hpp"
+#include "../Game/ActionDescriptor.hpp"
+#include "../Game/GameManager.hpp"
+#include "Traps/ItemRespawner.hpp"
+#include "Human.hpp"
 
 namespace Dungeon {
 

@@ -5,12 +5,12 @@
 #include <execinfo.h>
 #include <unistd.h>
 #include "common.hpp"
+#include "Persistence/DatabaseHandler.hpp"
+#include "Drivers/JabberDriver.hpp"
+#include "Drivers/JabberDriver.hpp"
+#include "Game/GameManager.hpp"
+#include "Game/ActionQueue.hpp"
 #include "dynamic.hpp"
-#include "GameManager.hpp"
-#include "ActionQueue.hpp"
-#include "JabberDriver.hpp"
-#include "DatabaseHandler.hpp"
-#include "ConsoleDriver.hpp"
 
 using namespace Dungeon;
 

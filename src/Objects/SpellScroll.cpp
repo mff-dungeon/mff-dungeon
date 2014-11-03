@@ -1,7 +1,8 @@
 #include "SpellScroll.hpp"
+#include "../Utils/RegexMatcher.hpp"
+#include "../Game/GameManager.hpp"
+#include "Spells/Spell.hpp"
 #include "Human.hpp"
-#include "../Spells/Spell.hpp"
-#include "../RegexMatcher.hpp"
 
 namespace Dungeon {
 

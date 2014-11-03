@@ -1,10 +1,10 @@
 #include "MultiTargetAction.hpp"
 #include "UseAction.hpp"
-#include "../ObjectPointer.hpp"
-#include "../ObjectGroup.hpp"
-#include "../FuzzyStringMatcher.hpp"
-#include "../ActionDescriptor.hpp"
-#include "../Traps/MTATrap.hpp"
+#include "../Utils/FuzzyStringMatcher.hpp"
+#include "../Game/ObjectPointer.hpp"
+#include "../Game/ObjectGroup.hpp"
+#include "../Game/ActionDescriptor.hpp"
+#include "../Objects/Traps/MTATrap.hpp"
 
 namespace Dungeon {
 

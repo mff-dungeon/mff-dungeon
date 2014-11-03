@@ -1,8 +1,9 @@
 #include "Inventory.hpp"
 #include "Alive.hpp"
-#include "../RandomString.hpp"
-#include "../SentenceJoiner.hpp"
-#include "../RegexMatcher.hpp"
+#include "../Utils/RandomString.hpp"
+#include "../Utils/SentenceJoiner.hpp"
+#include "../Utils/RegexMatcher.hpp"
+#include "../Game/GameManager.hpp"
 #include <unistd.h>
 
 namespace Dungeon {

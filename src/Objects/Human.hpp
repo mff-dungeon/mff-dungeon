@@ -2,9 +2,8 @@
 #define	HUMAN_HPP
 
 #include "../common.hpp"
-#include "../IObject.hpp"
 #include "Alive.hpp"
-#include "../Action.hpp"
+#include "../Actions/Action.hpp"
 
 /**
  * Default respawn interval in seconds for humans, testing value, could be changed later (or used kinda dynamically)	 
@@ -157,10 +156,10 @@ namespace Dungeon {
 
 	};
 
-	class StatReq : public IObject {
+	class StatReq : public Base {
 	public:
 		StatReq() { };
-		StatReq(objId id) : IObject(id) { };
+		StatReq(objId id) : Base(id) { };
 		~StatReq() { };
 		StatReq(Human::Stats stat, int value) {
 			this->stat = stat;
@@ -177,7 +176,7 @@ namespace Dungeon {
 		int value;
 		Human::Stats stat;
 
-		PERSISTENT_DECLARATION(StatReq, IObject);
+		PERSISTENT_DECLARATION(StatReq, Base);
 	};
 
 	class RaiseStatAction : public Action {

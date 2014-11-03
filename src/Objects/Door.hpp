@@ -2,9 +2,9 @@
 #define	DOOR_HPP
 
 #include "../common.hpp"
-#include "IDescriptable.hpp"
+#include "Virtual/IDescriptable.hpp"
 #include "../Actions/MultiTargetAction.hpp"
-#include "../ActionDescriptor.hpp"
+#include "../Game/ActionDescriptor.hpp"
 
 namespace Dungeon {
 

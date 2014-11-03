@@ -3,7 +3,7 @@
 
 #include "../common.hpp"
 #include "../Actions/CallbackAction.hpp"
-#include "IDescriptable.hpp"
+#include "Virtual/IDescriptable.hpp"
 #include "Resource.hpp"
 
 namespace Dungeon {

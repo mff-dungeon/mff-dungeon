@@ -2,9 +2,9 @@
 #define	RESOURCE_HPP
 
 #include "../common.hpp"
+#include "../Utils/RandomString.hpp"
+#include "Traps/Trap.hpp"
 #include "Item.hpp"
-#include "../Traps/Trap.hpp"
-#include "../RandomString.hpp"
 
 namespace Dungeon {
 

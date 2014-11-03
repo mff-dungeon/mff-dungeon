@@ -78,7 +78,7 @@ void testInstanceOf() {
 	testing("InstanceOf");
 	assertEqual(h->instanceOf(Human), true, "Same class");
 	assertEqual(h->instanceOf(Alive), true, "Inherited");
-	assertEqual(h->instanceOf(IObject), true, "Base class");
+	assertEqual(h->instanceOf(Base), true, "Base class");
 	assertEqual(h->instanceOf(Inventory), false, "Different class");
 }
 

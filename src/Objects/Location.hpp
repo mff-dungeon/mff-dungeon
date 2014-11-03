@@ -2,7 +2,7 @@
 #define	LOCATION_HPP
 
 #include "../common.hpp"
-#include "IDescriptable.hpp"
+#include "Virtual/IDescriptable.hpp"
 #include "../Actions/MultiTargetAction.hpp"
 
 namespace Dungeon {

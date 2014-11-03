@@ -1,9 +1,0 @@
-#include "AddIObject.hpp"
-#include "ObjectList.hpp"
-
-namespace Dungeon {
-
-	AddIObject::AddIObject(string className, const IObject* o) {
-		ObjectList::getInstance().addIObject(className, o);
-	}
-}

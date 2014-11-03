@@ -2,9 +2,9 @@
 #define	WEARABLE_HPP
 
 #include "../common.hpp"
-#include "Item.hpp"
 #include "../Actions/MultiTargetAction.hpp"
-#include "../ActionDescriptor.hpp"
+#include "../Game/ActionDescriptor.hpp"
+#include "Item.hpp"
 
 namespace Dungeon {
 
