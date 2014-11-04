@@ -4,6 +4,7 @@
 #include "../common.hpp"
 #include "../dynamic.hpp"
 #include "../Objects/Virtual/Dropper.hpp"
+#include "../Objects/Virtual/Stats.hpp"
 #include "../Game/GameManager.hpp"
 #include "Cloner.hpp"
 

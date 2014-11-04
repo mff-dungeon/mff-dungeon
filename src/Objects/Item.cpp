@@ -8,6 +8,7 @@
 #include "../Game/ActionDescriptor.hpp"
 #include "../Game/GameManager.hpp"
 #include "Traps/ItemRespawner.hpp"
+#include "Virtual/Stats.hpp"
 #include "Human.hpp"
 
 namespace Dungeon {

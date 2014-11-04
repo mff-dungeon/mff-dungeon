@@ -1,4 +1,5 @@
 #include "Recipe.hpp"
+#include "Stats.hpp"
 #include "../../Utils/SentenceJoiner.hpp"
 #include "../../Game/GameManager.hpp"
 #include "../Resource.hpp"
