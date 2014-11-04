@@ -171,7 +171,7 @@ namespace Dungeon {
 
 	bool Alive::hasItemType(string type) {
 		ObjectPointer backpack = getBackpack();
-		if (backpack == 0) return false;
+		if (!backpack) return false;
 		if (!backpack->isInstanceOf(Inventory::InventoryClassName)) return false;
 		Inventory* inv = backpack.unsafeCast<Inventory>();
 

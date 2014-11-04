@@ -6,7 +6,7 @@ namespace Dungeon
 {
 
 	bool ObjectPointer::isLoaded() const {
-		return gm->hasObjectLoaded(id);
+		return this->id == "" || gm->hasObjectLoaded(id);
 	}
 	
 	Base* ObjectPointer::get() const {

@@ -155,7 +155,7 @@ namespace Dungeon {
 
 		Item* created = 0;
 		double successRate = 10000 * (1 - 10.0 / (levelDiff + 11));
-		if (getBadItem() == nullptr) successRate = 10000; // Always do the good item
+		if (!getBadItem()) successRate = 10000; // Always do the good item
 		if (successRate < Utils::getRandomInt(1, 10000)) {
 			*ad << "You have tried to craft " << getName() << " but you succeeded just barely." << eos;
 			created = getBadItem().assertExists("The crafting template doesn't exist")

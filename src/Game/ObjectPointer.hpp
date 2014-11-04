@@ -129,6 +129,14 @@ namespace Dungeon {
             return !(*this == other);
         }
         
+        bool operator==(const nullptr_t other) const {
+            return this->id == "";
+        }
+        
+        bool operator!=(const nullptr_t other) const {
+            return this->id != "";
+        }
+        
     protected:
         /**
          * Intentionally protected. 
