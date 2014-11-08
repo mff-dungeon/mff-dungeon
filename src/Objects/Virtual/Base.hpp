@@ -131,7 +131,7 @@ namespace Dungeon {
          * Returns objects with given relation to this object
          * @param master true, if the relation is master relation
          */
-        const ObjectMap getRelations(Relation::Dir dir, string type) const;
+        const ObjectMap& getRelations(Relation::Dir dir, string type) const;
 
         /**
          * Returns the one and only relation of this type.

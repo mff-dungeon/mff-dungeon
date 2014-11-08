@@ -1,7 +1,6 @@
 #include <iostream>
 #include <sstream>
 #include <signal.h>		
-#include <cstring>		// strcmp
 #include <execinfo.h>
 #include <unistd.h>
 #include "common.hpp"
@@ -116,6 +115,12 @@ void dbRestart() {
 }
 
 int main(int argc, char** argv) {
+	#ifndef COMPATIBLE
+	cout << "Warning: Our code may not be compatible with your compiler. "
+		<< "We are not responsible for any unexpected bugs that may occur to you. "
+		<< "For the best results, use gcc version 4.9 and newer, or clang version 3.2 or newer." << endl;
+	#endif
+	
     Logger::initialize();
     
 	/*

@@ -62,6 +62,7 @@ namespace Dungeon {
 				// If it's not MTA, why to call this at all?
 				return true;
 		}
+		return false;
 	}
 
 	PERSISTENT_IMPLEMENTATION(MTATrap)

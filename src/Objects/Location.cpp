@@ -56,7 +56,7 @@ namespace Dungeon {
 		// Add pickup for items
 		PickupAction* pickAction = new PickupAction;
 		try {
-			ObjectMap itemsIn = getRelations(Relation::Master, R_INSIDE);
+			const ObjectMap& itemsIn = getRelations(Relation::Master, R_INSIDE);
 			for (auto& itemObj : itemsIn) {
 				if (itemObj.second->instanceOf(Item)) {
 					pickAction->addTarget(itemObj.second);

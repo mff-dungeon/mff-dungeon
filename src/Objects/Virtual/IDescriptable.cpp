@@ -62,7 +62,7 @@ namespace Dungeon {
 		else if (others.size() == 1) return getDescriptionSentence();
 
 		string sentence = "There is ";
-		for (int i = 0; i < others.size() - 1; i++) {
+		for (size_t i = 0; i < others.size() - 1; i++) {
 			if (i != 0) sentence += ", ";
 			sentence += others.at(i).safeCast<IDescriptable>()->getName();
 		}

@@ -6,6 +6,20 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
+#define GCC_VERSION ( __GNUC__ * 10000 \
+					   + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__ )
+#define CLANG_VERSION ( __clang_major__ * 10000 \
+					   + __clang_minor__ * 100 + __clang_patchlevel__ )
+
+// If the compiler used is not version 4.9+, or clang 3.2+, print warning on startup
+// see main.cpp, main() function
+#if GCC_VERSION > 40900
+	#define COMPATIBLE
+#elif CLANG_VERSION > 30200
+	#define COMPATIBLE
+#endif
+
+
 #define DB_NAME "dungeon.db"
 #define CONFIG_GAME_MODE 0
 

@@ -7,20 +7,19 @@ namespace Dungeon {
 	}
 
 	void WorldCreator::initAdmins() {
-		Human *aearsis, *asaru, *petr;
 		ThorsHammer* th;
 		gm->insertObject(th = new ThorsHammer());
-		aearsis = gm->addNewFigure(new Human("human/aearsis@eideo.cz", "Aearsis", "aearsis@eideo.cz"))
+		gm->addNewFigure(new Human("human/aearsis@eideo.cz", "Aearsis", "aearsis@eideo.cz"))
 				->setWeaponName("powerful hands of administrator")
 				->setSingleRelation("special-th", th)
 				->save().unsafeCast<Human>();
 		
-		asaru = gm->addNewFigure(new Human("human/asaru@jabbim.cz", "Salmelu", "asaru@jabbim.cz"))
+		gm->addNewFigure(new Human("human/asaru@jabbim.cz", "Salmelu", "asaru@jabbim.cz"))
 				->setWeaponName("powerful hands of administrator")
 				->setSingleRelation("special-th", th)
 				->save().unsafeCast<Human>();
 		
-		petr = gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"))
+		gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"))
 				->setWeaponName("powerful hands of administrator")
 				->setSingleRelation("special-th", th)
 				->save().unsafeCast<Human>();

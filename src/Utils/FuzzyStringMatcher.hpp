@@ -157,7 +157,7 @@ namespace Dungeon {
 	
 	template<typename value_type>
 	int FuzzyStringMatcher<value_type>::getEqualness(const vector<string>& needle, const vector<string>& haystack) const {
-		int i = 0, sum = 0, lastmatch = 0;
+		size_t i = 0, sum = 0, lastmatch = 0;
 		for (const string& nWord : needle) {
 			for (; i < haystack.size(); i++) {
 				int tol = std::min(nWord.length(), haystack[i].length());

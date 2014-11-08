@@ -83,11 +83,22 @@ namespace Dungeon {
 		return dir == Relation::Dir::Master ? relation_master : relation_slave;
 	}
 	
-	const ObjectMap Base::getRelations(Relation::Dir dir, string type) const {
+	const ObjectMap& Base::getRelations(Relation::Dir dir, string type) const {
 		try {
 			return getRelations(dir).at(type);
 		} catch (std::out_of_range& e) {
-			return ObjectMap();
+			/*
+			 * The method is actually const, because the data structure is same on the outside
+			 * The const_cast is used to insert an empty map to be able to return ObjectMap reference
+			 * Prevents unneccesary copying and still allows being called in const methods
+			 */
+			if(dir == Relation::Master) {
+				const_cast<Base*>(this)->relation_master.insert(pair<string,ObjectMap>(type, ObjectMap()));
+			}
+			else  {
+				const_cast<Base*>(this)->relation_slave.insert(pair<string,ObjectMap>(type, ObjectMap()));
+			}
+			return getRelations(dir).at(type);
 		}
 	}
 	
