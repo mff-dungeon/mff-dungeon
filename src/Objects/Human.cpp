@@ -426,7 +426,7 @@ namespace Dungeon {
 						}
 						if (me->getFreePoints() > 0) {
 							ad->setReplyFormat(ActionDescriptor::ReplyFormat::Paragraph);
-									*ad << "I also have " << me->getFreePoints() << " free points to distribute." << eos;
+							*ad << "I also have " << me->getFreePoints() << " free points to distribute." << eos;
 						}
 					}, false));
 

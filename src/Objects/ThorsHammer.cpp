@@ -106,6 +106,17 @@ namespace Dungeon {
 					*ad << "You have fully healed yourself." << eos;
 				}));
 
+		list->addAction(new CallbackAction("addexp (int)", "(TH) addexp - increases your level.",
+				RegexMatcher::matcher("addexp [0-9]+"),
+				[] (ActionDescriptor * ad) {
+					string sexp = ad->in_msg.substr(7);
+					int exp = stoi(sexp);
+					if(exp != 0) {
+						ad->getCaller()->addExperience(exp);
+						*ad << "You have increased your exp by " << exp << " using your hammer." << eos;
+					}
+				}, false));
+
 		list->addAction(new CallbackAction("teleport", "(TH) teleport <id> - teleport yourself everywhere.",
 				RegexMatcher::matcher("teleport( to)? .+"),
 				[] (ActionDescriptor * ad) {

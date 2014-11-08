@@ -259,35 +259,30 @@ namespace Dungeon {
 	}
 
 	void EquipAction::itemPhaseThree(ActionDescriptor* ad) {
-		// FIXME doesn't handle items in chests atm, throws exceptions
 		// Need a way to find/check the item and remove it from there
-		Location* currentRoom = ad->getCaller()->getLocation().safeCast<Location>();
-		if (currentRoom->contains(itemPtr)) {
-			ad->getGM()->removeRelation(currentRoom, itemPtr, R_INSIDE);
-			ad->getCaller()->setSingleRelation(Wearable::SlotRelations[itemPtr.unsafeCast<Wearable>()->getSlot()], itemPtr, Relation::Master, GameStateInvalid::EquippedMoreThanOne);
-			*ad << "You have successfully equipped " << itemPtr.unsafeCast<IDescriptable>()->getName() << "." << eos;
-			ad->getCaller()->calculateBonuses()->save();
-			itemPtr.unsafeCast<Wearable>()->onPick(ad);
-			itemPtr.unsafeCast<Wearable>()->onEquip(ad);
+		bool found = false;
+		ObjectPointer inventory = itemPtr->getSingleRelation(R_INVENTORY, Relation::Slave);
+		if(!!inventory) {
+			inventory.assertType<Inventory>().unsafeCast<Inventory>()->removeItem(itemPtr);
+			found = true;
+		}
+		else {
+			ObjectPointer location = itemPtr->getSingleRelation(R_INSIDE, Relation::Slave);
+			if(!!location) {
+				location.assertType<Location>();
+				ad->getGM()->removeRelation(location, itemPtr, R_INSIDE);
+				found = true;
+			}
+		}
+		if(!found) {
+			throw GameStateInvalid("The item is somehow unreachable.");
 			return;
 		}
-
-		try {
-			Inventory* backpack = ad->getCaller()->getBackpack().safeCast<Inventory>();
-			if (backpack) {
-				if (backpack->contains(itemPtr)) {
-					backpack->removeItem(itemPtr);
-					ad->getCaller()->setSingleRelation(slotRelation, itemPtr, Relation::Master, GameStateInvalid::EquippedMoreThanOne);
-					*ad << "You have successfully equipped " << itemPtr.unsafeCast<IDescriptable>()->getName() << "." << eos;
-					ad->getCaller()->calculateBonuses()->save();
-					itemPtr.unsafeCast<Wearable>()->onEquip(ad);
-					return;
-				}
-			}
-		}		catch (const std::out_of_range& e) {
-
-		}
-		throw GameStateInvalid("The item is somehow unreachable.");
+		ad->getCaller()->setSingleRelation(Wearable::SlotRelations[itemPtr.unsafeCast<Wearable>()->getSlot()], itemPtr, Relation::Master, GameStateInvalid::EquippedMoreThanOne);
+		*ad << "You have successfully equipped " << itemPtr.unsafeCast<IDescriptable>()->getName() << "." << eos;
+		ad->getCaller()->calculateBonuses()->save();
+		itemPtr.unsafeCast<Wearable>()->onPick(ad);
+		itemPtr.unsafeCast<Wearable>()->onEquip(ad);
 	}
 
 	void EquipAction::backpackPhaseOne(ActionDescriptor* ad) {
@@ -385,9 +380,10 @@ namespace Dungeon {
 
 	void EquipAction::backpackPhaseThree(ActionDescriptor* ad) {
 		Inventory* newPack = itemPtr.safeCast<Inventory>();
-		Location* currentLoc = ad->getCaller()->getLocation().safeCast<Location>();
-		if (currentLoc->contains(itemPtr)) {
-			ad->getGM()->removeRelation(currentLoc, newPack, R_INSIDE);
+		ObjectPointer itemLoc = newPack->getSingleRelation(R_INSIDE, Relation::Slave);
+		if(!!itemLoc) {
+			itemLoc.assertType<Location>();
+			ad->getGM()->removeRelation(itemLoc, itemPtr, R_INSIDE);
 		}
 		ad->getGM()->createRelation(ad->getCaller(), newPack, slotRelation);
 		*ad << "You have equipped " << newPack->getName() << "." << eos;

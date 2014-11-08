@@ -2705,9 +2705,9 @@ namespace Dungeon {
 						->save();
 
 				createObject<Wearable>("wearable/woodenclub/" + RANDID, equipChest)
-						->setAttackBonus(6)
+						->setAttackBonus(9)
 						->setSlot(Wearable::Weapon)
-						->addStatReq(statReq(Human::Strength, 12))
+						->addStatReq(statReq(Human::Strength, 11))
 						->setSize(3000)
 						->setWeight(5000)
 						->respawnEvery(60)

@@ -50,7 +50,7 @@ namespace Dungeon {
 			*ad << "You have no free points to distribute." << eos;
 			return;
 		}
-		h->useStatPoint(selectedStat);
+		h->useStatPoint(selectedStat, ad);
 	}
 
 	Human::Stats StatReq::getStat() const {
