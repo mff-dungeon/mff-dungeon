@@ -24,6 +24,8 @@ namespace Dungeon {
 
 		ActionDescriptor(Driver * driver);
 		virtual ~ActionDescriptor();
+                
+                ActionDescriptor& operator=(const ActionDescriptor& right);
 
 		Action* getAction();
 		Human* getCaller();

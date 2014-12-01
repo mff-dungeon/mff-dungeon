@@ -6,12 +6,6 @@
 
 namespace Dungeon {
     
-    TextDriver::TextDriver(ActionQueue* queue) : Driver(queue) {
-    }
-
-    TextDriver::~TextDriver() { 
-    }
-    
     bool TextDriver::process(TextActionDescriptor* ad) {
 		try { // Catching regular exceptions
 			try { // TrapExceptions to modify life-cycle

@@ -4,8 +4,6 @@ namespace Dungeon {
 
 	ConsoleDriver::ConsoleDriver(ActionQueue* queue, Human* figure) : TextDriver(queue), figure(figure) { }
 
-	ConsoleDriver::~ConsoleDriver() { }
-
 	void ConsoleDriver::worker() {
 		LOG("ConsoleDriver") << "Worker started." << LOGF;
 

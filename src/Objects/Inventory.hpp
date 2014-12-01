@@ -14,7 +14,7 @@ namespace Dungeon {
 		const int DEFAULT_WEIGHT = 20000; // 20 kg
 		Inventory();
 		Inventory(objId id);
-		virtual ~Inventory();
+		virtual ~Inventory() { }
 
 		Inventory* setMaxSpace(int maxSpace);
 		int getMaxSpace() const;

@@ -33,6 +33,8 @@ namespace Dungeon {
 			ManaShard = 9,
 			END // do not use, for iteration purposes only!
 		};
+                
+                static const int Count = ResourceType::END;
 
 		static const char* ResourceName[];
 		static const char* ResourceIdentifier[];

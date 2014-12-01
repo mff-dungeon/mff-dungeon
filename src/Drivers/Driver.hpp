@@ -14,7 +14,15 @@ namespace Dungeon {
 	class Driver {
 	public:
 		Driver(ActionQueue* queue);
-		~Driver();
+		virtual ~Driver() { }
+                
+                Driver& operator=(const Driver& right)
+                {
+                    if (this == &right)
+                        return *this;
+                    throw new logic_error("Driver cannot be copied.");
+                }
+                
 
 		/**
 		 * Called by ActionQueue in it's thread. 

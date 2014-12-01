@@ -20,8 +20,6 @@ namespace Dungeon {
 	private:
 		map<string, const Base*> names;
 		ObjectList() { } // Private constructor
-		ObjectList(const ObjectList&);
-		ObjectList& operator=(const ObjectList&);
 		~ObjectList();
 
 	public:

@@ -71,13 +71,6 @@ namespace Dungeon {
 		q_condvar.notify_one();
 	}
 
-	void ActionQueue::registerDriver(Driver *driver) {
-		drivers.push_back(driver);
-	}
-
-	void ActionQueue::unregisterDriver(Driver *driver) {
-		drivers.erase(remove(drivers.begin(), drivers.end(), driver), drivers.end());
-	}
 }
 
 

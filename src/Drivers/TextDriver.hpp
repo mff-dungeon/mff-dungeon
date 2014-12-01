@@ -17,8 +17,8 @@ namespace Dungeon {
 	 */
 	class TextDriver : public Driver {
 	public:
-		TextDriver(ActionQueue* queue);
-		virtual ~TextDriver();
+		TextDriver(ActionQueue* queue) : Driver(queue) { }
+		virtual ~TextDriver() { }
 
 		bool process(TextActionDescriptor* ad);
 

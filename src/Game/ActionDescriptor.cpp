@@ -100,6 +100,13 @@ namespace Dungeon {
 		replyFormat = format;
 		return this;
 	}
+	
+	ActionDescriptor& ActionDescriptor::operator=(const ActionDescriptor& right) {
+		if (this == &right)
+			return *this;
+
+		throw new logic_error("AD cannot be copied.");
+	}
 
 	TextActionDescriptor::TextActionDescriptor(Driver* driver) : ActionDescriptor(driver) { }
 

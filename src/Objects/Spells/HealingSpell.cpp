@@ -3,12 +3,6 @@
 
 namespace Dungeon {
 
-	HealingSpell::HealingSpell() { }
-
-	HealingSpell::HealingSpell(objId id) : Spell(id) { }
-
-	HealingSpell::~HealingSpell() { }
-
 	void HealingSpell::cast(ObjectPointer casterPtr, ActionDescriptor* ad) {
 		Human* caster = casterPtr.assertExists("The caster doesn't exist")
 				.assertType<Human>("Only humans cast spells")

@@ -13,8 +13,7 @@ namespace Dungeon {
 	 */
 	class MultiTargetAction : public Action {
 	public:
-		MultiTargetAction(string type);
-		virtual ~MultiTargetAction();
+		MultiTargetAction(string type) : Action(type) { }
 
 		/**
 		 * Invoked by ActionList, when other action of the same type arrives.

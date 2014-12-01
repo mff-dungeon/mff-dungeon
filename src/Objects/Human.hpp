@@ -53,7 +53,7 @@ namespace Dungeon {
 		};
 
 		Human();
-		virtual ~Human();
+		virtual ~Human() { }
 		Human(objId id);
 		Human(objId id, string username, string contact);
 
@@ -132,7 +132,7 @@ namespace Dungeon {
 		long exp = 0;
 		// Free points to be distributed to stats
 		int freepoints = 0;
-		int* stats;
+		int stats [Stats::End];
 
 		/**
 		 * Calculates the exp needed to level up

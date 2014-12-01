@@ -14,7 +14,7 @@ namespace Dungeon {
 	public:
 		Item();
 		Item(objId id);
-		virtual ~Item();
+		virtual ~Item() { }
 
 		/**
 		 * Approximate size in litres/1000 

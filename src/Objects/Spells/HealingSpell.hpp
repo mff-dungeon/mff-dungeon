@@ -8,9 +8,9 @@ namespace Dungeon {
 
 	class HealingSpell : public Spell {
 	public:
-		HealingSpell();
-		HealingSpell(objId id);
-		virtual ~HealingSpell();
+		HealingSpell() { }
+		HealingSpell(objId id) : Spell(id) { }
+		virtual ~HealingSpell() { }
 
 		virtual void cast(ObjectPointer casterPtr, ActionDescriptor* ad = 0);
 		

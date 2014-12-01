@@ -2,10 +2,9 @@
 
 namespace Dungeon {
 
-	ObjectList::~ObjectList() { // Desctructor - clean the list!
+	ObjectList::~ObjectList() { // Destructor - clean the list!
 		for (map<string, const Base*>::const_iterator it = names.begin(); it != names.end(); it++) {
-			const Base* o = it->second;
-			delete o;
+			delete it->second;
 		}
 		names.clear();
 	}
@@ -29,7 +28,6 @@ namespace Dungeon {
 	Base* ObjectList::create(string className) {
 		map<string, const Base*>::const_iterator it = names.find(className);
 		if (it == names.end()) return 0;
-		const Base* o = it->second;
-		return o->createObject();
+		return it->second->createObject();
 	}
 }

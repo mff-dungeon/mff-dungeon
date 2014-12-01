@@ -14,7 +14,7 @@ namespace Dungeon {
 	class ConsoleDriver : public TextDriver {
 	public:
 		ConsoleDriver(ActionQueue* queue, Human* figure);
-		virtual ~ConsoleDriver();
+		virtual ~ConsoleDriver() { }
 		void run();
 
 		virtual void processDescriptor(ActionDescriptor* ad);

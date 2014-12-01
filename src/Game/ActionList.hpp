@@ -15,7 +15,6 @@ namespace Dungeon {
     class ActionList : public actionMap {
     public:
         ActionList();
-        ActionList(const ActionList& orig);
         virtual ~ActionList();
         
         Action* addAction(Action* action);

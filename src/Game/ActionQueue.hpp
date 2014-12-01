@@ -40,14 +40,7 @@ namespace Dungeon {
          * Tells the queue to stop after processing current event. Thread safe.
          */
         void stop();
-        
-        /**
-         * FIXME Not necessary probably?
-         * We could use it to stop the queue after all drivers are stopped.
-         */
-        void registerDriver(Driver *driver);
-        void unregisterDriver(Driver *driver);
-        
+                
         typedef queue<ActionDescriptor *> qType;
         
     private:
@@ -65,8 +58,6 @@ namespace Dungeon {
 
         typedef lock_guard<std::mutex> lock;
         typedef unique_lock<std::mutex> ulock;
-        
-        vector<Driver *> drivers;
     };
 }
 

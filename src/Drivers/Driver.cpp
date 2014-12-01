@@ -5,11 +5,6 @@
 namespace Dungeon {
 
 	Driver::Driver(ActionQueue* queue) : queue(queue) {
-		queue->registerDriver(this);
-	}
-
-	Driver::~Driver() {
-		queue->unregisterDriver(this);
 	}
 
 	void Driver::processDescriptor(ActionDescriptor* descriptor) {

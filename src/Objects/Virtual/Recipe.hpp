@@ -11,9 +11,9 @@ namespace Dungeon {
 	 */
 	class Recipe : public IDescriptable {
 	public:
-		Recipe();
-		Recipe(objId id);
-		virtual ~Recipe();
+		Recipe() { }
+		Recipe(objId id) : IDescriptable(id) { }
+		virtual ~Recipe() { }
 
 		virtual string getDescription() const;
 
@@ -43,7 +43,8 @@ namespace Dungeon {
 		int level = 1;
 		int experience = 0;
 		Human::Stats mainStat = Human::Crafting;
-		int* resources;
+                
+		int resources [Resource::Count];
 
 		PERSISTENT_DECLARATION(Recipe, IDescriptable)
 	};

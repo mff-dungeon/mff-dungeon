@@ -7,11 +7,7 @@
 #include "../Objects/Traps/MTATrap.hpp"
 
 namespace Dungeon {
-
-	MultiTargetAction::~MultiTargetAction() { }
-
-	MultiTargetAction::MultiTargetAction(string type) : Action(type) { }
-
+	
 	MultiTargetAction* MultiTargetAction::addTarget(ObjectPointer op) {
 		if (targets.find(op.getId()) == targets.end())
 			targets.insert(pair<objId, ObjectPointer>(op.getId(),op));

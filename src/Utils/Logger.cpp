@@ -29,7 +29,6 @@ namespace Dungeon {
 	Logger::~Logger() {
 		// write new line into log and flush
 		*this << endl;
-		this->flush();
 
 		// close the log file
 		stdoutFile.close();
@@ -63,7 +62,6 @@ namespace Dungeon {
 		stream.flush();
 		stream << "[" << this->getTimestamp() << "] Logging began with minimal severity level: ";
 		stream << getSeverityName(minSeverity) << endl;
-		stream.flush();
 
 		buffer.addBuffer(stream.rdbuf(), minSeverity);
 	}
@@ -76,7 +74,6 @@ namespace Dungeon {
 			stream.flush();
 			stream << "[" << this->getTimestamp() << "] Changed minimal log severity level to: ";
 			stream << getSeverityName(minSeverity) << endl;
-			stream.flush();
 
 			result = true;
 		}
@@ -98,7 +95,6 @@ namespace Dungeon {
 		if (buffer.removeBuffer(stream.rdbuf())) {
 			stream.flush();
 			stream << "[" << this->getTimestamp() << "] Logging ended." << endl << endl;
-			stream.flush();
 
 			result = true;
 		}
@@ -180,7 +176,6 @@ namespace Dungeon {
 	void Logger::endMessage() {
 		// print new line and flush
 		*this << endl;
-		this->flush();
 
 		// file streams need to be flushed separately
 		stdoutFile.flush();

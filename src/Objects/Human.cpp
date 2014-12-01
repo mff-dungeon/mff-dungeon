@@ -15,30 +15,21 @@
 
 namespace Dungeon {
 
-	Human::Human() {
+	Human::Human() : Alive() {
 		this->setRespawnInterval(DEFAULT_RESPAWN_INTERVAL);
-		this->stats = new int[Stats::End];
-		for (int i = 0; i < Stats::End; i++) this->stats[i] = 10;
 	}
 
 	Human::Human(objId id) : Alive(id) {
 		this->setRespawnInterval(DEFAULT_RESPAWN_INTERVAL);
-		this->stats = new int[Stats::End];
-		for (int i = 0; i < Stats::End; i++) this->stats[i] = 10;
 	}
 
 	Human::Human(objId id, string username, string contact) :
 	Alive(id), username(username), contact(contact) {
 		this->setRespawnInterval(DEFAULT_RESPAWN_INTERVAL);
-		this->stats = new int[Stats::End];
 		for (int i = 0; i < Stats::End; i++) this->stats[i] = 10;
 
 		// Creation is the first interaction
 		this->markInteraction();
-	}
-
-	Human::~Human() {
-		delete[] stats;
 	}
 
 	string Human::getLongName() const {

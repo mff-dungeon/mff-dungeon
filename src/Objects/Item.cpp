@@ -21,8 +21,6 @@ namespace Dungeon {
 		this->setDropable(true)->setPickable(true)->setSize(0)->setWeight(0);
 	}
 
-	Item::~Item() { }
-
 	Item* Item::setSize(int size) {
 		this->size = size;
 		return this;

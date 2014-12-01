@@ -19,7 +19,7 @@ $(TARGET): $(OBJECTS) build/main.o
 
 src/dynamic.hpp: $(DYNAMICS)
 	@printf "#ifndef DYNAMIC_HPP\n#define	DYNAMIC_HPP\n\n" > $@
-	@echo $(DYNAMICS) | sed -r 's~src/([[:alnum:]/.-]+)\s*~#include "\1"\n~g' >> $@
+	@echo $(DYNAMICS) | sed -r 's~src/([[:alnum:]/.-]+)\s*~#include "\1"\n~g' | sort >> $@
 	@printf "#endif\n" >> $@
 	@echo "[ .. ] Dynamic header file generated."
 

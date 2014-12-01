@@ -22,8 +22,6 @@ namespace Dungeon {
 		this->usedWeight = 0;
 	}
 
-	Inventory::~Inventory() { }
-
 	Inventory* Inventory::setMaxSpace(int maxSpace) {
 		this->maxSpace = maxSpace;
 		return this;

@@ -9,20 +9,6 @@
 
 namespace Dungeon {
 
-	Recipe::Recipe() {
-		this->resources = new int[Resource::ManaShard + 1];
-		for (int i = 0; i <= Resource::ManaShard; i++) resources[i] = 0;
-	}
-
-	Recipe::Recipe(objId id) : IDescriptable(id) {
-		this->resources = new int[Resource::ManaShard + 1];
-		for (int i = 0; i <= Resource::ManaShard; i++) resources[i] = 0;
-	}
-
-	Recipe::~Recipe() {
-		delete[] this->resources;
-	}
-
 	int Recipe::getLevel() const {
 		return level;
 	}

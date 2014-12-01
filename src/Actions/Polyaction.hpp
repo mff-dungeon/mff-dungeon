@@ -11,6 +11,9 @@ namespace Dungeon {
 		Polyaction(string type) : MultiTargetAction(type) { };
 		virtual ~Polyaction();
 
+        Polyaction& operator=(const Polyaction& right);
+        Polyaction& operator=(Polyaction && right);
+
 		virtual MultiTargetAction* addTarget(ObjectPointer op);
 		virtual Polyaction* addTarget(ObjectPointer op, MultiTargetAction* action);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
