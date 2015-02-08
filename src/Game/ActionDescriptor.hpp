@@ -126,6 +126,15 @@ namespace Dungeon {
 		}
 
 		ActionDescriptor* setReplyFormat(ReplyFormat format);
+                
+                /** 
+                 * Printf-like formatted message will be replaced as following:
+                 *      %u -> Username
+                 *      %% -> %
+                 * 
+                 * Obviously, more replacements will be added in time of development.
+                 */
+                string formatMessage(string msg);
 
 	protected:
 		string message;

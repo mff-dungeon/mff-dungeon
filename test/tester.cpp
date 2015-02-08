@@ -5,10 +5,11 @@
 #include "../src/common.hpp"
 #include "testutils.cpp"
 #include "../src/dynamic.hpp"
-#include "../src/FuzzyStringMatcher.hpp"
-#include "../src/RandomString.hpp"
+#include "../src/Utils/FuzzyStringMatcher.hpp"
+#include "../src/Utils/RandomString.hpp"
 #include "../src/Objects/Item.hpp"
-#include "../src/Cloner.hpp"
+#include "../src/Persistence/Cloner.hpp"
+#include "../src/Game/GameManager.hpp"
 
 void testFSMatcher() {
     testing("FuzzyMatcher");

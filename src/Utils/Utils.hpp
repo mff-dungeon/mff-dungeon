@@ -22,7 +22,8 @@
 namespace Dungeon {
 
     static random_device hw_random;
-
+    class ActionDescriptor;
+    
     class Utils {
     public:
 
@@ -118,7 +119,7 @@ namespace Dungeon {
 		
         static inline std::string decapitalize(const std::string& cs)
         {
-			std::string s(cs);
+            std::string s(cs);
             for (size_t i = 0; i <= s.length(); i++) {
                 if (isalpha(s[i])) {
                     s[i] = tolower(s[i]);
@@ -127,18 +128,18 @@ namespace Dungeon {
             return s;
         }
 		
-		/**
-		 * Gets current time in specified format
+        /**
+         * Gets current time in specified format
          * @param format datetime formatting used in strftime method
          * @return a string with the current time
          */
-		static std::string currentTime(string format) {
-			std::time_t t = std::time(NULL);
-			char mbstr[100];
-			std::strftime(mbstr, sizeof (mbstr), format.c_str(), std::localtime(&t));
+        static std::string currentTime(string format) {
+                std::time_t t = std::time(NULL);
+                char mbstr[100];
+                std::strftime(mbstr, sizeof (mbstr), format.c_str(), std::localtime(&t));
 
-			return std::string(mbstr);
-		}
+                return std::string(mbstr);
+        }
     };
 }
 
