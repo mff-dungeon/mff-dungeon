@@ -128,7 +128,10 @@ int main(int argc, char** argv) {
 	 */
 	for (int a = 1; a < argc; a++) {
 		string arg = string(argv[a]);
-		if (arg == "cleanDB" || arg == "--cleanDB") {
+		if (arg == "--help" || arg == "help" || arg == "-h") {
+			cout << "Usage: " << argv[0] << " [--help] [--verbose] [--cleanDB]" << endl;
+			return 0;
+		} else if (arg == "cleanDB" || arg == "--cleanDB") {
 			dbRestart();
         } else if (arg == "--verbose" || arg == "verbose" || arg == "-v") {
             LOG("main") << "User has requested verbose logging on stdout by launch argument." << LOGF;
