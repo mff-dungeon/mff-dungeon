@@ -2559,6 +2559,18 @@ namespace Dungeon {
 		deepCloneTemplate(templates["creature/ghost"], rooms["witchburn"]);
 		
 		deepCloneTemplate(templates["creature/unicorn"], rooms["unicornforest"]);
+		
+		createObject<Board>("board/landcastle", rooms["landcastle"])
+			->setContent("Gotcha! Nothing here.")
+			->setLongName("Board with little roof with some torn paper attached.")
+			->setName("WANTED! board")
+			->save();
+		
+		createObject<Speaker>("speaker/landcastle", rooms["landcastle"])
+			->setContent("Everybody please help!\nSome fuckin' rat 100%% stole my Ring. My wife's gonna be so mad! Bring it to me, %u, and gold won't miss you.")
+			->setLongName("")
+			->setName("Sauron")
+			->save();
 	}
 
 

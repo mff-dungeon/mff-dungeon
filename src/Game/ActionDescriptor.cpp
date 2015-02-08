@@ -117,6 +117,33 @@ namespace Dungeon {
 	void TextActionDescriptor::clearReply() {
 		message = "";
 	}
+	
+	string ActionDescriptor::formatMessage(string msg)
+	{
+		LOGS("formatMessage", Verbose) << "Input: " << msg << LOGF;
+		string out;
+		for (auto it = msg.begin(); it != msg.end(); ++it) {
+			if (*it == '%') {
+				if (++it == msg.end()) --it;
+				switch(*it) {
+				case '%': // Also at the end of string
+					out.append("%");
+					break;
+				case 'u':
+					out.append(caller->getUsername());
+					break;
+				default:
+					LOGS("formatMessage", Error) << "Unexpected modifier %" << *it << "!" << LOGF;
+					out.push_back('%');
+					out.push_back(*it);
+				}
+			} else {
+				out.push_back(*it);
+			}
+		}
+		LOGS("formatMessage", Verbose) << "Output: " << out << LOGF;
+		return std::move(out);
+	}
 
 }
 

@@ -22,7 +22,8 @@
 namespace Dungeon {
 
     static random_device hw_random;
-
+    class ActionDescriptor;
+    
     class Utils {
     public:
 
@@ -116,6 +117,7 @@ namespace Dungeon {
 
             return s;
         }
+        
     };
 }
 

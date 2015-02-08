@@ -45,6 +45,7 @@ namespace Dungeon {
 					createAct->addTarget(recipe.second);
 				}
 			}
+		
 			if (createAct->getTargets().size() > 0) {
 				list->addAction(createAct);
 			} else {
