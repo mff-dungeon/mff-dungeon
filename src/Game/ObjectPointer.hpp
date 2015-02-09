@@ -17,7 +17,7 @@ namespace Dungeon {
             setLock(false);
         }
         
-        objId getId() const
+        const objId& getId() const
         {
             return this->id;
         }

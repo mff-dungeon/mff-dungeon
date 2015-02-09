@@ -57,7 +57,6 @@ namespace Dungeon {
         
         const static string EquippedNonWearable, BackpackNotInventory, EquippedMoreThanOne;
     };
-
     
     /**
      * We tried hard to type-cast an object, but it wasn't possible
@@ -66,6 +65,15 @@ namespace Dungeon {
     class InvalidType : public GameStateInvalid {
     public:
         InvalidType(string message = "Object should have been of different type.") : GameStateInvalid(message) { }
+    };
+    
+    /**
+     * Some convention wasn't held when triggering a trap.
+     * This is an fatal error, and there's a bug in your code.
+     */
+    class InvalidEvent : public GameException {
+    public:
+        InvalidEvent(string message = "Trap was triggered just wrong.") : GameException(message) { }
     };
 }
 

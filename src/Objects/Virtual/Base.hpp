@@ -27,9 +27,12 @@ private: \
 /*
  *	Simple line of code registering the object
  */
+#define PERSISTENT_IMPLEMENTATION_FULL(fullName, cName) \
+	AddObject fullName::addObject(#fullName, new fullName()); \
+        NONPERSISTENT_IMPLEMENTATION(fullName, cName)
+
 #define PERSISTENT_IMPLEMENTATION(cName) \
-	AddObject cName::addObject(#cName, new cName()); \
-        NONPERSISTENT_IMPLEMENTATION(cName)
+	PERSISTENT_IMPLEMENTATION_FULL(cName, cName)
 
 #define NONPERSISTENT_DECLARATION(cName, pName) \
 public: \
@@ -41,8 +44,8 @@ public: \
 		return cName##ClassName == cname || pName::isInstanceOf(cname); \
 	};
 
-#define NONPERSISTENT_IMPLEMENTATION(cName) \
-        const char * cName::cName##ClassName = #cName;
+#define NONPERSISTENT_IMPLEMENTATION(fullName, cName) \
+        const char * fullName::cName##ClassName = #fullName;
 
 /**
  * This way we can call obj->instanceOf(IDescriptable) and it will work
@@ -196,6 +199,7 @@ namespace Dungeon {
         
         ObjectPointer attachTrap(ObjectPointer trap, const string& event);
         ObjectPointer detachTrap(ObjectPointer trap, const string& event);
+        bool hasTrapAttached(ObjectPointer trap, const string& event);
         
         ObjectPointer deepClone() const;
         ObjectPointer shallowClone() const;

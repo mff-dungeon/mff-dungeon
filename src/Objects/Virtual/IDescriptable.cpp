@@ -71,7 +71,7 @@ namespace Dungeon {
 		return sentence;
 	}
 
-	NONPERSISTENT_IMPLEMENTATION(IDescriptable)
+	NONPERSISTENT_IMPLEMENTATION(IDescriptable, IDescriptable)
 
 
 	bool ExamineEction::match(const string& command, ActionDescriptor* ad) {

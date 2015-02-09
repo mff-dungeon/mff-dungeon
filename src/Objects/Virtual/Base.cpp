@@ -48,6 +48,7 @@ namespace Dungeon {
 	
 	bool Base::hasRelation(const string& type, ObjectPointer other, Relation::Dir dir) {
 		try {
+		LOGS("Object::Base", Verbose) << "Checking relation " << getId() << (dir ? "-->" : "<--") << other.getId() << " type " << type << LOGF;
 			if(dir == Relation::Master) {
 				return relation_master[type].find(other.getId()) != relation_master[type].end();
 			} else {
@@ -180,6 +181,10 @@ namespace Dungeon {
 		return this;
 	}
 	
+	bool Base::hasTrapAttached(ObjectPointer trap, const string& event) {
+		return trap.assertType<Trap>("Tried to check non-trap attachment.")->hasRelation(Trap::getRelation(event), this);
+	}
+	
 	ObjectPointer Base::deepClone() const {
 		return Cloner::deepClone(this);
 	}
@@ -188,5 +193,5 @@ namespace Dungeon {
 		return Cloner::shallowClone(this);
 	}
 
-	NONPERSISTENT_IMPLEMENTATION(Base)
+	NONPERSISTENT_IMPLEMENTATION(Base, Base)
 }
