@@ -1,5 +1,7 @@
 #include <iostream>
+#include <fstream>
 #include <sstream>
+#include <vector>
 #include <signal.h>		
 #include <execinfo.h>
 #include <unistd.h>
@@ -22,6 +24,7 @@ Alive* admin;
 JabberDriver* jabber;
 bool initWorld = false;
 bool finishing = false;
+ofstream debugFile;
 
 /*
  *  Attempts to get current backtrace
@@ -67,6 +70,7 @@ void finish(int signal) {
 
 	jabber->stop();
 	gm->shutdown();
+	if(debugFile.is_open()) debugFile.close();
 }
 
 /*
@@ -100,6 +104,21 @@ void start() {
 }
 
 /*
+ * Used by command line argument -h. Prints a short help and argument information.
+ */
+void printHelp() {
+	cout << "This is the Jabber Dungeon. If you don't know what it is and you are trying to start it anyway, "
+			<< "please read the documentation first. " << endl
+			<< "Usable arguments: " << endl 
+			<< "\t-h|--help\t\tPrints this help" << endl 
+			<< "\t-f|--config [file]\tSpecifies the path to the config file" << endl
+			<< "\t-v|--verbose\t\tThe game will print detailed information on standard output" << endl
+			<< "\t-d|--debug\t\tTurns on debug logging" << endl
+			<< "\t-p|--printDebug\t\tPrints debug information on the console. Mutually exclusive with -v" << endl
+			<< "\t-c|--cleanDB\t\tThe game world will be reset to default state" << endl;
+}
+
+/*
  *	Confirms dbRestart and sets the flag for GM if confirmed
  */
 void dbRestart() {
@@ -114,6 +133,50 @@ void dbRestart() {
 	}
 }
 
+/*
+ * Processes command line arguments. 
+ * If an invalid argument is found, this method returns false so we may end the program.
+ */
+bool parseArguments(vector<string>& args) {
+	for(auto it = args.begin() + 1; it != args.end(); it++) {
+		if (*it == "help" || *it == "--help" || *it == "-h") {
+			printHelp();
+			return false;
+		}
+		else if(*it == "cleanDB" || *it == "--cleanDB" || *it == "-c") {
+			dbRestart();
+		} else if (*it == "--verbose" || *it == "verbose" || *it == "-v") {
+			LOG("args") << "Requested verbose logging on stdout." << LOGF;
+			Logger::getInstance().setMinSeverity(cout, Logger::Severity::Verbose);
+		} else if (*it == "--debug" || *it == "debug" || *it == "-d") {
+			LOG("args") << "Requested debugging information, debug file was opened." << LOGF;
+			debugFile.open(Utils::currentTime("%Y-%m-%d") + "_debug.log", fstream::out | fstream::app | fstream::ate);
+			Logger::getInstance().linkStream(debugFile, Logger::Severity::Debug);
+		} else if (*it == "--printDebug" || *it == "printDebug" || *it == "-p") {
+			LOG("args") << "Requested logging debugging information on stdout." << LOGF;
+			Logger::getInstance().setMinSeverity(cout, Logger::Severity::Debug);
+		} else if (*it == "--config" || *it == "config" || *it == "-f") {
+			if(it+1 == args.end()) {
+				LOGS("args", Fatal) << "Specified config argument has no value." << LOGF;
+				return false;
+			}
+			string& fname = *(it+1);
+			if(fname.find("-") == 0) {
+				LOGS("args", Fatal) << "Specified config file name starts with a dash. "
+						<< "It is possible that you have forgot to put a filename after the config argument. Please use a filename without a dash." << LOGF;
+				return false;
+			}
+			// TODO: call config init!
+			it++;
+		} else {
+			LOGS("args", Fatal) << "Unknown argument: " << *it << LOGF;
+			cout << "Unknown argument: " << *it << ". Use -h or --help argument to get a list of accepted arguments." << endl;
+			return false;
+		}
+	}
+	return true;
+}
+
 int main(int argc, char** argv) {
 	#ifndef COMPATIBLE
 	cout << "Warning: Our code may not be compatible with your compiler. "
@@ -122,25 +185,17 @@ int main(int argc, char** argv) {
 	#endif
 	
     Logger::initialize();
-    
-	/*
-	 *	Process command line parameters, if any found
-	 */
-	for (int a = 1; a < argc; a++) {
-		string arg = string(argv[a]);
-		if (arg == "cleanDB" || arg == "--cleanDB") {
-			dbRestart();
-        } else if (arg == "--verbose" || arg == "verbose" || arg == "-v") {
-            LOG("main") << "User has requested verbose logging on stdout by launch argument." << LOGF;
-            Logger::getInstance().setMinSeverity(cout, Logger::Severity::Verbose);
-		} else
-			LOG("main") << "Unknown argument: " << argv[a] << LOGF;
+    vector<string> args(argv, argv+argc);
+	if(!parseArguments(args)) {
+		return 1;
 	}
+	
 	/*
 	 *	Regular dungeon start 
 	 */
 	LOG("main") << "Starting dungeon..." << LOGF;
 	start();
+	if(debugFile.is_open()) debugFile.close();
 	return 0;
 }
 

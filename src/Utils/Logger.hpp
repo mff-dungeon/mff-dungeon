@@ -27,11 +27,12 @@ namespace Dungeon {
 		/** Severity enum.
 		 */
 		enum Severity {
-			Verbose = 1,
-			Info = 2,
-			Warning = 4,
-			Error = 8,
-			Fatal = 16
+			Debug = 1,
+			Verbose = 2,
+			Info = 4,
+			Warning = 8,
+			Error = 16,
+			Fatal = 32
 		};
                 
 		/** Retrieves the singleton instance
@@ -101,7 +102,6 @@ namespace Dungeon {
 		};
 
 		LogBuffer buffer;
-		string currentTime(string format);
 
 		string getTimestamp();
 		mutex mutex_lock;

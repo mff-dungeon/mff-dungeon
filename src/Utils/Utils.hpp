@@ -116,6 +116,19 @@ namespace Dungeon {
 
             return s;
         }
+		
+		/**
+		 * Gets current time in specified format
+         * @param format datetime formatting used in strftime method
+         * @return a string with the current time
+         */
+		static std::string currentTime(string format) {
+			std::time_t t = std::time(NULL);
+			char mbstr[100];
+			std::strftime(mbstr, sizeof (mbstr), format.c_str(), std::localtime(&t));
+
+			return std::string(mbstr);
+		}
     };
 }
 

@@ -12,15 +12,15 @@ namespace Dungeon {
 		// output all messages to stdout
 		this->linkStream(cout, Severity::Info);
 		// open file stream with "append at the end" flag and make it copy stdout
-		stdoutFile.open(this->currentTime("%Y-%m-%d") + "_stdout.log", fstream::out | fstream::app | fstream::ate);
+		stdoutFile.open(Utils::currentTime("%Y-%m-%d") + "_stdout.log", fstream::out | fstream::app | fstream::ate);
 		this->linkStream(stdoutFile, Severity::Info);
 
 		// open file stream with "append at the end" flag and make it receive all messages
-		verboseFile.open(this->currentTime("%Y-%m-%d") + "_verbose.log", fstream::out | fstream::app | fstream::ate);
+		verboseFile.open(Utils::currentTime("%Y-%m-%d") + "_verbose.log", fstream::out | fstream::app | fstream::ate);
 		this->linkStream(verboseFile, Severity::Verbose);
 
 		// open file stream with "append at the end" flag and make it receive warnings or worse
-		warningsFile.open(this->currentTime("%Y-%m-%d") + "_warnings.log", fstream::out | fstream::app | fstream::ate);
+		warningsFile.open(Utils::currentTime("%Y-%m-%d") + "_warnings.log", fstream::out | fstream::app | fstream::ate);
 		this->linkStream(warningsFile, Severity::Warning);
 
 		mutex_lock.unlock();
@@ -188,15 +188,7 @@ namespace Dungeon {
         }
 
 	string Logger::getTimestamp() {
-		return this->currentTime("%d/%m %H:%M:%S");
-	}
-
-	string Logger::currentTime(string format) {
-		std::time_t t = std::time(NULL);
-		char mbstr[100];
-		std::strftime(mbstr, sizeof (mbstr), format.c_str(), std::localtime(&t));
-
-		return std::string(mbstr);
+		return Utils::currentTime("%d/%m %H:%M:%S");
 	}
 
 	void Logger::setHeadline(string title) {
