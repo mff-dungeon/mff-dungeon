@@ -12,10 +12,10 @@
 
 using namespace std;
 
-#define LOG(source) ( Logger::getInstance().beginMessage(source), Logger::getInstance() )
-#define LOGS(source, severity) ( Logger::getInstance().beginMessage(source, Logger::Severity::severity), Logger::getInstance() )
+#define LOGS(source, severity) Logger::getInstance().writeMessage(source, Logger::Severity::severity, (stringstream()
+#define LOG(source) LOGS(source, Info)
 #define LOGH(headline) { Logger::getInstance().setHeadline(headline); } 
-#define LOGF ( Logger::getInstance().endMessage(), "" )
+#define LOGF ""))
 
 namespace Dungeon {
 
@@ -33,6 +33,7 @@ namespace Dungeon {
 			Error = 8,
 			Fatal = 16
 		};
+                
 		/** Retrieves the singleton instance
 		 */
 		static Logger& getInstance() {
@@ -44,16 +45,13 @@ namespace Dungeon {
 		static void initialize() {
 			Logger::getInstance();
 		}
-
-		/** Outputs timestamp of a new message and locks the mutex.
+                
+                /** Outputs the message atomically.
 		 @param source      The section of application responsible for the message.
 		 @param severity    The importance of the message.
+		 @param data        The message to print.
 		 */
-		void beginMessage(string source = "", Severity severity = Severity::Info);
-
-		/** Flushes streams and unlocks the mutex.
-		 */
-		void endMessage();
+                void writeMessage(const string source, const Severity severity, const ostream& data);
 
 		/** Writes headline into the log.
 		 @param title   Title of the headline.

@@ -138,53 +138,54 @@ namespace Dungeon {
 
 		return c;
 	}
+        
+        void Logger::writeMessage(const string source, const Severity severity, const ostream& data) {
+            // atomic operation
+            mutex_lock.lock();
+            this->flush();
+            
+            buffer.currentSeverity = severity;
 
-	void Logger::beginMessage(string source, Severity severity) {
-		// atomic operation
-		mutex_lock.lock();
-		this->flush();
+            // print timestamp
+            *this << "[" << (*this).getTimestamp() << "] ";
 
-		buffer.currentSeverity = severity;
+            // print severity level if needed
+            switch (severity) {
+                    case Severity::Warning:
+                            *this << "WARNING: ";
+                            break;
 
-		// print timestamp
-		*this << "[" << (*this).getTimestamp() << "] ";
+                    case Severity::Error:
+                            *this << "ERROR: ";
+                            break;
 
-		// print severity level if needed
-		switch (severity) {
-			case Severity::Warning:
-				*this << "WARNING: ";
-				break;
+                    case Severity::Fatal:
+                            *this << "FATAL: ";
+                            break;
 
-			case Severity::Error:
-				*this << "ERROR: ";
-				break;
+                    default:
+                            break;
+            }
 
-			case Severity::Fatal:
-				*this << "FATAL: ";
-				break;
+            // print message source if needed
+            if (source != "") {
+                    *this << source << ": ";
+            }
+            
+            // print the actual message
+            *this << data.rdbuf();
+            
+            // print new line and flush
+            *this << endl;
 
-			default:
-				break;
-		}
+            // file streams need to be flushed separately
+            stdoutFile.flush();
+            verboseFile.flush();
+            warningsFile.flush();
 
-		// print message source if needed
-		if (source != "") {
-			*this << source << ": ";
-		}
-	}
-
-	void Logger::endMessage() {
-		// print new line and flush
-		*this << endl;
-
-		// file streams need to be flushed separately
-		stdoutFile.flush();
-		verboseFile.flush();
-		warningsFile.flush();
-
-		// end atomic operation
-		mutex_lock.unlock();
-	}
+            // end atomic operation
+            mutex_lock.unlock();
+        }
 
 	string Logger::getTimestamp() {
 		return this->currentTime("%d/%m %H:%M:%S");
