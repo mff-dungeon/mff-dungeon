@@ -1,3 +1,16 @@
 # Path to the database file used
 # Default: dungeon.db
-DB_NAME = dungeon.dbs
+DB_NAME = dungeon.db
+
+# User name used to connect to the jabber server
+# Default: dungeon@eideo.cz
+JABBER_NAME = dungeon-test@eideo.cz
+
+# Password used for jabber connection
+# Default: ********
+JABBER_PASSWD = losethegame
+
+# Used game mode for this Dungeon world
+# 0 - classical mode
+# 1 - hardcore mode (unimplemented)
+GAME_MODE = 0

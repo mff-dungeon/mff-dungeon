@@ -26,12 +26,10 @@ namespace Dungeon {
 			}
 		}
 		
-		/**
-		 * Returns set path for the game database.
-         */
-		static const string& dbName() {
-			return p_dbName;
-		}
+		static const string& DbName() {	return p_dbName; }
+		static const string& JabberName() {	return p_jabberName; }
+		static const string& JabberPasswd() { return p_jabberPasswd; }
+		static const int GameMode() { return p_gameMode; }
 		
 	private:
 		Config() {};
@@ -45,6 +43,9 @@ namespace Dungeon {
 		static bool initialized;
 		
 		static string p_dbName;
+		static string p_jabberName;
+		static string p_jabberPasswd;
+		static int p_gameMode;
 	};
 }
 #endif	/* CONFIG_HPP */

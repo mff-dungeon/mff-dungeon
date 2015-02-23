@@ -19,8 +19,11 @@ namespace Dungeon {
 		~ConfigParser() {};
 		
 		string getString(const string& key) const;
+		string getString(const string& key, const function<bool(string)> &predicate, string error) const;
 		int getInt(const string& key) const;
+		int getInt(const string& key, const function<bool(int)> &predicate, string error) const;
 		double getDouble(const string& key) const;
+		double getDouble(const string& key, const function<bool(double)> &predicate, string error) const;
 		bool getBool(const string& key) const;
 		
 		/*

@@ -41,6 +41,18 @@ namespace Dungeon {
 		return (*it).second;
 	}
 	
+	string ConfigParser::getString(const string& key, const function<bool(string)>& predicate, string error) const {
+		map<string, string>::const_iterator it = loadedValues.find(key);
+		if(it == loadedValues.end()) {
+			throw InvalidFieldException("No field with identifier " + key + " found.", key);
+		}
+		if(!predicate((*it).second)) {
+			throw InvalidFieldException(error, key);
+		}
+		return (*it).second;
+	}
+
+	
 	bool ConfigParser::getBool(const string& key) const {
 		map<string, string>::const_iterator it = loadedValues.find(key);
 		if(it == loadedValues.end()) {
@@ -67,6 +79,14 @@ namespace Dungeon {
 		return d;
 	}
 
+	double ConfigParser::getDouble(const string& key, const function<bool(double)> &predicate, string error) const {
+		double d = getDouble(key);
+		if(!predicate(d)) {
+			throw InvalidFieldException(error, key);
+		}
+		return d;
+	}
+
 	int ConfigParser::getInt(const string& key) const {
 		map<string, string>::const_iterator it = loadedValues.find(key);
 		if(it == loadedValues.end()) {
@@ -81,4 +101,13 @@ namespace Dungeon {
 		}
 		return i;
 	}
+
+	int ConfigParser::getInt(const string& key, const function<bool(int)> &predicate, string error) const {
+		int i = getInt(key);
+		if(!predicate(i)) {
+			throw InvalidFieldException(error, key);
+		}
+		return i;
+	}
+
 }

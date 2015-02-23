@@ -14,7 +14,7 @@ namespace Dungeon {
 	}
 
 	bool DatabaseHandler::openConnection() {
-		sqlCode = sqlite3_open(Config::dbName().c_str(), &dbConnection);
+		sqlCode = sqlite3_open(Config::DbName().c_str(), &dbConnection);
 		if (sqlCode != SQLITE_OK) {
 			sqlite3_close(dbConnection);
 			return true;

@@ -19,8 +19,6 @@
 	#define COMPATIBLE
 #endif
 
-#define CONFIG_GAME_MODE 0
-
 /**
  * Relation types used a lot
  */
