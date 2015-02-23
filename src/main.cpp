@@ -54,7 +54,7 @@ void finish(int signal) {
         if (signal == SIGINT) LOG("main") << "Caught another SIGINT, already in shutdown mode." << LOGF;
         else if (signal == SIGTERM) LOG("main") << "Caught another SIGTERM, already in shutdown mode." << LOGF;
         
-        LOGS("main", Fatal) << "Resolving potentially uncontrollable hang by voluntary suicide (SIGABRT)...";
+        LOGS("main", Fatal) << "Resolving potentially uncontrollable hang by voluntary suicide (SIGABRT)..." << LOGF;
         abort();
         return;
     }
