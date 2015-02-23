@@ -1,0 +1,3 @@
+# Path to the database file used
+# Default: dungeon.db
+DB_NAME = dungeon.dbs

@@ -12,6 +12,7 @@
 #include "Game/GameManager.hpp"
 #include "Game/ActionQueue.hpp"
 #include "dynamic.hpp"
+#include "Utils/Config.hpp"
 
 using namespace Dungeon;
 
@@ -142,8 +143,7 @@ bool parseArguments(vector<string>& args) {
 		if (*it == "help" || *it == "--help" || *it == "-h") {
 			printHelp();
 			return false;
-		}
-		else if(*it == "cleanDB" || *it == "--cleanDB" || *it == "-c") {
+		} else if(*it == "cleanDB" || *it == "--cleanDB" || *it == "-c") {
 			dbRestart();
 		} else if (*it == "--verbose" || *it == "verbose" || *it == "-v") {
 			LOG("args") << "Requested verbose logging on stdout." << LOGF;
@@ -156,6 +156,10 @@ bool parseArguments(vector<string>& args) {
 			LOG("args") << "Requested logging debugging information on stdout." << LOGF;
 			Logger::getInstance().setMinSeverity(cout, Logger::Severity::Debug);
 		} else if (*it == "--config" || *it == "config" || *it == "-f") {
+			if(Config::isInitialized()) {
+				LOGS("args", Fatal) << "Config is already initialized." << LOGF;
+				return false;
+			}
 			if(it+1 == args.end()) {
 				LOGS("args", Fatal) << "Specified config argument has no value." << LOGF;
 				return false;
@@ -166,7 +170,17 @@ bool parseArguments(vector<string>& args) {
 						<< "It is possible that you have forgot to put a filename after the config argument. Please use a filename without a dash." << LOGF;
 				return false;
 			}
-			// TODO: call config init!
+			try {
+				Config::initialize(fname);
+			}
+			catch (ConfigParser::InvalidFileException& e) {
+				LOGS("args", Fatal) << "Configuration loading error: " << e.what() << LOGF;
+				return false;
+			}
+			catch (ConfigParser::InvalidFieldException& e) {
+				LOGS("args", Fatal) << "Configuration loading error: Field " << e.fieldName << " - " << e.what() << LOGF;
+				return false;
+			}
 			it++;
 		} else {
 			LOGS("args", Fatal) << "Unknown argument: " << *it << LOGF;
@@ -188,6 +202,25 @@ int main(int argc, char** argv) {
     vector<string> args(argv, argv+argc);
 	if(!parseArguments(args)) {
 		return 1;
+	}
+	
+	/*
+	 *  No config is initialized, load the default one
+	 */
+	if(!Config::isInitialized()) {
+		try {
+			Config::initialize("config");
+		}
+		catch (ConfigParser::InvalidFileException& e) {
+			LOGS("main", Fatal) << "Configuration loading error: " << e.what() << LOGF;
+			LOGS("main", Fatal) << "There must be either a configuration file in the current folder called \"config\", "
+					<< "or you must specify a path to a valid configuration file using command line arguments." << LOGF;
+			return 2;
+		}
+		catch (ConfigParser::InvalidFieldException& e) {
+			LOGS("main", Fatal) << "Configuration loading error: Field " << e.fieldName << " - " << e.what() << LOGF;
+			return 2;
+		}
 	}
 	
 	/*

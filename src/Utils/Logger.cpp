@@ -38,6 +38,9 @@ namespace Dungeon {
 
 	string Logger::getSeverityName(Severity severity) {
 		switch (severity) {
+			case Severity::Debug:
+				return "debug";
+				
 			case Severity::Verbose:
 				return "verbose";
 

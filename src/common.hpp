@@ -19,8 +19,6 @@
 	#define COMPATIBLE
 #endif
 
-
-#define DB_NAME "dungeon.db"
 #define CONFIG_GAME_MODE 0
 
 /**
@@ -48,8 +46,8 @@
  *  Logging
  */
 #include "Utils/Logger.hpp"
-
 #include "Utils/Utils.hpp"
+#include "Utils/Config.hpp"
 
 namespace Dungeon {    
 
