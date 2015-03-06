@@ -67,7 +67,7 @@ namespace Dungeon {
 	void Base::addRelation(string type, ObjectPointer other, Relation::Dir dir){
 		if (hasRelation(type, other, dir)) return;
 		
-		LOGS("Object::Base", Verbose) << "Adding relation " << getId() << (dir ? "<--" : "-->") << other.getId() << " type " << type << LOGF;
+		LOGS("Object::Base", Debug) << "Adding relation " << getId() << (dir ? " <-- " : " --> ") << other.getId() << " of type " << type << LOGF;
 		if(dir) {
 			relation_master[type][other.getId()] = other;
 		}
@@ -132,7 +132,7 @@ namespace Dungeon {
 	void Base::eraseRelation(string type, ObjectPointer other, Relation::Dir dir) {
 		if (!other || !hasRelation(type, other, dir)) return;
 		
-		LOGS("Object::Base", Verbose) << "Erasing relation " << getId() << (dir ? "<--" : "-->") << other.getId() << " type " << type << LOGF;
+		LOGS("Object::Base", Debug) << "Erasing relation " << getId() << (dir ? " <-- " : " --> ") << other.getId() << " of type " << type << LOGF;
 		if(dir) {
 			relation_master.at(type).erase(other.getId());
 		}

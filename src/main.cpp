@@ -64,8 +64,8 @@ void finish(int signal) {
     }
     
 	LOGH("Finish");
-	if (signal == SIGINT) LOG("main") << "Caught SIGINT, terminating..." << LOGF;
-	else if (signal == SIGTERM) LOG("main") << "Caught SIGTERM, terminating..." << LOGF;
+	if (signal == SIGINT) LOGS("main", Warning) << "Caught SIGINT, terminating..." << LOGF;
+	else if (signal == SIGTERM) LOGS("main", Warning) << "Caught SIGTERM, terminating..." << LOGF;
     
     finishing = true;
 
@@ -78,7 +78,7 @@ void finish(int signal) {
  *  Handles segfault.
  */
 void crash_segv(int signal) {
-    LOGS("main", Fatal) << "Caught SIGSEGV (" << signal << "), crashing..." << getStacktace() << LOGF;
+    LOGS("main", Fatal) << "Caught SIGSEGV (" << signal << "), crashing... " << getStacktace() << LOGF;
 	throw GameException("Segmentation fault.");
 }
 

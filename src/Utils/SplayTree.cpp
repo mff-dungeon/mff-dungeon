@@ -7,7 +7,7 @@ namespace Dungeon {
 	 * Initialize tree, root is empty pointer
 	 */
 	SplayTree::SplayTree() {
-		mroot = 0;
+		mroot = nullptr;
 	};
 
 	/*
@@ -17,9 +17,9 @@ namespace Dungeon {
 	void SplayTree::rotateRight(Node* n) {
 		Node* t = n->left;
 		n->left = t->right;
-		if(t->right != 0) t->right->parent = n;
+		if(t->right != nullptr) t->right->parent = n;
 		t->parent = n->parent;
-		if(n->parent == 0) this->mroot = t;
+		if(n->parent == nullptr) this->mroot = t;
 		else if(n == n->parent->left) n->parent->left = t;
 		else n->parent->right = t;
 		t->right = n;
@@ -33,9 +33,9 @@ namespace Dungeon {
 	void SplayTree::rotateLeft(Node* n) {
 		Node* t = n->right;
 		n->right = t->left;
-		if(t->left != 0) t->left->parent = n;
+		if(t->left != nullptr) t->left->parent = n;
 		t->parent = n->parent;
-		if(n->parent == 0) this->mroot = t;
+		if(n->parent == nullptr) this->mroot = t;
 		else if(n == n->parent->left) n->parent->left = t;
 		else n->parent->right = t;
 		t->left = n;
@@ -46,8 +46,8 @@ namespace Dungeon {
 	 * Splay the tree - move the Node n to the root of the tree
 	 */
 	void SplayTree::splay(Node* n) {
-		while(n->parent != 0) {			// do while n is not root
-			if(n->parent->parent == 0) {
+		while(n->parent != nullptr) {			// do while n is not root
+			if(n->parent->parent == nullptr) {
 				if(n->parent->left == n) {
 					rotateRight(n->parent);
 				} else {
@@ -78,17 +78,17 @@ namespace Dungeon {
 	 *	so Node u can be deleted
 	 */
 	void SplayTree::replace(Node* u, Node* v) {
-		if(u->parent == 0) this->mroot = v;
+		if(u->parent == nullptr) this->mroot = v;
 		else if(u == u->parent->left) u->parent->left = v;
 		else u->parent->right = v;
-		if(v != 0) v->parent = u->parent;
+		if(v != nullptr) v->parent = u->parent;
 	};
 
 	/* 
 	 * Finds the minimal Node in a subtree with Node root 
 	 */
 	SplayTree::Node* SplayTree::findMinimum(Node* root) {
-		while(root->left != 0)
+		while(root->left != nullptr)
 			root = root->left;
 		return root;
 	}
@@ -98,11 +98,15 @@ namespace Dungeon {
 	 */
 	void SplayTree::insert(Base* obj) {
 		Node* f = this->mroot;
-		Node* p = 0;
-		while(f != 0) {
+		Node* p = nullptr;
+		if(obj == nullptr) {
+			LOGS("SplayTree", Fatal) << "Attempted to insert a null pointer." << LOGF;
+			return;
+		}
+		while(f != nullptr) {
 			p = f;
 			if(f->value->getId() == obj->getId()) {
-				// throw error - already in the tree
+				LOGS("SplayTree", Error) << "Insertion failed. Node with id " << obj->getId() << " is already in the tree." << LOGF;
 				return;
 			}
 			else if(f->value->getId() < obj->getId()) {
@@ -117,13 +121,14 @@ namespace Dungeon {
 		f->right = 0;
 		f->value = obj;
 		f->parent = p;	
-		if(p == 0)
+		if(p == nullptr)
 			this->mroot = f;
 		else if(f->value->getId() < p->value->getId())
 			p->left = f;
 		else
 			p->right = f;
 
+		LOGS("SplayTree", Debug) << "Node with id " << obj->getId() << " inserted." << LOGF;
 		this->splay(f);
 	};
 
@@ -132,12 +137,12 @@ namespace Dungeon {
 	 */
 	Base* SplayTree::find(objId id) {
 		Node* f = this->mroot;
-		while(f != 0) {
+		while(f != nullptr) {
 			if(f->value->getId() == id) 
-				{
-					this->splay(f);
-					return f->value;
-				}
+			{
+				this->splay(f);
+				return f->value;
+			}
 			else if(f->value->getId() < id)
 				f = f->right;
 			else
@@ -151,18 +156,21 @@ namespace Dungeon {
 	 */
 	void SplayTree::remove(objId id) {
 		Node* f = this->mroot;
-		while(f != 0 && f->value->getId() != id) {
+		while(f != nullptr && f->value->getId() != id) {
 			if(f->value->getId() < id)
 				f = f->right;
 			else
 				f = f->left;
 		}
 		
-		if(f == 0) return;
+		if(f == nullptr) {
+			LOGS("SplayTree", Debug) << "Requested removing node with id " << id << ", but it wasn't found." << LOGF;
+			return;
+		}
 
-		if(f->left == 0)
+		if(f->left == nullptr)
 			this->replace(f, f->right);
-		else if(f->right == 0)
+		else if(f->right == nullptr)
 			this->replace(f, f->left);
 		else {
 			Node *t = this->findMinimum(f->right);
@@ -177,33 +185,35 @@ namespace Dungeon {
 		}
 
 		delete f;
+		LOGS("SplayTree", Debug) << "Node with id " << id << " removed from the tree." << LOGF;
 	};
 	
 	void SplayTree::clearTree() {
+		LOG("SplayTree") << "Clearing whole game tree." << LOGF;
 		Node *f = this->mroot;
-		while(f != 0) {
-			if(f->left != 0) {
+		while(f != nullptr) {
+			if(f->left != nullptr) {
 				f = f->left;
 			} 
-			else if (f->right != 0) {
+			else if (f->right != nullptr) {
 				f = f->right;
 			}
 			else {
 				Node *p = f->parent;
-				if(f->value != 0) {
+				if(f->value != nullptr) {
 					delete f->value;
 				}
 				if (p) {
 					if (p->left == f) 
-						p->left = 0;
+						p->left = nullptr;
 					else 
-						p->right = 0;
+						p->right = nullptr;
 				}
 				delete f;
 				f = p;
 			}
 		}
-		this->mroot = 0;
+		this->mroot = nullptr;
 	}
         
 	/*

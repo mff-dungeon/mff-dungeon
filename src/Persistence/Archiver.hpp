@@ -11,6 +11,7 @@ namespace Dungeon {
 	 * Class implementing the archivation of objects into a std::stringstream
 	 * Holds private std::stringstream, which is converted to std::string when required by
 	 *	ObjectLoader.
+	 * Doesn't inherit stringstream ownership, only holds a reference (pointer) to it
 	 * Defines operator << and >> for all supported data types to define 
 	 *  converting to different data types.
 	 * Storing variable defines the direction - if true, Archiver is saving 

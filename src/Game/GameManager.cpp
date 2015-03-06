@@ -13,7 +13,7 @@ namespace Dungeon {
 
 		int dbCode = DatabaseHandler::getInstance().checkDatabase();
 		if (dbCode == DatabaseHandler::E_CONNECTION_ERROR) {
-			LOGS("DatabaseHandler", Fatal) << "Database isn't working" << LOGF;
+			LOGS("DatabaseHandler", Fatal) << "Database isn't working correctly." << LOGF;
 			exit(1);
 		} else if (init) {
 			LOG("GameManager") << "Cleanup initiated." << LOGF;
@@ -36,17 +36,16 @@ namespace Dungeon {
 		LOG("GameManager") << "Dropping all tables." << LOGF;
 		err = DatabaseHandler::getInstance().dropDatabase();
 		if (err != DatabaseHandler::E_OK) {
-			LOGS("GameManager", Fatal) << "Drop database query failed with error code " << err << LOGF;
+			LOGS("GameManager", Fatal) << "Drop database query failed." << LOGF;
 			exit(1);
 		}
 		LOG("GameManager") << "All tables dropped." << LOGF;
 		err = DatabaseHandler::getInstance().initDatabase();
 		if (err != DatabaseHandler::E_OK) {
-			LOGS("GameManager", Fatal) << "Create table database query failed with error code " << err << LOGF;
+			LOGS("GameManager", Fatal) << "Create table database query failed." << LOGF;
 			exit(1);
 		}
 
-		LOG("GameManager") << "Cleaning object tree." << LOGF;
 		this->objects.clearTree();
 
 		LOG("GameManager") << "Creating and initializing tables." << LOGF;
@@ -75,14 +74,14 @@ namespace Dungeon {
 	Base* GameManager::getObjectInstance(objId id) {
 		Base * r;
 		r = this->objects.find(id);
-		if (r == 0) {
+		if (r == nullptr) {
 			r = loadObject(id);
-			if (r != 0)
+			if (r != nullptr)
 				this->objects.insert(r);
 			else
 				throw new ObjectLost("No such object found");
 		}
-		LOGS("GameManager", Verbose) << "Looking up object '" << id << "'." << LOGF;
+		LOGS("GameManager", Debug) << "Looking up object with id '" << id << "'." << LOGF;
 		return r;
 	}
 
@@ -90,7 +89,7 @@ namespace Dungeon {
 		Base* r = 0;
 		r = loader->loadObject(id);
 		if (r == 0) return 0;
-		LOGS("GameManager", Info) << "Loaded object '" << id << "' with class " << r->className() << "." << LOGF;
+		LOGS("GameManager", Verbose) << "Loaded object '" << id << "' with class " << r->className() << "." << LOGF;
 		r->setGameManager(this);
 
 		// Load the relations
@@ -124,7 +123,7 @@ namespace Dungeon {
 			else
 				return false;
 		}
-		LOGS("GameManager", Verbose) << "Peeking object '" << id << "'." << LOGF;
+		LOGS("GameManager", Debug) << "Peeking object '" << id << "'." << LOGF;
 		return true;
 	}
 
@@ -148,7 +147,7 @@ namespace Dungeon {
 	}
 
 	void GameManager::saveObject(Base* obj) {
-		LOGS("GameManager", Verbose) << "Saving object " << obj->getId() << "." << LOGF;
+		LOGS("GameManager", Debug) << "Saving object " << obj->getId() << "." << LOGF;
 		loader->saveObject(obj);
 	}
 
@@ -178,7 +177,7 @@ namespace Dungeon {
 		int err = DatabaseHandler::getInstance().addRelation(rel);
 		LOGS("GameManager", Verbose) << "Adding relation " << rel->pid << " --> " << rel->sid << "." << LOGF;
 		if (err != DatabaseHandler::E_OK) {
-			LOGS("GameManager", Fatal) << "Error adding relation to database, error code " << err << LOGF;
+			LOGS("GameManager", Error) << "Error adding relation to database." << LOGF;
 		}
 	}
 
@@ -211,6 +210,7 @@ namespace Dungeon {
 		createRelation(getObjectInstance("location/room/landcastle"), figure, R_INSIDE);
 
 		figure->calculateBonuses();
+		LOGS("GameManager", Verbose) << "A new figure for player with id " << figure->getId() << " was created." << LOGF;
 		return figure;
 	}
 
@@ -262,6 +262,7 @@ namespace Dungeon {
 	}
 
 	void GameManager::moveAlive(Alive* alive, ObjectPointer room) {
+		LOGS("GameManager", Verbose) << "Moving alive to " << room->getId() << "." << LOGF;
 		this->removeRelation(alive->getLocation(), alive, R_INSIDE);
 		this->createRelation(room, alive, R_INSIDE);
 		if (room.safeCast<Location>()->isRespawnable() && alive->isInstanceOf(Human::HumanClassName)) {

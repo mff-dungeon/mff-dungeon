@@ -6,9 +6,9 @@ namespace Dungeon {
 
 	ActionDescriptor::ActionDescriptor(Driver* driver) : driver(driver) {
 		id = rand();
-		gm = 0;
-		caller = 0;
-		action = 0;
+		gm = nullptr;
+		caller = nullptr;
+		action = nullptr;
 	}
 
 	ActionDescriptor::~ActionDescriptor() {

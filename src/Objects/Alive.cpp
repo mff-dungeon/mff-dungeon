@@ -28,6 +28,7 @@ namespace Dungeon {
 		}
 
 		// Get actions for the inventory items - thors hammer
+		// FIXME goes through all master relations, logs thousands of "is not item" messages
 		LOGS("Alive", Verbose) << "Getting actions on inventory - " << this->getId() << "." << LOGF;
 		try {
 			const RelationList& mastering = getRelations(Relation::Master);
@@ -38,7 +39,7 @@ namespace Dungeon {
 						item.second->triggerTraps("get-actions", nullptr)
 						->getActions(list, this);
 					else
-						LOGS("Alive", Verbose) << item.second << " is not item" << LOGF;
+						LOGS("Alive", Verbose) << item.second.getId() << " is not item" << LOGF;
 				}
 		} catch (const std::out_of_range& e) {
 			// Nothing needs to be done

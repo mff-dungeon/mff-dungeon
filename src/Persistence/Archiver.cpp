@@ -1,5 +1,6 @@
 #include "Archiver.hpp"
 #include <vector>
+#include <stdexcept>
 
 using namespace std;
 
@@ -102,13 +103,13 @@ namespace Dungeon {
 	void Archiver::write(const void* buffer, size_t length) {
 		stream->write((const char*) buffer, length);
 		if (! *stream)
-			throw "Archiver::write Error";
+			throw runtime_error("Archiver::write Error");
 	}
 
 	void Archiver::read(void* buffer, size_t length) {
 		stream->read((char*) buffer, length);
 		if (! *stream)
-			throw "Archiver::read Error";
+			throw runtime_error("Archiver::read Error");
 	}
 }
 

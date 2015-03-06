@@ -6,6 +6,7 @@ namespace Dungeon
 {
 
 	bool ObjectPointer::isLoaded() const {
+		// FIXME FIXME FIXME --- are we sure this is what we wanted? Seems pretty weeeeeird
 		return this->id == "" || gm->hasObjectLoaded(id);
 	}
 	
@@ -33,9 +34,4 @@ namespace Dungeon
 		}
 		return *this;
 	}
-
-
-	
-	
-
 }

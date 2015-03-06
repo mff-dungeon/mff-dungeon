@@ -91,8 +91,6 @@ namespace Dungeon {
 		file << "<b>" << id << "</b>: " << (prop ? "yes" : "no") << "<br/>";
 		return *this;
 	}
-
-
 	
 	void DotDumper::endDump() {
 		file << "}\n" << endl;
@@ -100,8 +98,5 @@ namespace Dungeon {
 		
 	}
 	
-	
-
-
 }
 

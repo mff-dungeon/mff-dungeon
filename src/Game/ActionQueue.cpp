@@ -11,6 +11,7 @@ namespace Dungeon {
 	void ActionQueue::enqueue(ActionDescriptor* ad) {
 		lock l(q_mutex);
 		ad->enqueued(this->gm);
+		LOGS("ActionQueue", Verbose) << "Enqueued an action." << LOGF;
 		bool wake = actions.empty();
 		if (running) this->actions.push(ad);
 		if (wake) q_condvar.notify_one();
@@ -38,7 +39,7 @@ namespace Dungeon {
 
 			flawless = true;
 		} catch (GameException& ge) {
-                    LOGS("ActionQueue", Error) << "Game exception occured and Driver missed it." << ge.what() << LOGF;
+			LOGS("ActionQueue", Error) << "Game exception occured and Driver missed it. " << ge.what() << LOGF;
 		}
 		/* Disabled for debugging, enable on production
 		catch (char const * e) {

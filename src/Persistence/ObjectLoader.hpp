@@ -10,7 +10,7 @@ namespace Dungeon {
 
 	/**
 	 * Load & store objects to some storage. 
-	 * By default implemented database, can be inherited.
+	 * Implemented using a SQLite database, can be inherited.
 	 */
 	class ObjectLoader {
 	public:

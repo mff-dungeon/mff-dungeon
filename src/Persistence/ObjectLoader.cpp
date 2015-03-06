@@ -13,12 +13,13 @@ namespace Dungeon {
 		string cName;
 		int err = DatabaseHandler::getInstance().loadObject(oid, cName, cDataStream);
 		if (err != 0) {
-			LOG("Loader") << "Error loading object, id " << oid << ". Error code: " << err << LOGF;
-			return 0;
+			LOGS("ObjectLoader", Warning) << "Loading object with id " << oid << " failed." << LOGF;
+			return nullptr;
 		}
 		Archiver as(&cDataStream);
 		Base* loaded = Base::load(as, cName);
 		loaded->setId(oid);
+		LOGS("ObjectLoader", Debug) << "Loaded object with id " << oid << "." << LOGF;
 		return loaded;
 	}
 
@@ -36,8 +37,9 @@ namespace Dungeon {
 		int err = DatabaseHandler::getInstance().saveObject(id, cName, cData);
 		delete cDataStream;
 		if (err != DatabaseHandler::E_OK) {
-			LOGS("Loader", Fatal) << "Error saving object " << id << ", error code " << err << LOGF;
+			LOGS("ObjectLoader", Error) << "Saving object with " << id << " failed." << LOGF;
 		}
+		LOGS("ObjectLoader", Debug) << "Saved object with id " << id << "." << LOGF;
 	}
 
 	vector<objId> ObjectLoader::getObjectList() {
