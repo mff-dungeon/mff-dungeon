@@ -25,7 +25,6 @@
  *	-	Alive - getAllActions
  *	-	Creature - getActions
  *	-	HardcoreTrap - hardcore mode
- *	-	Human - move values to config (header)
  *	-	EquipAction::itemPhaseTwo 2x - checking the game state
  *	-	HealingTrap - the timestamp should be always updated 
  *					- atm, the user gets insta-healed after coming to healing location

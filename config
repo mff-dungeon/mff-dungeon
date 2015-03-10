@@ -10,7 +10,18 @@ JABBER_NAME = dungeon-test@eideo.cz
 # Default: ********
 JABBER_PASSWD = losethegame
 
+####################### Character Settings
+
 # Used game mode for this Dungeon world
 # 0 - classical mode
 # 1 - hardcore mode (unimplemented)
 GAME_MODE = 0
+
+# The time interval in seconds after which will the user respawn
+# Default: 120
+RESPAWN_INTERVAL = 120
+
+# The number of stat points gained by a character on its level up
+# to be distributed to character's stats.
+# Default: 5
+LEVEL_STAT_POINTS = 5

@@ -5,17 +5,6 @@
 #include "Alive.hpp"
 #include "../Actions/Action.hpp"
 
-/**
- * Default respawn interval in seconds for humans, testing value, could be changed later (or used kinda dynamically)	 
- */
-#define DEFAULT_RESPAWN_INTERVAL 120
-
-/**
- * The number of points which the user will receive on level up, 
- * can be distributed to the stats
- */
-#define LEVEL_STAT_POINTS 5
-
 namespace Dungeon {
 
 	/**

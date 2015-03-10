@@ -2,6 +2,7 @@
 #include "Virtual/Base.hpp"
 #include "Virtual/Stats.hpp"
 #include "../Utils/RandomString.hpp"
+#include "../Utils/Config.hpp"
 #include "../Game/ActionList.hpp"
 #include "../Game/ActionDescriptor.hpp"
 #include "../Game/GameManager.hpp"
@@ -16,16 +17,16 @@
 namespace Dungeon {
 
 	Human::Human() : Alive() {
-		this->setRespawnInterval(DEFAULT_RESPAWN_INTERVAL);
+		this->setRespawnInterval(Config::RespawnTime());
 	}
 
 	Human::Human(const objId& id) : Alive(id) {
-		this->setRespawnInterval(DEFAULT_RESPAWN_INTERVAL);
+		this->setRespawnInterval(Config::RespawnTime());
 	}
 
 	Human::Human(const objId& id, const string& username, const string& contact) :
 	Alive(id), username(username), contact(contact) {
-		this->setRespawnInterval(DEFAULT_RESPAWN_INTERVAL);
+		this->setRespawnInterval(Config::RespawnTime());
 		for (int i = 0; i < Stats::End; i++) this->stats[i] = 10;
 
 		// Creation is the first interaction
@@ -73,11 +74,11 @@ namespace Dungeon {
 
 	void Human::doLevelUp(ActionDescriptor* ad) {
 		this->level++;
-		this->freepoints += LEVEL_STAT_POINTS;
+		this->freepoints += Config::LevelStats();
 		LOGS("Human", Debug) << getId() << " has acquired a new level." << LOGF;
 		if (ad) {
 			*ad << "You have just advanced to a new level. You have just gained "
-					<< LEVEL_STAT_POINTS
+					<< Config::LevelStats()
 					<< " stat points. Distribute them by typing 'raise ...'."
 					<< eos;
 		}
