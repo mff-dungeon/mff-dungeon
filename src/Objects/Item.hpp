@@ -13,7 +13,7 @@ namespace Dungeon {
 	class Item : public IDescriptable {
 	public:
 		Item();
-		Item(objId id);
+		Item(const objId& id);
 		virtual ~Item() { }
 
 		/**
@@ -27,11 +27,11 @@ namespace Dungeon {
 		 */
 		virtual Item* setWeight(int weight);
 		virtual int getWeight() const;
-
-		virtual bool isPickable() const;
-		virtual Item* setPickable(bool pickable);
-		virtual bool isDropable() const;
-		virtual Item* setDropable(bool dropable);
+	
+		bool isPickable() const;
+		Item* setPickable(bool pickable);
+		bool isDropable() const;
+		Item* setDropable(bool dropable);
 
 		virtual void getActions(ActionList* list, ObjectPointer callee);
 
@@ -44,8 +44,8 @@ namespace Dungeon {
 		 * Allows to add a stat requirement to the item. Doesn't take care of checking,
 		 * checking should be done by each item (SpellScroll, Wearable, ...)
 		 */
-		virtual Item* addStatReq(ObjectPointer reqPtr);
-		virtual bool checkStatReqs(ObjectPointer userPtr, ActionDescriptor* ad = 0);
+		Item* addStatReq(ObjectPointer reqPtr);
+		bool checkStatReqs(ObjectPointer userPtr, ActionDescriptor* ad = nullptr);
 
 		virtual string getDescription() const;
 		virtual string getDescriptionSentence();

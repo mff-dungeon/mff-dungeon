@@ -59,13 +59,13 @@ namespace Dungeon {
 
 	ObjectPointer Cloner::shallowClone(ObjectPointer original) {
 		Cloner cl = Cloner(original);
-		LOGS("Cloner", Verbose) << "Making shallow clone of object " << original.getId() << "." << LOGF;
+		LOGS("Cloner", Debug) << "Making shallow clone of object " << original.getId() << "." << LOGF;
 		return cl.getShallowClone();
 	}
 
 	ObjectPointer Cloner::deepClone(ObjectPointer original) {
 		Cloner cl = Cloner(original);
-		LOGS("Cloner", Verbose) << "Making deep clone of object " << original.getId() << "." << LOGF;
+		LOGS("Cloner", Debug) << "Making deep clone of object " << original.getId() << "." << LOGF;
 		return cl.getDeepClone();
 	}
 

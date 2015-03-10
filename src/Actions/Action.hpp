@@ -12,7 +12,7 @@ namespace Dungeon {
 	 */
 	class Action {
 	public:
-		Action(string type, bool visible = true) : type(type), isVisibleInHelp(visible) { }
+		Action(const string& type, bool visible = true) : type(type), isVisibleInHelp(visible) { }
 		virtual ~Action() { }
 
 		/**
@@ -20,7 +20,7 @@ namespace Dungeon {
 		 * Shall also fetch all needed parameters from the string and store it
 		 * inside.
 		 */
-		virtual bool match(string command, ActionDescriptor* ad);
+		virtual bool match(const string& command, ActionDescriptor* ad);
 		/**
 		 * Can be overriden to check integrity before commiting.
 		 */

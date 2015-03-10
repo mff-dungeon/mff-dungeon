@@ -6,12 +6,6 @@
 
 namespace Dungeon {
 
-	Potion::Potion() { }
-
-	Potion::Potion(objId id) : Item(id) { }
-
-	Potion::~Potion() { }
-
 	Potion* Potion::setType(PotionType type) {
 		this->type = type;
 		return this;
@@ -53,7 +47,7 @@ namespace Dungeon {
 		*ad << "Use 'drink ...' to drink a potion you have or see.\n" << eos;
 	}
 
-	bool DrinkPotionAction::match(string command, ActionDescriptor* ad) {
+	bool DrinkPotionAction::match(const string& command, ActionDescriptor* ad) {
 		if (RegexMatcher::match("drink .+", command)) {
 			selectBestTarget(command.substr(6), ad);
 			return true;

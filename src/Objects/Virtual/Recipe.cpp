@@ -84,7 +84,7 @@ namespace Dungeon {
 					if (retVal < r->getValue()) retVal = r->getValue();
 				}
 			}
-		}		catch (std::out_of_range& e) {
+		} catch (std::out_of_range& e) {
 
 		}
 		return retVal;
@@ -112,13 +112,14 @@ namespace Dungeon {
 					return false;
 				}
 			}
-		}		catch (std::out_of_range& e) {
+		} catch (std::out_of_range& e) {
 
 		}
 		return true;
 	}
 
 	void Recipe::tryCraft(ActionDescriptor* ad) {
+		LOGS("Recipe", Debug) << "Requested crafting item" << LOGF;
 		if (!checkStatReqs(ad->getCaller(), ad)) return; // Stats not high enough
 		for (int i = Resource::ManaShard; i >= 0; i--) {
 			if (!ad->getCaller()->hasResourceGreaterThan((Resource::ResourceType) i, getResource(i))) {

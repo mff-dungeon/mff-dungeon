@@ -9,7 +9,7 @@ namespace Dungeon {
 	class Healing : public Trap {
 	public:
 		Healing() : Trap() { }
-		Healing(string id) : Trap(id) { }
+		Healing(const objId& id) : Trap(id) { }
 		virtual ~Healing() { }
 
 		/** Use this to scale while creating the world */
@@ -29,7 +29,7 @@ namespace Dungeon {
 			return this;
 		}
 
-		virtual void trigger(string event, ObjectPointer target, ActionDescriptor* ad);
+		virtual void trigger(const string& event, ObjectPointer target, ActionDescriptor* ad);
 
 		virtual void registerProperties(IPropertyStorage& storage);
 

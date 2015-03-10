@@ -13,7 +13,7 @@ namespace Dungeon {
 	class SpellScroll : public Item {
 	public:
 		SpellScroll();
-		SpellScroll(objId id);
+		SpellScroll(const objId& id);
 		virtual ~SpellScroll();
 
 		/**
@@ -34,10 +34,10 @@ namespace Dungeon {
 
 	class ReadScrollAction : public MultiTargetAction {
 	public:
-		ReadScrollAction(string type = "spellscroll-read") : MultiTargetAction(type) { };
+		ReadScrollAction(const string type = "spellscroll-read") : MultiTargetAction(type) { };
 
 		virtual void explain(ActionDescriptor* ad);
-		virtual bool match(string command, ActionDescriptor* ad);
+		virtual bool match(const string& command, ActionDescriptor* ad);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 	};
 }

@@ -19,11 +19,11 @@ namespace Dungeon {
 		inst->setSingleRelation(R_INSIDE, location, Relation::Slave);
 		inst->attachTrap(this, "picked");
 		setSingleRelation("last-created", inst);
-		LOGS("ItemRespawn", Verbose) << "Respawned " << templ.getId() << " as " << inst.getId() << LOGF;
+		LOGS("ItemRespawn", Debug) << "Respawned " << templ.getId() << " as " << inst.getId() << LOGF;
 		return inst;
 	}
 
-	void ItemRespawner::trigger(string event, ObjectPointer location, ActionDescriptor* ad) {
+	void ItemRespawner::trigger(const string& event, ObjectPointer location, ActionDescriptor* ad) {
 		if (event == "picked") {
 			location->detachTrap(this, "picked");
 			setTimestamp(Timestamp::Auto)->save();

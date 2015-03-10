@@ -16,26 +16,26 @@ namespace Dungeon {
 	class IDescriptable : public Base {
 	public:
 		IDescriptable() : Base() { }
-		IDescriptable(objId id) : Base(id) { }
+		IDescriptable(const objId& id) : Base(id) { }
 
 		/**
 		 * Description string. Will be displayed hile exploring room.
 		 */
 		virtual string getDescription() const;
-		IDescriptable* setDescription(string description);
+		IDescriptable* setDescription(const string& description);
 
 		/**
 		 * Long name is used mainly for matching.
 		 */
 		virtual string getLongName() const;
-		IDescriptable* setLongName(string longName);
+		IDescriptable* setLongName(const string& longName);
 
 		/**
 		 * Short name is used when there are many things 
 		 * and we need to spare some bytes :)
 		 */
 		virtual string getName() const;
-		IDescriptable* setName(string name);
+		IDescriptable* setName(const string& name);
 
 		/**
 		 * Describes this item in explore reply
@@ -64,7 +64,7 @@ namespace Dungeon {
 	public:
 		ExamineEction() : MultiTargetAction("examine") { }
 
-		virtual bool match(string command, ActionDescriptor* ad);
+		virtual bool match(const string& command, ActionDescriptor* ad);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 		virtual void explain(ActionDescriptor* ad);
 	};

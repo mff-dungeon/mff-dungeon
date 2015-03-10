@@ -11,7 +11,7 @@ namespace Dungeon {
 	void ActionQueue::enqueue(ActionDescriptor* ad) {
 		lock l(q_mutex);
 		ad->enqueued(this->gm);
-		LOGS("ActionQueue", Verbose) << "Enqueued an action." << LOGF;
+		LOGS("ActionQueue", Debug) << "Enqueued an action requested by user." << LOGF;
 		bool wake = actions.empty();
 		if (running) this->actions.push(ad);
 		if (wake) q_condvar.notify_one();
@@ -24,8 +24,8 @@ namespace Dungeon {
 		}
 		if (actions.empty()) return;
 
-		LOGS("ActionQueue", Verbose) << "Processing action." << LOGF;
 		ActionDescriptor *ad = actions.front();
+		LOGS("ActionQueue", Verbose) << "Processing action \"" << ad->in_msg << "\"." << LOGF;
 		gm->roundBegin(ad);
 		actions.pop();
 

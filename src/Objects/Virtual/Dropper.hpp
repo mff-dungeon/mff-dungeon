@@ -8,20 +8,26 @@
 namespace Dungeon {
 
 	/**
+	 Defines a custom percent literal, _p
+	 */
+	constexpr int operator"" _p ( long double value ) {
+		return (int)(value * 10000);
+	}
+	/**
 	 * Used for drop table, represents each possible drop for a creature
 	 */
 	class Dropper : public Base {
 	public:
 
 		enum DropChance {
-			Always = 1000000,
-			Half = 500000,
-			Percent = 10000,
-			Thousandth = 1000,
-			Milionth = 1
+			Always = 100.0_p,
+			Half = 50.0_p,
+			Percent = 1.0_p,
+			Thousandth = 0.1_p,
+			Milionth = 0.0001_p
 		};
 		Dropper();
-		Dropper(objId id);
+		Dropper(const objId& id);
 		virtual ~Dropper();
 
 		ObjectPointer getItem();
@@ -45,7 +51,7 @@ namespace Dungeon {
 		virtual void getActions(ActionList* list, ObjectPointer callee);
 
 	private:
-		int chance = 0; // 1000000 = 100%
+		int chance = 0; // 1000000 = 100_p = 100%
 		int min = 1;
 		int max = 1;
 

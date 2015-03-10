@@ -13,9 +13,9 @@ namespace Dungeon {
 	 */
 	class Spell : public IDescriptable {
 	public:
-		Spell();
-		Spell(objId id);
-		virtual ~Spell();
+		Spell() {};
+		Spell(const objId& id) : IDescriptable(id) {}
+		virtual ~Spell() {}
 
 		int getBaseManaCost() const;
 		Spell* setBaseManaCost(int mana);
@@ -46,13 +46,13 @@ namespace Dungeon {
 		 * @param ad An AD to message the user, if desired
 		 * @return true if the spell can be casted
 		 */
-		virtual bool checkCast(ObjectPointer casterPtr, ActionDescriptor* ad = 0) const;
+		virtual bool checkCast(ObjectPointer casterPtr, ActionDescriptor* ad = nullptr) const;
 		/**
 		 * Does the actual spell effect, to be overriden
 		 * @param casterPtr User casting this spell
 		 * @param ad An AD to message the user, if desired
 		 */
-		virtual void cast(ObjectPointer casterPtr, ActionDescriptor* ad = 0);
+		virtual void cast(ObjectPointer casterPtr, ActionDescriptor* ad = nullptr);
 
 		virtual void registerProperties(IPropertyStorage& storage);
 
@@ -70,7 +70,7 @@ namespace Dungeon {
 		CastAction(string type = "spell-cast") : MultiTargetAction(type) { };
 
 		virtual void explain(ActionDescriptor* ad);
-		virtual bool match(string command, ActionDescriptor* ad);
+		virtual bool match(const string& command, ActionDescriptor* ad);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 	};
 }

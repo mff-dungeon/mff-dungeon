@@ -15,7 +15,7 @@ namespace Dungeon {
 	class MTATrap : public Trap {
 	public:
 		MTATrap() : Trap() { }
-		MTATrap(objId id) : Trap(id) { }
+		MTATrap(const objId& id) : Trap(id) { }
 		virtual ~MTATrap() { }
 
 		enum Phase {

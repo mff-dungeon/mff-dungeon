@@ -13,7 +13,7 @@ namespace Dungeon {
 	 */
 	class MultiTargetAction : public Action {
 	public:
-		MultiTargetAction(string type) : Action(type) { }
+		MultiTargetAction(const string& type) : Action(type) { }
 
 		/**
 		 * Invoked by ActionList, when other action of the same type arrives.
@@ -40,7 +40,7 @@ namespace Dungeon {
 		/**
 		 * Does generic object matching to set best target
 		 */
-		virtual void selectBestTarget(string str, ActionDescriptor* ad);
+		virtual void selectBestTarget(const string& str, ActionDescriptor* ad);
 		ObjectPointer getTarget() const {
 			return selectedTarget;
 		}

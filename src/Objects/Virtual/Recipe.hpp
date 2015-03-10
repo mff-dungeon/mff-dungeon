@@ -12,7 +12,7 @@ namespace Dungeon {
 	class Recipe : public IDescriptable {
 	public:
 		Recipe() { }
-		Recipe(objId id) : IDescriptable(id) { }
+		Recipe(const objId& id) : IDescriptable(id) { }
 		virtual ~Recipe() { }
 
 		virtual string getDescription() const;

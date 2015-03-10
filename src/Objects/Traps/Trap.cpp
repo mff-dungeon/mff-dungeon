@@ -25,8 +25,8 @@ namespace Dungeon {
 
 	PERSISTENT_IMPLEMENTATION(DemoTrap)
 
-	void DemoTrap::trigger(string event, ObjectPointer target, ActionDescriptor* ad) {
-		LOG("DemoTrap") << "Trap on " << target.getId() << ", event " << event << " triggered" << LOGF;
+	void DemoTrap::trigger(const string& event, ObjectPointer target, ActionDescriptor* ad) {
+		LOGS("DemoTrap", Debug) << "Trap on " << target.getId() << ", event " << event << " triggered" << LOGF;
 		if (ad)
 			*ad << " [" + target.getId() + " // " + event + "]" << eos;
 	}

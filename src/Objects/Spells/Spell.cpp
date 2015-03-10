@@ -5,12 +5,6 @@
 
 namespace Dungeon {
 
-	Spell::Spell() { }
-
-	Spell::Spell(objId id) : IDescriptable(id) { }
-
-	Spell::~Spell() { }
-
 	int Spell::getBaseEffect() const {
 		return effect;
 	}
@@ -96,7 +90,7 @@ namespace Dungeon {
 		*ad << "Use 'cast ...' to cast a spell." << eos;
 	}
 
-	bool CastAction::match(string command, ActionDescriptor* ad) {
+	bool CastAction::match(const string& command, ActionDescriptor* ad) {
 		if (RegexMatcher::match("cast .+", command)) {
 			selectBestTarget(command.substr(5), ad);
 			return true;

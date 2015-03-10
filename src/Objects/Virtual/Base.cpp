@@ -11,7 +11,7 @@
 
 namespace Dungeon {
 
-	objId Base::getId() const {
+	const objId& Base::getId() const {
 		return id;
 	}
 
@@ -34,25 +34,19 @@ namespace Dungeon {
 		const_cast<Base*>(this)->registerProperties(stream);
 	}
 
-	Base* Base::load(Archiver& stream, string className) {
+	Base* Base::load(Archiver& stream, const string& className) {
 		Base* clone = ObjectList::getInstance().create(className);
-		if(clone == 0)
-			throw "Object::Base::load: Error creating object.";
-
-		std::auto_ptr<Base> holder(clone);
-		Base* object = dynamic_cast<Base*>(clone);
-		if(object == 0) {
-			throw "Object::Base::load: Error creating object.";
+		if(clone == 0) {
+			LOGS("Object::Base", Error) << "Error creating object of type " << className << "." << LOGF;
+			throw runtime_error("Object::Base::load: Error creating object.");
 		}
 
 		stream.setDirection(false);
-
-		object->registerProperties(stream);
-		holder.release();
-		return object;
+		clone->registerProperties(stream);
+		return clone;
 	}
 	
-	bool Base::hasRelation(string type, ObjectPointer other, Relation::Dir dir) {
+	bool Base::hasRelation(const string& type, ObjectPointer other, Relation::Dir dir) {
 		try {
 			if(dir == Relation::Master) {
 				return relation_master[type].find(other.getId()) != relation_master[type].end();
@@ -64,7 +58,7 @@ namespace Dungeon {
 		}
 	}
 	
-	void Base::addRelation(string type, ObjectPointer other, Relation::Dir dir){
+	void Base::addRelation(const string& type, ObjectPointer other, Relation::Dir dir){
 		if (hasRelation(type, other, dir)) return;
 		
 		LOGS("Object::Base", Debug) << "Adding relation " << getId() << (dir ? " <-- " : " --> ") << other.getId() << " of type " << type << LOGF;
@@ -83,7 +77,7 @@ namespace Dungeon {
 		return dir == Relation::Dir::Master ? relation_master : relation_slave;
 	}
 	
-	const ObjectMap& Base::getRelations(Relation::Dir dir, string type) const {
+	const ObjectMap& Base::getRelations(Relation::Dir dir, const string& type) const {
 		try {
 			return getRelations(dir).at(type);
 		} catch (std::out_of_range& e) {
@@ -102,7 +96,7 @@ namespace Dungeon {
 		}
 	}
 	
-	ObjectPointer Base::getSingleRelation(string type, Relation::Dir dir, string errMsg) const {
+	ObjectPointer Base::getSingleRelation(const string& type, Relation::Dir dir, const string& errMsg) const {
 		try {
 			const ObjectMap& objects = getRelations(dir, type);
 			if (objects.size() > 1)
@@ -116,7 +110,7 @@ namespace Dungeon {
 		}
 	}
 	
-	ObjectPointer Base::setSingleRelation(string type, ObjectPointer other, Relation::Dir dir, string errMsg) {
+	ObjectPointer Base::setSingleRelation(const string& type, ObjectPointer other, Relation::Dir dir, const string& errMsg) {
 		if(dir == Relation::Master) {
 			gm->removeRelation(this, getSingleRelation(type, dir, errMsg), type);
 			gm->createRelation(this, other, type);
@@ -129,7 +123,7 @@ namespace Dungeon {
 	}
 
 	
-	void Base::eraseRelation(string type, ObjectPointer other, Relation::Dir dir) {
+	void Base::eraseRelation(const string& type, ObjectPointer other, Relation::Dir dir) {
 		if (!other || !hasRelation(type, other, dir)) return;
 		
 		LOGS("Object::Base", Debug) << "Erasing relation " << getId() << (dir ? " <-- " : " --> ") << other.getId() << " of type " << type << LOGF;
@@ -142,10 +136,6 @@ namespace Dungeon {
 		
 		if (other.isLoaded())
 			other->eraseRelation(type, this, !dir);
-	}
-	
-	void Base::serialize(Archiver& stream) {
-		this->registerProperties(stream);
 	}
 
 	void Base::registerProperties(IPropertyStorage& storage) {
@@ -166,25 +156,25 @@ namespace Dungeon {
 		this->gm = gm;
 	}
 	
-	ObjectPointer Base::triggerTraps(string event, ActionDescriptor* ad) {
+	ObjectPointer Base::triggerTraps(const string& event, ActionDescriptor* ad) {
 		try {
-			LOGS("Object", Verbose) << "Triggering event " << event << " on " << id << ":" << LOGF;
+			LOGS("Object::Base", Debug) << "Triggering event " << event << " on " << id << ":" << LOGF;
 			const ObjectMap& map = getRelations(Relation::Slave, Trap::getRelation(event));
 			for (const ObjectMap::value_type& pair : map) {
-				LOGS("Object", Verbose) << "	trap " << pair.second.getId() << LOGF;
+				LOGS("Object::Base", Debug) << "	trap " << pair.second.getId() << LOGF;
 				pair.second.safeCast<Trap>()->trigger(event, this, ad);
 			}
 		} catch (std::out_of_range& e) {}
 		return this;
 	}
 	
-	ObjectPointer Base::attachTrap(ObjectPointer trap, string event) {
+	ObjectPointer Base::attachTrap(ObjectPointer trap, const string& event) {
 		trap.assertType<Trap>("Tried to attach non-trap");
 		gm->createRelation(trap, this, Trap::getRelation(event));
 		return this;
 	}
 	
-	ObjectPointer Base::detachTrap(ObjectPointer trap, string event) {
+	ObjectPointer Base::detachTrap(ObjectPointer trap, const string& event) {
 		trap.assertType<Trap>("Tried to detach non-trap");
 		gm->removeRelation(trap, this, Trap::getRelation(event));
 		return this;

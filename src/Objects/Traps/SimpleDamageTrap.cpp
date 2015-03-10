@@ -4,7 +4,7 @@
 
 namespace Dungeon {
 
-	void SimpleDamageTrap::trigger(string event, ObjectPointer target, ActionDescriptor* ad) {
+	void SimpleDamageTrap::trigger(const string& event, ObjectPointer target, ActionDescriptor* ad) {
 		if (justOnce && hasRelation("damage-dealt", ad->getCaller()))
 			return;
 

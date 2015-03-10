@@ -13,7 +13,7 @@ namespace Dungeon {
 		const int DEFAULT_SPACE = 20000; // 20 litres
 		const int DEFAULT_WEIGHT = 20000; // 20 kg
 		Inventory();
-		Inventory(objId id);
+		Inventory(const objId& id);
 		virtual ~Inventory() { }
 
 		Inventory* setMaxSpace(int maxSpace);
@@ -63,10 +63,10 @@ namespace Dungeon {
 
 	class DropAction : public MultiTargetAction {
 	public:
-		DropAction(string type = "inventory-drop") : MultiTargetAction(type) { }
+		DropAction(const string& type = "inventory-drop") : MultiTargetAction(type) { }
 
 		virtual void explain(ActionDescriptor* ad);
-		virtual bool match(string command, ActionDescriptor* ad);
+		virtual bool match(const string& command, ActionDescriptor* ad);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 	};
 }

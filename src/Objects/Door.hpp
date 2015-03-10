@@ -14,15 +14,15 @@ namespace Dungeon {
 	class Door : public IDescriptable {
 	public:
 		Door();
-		Door(objId id) : IDescriptable(id) { }
+		Door(const objId& id) : IDescriptable(id) { }
 		virtual void getActions(ActionList* list, ObjectPointer callee);
 
 		virtual string getDescriptionSentence();
 		virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
-		string getGoThroughMessage() const {
+		const string& getGoThroughMessage() const {
 			return goThroughMessage;
 		}
-		Door* setGoThroughMessage(string goThroughMessage) {
+		Door* setGoThroughMessage(const string& goThroughMessage) {
 			this->goThroughMessage = goThroughMessage;
 			return this;
 		}
@@ -48,10 +48,10 @@ namespace Dungeon {
 	 */
 	class DoorwalkAction : public MultiTargetAction {
 	public:
-		DoorwalkAction(string type = "door-walk") : MultiTargetAction(type) { }
+		DoorwalkAction(const string& type = "door-walk") : MultiTargetAction(type) { }
 
 		virtual void explain(ActionDescriptor* ad);
-		virtual bool match(string command, ActionDescriptor* ad);
+		virtual bool match(const string& command, ActionDescriptor* ad);
 
 		/**
 		 * Will move the target to another Room.

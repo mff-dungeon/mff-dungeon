@@ -8,9 +8,9 @@ namespace Dungeon {
 
 	class TeleportSpell : public Spell {
 	public:
-		TeleportSpell();
-		TeleportSpell(objId id);
-		virtual ~TeleportSpell();
+		TeleportSpell() {};
+		TeleportSpell(const objId& id) {};
+		virtual ~TeleportSpell() {};
 
 		TeleportSpell* setDestination(ObjectPointer locationPtr);
 		ObjectPointer getDestination();

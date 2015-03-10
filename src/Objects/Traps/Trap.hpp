@@ -15,9 +15,9 @@ namespace Dungeon {
 	 */
 	class Trap : public Base {
 	public:
-		Trap() : Base() { };
-		Trap(string id) : Base(id) { };
-		virtual ~Trap() { };
+		Trap() : Base() {};
+		Trap(const objId& id) : Base(id) {};
+		virtual ~Trap() {};
 		/**
 		 * Can either process everything (and continue processing original action),
 		 * or throw TrapException and stop it.
@@ -29,8 +29,8 @@ namespace Dungeon {
 		 * @param target The target which triggered the trap
 		 * @param ad Can be NULL sometimes, then use the exception trigger
 		 */
-		virtual void trigger(string event, ObjectPointer target, ActionDescriptor* ad) {
-			LOG("Trap") << "Empty trap triggered." << LOGF;
+		virtual void trigger(const string& event, ObjectPointer target, ActionDescriptor* ad) {
+			LOGS("Trap", Debug) << "Empty trap triggered." << LOGF;
 		}
 
 		/**
@@ -57,7 +57,7 @@ namespace Dungeon {
 		/**
 		 * Returns name of relation for that event
 		 */
-		static const string getRelation(const string event) {
+		static const string getRelation(const string& event) {
 			return "trap-" + event;
 		}
 
@@ -83,9 +83,9 @@ namespace Dungeon {
 	class DemoTrap : public Trap {
 	public:
 		DemoTrap() : Trap() { };
-		DemoTrap(string id) : Trap(id) { };
+		DemoTrap(const objId& id) : Trap(id) { };
 		virtual ~DemoTrap() { };
-		virtual void trigger(string event, ObjectPointer target, ActionDescriptor* ad);
+		virtual void trigger(const string& event, ObjectPointer target, ActionDescriptor* ad);
 
 		PERSISTENT_DECLARATION(DemoTrap, Trap)
 	};

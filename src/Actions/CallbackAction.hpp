@@ -19,8 +19,8 @@ namespace Dungeon {
 
     class CallbackAction : public Action {
     public:
-        CallbackAction(string type,
-                string explanation,
+        CallbackAction(const string& type,
+                const string& explanation,
                 function<bool (string)> matchCallback,
                 function<void (ActionDescriptor*)> commitCallback,
                 bool visible = true)
@@ -31,7 +31,7 @@ namespace Dungeon {
 
         virtual void explain(ActionDescriptor* ad);
         virtual void commit(ActionDescriptor* ad);
-        virtual bool match(string command, ActionDescriptor* ad);
+        virtual bool match(const string& command, ActionDescriptor* ad);
 
     private:
         string explanation;

@@ -62,6 +62,7 @@ namespace Dungeon {
 				return "Your defense is boosted by " + getName() + ".";
 			case Slot::Invalid:
 			default:
+				LOGS("Wearable", Error) << "Undefined Wearable slot " << getSlot() << "." << LOGF;
 				return getName() + " is fucking out of our tables for some reason.";
 		}
 	}
@@ -143,7 +144,7 @@ namespace Dungeon {
 		*ad << "take off ... - unequip armor, weapon or whatever." << eos;
 	}
 
-	bool UnequipAction::match(string command, ActionDescriptor* ad) {
+	bool UnequipAction::match(const string& command, ActionDescriptor* ad) {
 		smatch matches;
 		if (RegexMatcher::match("(take off|unequip) (.+)", command, matches)) {
 			selectBestTarget(matches[2], ad);
@@ -187,7 +188,7 @@ namespace Dungeon {
 		*ad << "Use 'wear ...' or 'equip ...' to equip chosen item." << eos;
 	}
 
-	bool EquipAction::match(string command, ActionDescriptor* ad) {
+	bool EquipAction::match(const string& command, ActionDescriptor* ad) {
 		smatch matches;
 		if (RegexMatcher::match("(wear|equip) (.+)", command, matches)) {
 			selectBestTarget(matches[2], ad);
@@ -274,6 +275,7 @@ namespace Dungeon {
 				found = true;
 			}
 		}
+		// FIXME: any way to find it somehow? We need to ensure it's still at the same location as it was when the action was initiated
 		if(!found) {
 			throw GameStateInvalid("The item is somehow unreachable.");
 			return;

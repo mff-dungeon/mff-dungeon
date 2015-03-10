@@ -30,7 +30,7 @@ namespace Dungeon {
 
 		}
 
-		if (ad != 0) {
+		if (ad != nullptr) {
 			if (dropped) {
 				*ad << this->getName() << " has dropped some items on the ground!" << eos;
 			} else {
@@ -63,7 +63,7 @@ namespace Dungeon {
 			this->setRespawnTime(time(0) + getRespawnInterval());
 			this->setState(State::Dead);
 		}
-		if (ad != 0) {
+		if (ad != nullptr) {
 			*ad << "You have killed " << getName() << "." << eos;
 		}
 		save();
@@ -97,7 +97,11 @@ namespace Dungeon {
 
 	void Creature::getActions(ActionList* list, ObjectPointer callee) {
 		// FIXME: The object should be removed, not in the world anymore - check method die()
-		if (getState() == State::Invalid) return;
+		LOGS("Creature", Debug) << "Listing all actions on " << getId() << "." << LOGF;
+		if (getState() == State::Invalid) {
+			LOGS("Creature", Warning) << "A creature " << getId() << " is still existing even though it should have been removed from the world." << LOGF;
+			return;
+		}
 		Alive::getActions(list, callee);
 
 		// Something like examine should be here - can also be used on dead body (with different explaining)
@@ -175,7 +179,7 @@ namespace Dungeon {
 		*ad << "Use 'kill ...' to kill an almost dead creature.\n" << eos;
 	}
 
-	bool KillAction::match(string command, ActionDescriptor* ad) {
+	bool KillAction::match(const string& command, ActionDescriptor* ad) {
 		smatch matches;
 		if (RegexMatcher::match("(kill|finish) (.+)", command, matches)) {
 			selectBestTarget(matches[2], ad);
@@ -202,7 +206,7 @@ namespace Dungeon {
 		*ad << "Use 'attack ...' to initiate combat with a creature.\n";
 	}
 
-	bool CombatAction::match(string command, ActionDescriptor* ad) {
+	bool CombatAction::match(const string& command, ActionDescriptor* ad) {
 		if (RegexMatcher::match("attack .+", command)) {
 			selectBestTarget(command.substr(7), ad);
 			return true;
@@ -230,7 +234,7 @@ namespace Dungeon {
 		return true;
 	}
 
-	CombatAction::CombatMatch CombatAction::matchAnswer(string reply) {
+	CombatAction::CombatMatch CombatAction::matchAnswer(const string& reply) {
 		static FuzzyStringMatcher<CombatAction::CombatMatch> matcher;
 		if (matcher.empty()) {
 			matcher.add("attack", CombatAction::CombatMatch::Attack);
@@ -248,7 +252,7 @@ namespace Dungeon {
 		}
 	}
 
-	void CombatAction::combatLoop(ActionDescriptor* ad, string reply) {
+	void CombatAction::combatLoop(ActionDescriptor* ad, const string& reply) {
 		if (!checkValidity(ad)) {
 			return;
 		}

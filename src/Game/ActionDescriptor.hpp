@@ -25,7 +25,7 @@ namespace Dungeon {
 		ActionDescriptor(Driver * driver);
 		virtual ~ActionDescriptor();
                 
-                ActionDescriptor& operator=(const ActionDescriptor& right);
+        ActionDescriptor& operator=(const ActionDescriptor& right);
 
 		Action* getAction();
 		Human* getCaller();
@@ -97,6 +97,7 @@ namespace Dungeon {
 		 * @param callback Function receiving (AD*, string), where the string is user's reply.
 		 */
 		void waitForReply(dialogReply callback) {
+			LOGS("ActionDescriptor", Debug) << "Requested a dialog reply for user " << caller->getName() << "." << LOGF;
 			dialogReplies.push(callback);
 		}
 		/**

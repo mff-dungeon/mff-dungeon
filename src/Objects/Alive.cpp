@@ -13,39 +13,52 @@
 
 namespace Dungeon {
 
-	Alive::Alive(objId id) : IDescriptable(id) { }
-
+	/*************************************
+	 *	HUGE FIXME
+	 *		- move this method to Human - alive shouldn't call actions in general
+	 *		- clean the method
+	 *		- fix the action finding - now, it always goes through all relations
+	 *		- done temporary workaround for now
+	 **************************************/
 	void Alive::getAllActions(ActionList* list) {
-		LOGS("Alive", Verbose) << "Getting all actions on " << this->getId() << "." << LOGF;
+		LOGS("Alive", Debug) << "Getting all actions on " << this->getId() << "." << LOGF;
 
 		triggerTraps("get-all-actions", nullptr);
 
 		// Add some actions on myself
 		this->getActions(list, this);
 		if (getState() == State::Dead) {
-			// No interacting!
+			LOGS("Alive", Debug) << this->getId() << " is dead." << LOGF; 
 			return;
 		}
 
 		// Get actions for the inventory items - thors hammer
-		// FIXME goes through all master relations, logs thousands of "is not item" messages
-		LOGS("Alive", Verbose) << "Getting actions on inventory - " << this->getId() << "." << LOGF;
+		LOGS("Alive", Debug) << "Getting actions on inventory of " << this->getId() << "." << LOGF;
 		try {
-			const RelationList& mastering = getRelations(Relation::Master);
-			for (auto& pair : mastering)
-				for (auto& item : pair.second) {
-					LOGS("Alive", Verbose) << "Getting actions " << item.second << "." << LOGF;
-					if (item.second->instanceOf(Item))
-						item.second->triggerTraps("get-actions", nullptr)
-						->getActions(list, this);
-					else
-						LOGS("Alive", Verbose) << item.second.getId() << " is not item" << LOGF;
-				}
+			const ObjectMap& items = getRelations(Relation::Master, R_INVENTORY);
+			for (const auto& item : items) {
+				LOGS("Alive", Debug) << "Getting actions on " << item.second << "." << LOGF;
+				if (item.second->instanceOf(Item))
+					item.second->triggerTraps("get-actions", nullptr)
+					->getActions(list, this);
+				else
+					LOGS("Alive", Debug) << item.second.getId() << " is not item" << LOGF;
+			}
 		} catch (const std::out_of_range& e) {
 			// Nothing needs to be done
 		}
-
-		LOGS("Alive", Verbose) << "Getting actions on equiped items" << LOGF;
+		
+		try {
+			for(const auto& th : getRelations(Relation::Master, "special-th")) {
+				LOGS("Alive", Debug) << "User has Thors' Hammer, adding actions." << LOGF;
+				th.second->triggerTraps("get-actions", nullptr)
+							->getActions(list, this);
+			}
+		} catch (const std::out_of_range& e) {
+			// Nothing needs to be done
+		}
+		
+		LOGS("Alive", Debug) << "Getting actions on equiped items" << LOGF;
 		for (int i = Wearable::Slot::BodyArmor; i != Wearable::Slot::Invalid; i--) {
 			ObjectPointer equip = getSingleRelation(Wearable::SlotRelations[i], Relation::Master, GameStateInvalid::EquippedMoreThanOne);
 			if (!!equip) {
@@ -54,7 +67,7 @@ namespace Dungeon {
 			}
 		}
 
-		LOGS("Alive", Verbose) << "Getting actions in location - " << this->getId() << "." << LOGF;
+		LOGS("Alive", Debug) << "Getting actions in location - " << this->getId() << "." << LOGF;
 		// Find objects in current location
 		try {
 			const ObjectMap& room = getRelations(Relation::Slave, R_INSIDE);
@@ -111,7 +124,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::setAttack(int attack, ActionDescriptor* ad) {
-		if (ad != 0 && this->attack != attack && ad->getCaller() == this) {
+		if (ad != nullptr && this->attack != attack && ad->getCaller() == this) {
 			*ad << "Your attack value has changed to " + to_string(attack) + "." << eos;
 		}
 		this->attack = attack;
@@ -123,7 +136,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::setDefense(int defense, ActionDescriptor* ad) {
-		if (ad != 0 && this->defense != defense && ad->getCaller() == this) {
+		if (ad != nullptr && this->defense != defense && ad->getCaller() == this) {
 			*ad << "Your defense value has changed to " + to_string(defense) + "." << eos;
 		}
 		this->defense = defense;
@@ -138,10 +151,11 @@ namespace Dungeon {
 		if (hp >= maxHp) hp = maxHp;
 		if (hp <= 0) hp = 0;
 
-		if (ad != 0 && this->currentHp != hp && ad->getCaller() == this) {
+		if (ad != nullptr && this->currentHp != hp && ad->getCaller() == this) {
 			*ad << "Your current hitpoints have changed to " + to_string(hp) + "." << eos;
 		}
 		this->currentHp = hp;
+		LOGS("Alive", Debug) << "Hitpoints of " << getId() << " were changed to " << hp << "." << LOGF;
 		return this;
 	}
 
@@ -150,7 +164,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::setMaxHp(int hp, ActionDescriptor* ad) {
-		if (ad != 0 && this->maxHp != maxHp && ad->getCaller() == this) {
+		if (ad != nullptr && this->maxHp != maxHp && ad->getCaller() == this) {
 			*ad << "Your maximum hitpoints have changed to " + to_string(maxHp) + "." << eos;
 		}
 		this->maxHp = hp;
@@ -170,7 +184,7 @@ namespace Dungeon {
 		return getSingleRelation(Wearable::SlotRelations[Wearable::Backpack], Relation::Master, "You've somehow equipped more than backpack.");
 	}
 
-	bool Alive::hasItemType(string type) {
+	bool Alive::hasItemType(const string& type) {
 		ObjectPointer backpack = getBackpack();
 		if (!backpack) return false;
 		if (!backpack->isInstanceOf(Inventory::InventoryClassName)) return false;
@@ -205,9 +219,10 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::damageAlive(ObjectPointer attackerPtr, int amount, ActionDescriptor* ad) {
+		LOGS("Alive", Debug) << "Damaging alive " << attackerPtr.getId() << "." << LOGF;
 		Alive* attacker = attackerPtr.safeCast<Alive>();
 		if (amount <= 0) return this;
-		if (ad != 0) {
+		if (ad != nullptr) {
 			if (ad->getCaller() == this) {
 				if (attacker->getWeaponName() != "")
 					*ad << (RandomString::get()
@@ -338,6 +353,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::regenerate(int rate) {
+		LOGS("Alive", Debug) << "Attached healing trap to " << getId() << " healing at rate " << rate << "." << LOGF;
 		Healing* heal = new Healing("trap/healing/" + getId());
 		heal->setRate(rate);
 		getGameManager()->insertObject(heal);

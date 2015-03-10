@@ -11,16 +11,16 @@ namespace Dungeon {
 	 */
 	class DoorLock : public Trap {
 	public:
-		DoorLock();
-		DoorLock(objId id);
-		virtual ~DoorLock();
+		DoorLock() {}
+		DoorLock(const objId& id) : Trap(id) {}
+		virtual ~DoorLock() {}
 
 		ObjectPointer getKey() const;
 		DoorLock* setKey(ObjectPointer key);
 		bool consumesKey() const;
 		DoorLock* setConsumesKey(bool consumesKey);
 
-		virtual void trigger(string event, ObjectPointer target, ActionDescriptor* ad);
+		virtual void trigger(const string& event, ObjectPointer target, ActionDescriptor* ad);
 		virtual bool exceptionTrigger(ActionDescriptor* ad);
 
 		virtual void registerProperties(IPropertyStorage& storage);

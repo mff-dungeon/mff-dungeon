@@ -9,12 +9,12 @@ namespace Dungeon {
 	class SimpleDamageTrap : public Trap {
 	public:
 		SimpleDamageTrap() : Trap() { }
-		SimpleDamageTrap(string id) : Trap(id) { }
+		SimpleDamageTrap(const objId& id) : Trap(id) { }
 		virtual ~SimpleDamageTrap() { }
-		string getDamageMessage() const {
+		const string& getDamageMessage() const {
 			return damageMessage;
 		}
-		SimpleDamageTrap* setDamageMessage(string damageMessage) {
+		SimpleDamageTrap* setDamageMessage(const string& damageMessage) {
 			this->damageMessage = damageMessage;
 			return this;
 		}
@@ -33,7 +33,7 @@ namespace Dungeon {
 			return this;
 		}
 
-		virtual void trigger(string event, ObjectPointer target, ActionDescriptor* ad);
+		virtual void trigger(const string& event, ObjectPointer target, ActionDescriptor* ad);
 		virtual void registerProperties(IPropertyStorage& storage);
 
 	private:

@@ -184,7 +184,7 @@ namespace Dungeon {
 		string buffer;
 		bool found = false;
 
-		LOGS("JabberDriver", Verbose) << "Looking for objId: '" << figureId << "'." << LOGF;
+		LOGS("JabberDriver", Debug) << "Looking for figure with objId: '" << figureId << "'." << LOGF;
 
 		userFile.seekg(0, ios_base::beg);
 		while (getline(userFile, buffer, userFileSeparator())) {
@@ -198,14 +198,14 @@ namespace Dungeon {
 				found = true;
 
 				jid = JID(sessionJid);
-				LOGS("JabberDriver", Verbose) << "Found corresponding JID: '" << sessionJid << "'." << LOGF;
+				LOGS("JabberDriver", Debug) << "Found corresponding JID: '" << sessionJid << "'." << LOGF;
 				break;
 			}
 		}
 		userFile.clear();
 
 		if (!found) {
-			LOGS("JabberDriver", Verbose) << "Not found, discarding..." << LOGF;
+			LOGS("JabberDriver", Debug) << "Not found, discarding..." << LOGF;
 		}
 
 		return jid;
@@ -258,7 +258,7 @@ namespace Dungeon {
 				break;
 		}
 
-		LOGS("JabberDriver", Verbose) << "Received presence: '" << typeName << "', sender: '" << sender << "', status: '" << status << "'" << LOGF;
+		LOGS("JabberDriver", Debug) << "Received presence: '" << typeName << "', sender: '" << sender << "', status: '" << status << "'" << LOGF;
 	}
 
 	void JabberDriver::createNewFigure(JID jid) {
@@ -318,6 +318,6 @@ namespace Dungeon {
 				break;
 		}
 
-		LOGS("JabberDriver", Verbose) << "Received subcription packet: '" << typeName << "', sender '" << sender << "', status: '" << status << "'" << LOGF;
+		LOGS("JabberDriver", Debug) << "Received subcription packet: '" << typeName << "', sender '" << sender << "', status: '" << status << "'" << LOGF;
 	}
 }

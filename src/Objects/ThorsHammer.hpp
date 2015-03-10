@@ -30,7 +30,7 @@ namespace Dungeon {
 
 			// Action side
 			virtual void explain(ActionDescriptor* ad);
-			virtual bool match(string command, ActionDescriptor* ad);
+			virtual bool match(const string& command, ActionDescriptor* ad);
 			virtual bool handleException(GameException& exception, ActionDescriptor* ad);
 			virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 

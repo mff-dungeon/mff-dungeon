@@ -4,12 +4,6 @@
 
 namespace Dungeon {
 
-	DoorLock::DoorLock() { }
-
-	DoorLock::DoorLock(objId id) : Trap(id) { }
-
-	DoorLock::~DoorLock() { }
-
 	ObjectPointer DoorLock::getKey() const {
 		return this->getSingleRelation("keytemplate", Relation::Master);
 	}
@@ -28,7 +22,7 @@ namespace Dungeon {
 		return this;
 	}
 
-	void DoorLock::trigger(string event, ObjectPointer target, ActionDescriptor* ad) {
+	void DoorLock::trigger(const string& event, ObjectPointer target, ActionDescriptor* ad) {
 		if (!ad->getCaller()->hasItemType(getKey()->getObjectType())) {
 			throw TrapException(this);
 		}

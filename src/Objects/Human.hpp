@@ -54,29 +54,29 @@ namespace Dungeon {
 
 		Human();
 		virtual ~Human() { }
-		Human(objId id);
-		Human(objId id, string username, string contact);
+		Human(const objId& id);
+		Human(const objId& id, const string& username, const string& contact);
 
 		virtual void getActions(ActionList* list, ObjectPointer callee);
 
-		virtual Human* learnSpell(ObjectPointer spell);
-		virtual bool knowsSpell(ObjectPointer spell);
-		virtual void addCastableSpells(ActionList* list);
+		Human* learnSpell(ObjectPointer spell);
+		bool knowsSpell(ObjectPointer spell);
+		void addCastableSpells(ActionList* list);
 
-		virtual Alive* die(ActionDescriptor* ad = 0);
-		virtual Alive* respawn(ActionDescriptor* ad = 0);
+		virtual Alive* die(ActionDescriptor* ad = nullptr);
+		virtual Alive* respawn(ActionDescriptor* ad = nullptr);
 
-		virtual int getCharacterLevel() const;
-		virtual int getExperience() const;
-		virtual int getFreePoints() const;
-		virtual Human* useStatPoint(Stats stat, ActionDescriptor* ad = 0);
-		virtual int getStatValue(Stats stat) const;
-		virtual int getStatValue(int stat) const {
+		int getCharacterLevel() const;
+		int getExperience() const;
+		int getFreePoints() const;
+		Human* useStatPoint(Stats stat, ActionDescriptor* ad = nullptr);
+		int getStatValue(Stats stat) const;
+		int getStatValue(int stat) const {
 			return getStatValue(Stats(stat));
 		}
-		virtual Human* changeStatValue(Stats stat, int delta, ActionDescriptor* ad = 0);
-		virtual Human* setStatValue(Stats stat, int value, ActionDescriptor* ad = 0);
-		virtual Human* addExperience(int exp, ActionDescriptor* ad = 0);
+		Human* changeStatValue(Stats stat, int delta, ActionDescriptor* ad = nullptr);
+		Human* setStatValue(Stats stat, int value, ActionDescriptor* ad = nullptr);
+		Human* addExperience(int exp, ActionDescriptor* ad = nullptr);
 
 		/**
 		 * Returns a string description of that stat
@@ -94,10 +94,10 @@ namespace Dungeon {
 
 		virtual void registerProperties(IPropertyStorage& storage);
 
-		Human* setContact(string contact);
-		string getContact() const;
-		Human* setUsername(string username);
-		string getUsername() const;
+		Human* setContact(const string& contact);
+		const string& getContact() const;
+		Human* setUsername(const string& username);
+		const string& getUsername() const;
 
 		/**
 		 * Finds out whether the guy is online.
@@ -115,17 +115,10 @@ namespace Dungeon {
 	private:
 		string username, contact;
 
-		/**
-		 Presence tracking
-		 */
+		/**	 Presence tracking */
 		long lastInteraction = 0;
 
 		// Level stats
-		// @deprecated
-		int craftingLvl = 1;
-		// @deprecated
-		int craftingExp = 0;
-
 		// Character level
 		int level = 1;
 		// Character experience points

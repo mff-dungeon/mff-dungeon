@@ -9,7 +9,7 @@ namespace Dungeon {
 		return false;
 	}
 
-	void HardcoreRespawn::trigger(string event, ObjectPointer target, ActionDescriptor* ad) {
+	void HardcoreRespawn::trigger(const string& event, ObjectPointer target, ActionDescriptor* ad) {
 		throw TrapException(this);
 	}
 

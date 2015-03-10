@@ -180,7 +180,7 @@ namespace Dungeon {
 			LOGS("FSM", Warning) << "Tried to find empty string." << LOGF;
 			throw StringMatcher::NoCandidate("You must write something.");
 		}
-		LOGS("FuzzyMatcher", Verbose) << "Looking for " << needle << LOGF;
+		LOGS("FuzzyMatcher", Debug) << "Looking for " << needle << LOGF;
 		int max = 0;
 		auto maxMatch = strMap.begin();
 		bool uncertain = true;
@@ -190,7 +190,7 @@ namespace Dungeon {
 		for (auto pair = strMap.begin(); pair != strMap.end(); pair++) {
 			vector<string> hTok = StringMatcher::tokenize(pair->first);
 			int d = getEqualness(nTok, hTok);
-			LOGS("FuzzyMatcher", Verbose) << " in " << pair->first << " -> " << d << " equalness" << LOGF;
+			LOGS("FuzzyMatcher", Debug) << " in " << pair->first << " -> " << d << " equalness" << LOGF;
 			if (d > max) {
 				max = d;
 				maxMatch = pair;

@@ -5,7 +5,7 @@
 
 namespace Dungeon {
 
-	bool UseAction::match(string command, ActionDescriptor* ad) {
+	bool UseAction::match(const string& command, ActionDescriptor* ad) {
 		smatch matches;
 		if (RegexMatcher::match("(use|utilize|apply) (.+)", command, matches)) {
 			selectBestTarget(matches[2], ad);

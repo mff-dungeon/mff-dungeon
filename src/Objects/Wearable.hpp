@@ -41,7 +41,7 @@ namespace Dungeon {
 
 		static const char* SlotRelations[];
 		Wearable() { }
-		Wearable(objId id) : Item(id) { }
+		Wearable(const objId& id) : Item(id) { }
 		virtual ~Wearable() { }
 
 		Slot getSlot() const;
@@ -80,11 +80,11 @@ namespace Dungeon {
 
 	class UnequipAction : public MultiTargetAction {
 	public:
-		UnequipAction(string type = "wearable-unequip") : MultiTargetAction(type) { }
+		UnequipAction(const string& type = "wearable-unequip") : MultiTargetAction(type) { }
 
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 		virtual void explain(ActionDescriptor* ad);
-		virtual bool match(string command, ActionDescriptor* ad);
+		virtual bool match(const string& command, ActionDescriptor* ad);
 	};
 
 	/**
@@ -99,11 +99,11 @@ namespace Dungeon {
 		string slotRelation;
 
 	public:
-		EquipAction(string type = "wearable-equip") : MultiTargetAction(type) { }
+		EquipAction(const string& type = "wearable-equip") : MultiTargetAction(type) { }
 
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 		virtual void explain(ActionDescriptor* ad);
-		virtual bool match(string command, ActionDescriptor* ad);
+		virtual bool match(const string& command, ActionDescriptor* ad);
 
 		/**
 		 * Phase one handles asking user question and matching the answer

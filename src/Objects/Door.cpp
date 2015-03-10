@@ -14,7 +14,7 @@ namespace Dungeon {
 	Door::Door() { }
 
 	void Door::getActions(ActionList* list, ObjectPointer callee) {
-		LOGS("Door", Verbose) << "Getting actions on " << this->getId() << "." << LOGF;
+		LOGS("Door", Debug) << "Getting actions on " << this->getId() << "." << LOGF;
 		IDescriptable::getActions(list, callee);
 		// Add move actions to all rooms
 		try {
@@ -48,7 +48,7 @@ namespace Dungeon {
 			// What a weird door pointing nowhere...
 		}
 
-		target.assertType<Location>("That seems to head nowhere. You've decided not to go there.");
+		target.assertType<Location>("That seemed to head nowhere. You've decided not to go there.");
 		ad->getGM()->moveAlive(ad->getCaller(), target);
 		door.unsafeCast<Door>()->onGoThrough(ad);
 		target->triggerTraps("inside", ad);
@@ -56,13 +56,13 @@ namespace Dungeon {
 	}
 
 	Door* Door::addLock(ObjectPointer lock) {
-		lock.assertExists("The lock doesn't exists.").assertType<DoorLock>("You are locking a door with something strange.");
+		lock.assertExists("The lock doesn't exist.").assertType<DoorLock>("You are locking a door with something strange.");
 		this->attachTrap(lock, "doorwalk");
 		return this;
 	}
 
 	Door* Door::removeLock(ObjectPointer lock) {
-		lock.assertExists("The lock doesn't exists.").assertType<DoorLock>("You are unlocking a door with something strange.");
+		lock.assertExists("The lock doesn't exist.").assertType<DoorLock>("You are unlocking a door with something strange.");
 		this->detachTrap(lock, "doorwalk");
 		return this;
 	}
@@ -92,7 +92,7 @@ namespace Dungeon {
 		*ad << "go to ... - enter another room." << eos;
 	}
 
-	bool DoorwalkAction::match(string command, ActionDescriptor* ad) {
+	bool DoorwalkAction::match(const string& command, ActionDescriptor* ad) {
 		smatch matches;
 		if (RegexMatcher::match("(go to|cd|walk through|enter) (.+)", command, matches)) {
 			selectBestTarget(matches[2], ad);
@@ -101,8 +101,5 @@ namespace Dungeon {
 		return false;
 	}
 
-
 	PERSISTENT_IMPLEMENTATION(Door)
-
-
 }

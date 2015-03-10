@@ -12,10 +12,10 @@ namespace Dungeon {
 	class HardcoreRespawn : public Trap {
 	public:
 		HardcoreRespawn() { };
-		HardcoreRespawn(objId id) : Trap(id) { };
+		HardcoreRespawn(const objId& id) : Trap(id) { };
 		virtual ~HardcoreRespawn() { };
 
-		virtual void trigger(string event, ObjectPointer target, ActionDescriptor* ad);
+		virtual void trigger(const string& event, ObjectPointer target, ActionDescriptor* ad);
 		virtual bool exceptionTrigger(ActionDescriptor* ad);
 
 	private:

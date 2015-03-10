@@ -9,7 +9,7 @@ namespace Dungeon {
 		*ad << "raise ... - raise your character stat." << eos;
 	}
 
-	bool RaiseStatAction::match(string command, ActionDescriptor* ad) {
+	bool RaiseStatAction::match(const string& command, ActionDescriptor* ad) {
 		if (RegexMatcher::match("raise .+", command)) {
 			selectStat(command.substr(6), ad);
 			return true;
@@ -17,7 +17,7 @@ namespace Dungeon {
 		return false;
 	}
 
-	void RaiseStatAction::selectStat(string statName, ActionDescriptor* ad) {
+	void RaiseStatAction::selectStat(const string& statName, ActionDescriptor* ad) {
 		FuzzyStringMatcher<Human::Stats> matcher;
 		matcher.add("strength", Human::Strength)
 				.add("str", Human::Strength)
@@ -35,7 +35,7 @@ namespace Dungeon {
 				.add("alch", Human::Alchemy);
 		try {
 			this->selectedStat = matcher.find(statName);
-		}		catch (exception e) {
+		} catch (exception e) {
 
 		}
 	}
@@ -45,6 +45,7 @@ namespace Dungeon {
 			*ad << "There was no such stat found." << eos;
 			return;
 		}
+		LOGS("Stats", Debug) << "Requested raising stat " << selectedStat << "." << LOGF;
 		Human* h = ad->getCaller();
 		if (h->getFreePoints() == 0) {
 			*ad << "You have no free points to distribute." << eos;

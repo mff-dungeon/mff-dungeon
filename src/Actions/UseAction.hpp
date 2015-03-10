@@ -11,7 +11,7 @@ namespace Dungeon {
 		UseAction() : Polyaction("use") { };
 		virtual ~UseAction() { }
 
-		virtual bool match(string command, ActionDescriptor* ad);
+		virtual bool match(const string& command, ActionDescriptor* ad);
 		virtual void explain(ActionDescriptor* ad);
 
 		static void setFor(ObjectPointer target, ActionList* list, MultiTargetAction* action);

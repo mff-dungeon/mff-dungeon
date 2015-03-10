@@ -15,17 +15,17 @@ namespace Dungeon {
 	class Creature : public Alive {
 	public:
 		Creature() { }
-		Creature(objId id) : Alive(id) { };
+		Creature(const objId& id) : Alive(id) { };
 		virtual ~Creature() { }
 
 		virtual Alive* changeHp(int amount, ActionDescriptor* ad);
 
-		virtual Creature* calculateDrops(ActionDescriptor*ad = 0);
-		virtual Creature* attachDrop(ObjectPointer drop);
-		virtual Creature* detachDrop(ObjectPointer drop);
+		virtual Creature* calculateDrops(ActionDescriptor* ad = nullptr);
+		Creature* attachDrop(ObjectPointer drop);
+		Creature* detachDrop(ObjectPointer drop);
 
-		virtual Alive* die(ActionDescriptor* ad = 0);
-		virtual Alive* respawn(ActionDescriptor* ad = 0);
+		virtual Alive* die(ActionDescriptor* ad = nullptr);
+		virtual Alive* respawn(ActionDescriptor* ad = nullptr);
 
 		virtual void getActions(ActionList* list, ObjectPointer callee);
 
@@ -37,10 +37,10 @@ namespace Dungeon {
 		 * Helper method to set the creature drops
 		 * @see Dropper
 		 */
-		virtual Creature* drops(ObjectPointer item, int chance, int min = 1, int max = 1);
+		Creature* drops(ObjectPointer item, int chance, int min = 1, int max = 1);
 
-		virtual Creature* setExpReward(int reward);
-		virtual int getExpReward() const;
+		Creature* setExpReward(int reward);
+		int getExpReward() const;
 
 	private:
 		int expReward = 0;
@@ -57,16 +57,16 @@ namespace Dungeon {
 			Check = 2,
 			Run = 3
 		};
-		CombatAction(string type = "creature-combat") : MultiTargetAction(type) { }
+		CombatAction(const string& type = "creature-combat") : MultiTargetAction(type) { }
 		virtual ~CombatAction() { }
 
 		virtual void explain(ActionDescriptor* ad);
-		virtual bool match(string command, ActionDescriptor* ad);
+		virtual bool match(const string& command, ActionDescriptor* ad);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 
 		bool checkValidity(ActionDescriptor* ad);
-		void combatLoop(ActionDescriptor* ad, string reply);
-		CombatMatch matchAnswer(string reply);
+		void combatLoop(ActionDescriptor* ad, const string& reply);
+		CombatMatch matchAnswer(const string& reply);
 	private:
 		ObjectPointer creaturePtr;
 		const string text = "\nType 'attack' (a) to attack the enemy, 'check' (c) to check its status or 'run' (r) to run from the fight.";
@@ -74,10 +74,10 @@ namespace Dungeon {
 
 	class KillAction : public MultiTargetAction {
 	public:
-		KillAction(string type = "creature-kill") : MultiTargetAction(type) { }
+		KillAction(const string& type = "creature-kill") : MultiTargetAction(type) { }
 
 		virtual void explain(ActionDescriptor* ad);
-		virtual bool match(string command, ActionDescriptor* ad);
+		virtual bool match(const string& command, ActionDescriptor* ad);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 	};
 }

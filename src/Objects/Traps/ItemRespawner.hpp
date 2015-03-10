@@ -9,7 +9,7 @@ namespace Dungeon {
 	class ItemRespawner : public Trap {
 	public:
 		ItemRespawner() : Trap() { }
-		ItemRespawner(string id) : Trap(id) { }
+		ItemRespawner(const objId& id) : Trap(id) { }
 		virtual ~ItemRespawner() { }
 
 		enum RespawnMode {
@@ -52,7 +52,7 @@ namespace Dungeon {
 			return this;
 		}
 
-		virtual void trigger(string event, ObjectPointer location, ActionDescriptor* ad);
+		virtual void trigger(const string& event, ObjectPointer location, ActionDescriptor* ad);
 		virtual ObjectPointer doRespawn(ObjectPointer location);
 
 		virtual void registerProperties(IPropertyStorage& storage);

@@ -19,11 +19,11 @@ namespace Dungeon {
 		this->setRespawnInterval(DEFAULT_RESPAWN_INTERVAL);
 	}
 
-	Human::Human(objId id) : Alive(id) {
+	Human::Human(const objId& id) : Alive(id) {
 		this->setRespawnInterval(DEFAULT_RESPAWN_INTERVAL);
 	}
 
-	Human::Human(objId id, string username, string contact) :
+	Human::Human(const objId& id, const string& username, const string& contact) :
 	Alive(id), username(username), contact(contact) {
 		this->setRespawnInterval(DEFAULT_RESPAWN_INTERVAL);
 		for (int i = 0; i < Stats::End; i++) this->stats[i] = 10;
@@ -40,25 +40,26 @@ namespace Dungeon {
 		return getUsername();
 	}
 
-	Human* Human::setContact(string contact) {
+	Human* Human::setContact(const string& contact) {
 		this->contact = contact;
 		return this;
 	}
 
-	string Human::getContact() const {
+	const string& Human::getContact() const {
 		return contact;
 	}
 
-	Human* Human::setUsername(string username) {
+	Human* Human::setUsername(const string& username) {
 		this->username = username;
 		return this;
 	}
 
-	string Human::getUsername() const {
+	const string& Human::getUsername() const {
 		return username;
 	}
 
 	Human* Human::addExperience(int exp, ActionDescriptor* ad) {
+		LOGS("Human", Debug) << getId() << " has acquired " << exp << " experience pts." << LOGF;
 		this->exp += exp;
 		while (getRequiredExp(getCharacterLevel() + 1) <= this->exp) {
 			doLevelUp(ad);
@@ -73,6 +74,7 @@ namespace Dungeon {
 	void Human::doLevelUp(ActionDescriptor* ad) {
 		this->level++;
 		this->freepoints += LEVEL_STAT_POINTS;
+		LOGS("Human", Debug) << getId() << " has acquired a new level." << LOGF;
 		if (ad) {
 			*ad << "You have just advanced to a new level. You have just gained "
 					<< LEVEL_STAT_POINTS
@@ -218,6 +220,7 @@ namespace Dungeon {
 	}
 
 	Alive* Human::die(ActionDescriptor* ad) {
+		LOGS("Human", Verbose) << getId() << " has died. What a poor person." << LOGF;
 		this->setState(State::Dead);
 		if (getGameManager()->getGameMode() == GameManager::Hardcore) {
 			HardcoreRespawn* trap = new HardcoreRespawn("HardcoreRespawn/trap/" + RANDID);
@@ -260,8 +263,6 @@ namespace Dungeon {
 	void Human::registerProperties(IPropertyStorage& storage) {
 		storage.have(username, "human-username", "Username, public available")
 				.have(contact, "human-jid", "Contact JID", false)
-				.have(craftingLvl, "human-craftinglvl", "Human's crafting lvl")
-				.have(craftingExp, "human-craftingexp", "Human's crafting exp")
 				.have(level, "human-level", "Human's character level")
 				.have(exp, "human-exp", "Human's experience points")
 				.have(freepoints, "human-free-points", "Human's stat points to distribute")
@@ -314,6 +315,8 @@ namespace Dungeon {
 							}
 
 						}, false));
+						
+				return;
 			}
 
 			list->addAction(new CallbackAction("suicide", "commit suicide - If you just dont want to live on this planet anymore.",
@@ -475,7 +478,7 @@ namespace Dungeon {
 			} else {
 				delete casting;
 			}
-		}		catch (std::out_of_range& e) {
+		} catch (std::out_of_range& e) {
 			delete casting;
 		}
 	}

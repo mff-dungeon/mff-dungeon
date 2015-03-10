@@ -73,6 +73,7 @@ namespace Dungeon {
 		list->addAction(new CallbackAction("shutdown", "(TH) server shutdown - Shutdown's the server.",
 				RegexMatcher::matcher("server shutdown"),
 				[] (ActionDescriptor * ad) {
+					LOGS("ThorsHammer", Warning) << "Admin " << ad->getCaller()->getName() << " initiated server shutdown!!!" << LOGF;
 					ad->getGM()->shutdown();
 					*ad << "OK. I will just finish the queue. Bye!" << eos;
 				}));
@@ -80,6 +81,7 @@ namespace Dungeon {
 		list->addAction(new CallbackAction("dot-dump", "(TH) server dump dot - generate game graph in dot format.",
 				RegexMatcher::matcher("server dump dot"),
 				[] (ActionDescriptor * ad) {
+					LOGS("ThorsHammer", Warning) << "Admin " << ad->getCaller()->getName() << " requested dot dump." << LOGF;
 					DotDumper dd;
 					*ad << "You can find the dump at " << dd.startDump() << "." << eos;
 
@@ -94,6 +96,7 @@ namespace Dungeon {
 		list->addAction(new CallbackAction("bigBang", "(TH) server initialize - Delete & recreate tables.",
 				RegexMatcher::matcher("server initialize"),
 				[] (ActionDescriptor * ad) {
+					LOGS("ThorsHammer", Warning) << "Admin " << ad->getCaller()->getName() << " requested server reinitialization!!!" << LOGF;
 					*ad << "Cross your fingers!" << eos;
 					ad->getGM()->initWorld(false);
 							*ad << "... can you hear me? Yes? It worked!" << eos;
@@ -102,6 +105,7 @@ namespace Dungeon {
 		list->addAction(new CallbackAction("heal", "(TH) heal yourself - heals you to full hp.",
 				RegexMatcher::matcher("heal( myself| me)?"),
 				[] (ActionDescriptor * ad) {
+					LOG("ThorsHammer") << "Admin " << ad->getCaller()->getName() << " healed himself using Thors' Hammer." << LOGF;
 					ad->getCaller()->setCurrentHp(ad->getCaller()->getMaxHp());
 					*ad << "You have fully healed yourself." << eos;
 				}));
@@ -109,6 +113,7 @@ namespace Dungeon {
 		list->addAction(new CallbackAction("addexp (int)", "(TH) addexp - increases your level.",
 				RegexMatcher::matcher("addexp [0-9]+"),
 				[] (ActionDescriptor * ad) {
+					LOG("ThorsHammer") << "Admin " << ad->getCaller()->getName() << " increased his experience points using Thors' Hammer." << LOGF;
 					string sexp = ad->in_msg.substr(7);
 					int exp = stoi(sexp);
 					if(exp != 0) {
@@ -127,6 +132,7 @@ namespace Dungeon {
 						return;
 					}
 
+					LOG("ThorsHammer") << "Admin " << ad->getCaller()->getName() << " teleported to " << matches[1] << " using Thors' Hammer." << LOGF;
 					ad->getGM()->moveAlive(ad->getCaller(), ad->getGM()->getObject(matches[1]));
 							*ad << "You have teleported to " << matches[1] << eos;
 				}));
@@ -138,7 +144,7 @@ namespace Dungeon {
 		list->addAction(pe);
 	}
 
-	bool ThorsHammer::PropertyEditor::match(string command, ActionDescriptor* ad) {
+	bool ThorsHammer::PropertyEditor::match(const string& command, ActionDescriptor* ad) {
 		smatch matches;
 		if (RegexMatcher::match("^edit (properties (of )?)?(.+)$", command, matches)) {
 			GameManager* gm = ad->getGM();
@@ -148,7 +154,7 @@ namespace Dungeon {
 				selectBestTarget(matches[3], ad);
 			}
 			this->ad = ad;
-			LOG("TH") << "Editing " << getTarget().getId() << LOGF;
+			LOGS("ThorsHammer", Warning) << "Admin " << ad->getCaller()->getName() << " is editing " << getTarget().getId() << LOGF;
 			return true;
 		}
 		return false;
@@ -194,7 +200,7 @@ namespace Dungeon {
 			target.assertExists();
 			if (reply != ".") {
 				prop = reply;
-				LOG("PropEditor") << "Set property of " << target.getId() << " to " << prop << LOGF;
+				LOGS("PropertyEditor", Verbose) << "Set property of " << target.getId() << " to " << prop << LOGF;
 			}
 			askForNextOne(ad);
 		});
@@ -211,7 +217,7 @@ namespace Dungeon {
 			if (reply != ".") {
 				std::istringstream(reply) >> prop;
 				*ad << "Set to '" << prop << "'." << eos;
-				LOG("PropEditor") << "Set property of " << target.getId() << " to " << prop << LOGF;
+				LOGS("PropertyEditor", Verbose) << "Set property of " << target.getId() << " to " << prop << LOGF;
 			}
 			askForNextOne(ad);
 		});
@@ -228,7 +234,7 @@ namespace Dungeon {
 			if (reply != ".") {
 				std::istringstream(reply) >> prop;
 				*ad << "Set to '" << prop << "'." << eos;
-				LOG("PropEditor") << "Set property of " << target.getId() << " to " << prop << LOGF;
+				LOGS("PropertyEditor", Verbose) << "Set property of " << target.getId() << " to " << prop << LOGF;
 			}
 			askForNextOne(ad);
 		});
@@ -243,7 +249,7 @@ namespace Dungeon {
 			if (reply != ".") {
 				prop = StringMatcher::matchTrueFalse(reply);
 				*ad << "Set to " << (prop ? "True" : "False") << "." << eos;
-				LOG("PropEditor") << "Set property of " << target.getId() << " to " << (prop ? "True" : "False") << LOGF;
+				LOGS("PropertyEditor", Verbose) << "Set property of " << target.getId() << " to " << (prop ? "True" : "False") << LOGF;
 			}
 			askForNextOne(ad);
 		});

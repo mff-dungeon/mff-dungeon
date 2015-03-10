@@ -31,22 +31,23 @@ namespace Dungeon {
 		};
 		
 		Alive() { } // Constructor allowing to load class later
-		Alive(objId id);
+		Alive(const objId& id) : IDescriptable(id) { }
+		
 		void getAllActions(ActionList* list);
 		virtual void getActions(ActionList* list, ObjectPointer callee);
 
 		virtual string getDescriptionSentence();
 		virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
 
-		virtual int getCurrentHp() const;
-		virtual Alive* setCurrentHp(int hp, ActionDescriptor* ad = 0);
-		virtual int getMaxHp() const;
-		virtual Alive* setMaxHp(int hp, ActionDescriptor* ad = 0);
-		virtual double getPercentageHp();
-		virtual int getAttack() const;
-		virtual Alive* setAttack(int attack, ActionDescriptor* ad = 0);
-		virtual int getDefense() const;
-		virtual Alive* setDefense(int defense, ActionDescriptor* ad = 0);
+		int getCurrentHp() const;
+		Alive* setCurrentHp(int hp, ActionDescriptor* ad = nullptr);
+		int getMaxHp() const;
+		Alive* setMaxHp(int hp, ActionDescriptor* ad = nullptr);
+		double getPercentageHp();
+		int getAttack() const;
+		Alive* setAttack(int attack, ActionDescriptor* ad = nullptr);
+		int getDefense() const;
+		Alive* setDefense(int defense, ActionDescriptor* ad = nullptr);
 
 		/**
 		 * Calculates the actual damage depending on attack/defense values
@@ -57,26 +58,26 @@ namespace Dungeon {
 		 * Calls method to damage alive. Fills ad and calls reduceHp
 		 * @param amount the damage to be done
 		 */
-		virtual Alive* damageAlive(ObjectPointer attackerPtr, int amount, ActionDescriptor* ad = 0);
+		virtual Alive* damageAlive(ObjectPointer attackerPtr, int amount, ActionDescriptor* ad = nullptr);
 
 		/**
 		 * Adds (or removes) hitpoints. Checks for death or full hitpoints.
 		 * @param amount The amount to increase (reduce, if negative)
 		 */
-		virtual Alive* changeHp(int amount, ActionDescriptor* ad = 0);
+		virtual Alive* changeHp(int amount, ActionDescriptor* ad = nullptr);
 
 		/**
 		 * Implements the dying procedures
 		 */
-		virtual Alive* die(ActionDescriptor* ad = 0);
-		virtual Alive* respawn(ActionDescriptor* ad = 0);
+		virtual Alive* die(ActionDescriptor* ad = nullptr);
+		virtual Alive* respawn(ActionDescriptor* ad = nullptr);
 
-		virtual State getState() const;
-		virtual Alive* setState(State newState);
-		virtual int getRespawnTime() const;
-		virtual Alive* setRespawnTime(int time);
-		virtual int getRespawnInterval() const;
-		virtual Alive* setRespawnInterval(int interval);
+		State getState() const;
+		Alive* setState(State newState);
+		int getRespawnTime() const;
+		Alive* setRespawnTime(int time);
+		int getRespawnInterval() const;
+		Alive* setRespawnInterval(int interval);
 		/**
 		 * Counts only on humans, creatures respawn where they were killed.
 		 */
@@ -106,7 +107,7 @@ namespace Dungeon {
 		/**
 		 * Returns true, whether the user has at least one of required item type
 		 */
-		bool hasItemType(string type);
+		bool hasItemType(const string& type);
 
 		virtual void registerProperties(IPropertyStorage& storage);
 		virtual void onBeforeAction(ActionDescriptor* ad) {
@@ -136,7 +137,7 @@ namespace Dungeon {
 		virtual string getWeaponName() const {
 			return weaponName;
 		}
-		virtual Alive* setWeaponName(string weaponName) {
+		virtual Alive* setWeaponName(const string& weaponName) {
 			this->weaponName = weaponName;
 			return this;
 		}
@@ -145,7 +146,7 @@ namespace Dungeon {
 		 * Helper method to set auto-healing trap.
 		 * @see Healing
 		 */
-		virtual Alive* regenerate(int rate);
+		Alive* regenerate(int rate);
 
 	private:
 		// Combat stats

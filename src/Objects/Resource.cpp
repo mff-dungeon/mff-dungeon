@@ -10,7 +10,7 @@ namespace Dungeon {
 
 	const char* Resource::ResourceIdentifier[] = {"gold", "wood", "iron", "dragon-skin",
 		"leather", "sand", "white-powder", "red-powder", "magical-stone", "mana-shards"};
-
+	
 	objId Resource::getResourceTypeId(ResourceType type) const {
 		return "resource/" + (string) ResourceIdentifier[(int) type] + "/" + RANDID;
 	}
@@ -80,13 +80,13 @@ namespace Dungeon {
 			case ResourceType::Sand:
 				return "Stuff from beaches (" + to_string(getQuantity()) + " units).";
 			default:
-				// no laughing, this is actually a serious error
+				LOGS("Resource", Error) << "Invalid resource type requested " << getType() << "." << LOGF;
 				return "They are more adorable than you would believe.";
 		}
 	}
 
 	void Resource::registerProperties(IPropertyStorage& storage) {
-		storage.have((int&) resourceType, "resource-type", "Type of the resource (0 - gold, 1 - wood, 2 - stone, 3 - food, 4 - mana shard)");
+		storage.have((int&) resourceType, "resource-type", "Type of the resource");
 		storage.have(quantity, "resource-quantity", "Quantity of the resource");
 		Item::registerProperties(storage);
 	}
@@ -102,7 +102,7 @@ namespace Dungeon {
 		return this;
 	}
 
-	void ResourceSumTrap::trigger(string event, ObjectPointer target, ActionDescriptor* ad) {
+	void ResourceSumTrap::trigger(const string& event, ObjectPointer target, ActionDescriptor* ad) {
 		target.assertType<Resource>("Tried to sum non-resource.");
 
 		Resource* newResource = target.safeCast<Resource>();

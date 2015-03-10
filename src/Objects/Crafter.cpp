@@ -8,12 +8,6 @@
 
 namespace Dungeon {
 
-	Crafter::Crafter() { }
-
-	Crafter::Crafter(objId id) : IDescriptable(id) { }
-
-	Crafter::~Crafter() { }
-
 	Crafter* Crafter::addRecipe(ObjectPointer recipe) {
 		recipe.assertExists("The recipe doesn't exist").assertType<Recipe>("You can only add recipes.");
 		getGameManager()->createRelation(this, recipe, R_RECIPE);
@@ -59,7 +53,7 @@ namespace Dungeon {
 		*ad << "Use 'craft ...' to ask for a recipe list." << eos;
 	}
 
-	bool CraftAction::match(string command, ActionDescriptor* ad) {
+	bool CraftAction::match(const string& command, ActionDescriptor* ad) {
 		if (RegexMatcher::match("craft .+", command)) {
 			selectBestTarget(command.substr(6), ad);
 			return true;
@@ -92,7 +86,7 @@ namespace Dungeon {
 		*ad << "Use 'create ...' to use a recipe to create something." << eos;
 	}
 
-	bool CreateAction::match(string command, ActionDescriptor* ad) {
+	bool CreateAction::match(const string& command, ActionDescriptor* ad) {
 		if (RegexMatcher::match("create .+", command)) {
 			selectBestTarget(command.substr(7), ad);
 			return true;

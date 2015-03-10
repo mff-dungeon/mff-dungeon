@@ -28,7 +28,7 @@ namespace Dungeon {
 		commitOnTarget(ad, selectedTarget);
 	}
 
-	void MultiTargetAction::selectBestTarget(string str, ActionDescriptor* ad) {
+	void MultiTargetAction::selectBestTarget(const string& str, ActionDescriptor* ad) {
 		ObjectPointer trap = ad->getGM()->getObject("trap/mta");
 		setTarget(trap.unsafeCast<MTATrap>()->wrapFind(targets, this, str, ad));
 	}

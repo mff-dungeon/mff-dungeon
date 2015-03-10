@@ -12,12 +12,12 @@ namespace Dungeon {
 	class AttackTrap : public Trap {
 	public:
 		AttackTrap() : Trap() { }
-		AttackTrap(string id) : Trap(id) { };
+		AttackTrap(const objId& id) : Trap(id) { };
 		virtual ~AttackTrap() { };
 
 		const static string doNotAttackRelation;
 
-		virtual void trigger(string event, ObjectPointer room, ActionDescriptor* ad);
+		virtual void trigger(const string& event, ObjectPointer room, ActionDescriptor* ad);
 		virtual bool exceptionTrigger(ActionDescriptor* ad);
 
 	private:

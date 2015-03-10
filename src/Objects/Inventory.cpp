@@ -15,7 +15,7 @@ namespace Dungeon {
 		this->usedWeight = 0;
 	}
 
-	Inventory::Inventory(objId id) : Wearable(id) {
+	Inventory::Inventory(const objId& id) : Wearable(id) {
 		this->maxSpace = DEFAULT_SPACE;
 		this->maxWeight = DEFAULT_WEIGHT;
 		this->usedSpace = 0;
@@ -156,7 +156,7 @@ namespace Dungeon {
 		*ad << "Use 'drop ...' to drop items from your backpack. \n" << eos;
 	}
 
-	bool DropAction::match(string command, ActionDescriptor* ad) {
+	bool DropAction::match(const string& command, ActionDescriptor* ad) {
 		if (RegexMatcher::match("drop .+", command)) {
 			selectBestTarget(command.substr(5), ad);
 			return true;

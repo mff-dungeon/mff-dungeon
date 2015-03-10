@@ -8,7 +8,7 @@ namespace Dungeon {
 
 	class Polyaction : public MultiTargetAction {
 	public:
-		Polyaction(string type) : MultiTargetAction(type) { };
+		Polyaction(const string& type) : MultiTargetAction(type) { };
 		virtual ~Polyaction();
 
         Polyaction& operator=(const Polyaction& right);

@@ -8,7 +8,7 @@ namespace Dungeon {
 
 	SpellScroll::SpellScroll() { }
 
-	SpellScroll::SpellScroll(objId id) : Item(id) { }
+	SpellScroll::SpellScroll(const objId& id) : Item(id) { }
 
 	SpellScroll::~SpellScroll() { }
 
@@ -37,7 +37,7 @@ namespace Dungeon {
 		*ad << "Use 'read ...' to read the scroll." << eos;
 	}
 
-	bool ReadScrollAction::match(string command, ActionDescriptor* ad) {
+	bool ReadScrollAction::match(const string& command, ActionDescriptor* ad) {
 		if (RegexMatcher::match("read .+", command)) {
 			selectBestTarget(command.substr(5), ad);
 			return true;
@@ -47,7 +47,7 @@ namespace Dungeon {
 
 	void ReadScrollAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		Human* reader = ad->getCaller();
-		target.assertExists("Are you reading air?").assertType<SpellScroll>("You cannot read this.");
+		target.assertExists("Are you trying to read air?").assertType<SpellScroll>("You cannot read that.");
 		SpellScroll* scroll = target.unsafeCast<SpellScroll>();
 		ObjectPointer spell = scroll->getSpell();
 		if (!scroll->checkStatReqs(ad->getCaller(), ad)) {
@@ -56,10 +56,10 @@ namespace Dungeon {
 		}
 
 		if (reader->knowsSpell(spell)) {
-			*ad << "You already learned " << spell.safeCast<IDescriptable>()->getName() << "." << eos;
+			*ad << "You already learned " << spell.safeCast<IDescriptable>()->getName() << " before." << eos;
 		} else {
 			reader->learnSpell(spell);
-			*ad << "You have learnt " << spell.safeCast<IDescriptable>()->getName()
+			*ad << "You have learned " << spell.safeCast<IDescriptable>()->getName()
 					<< " and the " << scroll->getName() << " has disappeared." << eos;
 			ad->getGM()->deleteObject(scroll);
 		}

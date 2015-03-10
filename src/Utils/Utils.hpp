@@ -113,7 +113,17 @@ namespace Dungeon {
                     s[i] = tolower(s[i]);
                 }
             }
-
+            return s;
+        }
+		
+        static inline std::string decapitalize(const std::string& cs)
+        {
+			std::string s(cs);
+            for (size_t i = 0; i <= s.length(); i++) {
+                if (isalpha(s[i])) {
+                    s[i] = tolower(s[i]);
+                }
+            }
             return s;
         }
 		

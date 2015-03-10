@@ -34,13 +34,13 @@ namespace Dungeon {
 				<< "There is nothing." << endr;
 	}
 
-	Location* Location::setEmptyMessage(string emptyMessage) {
+	Location* Location::setEmptyMessage(const string& emptyMessage) {
 		this->emptyMessage = emptyMessage;
 		return this;
 	}
 
 	void Location::getActions(ActionList* list, ObjectPointer callee) {
-		LOGS("Location", Verbose) << "Getting actions on " << this->getName() << "." << LOGF;
+		LOGS("Location", Debug) << "Getting actions on " << this->getName() << "." << LOGF;
 		// Recursively search all items in this room
 		try {
 			const ObjectMap& objects = getRelations(Relation::Master, R_INSIDE);
@@ -91,7 +91,7 @@ namespace Dungeon {
 	}
 
 	void Location::examine(ActionDescriptor* ad) {
-		LOGS("Location", Verbose) << "Exploring " << this->getName() << "." << LOGF;
+		LOGS("Location", Debug) << "Exploring " << this->getName() << "." << LOGF;
 		triggerTraps("examine", ad);
 		if (!ad) return;
 		ObjectPointer alive = ad->getCaller();
@@ -132,7 +132,7 @@ namespace Dungeon {
 		*ad << "Use 'pick up ...' to pick the items you see." << eos;
 	}
 
-	bool PickupAction::match(string command, ActionDescriptor* ad) {
+	bool PickupAction::match(const string& command, ActionDescriptor* ad) {
 		smatch matches;
 		if (RegexMatcher::match("(pick( up)?|take|grab|obtain|catch|seize) (.+)", command, matches)) {
 			selectBestTarget(matches[3], ad);

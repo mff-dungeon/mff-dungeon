@@ -8,7 +8,7 @@ namespace Dungeon {
 
 	Dropper::Dropper() { }
 
-	Dropper::Dropper(objId id) : Base(id) { }
+	Dropper::Dropper(const objId& id) : Base(id) { }
 
 	Dropper::~Dropper() { }
 
@@ -66,8 +66,8 @@ namespace Dungeon {
 				}
 			}
 			string itemName = getItem().safeCast<IDescriptable>()->getName();
-			LOGS("Dropper", Verbose) << "Dropped " << amount
-					<< " items " << itemName << "." << LOGF;
+			LOGS("Dropper", Debug) << "Dropped " << amount
+					<< " items of type " << itemName << "." << LOGF;
 			return true;
 		}
 		return false;

@@ -19,7 +19,7 @@ namespace Dungeon {
 		return this;
 	}
 
-	void Healing::trigger(string event, ObjectPointer trigger, ActionDescriptor* ad) {
+	void Healing::trigger(const string& event, ObjectPointer trigger, ActionDescriptor* ad) {
 		if (timestamp == 0) {
 			timestamp = std::time(nullptr);
 		}
@@ -33,13 +33,13 @@ namespace Dungeon {
 			ObjectPointer target = getTarget();
 			if (target->instanceOf(Alive)) {
 				target.unsafeCast<Alive>()->changeHp(healedHp, ad);
-				LOGS("Healing", Verbose) << "Healed " << target->getId() << " for " << healedHp << LOGF;
+				LOGS("Healing", Debug) << "Healed " << target->getId() << " for " << healedHp << LOGF;
 			} else if (target->instanceOf(Location)) {
 				for (auto obj : target->getRelations(Relation::Master, R_INSIDE)) {
 					if (obj.second->instanceOf(Alive))
 						obj.second.unsafeCast<Alive>()->changeHp(healedHp, ad);
 				}
-				LOGS("Healing", Verbose) << "Healed everything in " << target.getId() << " for " << healedHp << LOGF;
+				LOGS("Healing", Debug) << "Healed everything in " << target.getId() << " for " << healedHp << LOGF;
 			}
 
 			save();

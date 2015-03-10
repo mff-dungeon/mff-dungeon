@@ -5,12 +5,6 @@
 
 namespace Dungeon {
 
-	TeleportSpell::TeleportSpell() { }
-
-	TeleportSpell::TeleportSpell(objId id) : Spell(id) { }
-
-	TeleportSpell::~TeleportSpell() { }
-
 	ObjectPointer TeleportSpell::getDestination() {
 		return getSingleRelation("telespell-dest", Relation::Master);
 	}

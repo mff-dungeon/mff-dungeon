@@ -67,13 +67,9 @@ namespace Dungeon {
         friend class Cloner; // Setting ID
     public:
 
-        Base()
-        {
-        };
+        Base() {};
 
-        Base(objId id) : id(id)
-        {
-        };
+        Base(const objId& id) : id(id) {};
 
         virtual ~Base()
         {
@@ -81,7 +77,7 @@ namespace Dungeon {
                 LOGS("Object::Base", Error) << "Locked object is being deleted, something is wrong!" << LOGF;
         };
 
-        virtual objId getId() const;
+        virtual const objId& getId() const;
 		virtual string getObjectType() const;
 
         /**
@@ -98,7 +94,7 @@ namespace Dungeon {
          *  className - method defines by macro, see common.hpp
          */
         virtual Base* createObject() const = 0;
-        static Base* load(Archiver& stream, string className);
+        static Base* load(Archiver& stream, const string& className);
         void store(Archiver& stream, objId& id, string& className) const;
 
         /**
@@ -119,7 +115,7 @@ namespace Dungeon {
          * @param other ObjectPointer of the other object
          * @param master true, if the relation is master relation
          */
-        bool hasRelation(string type, ObjectPointer other, Relation::Dir dir = Relation::Master);
+        bool hasRelation(const string& type, ObjectPointer other, Relation::Dir dir = Relation::Master);
 
         /**
          * Returns either master, or slave relations of the object
@@ -131,7 +127,7 @@ namespace Dungeon {
          * Returns objects with given relation to this object
          * @param master true, if the relation is master relation
          */
-        const ObjectMap& getRelations(Relation::Dir dir, string type) const;
+        const ObjectMap& getRelations(Relation::Dir dir, const string& type) const;
 
         /**
          * Returns the one and only relation of this type.
@@ -139,9 +135,9 @@ namespace Dungeon {
          * @return nullptr when no such relation found.
          */
         ObjectPointer getSingleRelation(
-                string type,
+                const string& type,
                 Relation::Dir dir = Relation::Master,
-                string errMsg = "There are more than one object for single relation.") const;
+                const string& errMsg = "There are more than one object for single relation.") const;
 
         /**
          * Sets the one and only relation of this type.
@@ -149,10 +145,10 @@ namespace Dungeon {
          * @return itself
          */
         ObjectPointer setSingleRelation(
-                string type,
+                const string& type,
                 ObjectPointer other,
                 Relation::Dir dir = Relation::Master,
-                string errMsg = "There are more than one object for single relation.");
+                const string& errMsg = "There are more than one object for single relation.");
 
         /**
          * A special method used for some magic
@@ -196,20 +192,16 @@ namespace Dungeon {
          * @param event identificator of event - be consistent
          * @param ad Is not required, but must be explicitly NULL
          */
-        virtual ObjectPointer triggerTraps(string event, ActionDescriptor *ad);
+        virtual ObjectPointer triggerTraps(const string& event, ActionDescriptor *ad);
         
-        ObjectPointer attachTrap(ObjectPointer trap, string event);
-        ObjectPointer detachTrap(ObjectPointer trap, string event);
+        ObjectPointer attachTrap(ObjectPointer trap, const string& event);
+        ObjectPointer detachTrap(ObjectPointer trap, const string& event);
         
         ObjectPointer deepClone() const;
         ObjectPointer shallowClone() const;
         
 
     protected:
-        /**
-         * Kept as warning :)
-         */
-        void serialize(Archiver& stream);
         GameManager* getGameManager() const;
         void setGameManager(GameManager* gm);
 
@@ -231,7 +223,7 @@ namespace Dungeon {
          * @param other ObjectPointer of the other object
          * @param master true, if the relation is master relation
          */
-        void eraseRelation(string type, ObjectPointer other, Relation::Dir dir);
+        void eraseRelation(const string& type, ObjectPointer other, Relation::Dir dir);
 
         /**
          * Registers a new relation for this object
@@ -239,7 +231,7 @@ namespace Dungeon {
          * @param other ObjectPointer of the other object
          * @param master true, if the relation is master relation
          */
-        void addRelation(string type, ObjectPointer other, Relation::Dir dir);
+        void addRelation(const string& type, ObjectPointer other, Relation::Dir dir);
     };
 }
 

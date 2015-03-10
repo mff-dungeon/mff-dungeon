@@ -9,7 +9,7 @@ namespace Dungeon {
 		return description;
 	}
 
-	IDescriptable* IDescriptable::setDescription(string description) {
+	IDescriptable* IDescriptable::setDescription(const string& description) {
 		this->description = description;
 		return this;
 	}
@@ -20,7 +20,7 @@ namespace Dungeon {
 		return longName;
 	}
 
-	IDescriptable* IDescriptable::setLongName(string longName) {
+	IDescriptable* IDescriptable::setLongName(const string& longName) {
 		this->longName = longName;
 		return this;
 	}
@@ -29,7 +29,7 @@ namespace Dungeon {
 		return name;
 	}
 
-	IDescriptable* IDescriptable::setName(string name) {
+	IDescriptable* IDescriptable::setName(const string& name) {
 		this->name = name;
 		return this;
 	}
@@ -74,7 +74,7 @@ namespace Dungeon {
 	NONPERSISTENT_IMPLEMENTATION(IDescriptable)
 
 
-	bool ExamineEction::match(string command, ActionDescriptor* ad) {
+	bool ExamineEction::match(const string& command, ActionDescriptor* ad) {
 		smatch matches;
 		if (RegexMatcher::match("(investigate|examine|explore|look( closer)?( +(in|to|into|on|onto|at))?) +(.+)", command, matches)) {
 			selectBestTarget(matches[5], ad);

@@ -15,7 +15,7 @@ namespace Dungeon {
 	class Location : public IDescriptable {
 	public:
 		Location() { } // Constructor allowing to load class later
-		Location(objId id) : IDescriptable(id) { }
+		Location(const objId& id) : IDescriptable(id) { }
 		virtual ~Location() { }
 
 		virtual string getDescriptionSentence();
@@ -29,7 +29,7 @@ namespace Dungeon {
 		bool isRespawnable() const;
 		Location* setRespawnable(bool respawnable);
 		string getEmptyMessage() const;
-		Location* setEmptyMessage(string emptyMessage);
+		Location* setEmptyMessage(const string& emptyMessage);
 
 	private:
 		bool respawnable = false;
@@ -41,10 +41,10 @@ namespace Dungeon {
 
 	class PickupAction : public MultiTargetAction {
 	public:
-		PickupAction(string type = "location-pickup") : MultiTargetAction(type) { }
+		PickupAction(const string& type = "location-pickup") : MultiTargetAction(type) { }
 
 		virtual void explain(ActionDescriptor* ad);
-		virtual bool match(string command, ActionDescriptor* ad);
+		virtual bool match(const string& command, ActionDescriptor* ad);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 	};
 }

@@ -15,9 +15,9 @@ namespace Dungeon {
 			Poison = 2
 		};
 
-		Potion();
-		Potion(objId id);
-		virtual ~Potion();
+		Potion() {}
+		Potion(const objId& id) : Item(id) { }
+		virtual ~Potion() {}
 
 		virtual void getActions(ActionList* list, ObjectPointer callee);
 
@@ -53,10 +53,10 @@ namespace Dungeon {
 
 	class DrinkPotionAction : public MultiTargetAction {
 	public:
-		DrinkPotionAction(string type = "potion-drink") : MultiTargetAction(type) { }
+		DrinkPotionAction(const string& type = "potion-drink") : MultiTargetAction(type) { }
 
 		virtual void explain(ActionDescriptor* ad);
-		virtual bool match(string command, ActionDescriptor* ad);
+		virtual bool match(const string& command, ActionDescriptor* ad);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 
 	};

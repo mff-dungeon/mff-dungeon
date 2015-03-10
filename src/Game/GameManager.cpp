@@ -89,7 +89,7 @@ namespace Dungeon {
 		Base* r = 0;
 		r = loader->loadObject(id);
 		if (r == 0) return 0;
-		LOGS("GameManager", Verbose) << "Loaded object '" << id << "' with class " << r->className() << "." << LOGF;
+		LOGS("GameManager", Debug) << "Loaded object '" << id << "' with class " << r->className() << "." << LOGF;
 		r->setGameManager(this);
 
 		// Load the relations
@@ -140,7 +140,7 @@ namespace Dungeon {
 	}
 
 	void GameManager::insertObject(Base* obj) {
-		LOGS("GameManager", Verbose) << "Inserting object " << obj->getId() << "." << LOGF;
+		LOGS("GameManager", Debug) << "Inserting object " << obj->getId() << "." << LOGF;
 		objects.insert(obj);
 		saveObject(obj);
 		obj->setGameManager(this);
@@ -152,7 +152,7 @@ namespace Dungeon {
 	}
 
 	void GameManager::deleteObject(Base* obj) {
-		LOGS("GameManager", Verbose) << "Deleting object " << obj->getId() << "." << LOGF;
+		LOGS("GameManager", Debug) << "Deleting object " << obj->getId() << "." << LOGF;
 
 		RelationList copy = obj->getRelations(Relation::Master);
 		for (RelationList::value_type& rel : copy) {
@@ -175,7 +175,7 @@ namespace Dungeon {
 
 	void GameManager::addRelation(Relation* rel) {
 		int err = DatabaseHandler::getInstance().addRelation(rel);
-		LOGS("GameManager", Verbose) << "Adding relation " << rel->pid << " --> " << rel->sid << "." << LOGF;
+		LOGS("GameManager", Debug) << "Adding relation " << rel->pid << " --> " << rel->sid << "." << LOGF;
 		if (err != DatabaseHandler::E_OK) {
 			LOGS("GameManager", Error) << "Error adding relation to database." << LOGF;
 		}
@@ -262,7 +262,7 @@ namespace Dungeon {
 	}
 
 	void GameManager::moveAlive(Alive* alive, ObjectPointer room) {
-		LOGS("GameManager", Verbose) << "Moving alive to " << room->getId() << "." << LOGF;
+		LOGS("GameManager", Debug) << "Moving alive to " << room->getId() << "." << LOGF;
 		this->removeRelation(alive->getLocation(), alive, R_INSIDE);
 		this->createRelation(room, alive, R_INSIDE);
 		if (room.safeCast<Location>()->isRespawnable() && alive->isInstanceOf(Human::HumanClassName)) {

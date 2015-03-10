@@ -34,12 +34,12 @@ namespace Dungeon {
 			END // do not use, for iteration purposes only!
 		};
                 
-                static const int Count = ResourceType::END;
+        static const int Count = ResourceType::END;
 
 		static const char* ResourceName[];
 		static const char* ResourceIdentifier[];
 		Resource() { }
-		Resource(objId id) : Item(id) { }
+		Resource(const objId& id) : Item(id) { }
 		Resource(ResourceType type, int quantity) : Item(getResourceTypeId(type)), resourceType(type), quantity(quantity) { }
 		virtual ~Resource() { }
 
@@ -125,10 +125,10 @@ namespace Dungeon {
 	class ResourceSumTrap : public Trap {
 	public:
 		ResourceSumTrap() : Trap() { }
-		ResourceSumTrap(string id) : Trap(id) { }
+		ResourceSumTrap(const string& id) : Trap(id) { }
 		virtual ~ResourceSumTrap() { }
 
-		virtual void trigger(string event, ObjectPointer target, ActionDescriptor* ad);
+		virtual void trigger(const string& event, ObjectPointer target, ActionDescriptor* ad);
 
 	private:
 		PERSISTENT_DECLARATION(ResourceSumTrap, Trap)

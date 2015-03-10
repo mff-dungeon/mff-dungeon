@@ -13,7 +13,7 @@ namespace Dungeon {
 			ObjectGroup grp(objects);
 			ObjectPointer target = grp.match(str);
 			IDescriptable* obj = target.safeCast<IDescriptable>();
-			if (obj) LOGS("FMT", Verbose) << "Selected " << obj->getLongName() << LOGF;
+			if (obj) LOGS("MTATrap", Debug) << "Selected " << obj->getLongName() << LOGF;
 			return target;
 		} catch (const StringMatcher::Uncertain<ObjectPointer>& e) {
 			if (!ad)

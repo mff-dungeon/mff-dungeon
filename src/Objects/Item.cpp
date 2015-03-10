@@ -17,7 +17,7 @@ namespace Dungeon {
 		this->setDropable(true)->setPickable(true)->setSize(0)->setWeight(0);
 	}
 
-	Item::Item(objId id) : IDescriptable(id) {
+	Item::Item(const objId& id) : IDescriptable(id) {
 		this->setDropable(true)->setPickable(true)->setSize(0)->setWeight(0);
 	}
 
