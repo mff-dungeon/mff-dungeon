@@ -42,7 +42,11 @@ public: \
         const static char * cName##ClassName; \
 	inline virtual bool isInstanceOf(char const * cname) const { \
 		return cName##ClassName == cname || pName::isInstanceOf(cname); \
-	};
+	}; \
+        virtual void getActionsRecursive(ActionList* list, ObjectPointer callee) { \
+            pName::getActionsRecursive(list, callee); \
+            cName::getActions(list, callee); \
+        }
 
 #define NONPERSISTENT_IMPLEMENTATION(fullName, cName) \
         const char * fullName::cName##ClassName = #fullName;
@@ -85,8 +89,14 @@ namespace Dungeon {
 
         /**
          * Which actions can be performed by callee on this object?
+         * Do NOT call directly, use @see getActionsRecursive instead.
          */
         virtual void getActions(ActionList * list, ObjectPointer callee) = 0;
+        
+        /**
+         * Which actions can be performed by callee on this object?
+         */
+        virtual void getActionsRecursive(ActionList * list, ObjectPointer callee);
 
         /*
          * Serializing functions: 

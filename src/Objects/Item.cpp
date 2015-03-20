@@ -58,7 +58,7 @@ namespace Dungeon {
 	}
 
 	void Item::getActions(ActionList* list, ObjectPointer callee) {
-		IDescriptable::getActions(list, callee);
+		// Intentionally left blank?
 	}
 
 	Item* Item::addStatReq(ObjectPointer reqPtr) {

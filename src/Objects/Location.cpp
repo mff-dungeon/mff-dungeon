@@ -42,12 +42,12 @@ namespace Dungeon {
 	void Location::getActions(ActionList* list, ObjectPointer callee) {
 		LOGS("Location", Debug) << "Getting actions on " << this->getName() << "." << LOGF;
 		// Recursively search all items in this room
+		// TODO - rewrite to delegating R_INSIDE
 		try {
 			const ObjectMap& objects = getRelations(Relation::Master, R_INSIDE);
 			for (auto& item : objects) {
 				if (item.second != callee)
-					item.second->triggerTraps("get-actions", nullptr)
-					->getActions(list, callee);
+					item.second->getActionsRecursive(list, callee);
 			}
 		} catch (const std::out_of_range& e) {
 
@@ -70,8 +70,6 @@ namespace Dungeon {
 		} else {
 			delete pickAction;
 		}
-
-		IDescriptable::getActions(list, callee);
 	}
 
 	string Location::getDescriptionSentence() {

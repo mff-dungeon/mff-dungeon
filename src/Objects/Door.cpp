@@ -15,7 +15,6 @@ namespace Dungeon {
 
 	void Door::getActions(ActionList* list, ObjectPointer callee) {
 		LOGS("Door", Debug) << "Getting actions on " << this->getId() << "." << LOGF;
-		IDescriptable::getActions(list, callee);
 		// Add move actions to all rooms
 		try {
 			const ObjectMap& targets = this->getRelations(Relation::Master, R_TARGET);

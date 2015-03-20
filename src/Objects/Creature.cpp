@@ -102,7 +102,6 @@ namespace Dungeon {
 			LOGS("Creature", Warning) << "A creature " << getId() << " is still existing even though it should have been removed from the world." << LOGF;
 			return;
 		}
-		Alive::getActions(list, callee);
 
 		// Something like examine should be here - can also be used on dead body (with different explaining)
 		if (getState() == State::Dead) {

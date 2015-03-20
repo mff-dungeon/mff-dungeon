@@ -122,14 +122,14 @@ namespace Dungeon {
 	}
 
 	void Inventory::getActions(ActionList* list, ObjectPointer callee) {
-		Wearable::getActions(list, callee);
 
 		// Drop action, adding only if there is anything to drop
 		DropAction* action = new DropAction;
 		try {
 			const ObjectMap& itemsIn = this->getRelations(Relation::Master, R_INVENTORY);
 			for (auto& item : itemsIn) {
-				item.second->getActions(list, callee);
+				// TODO - R_INVENTORY delegating
+				item.second->getActionsRecursive(list, callee);
 				action->addTarget(item.second);
 			}
 		} catch (const std::out_of_range& e) {

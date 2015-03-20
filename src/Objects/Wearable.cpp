@@ -80,7 +80,6 @@ namespace Dungeon {
 	}
 
 	void Wearable::getActions(ActionList* list, ObjectPointer callee) {
-		Item::getActions(list, callee);
 		// Do I see this equipped or not?
 
 		if (hasRelation(Wearable::SlotRelations[this->getSlot()], callee, Relation::Slave)) {

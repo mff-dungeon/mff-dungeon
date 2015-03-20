@@ -25,6 +25,11 @@ namespace Dungeon {
 		if(type.find("template/") == 0) type = type.substr(9);
 		return type.substr(0, type.rfind("/"));
 	}
+	
+	void Base::getActionsRecursive(ActionList* list, ObjectPointer callee) {
+		triggerTraps("get-actions", nullptr);
+		// Check delegating relations.
+	}
 
 	void Base::store(Archiver& stream, objId& oid, string& className) const {
 		className = this->className();

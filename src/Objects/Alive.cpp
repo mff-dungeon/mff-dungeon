@@ -26,21 +26,20 @@ namespace Dungeon {
 		triggerTraps("get-all-actions", nullptr);
 
 		// Add some actions on myself
-		this->getActions(list, this);
+		this->getActionsRecursive(list, this);
 		if (getState() == State::Dead) {
 			LOGS("Alive", Debug) << this->getId() << " is dead." << LOGF; 
 			return;
 		}
 
-		// Get actions for the inventory items - thors hammer
+		// TODO - delegating R_INVENTORY
 		LOGS("Alive", Debug) << "Getting actions on inventory of " << this->getId() << "." << LOGF;
 		try {
 			const ObjectMap& items = getRelations(Relation::Master, R_INVENTORY);
 			for (const auto& item : items) {
 				LOGS("Alive", Debug) << "Getting actions on " << item.second << "." << LOGF;
 				if (item.second->instanceOf(Item))
-					item.second->triggerTraps("get-actions", nullptr)
-					->getActions(list, this);
+					item.second->getActionsRecursive(list, this);
 				else
 					LOGS("Alive", Debug) << item.second.getId() << " is not item" << LOGF;
 			}
@@ -63,7 +62,7 @@ namespace Dungeon {
 			ObjectPointer equip = getSingleRelation(Wearable::SlotRelations[i], Relation::Master, GameStateInvalid::EquippedMoreThanOne);
 			if (!!equip) {
 				equip->triggerTraps("get-actions", nullptr)
-						->getActions(list, this);
+						->getActionsRecursive(list, this);
 			}
 		}
 
@@ -72,8 +71,7 @@ namespace Dungeon {
 		try {
 			const ObjectMap& room = getRelations(Relation::Slave, R_INSIDE);
 			for (auto& item : room) {
-				item.second->triggerTraps("get-actions", nullptr)
-						->getActions(list, this);
+				item.second->getActionsRecursive(list, this);
 			}
 		} catch (const std::out_of_range& e) {
 			// Nothing needs to be done
@@ -81,8 +79,6 @@ namespace Dungeon {
 	}
 
 	void Alive::getActions(ActionList* list, ObjectPointer callee) {
-		triggerTraps("get-actions", nullptr);
-		IDescriptable::getActions(list, callee);
 		// Add actions if any will be generic to all alives
 	}
 
