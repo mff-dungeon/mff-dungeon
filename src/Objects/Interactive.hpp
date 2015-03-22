@@ -24,74 +24,13 @@ namespace Dungeon {
         }
         
         Interactive* says(const string& content) {
-            attachInteraction("speak( (with|to))?", "read ... - to read it", content);
+            attachInteraction("(speak|talk|chat)( (with|to))?", "speak with ... - to speak with someone", content);
             return this;
         }
         
         void attachInteraction(const string& verb, const string& explanation, const string& content);
 
         PERSISTENT_DECLARATION(Interactive, IDescriptable)
-
-        class BasicInteractionAction : public Dungeon::MultiTargetAction {
-        public:
-            BasicInteractionAction(const string& type, ObjectPointer interactionTrap);
-
-            virtual void explain(ActionDescriptor* ad);
-            virtual bool match(const string& command, ActionDescriptor* ad);
-            virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
-
-        private:
-            ObjectPointer interactionTrap;
-        };
-        
-        class BasicInteraction : public Dungeon::Trap {
-        public:
-            BasicInteraction() : Trap() { }
-
-            BasicInteraction(string id) : Trap(id) { }
-
-            const string getContent() const
-            {
-                return content.length() ? content : "Greetings %u.";
-            }
-
-            BasicInteraction* setContent(const string& content)
-            {
-                this->content = content;
-                return this;
-            }
-            
-            const string& getExplanation() const
-            {
-                return explanation;
-            }
-
-            BasicInteraction* setExplanation(const string& explanation)
-            {
-                this->explanation = explanation;
-                return this;
-            }
-
-            const string& getVerb() const
-            {
-                return verb;
-            }
-
-            BasicInteraction* setVerb(const string& verb)
-            {
-                this->verb = verb;
-                return this;
-            }
-
-            virtual void trigger(const string& event, ObjectPointer target, ActionDescriptor* ad);
-
-            virtual void registerProperties(IPropertyStorage& storage);
-            
-            PERSISTENT_DECLARATION(BasicInteraction, Trap)
-            
-        private:
-            string verb = "", explanation = "", content = "";
-        };
 
     private:
         string content;

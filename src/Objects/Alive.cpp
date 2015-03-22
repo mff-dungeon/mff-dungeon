@@ -21,65 +21,29 @@ namespace Dungeon {
 	 *		- done temporary workaround for now
 	 **************************************/
 	void Alive::getAllActions(ActionList* list) {
-		LOGS("Alive", Debug) << "Getting all actions on " << this->getId() << "." << LOGF;
-
+		LOGS("Alive", Debug) << "Getting all actions for " << this->getId() << "." << LOGF;
 		triggerTraps("get-all-actions", nullptr);
 
-		// Add some actions on myself
-		this->getActionsRecursive(list, this);
+		LOGS("Alive", Debug) << "Getting actions in location - " << this->getId() << "." << LOGF;
+		auto room = getSingleRelation(R_INSIDE, Relation::Slave);
+		if (!room)
+			this->getActionsRecursive(list, this);
+		else // Adding actions on ourselves will be delegated.
+			room->getActionsRecursive(list, this);
+	}
+
+	void Alive::getActions(ActionList* list, ObjectPointer callee) {
 		if (getState() == State::Dead) {
 			LOGS("Alive", Debug) << this->getId() << " is dead." << LOGF; 
 			return;
 		}
-
-		// TODO - delegating R_INVENTORY
-		LOGS("Alive", Debug) << "Getting actions on inventory of " << this->getId() << "." << LOGF;
-		try {
-			const ObjectMap& items = getRelations(Relation::Master, R_INVENTORY);
-			for (const auto& item : items) {
-				LOGS("Alive", Debug) << "Getting actions on " << item.second << "." << LOGF;
-				if (item.second->instanceOf(Item))
-					item.second->getActionsRecursive(list, this);
-				else
-					LOGS("Alive", Debug) << item.second.getId() << " is not item" << LOGF;
-			}
-		} catch (const std::out_of_range& e) {
-			// Nothing needs to be done
-		}
 		
-		try {
-			for(const auto& th : getRelations(Relation::Master, "special-th")) {
-				LOGS("Alive", Debug) << "User has Thors' Hammer, adding actions." << LOGF;
-				th.second->triggerTraps("get-actions", nullptr)
-							->getActions(list, this);
-			}
-		} catch (const std::out_of_range& e) {
-			// Nothing needs to be done
+		if (this == callee) { // Remove this condition to allow stealing ;)
+			LOGS("Alive", Debug) << "Getting actions on inventory of " << this->getId() << "." << LOGF;
+			delegateGetActions(list, this, { R_INVENTORY, "special-th" });
+			for (int slot = 1; slot < Wearable::Slot::Count; slot++)
+				delegateGetActions(list, this, Wearable::SlotRelations[slot]);
 		}
-		
-		LOGS("Alive", Debug) << "Getting actions on equiped items" << LOGF;
-		for (int i = Wearable::Slot::BodyArmor; i != Wearable::Slot::Invalid; i--) {
-			ObjectPointer equip = getSingleRelation(Wearable::SlotRelations[i], Relation::Master, GameStateInvalid::EquippedMoreThanOne);
-			if (!!equip) {
-				equip->triggerTraps("get-actions", nullptr)
-						->getActionsRecursive(list, this);
-			}
-		}
-
-		LOGS("Alive", Debug) << "Getting actions in location - " << this->getId() << "." << LOGF;
-		// Find objects in current location
-		try {
-			const ObjectMap& room = getRelations(Relation::Slave, R_INSIDE);
-			for (auto& item : room) {
-				item.second->getActionsRecursive(list, this);
-			}
-		} catch (const std::out_of_range& e) {
-			// Nothing needs to be done
-		}
-	}
-
-	void Alive::getActions(ActionList* list, ObjectPointer callee) {
-		// Add actions if any will be generic to all alives
 	}
 
 	void Alive::registerProperties(IPropertyStorage& storage) {

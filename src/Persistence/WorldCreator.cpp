@@ -890,7 +890,7 @@ namespace Dungeon {
 				->setName("Iron warhammer")
 				->setLongName("a big iron warhammer")
 				->save();
-		templates["recipe/enironspear"] = createObject<Recipe>("template/recipe/enironsword/1")
+		templates["recipe/enironspear"] = createObject<Recipe>("template/recipe/enironspear/1")
 				->setExperience(86 * RECIPE_EXP_RATE)
 				->setLevel(24)
 				->setResource(Resource::Wood, 50 * RECIPE_MAT_REQUIRED)

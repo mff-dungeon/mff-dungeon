@@ -25,7 +25,8 @@ namespace Dungeon {
 			Helmet = 4,
 			Boots = 5,
 			Gloves = 6,
-			BodyArmor = 7
+			BodyArmor = 7,
+			Count
 		};
 
 		/**

@@ -41,17 +41,7 @@ namespace Dungeon {
 
 	void Location::getActions(ActionList* list, ObjectPointer callee) {
 		LOGS("Location", Debug) << "Getting actions on " << this->getName() << "." << LOGF;
-		// Recursively search all items in this room
-		// TODO - rewrite to delegating R_INSIDE
-		try {
-			const ObjectMap& objects = getRelations(Relation::Master, R_INSIDE);
-			for (auto& item : objects) {
-				if (item.second != callee)
-					item.second->getActionsRecursive(list, callee);
-			}
-		} catch (const std::out_of_range& e) {
-
-		}
+		delegateGetActions(list, callee, R_INSIDE);
 
 		// Add pickup for items
 		PickupAction* pickAction = new PickupAction;

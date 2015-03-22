@@ -35,7 +35,7 @@ private: \
 	PERSISTENT_IMPLEMENTATION_FULL(cName, cName)
 
 #define NONPERSISTENT_DECLARATION(cName, pName) \
-public: \
+    public: \
 	inline virtual const char * className() const { \
 		return cName::cName##ClassName; \
 	}; \
@@ -43,10 +43,16 @@ public: \
 	inline virtual bool isInstanceOf(char const * cname) const { \
 		return cName##ClassName == cname || pName::isInstanceOf(cname); \
 	}; \
-        virtual void getActionsRecursive(ActionList* list, ObjectPointer callee) { \
+    inline virtual void getActionsRecursive(ActionList* list, ObjectPointer callee) { \
+        if (!cName##GettingActions) { /* Loop prevention */ \
+            cName##GettingActions = true; \
             pName::getActionsRecursive(list, callee); \
             cName::getActions(list, callee); \
-        }
+            cName##GettingActions = false; \
+        } \
+    } \
+    private: \
+        bool cName##GettingActions = false;
 
 #define NONPERSISTENT_IMPLEMENTATION(fullName, cName) \
         const char * fullName::cName##ClassName = #fullName;
@@ -92,11 +98,21 @@ namespace Dungeon {
          * Do NOT call directly, use @see getActionsRecursive instead.
          */
         virtual void getActions(ActionList * list, ObjectPointer callee) = 0;
-        
+
         /**
          * Which actions can be performed by callee on this object?
          */
         virtual void getActionsRecursive(ActionList * list, ObjectPointer callee);
+
+        /**
+         * Should be called in getActions whenever you want to delegate certain action.
+         */
+        void delegateGetActions(ActionList* list, ObjectPointer callee, std::initializer_list<const string> relations) const;
+
+        /**
+         * Should be called in getActions whenever you want to delegate certain action.
+         */
+        void delegateGetActions(ActionList* list, ObjectPointer callee, const string& relation) const;
 
         /*
          * Serializing functions: 

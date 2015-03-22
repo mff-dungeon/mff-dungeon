@@ -3,6 +3,8 @@
 
 
 #include "Objects/Alive.hpp"
+#include "Objects/Behavior/BasicInteraction.hpp"
+#include "Objects/Behavior/Behavior.hpp"
 #include "Objects/Crafter.hpp"
 #include "Objects/Creature.hpp"
 #include "Objects/Door.hpp"

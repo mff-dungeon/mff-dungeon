@@ -5,6 +5,7 @@
 #include "../../Game/ObjectPointer.hpp"
 #include "../../Game/GameManager.hpp"
 #include "../Traps/Trap.hpp"
+#include "../Behavior/Behavior.hpp"
 #include <memory>
 
 #include <stdexcept>
@@ -25,10 +26,27 @@ namespace Dungeon {
 		if(type.find("template/") == 0) type = type.substr(9);
 		return type.substr(0, type.rfind("/"));
 	}
-	
+
 	void Base::getActionsRecursive(ActionList* list, ObjectPointer callee) {
 		triggerTraps("get-actions", nullptr);
-		// Check delegating relations.
+
+		// TODO replace by delegation once possible
+		for (auto& rel : getRelations(Relation::Master, R_BEHAVIOR)) {
+			rel.second.safeCast<Behavior>()->getActions(list, callee, this);
+		}
+	}
+
+	void Base::delegateGetActions(ActionList* list, ObjectPointer callee, std::initializer_list<const string> relations) const {
+		for (auto& type : relations) {
+			for (auto& rel : getRelations(Relation::Master, type)) {
+				LOGS("Base", Debug) << getId() << " delegating by " << type << " to " << rel.first << LOGF;
+				rel.second->getActionsRecursive(list, callee);
+			}
+		}
+	}
+
+	void Base::delegateGetActions(ActionList* list, ObjectPointer callee, const string& relation) const {
+		delegateGetActions(list, callee, { relation });
 	}
 
 	void Base::store(Archiver& stream, objId& oid, string& className) const {

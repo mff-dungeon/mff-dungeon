@@ -45,6 +45,8 @@
 #define R_RECIPE "crafter-recipe"
 // Something requires a stat
 #define R_REQUIREMENT "stat-req"
+// Something has modular behavior
+#define R_BEHAVIOR "behavior"
 // Alive has gold
 #define R_RESOURCE(type) ( "resource-" + (string)(Resource::ResourceIdentifier[(int)type]) )
 // Alive explores stuff
