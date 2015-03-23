@@ -30,28 +30,6 @@
  *					- atm, the user gets insta-healed after coming to healing location
  ***********************************/
 
-/**
- * Relation types used a lot
- */
-// Alive is in a room, doors are in the room
-#define R_INSIDE "inside"
-// Alive has backpack, backpack has potion
-#define R_INVENTORY "inventory"
-// Door targets somewhere
-#define R_TARGET "target"
-// Creature drops an item
-#define R_DROP "dropper"
-// Creature drops an item
-#define R_RECIPE "crafter-recipe"
-// Something requires a stat
-#define R_REQUIREMENT "stat-req"
-// Something has modular behavior
-#define R_BEHAVIOR "behavior"
-// Alive has gold
-#define R_RESOURCE(type) ( "resource-" + (string)(Resource::ResourceIdentifier[(int)type]) )
-// Alive explores stuff
-#define R_SEEN "seen"
-
 
 /*
  *  Logging
