@@ -33,6 +33,14 @@ namespace Dungeon {
 		static const int RespawnTime() { return p_respawnTime; }
 		static const int LevelStats() { return p_levelStats; }
 		
+		static const int EnemyHp() { return p_enemyHp; }
+		static const int EnemyRespawn() { return p_enemyRespawn; }
+		static const int EnemyMatsDrop() { return p_enemyMatsDrop; }
+		static const int EnemyBossKey() { return p_enemyBossKey; }
+		static const int RecipeExp() { return p_recipeExp; }
+		static const int RecipeMat() { return p_recipeMat; }
+		static const int RecipeKeyMat() { return p_recipeKeyMat; }
+		
 	private:
 		Config() {};
 		Config(Config const&) = delete;
@@ -50,6 +58,14 @@ namespace Dungeon {
 		static int p_gameMode;
 		static int p_respawnTime;
 		static int p_levelStats;
+		
+		static int p_enemyHp;
+		static int p_enemyRespawn;
+		static int p_enemyMatsDrop;
+		static int p_enemyBossKey;
+		static int p_recipeExp;
+		static int p_recipeMat;
+		static int p_recipeKeyMat;
 	};
 }
 #endif	/* CONFIG_HPP */

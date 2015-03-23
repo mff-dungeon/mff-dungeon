@@ -25,3 +25,34 @@ RESPAWN_INTERVAL = 120
 # to be distributed to character's stats.
 # Default: 5
 LEVEL_STAT_POINTS = 5
+
+####################### World Creation Settings
+# All of the following settings are used only at the creation of the world
+
+# The HP multiplier of the creatures
+# Default: 10
+ENEMY_HP_RATE = 10
+
+# The respawn time multiplier of the creatures
+# Default: 10
+ENEMY_RESPAWN_RATE = 10
+
+# The drop rate of materials
+# Default: 5
+ENEMY_MATS_DROP_RATE = 5
+
+# The drop rate of the keys
+# Default: 5
+ENEMY_BOSS_KEY_RATE = 5
+
+# The speed multiplier used on gained experience points from recipes
+# Default: 2
+RECIPE_EXP_RATE = 2
+
+# The cost multiplier used on crafting material prices
+# Default: 5
+RECIPE_MAT_REQUIRED = 5
+
+# The cost multiplier used while crafting keys
+# Default: 1
+RECIPE_KEY_MAT_REQUIRED = 1
