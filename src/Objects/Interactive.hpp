@@ -15,7 +15,7 @@ namespace Dungeon {
     class Interactive : public IDescriptable {
     public:
         Interactive() : IDescriptable() { }
-        Interactive(objId id) : IDescriptable(id) { }
+        Interactive(const objId& id) : IDescriptable(id) { }
         virtual ~Interactive() { }
         
         Interactive* reads(const string& content) {

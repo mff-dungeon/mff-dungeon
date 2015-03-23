@@ -122,19 +122,24 @@ namespace Dungeon {
 					}
 				}, false));
 
-		list->addAction(new CallbackAction("teleport", "(TH) teleport <id> - teleport yourself everywhere.",
-				RegexMatcher::matcher("teleport( to)? .+"),
+		list->addAction(new CallbackAction("teleport", "(TH) teleport to <id> - teleport yourself everywhere.",
+				RegexMatcher::matcher("teleport to .+"),
 				[] (ActionDescriptor * ad) {
 					smatch matches;
-					RegexMatcher::match("^teleport (.*)$", ad->in_msg, matches);
-					if (!ad->getGM()->hasObject(matches[1])) {
-						*ad << "404: Object not found :)" << eos;
+					RegexMatcher::match("^teleport to (.*)$", ad->in_msg, matches);
+					string name = matches[1].str();
+					if(name.find("/") == string::npos) {
+						name = "location/room/" + Utils::decapitalize(name);
+					}
+					if (!ad->getGM()->hasObject(name)) {
+						*ad << "404: Location was not found :)" << eos;
 						return;
 					}
 
-					LOG("ThorsHammer") << "Admin " << ad->getCaller()->getName() << " teleported to " << matches[1] << " using Thors' Hammer." << LOGF;
-					ad->getGM()->moveAlive(ad->getCaller(), ad->getGM()->getObject(matches[1]));
-							*ad << "You have teleported to " << matches[1] << eos;
+					LOG("ThorsHammer") << "Admin " << ad->getCaller()->getName() << " teleported to " << name << " using Thors' Hammer." << LOGF;
+					ad->getGM()->moveAlive(ad->getCaller(), ad->getGM()->getObject(name));
+					*ad << "You have teleported to " 
+							<< ad->getCaller()->getLocation().safeCast<IDescriptable>()->getName() << eos;
 				}));
 
 		PropertyEditor* pe = new PropertyEditor;

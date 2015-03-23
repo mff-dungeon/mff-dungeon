@@ -164,10 +164,8 @@ namespace Dungeon {
 		sqlCode = sqlite3_step(dbStatement);
 		while (sqlCode == SQLITE_ROW) {
 			Relation* r = new Relation(objId((char *) sqlite3_column_text(dbStatement, 0)),
-					objId((char *) sqlite3_column_text(dbStatement, 2)), // FIXME: Leaks!!!
-					string((char *) sqlite3_column_text(dbStatement, 1)),
-					string((char *) sqlite3_column_text(dbStatement, 3)),
-					string((char *) sqlite3_column_text(dbStatement, 4))); // FIXME: Leaks!!! leaves unallocated memory somehow
+					objId((char *) sqlite3_column_text(dbStatement, 1)), // FIXME: Leaks!!!
+					string((char *) sqlite3_column_text(dbStatement, 2))); // FIXME: Leaks!!! leaves unallocated memory somehow
 			result.push_back(r);
 			sqlCode = sqlite3_step(dbStatement);
 		}
@@ -177,14 +175,12 @@ namespace Dungeon {
 	}
 
 	int DatabaseHandler::addRelation(Relation* rel) {
-		const char *statement = "INSERT INTO relations (pid, sid, pclass, sclass, relation) VALUES (?, ?, ?, ?, ?)";
+		const char *statement = "INSERT INTO relations (mid, sid, relation) VALUES (?, ?, ?)";
 		sqlite3_prepare_v2(dbConnection, statement, (int) strlen(statement), &dbStatement, 0);
 
-		sqlite3_bind_text(dbStatement, 1, rel->pid.c_str(), strlen(rel->pid.c_str()), 0);
+		sqlite3_bind_text(dbStatement, 1, rel->mid.c_str(), strlen(rel->mid.c_str()), 0);
 		sqlite3_bind_text(dbStatement, 2, rel->sid.c_str(), strlen(rel->sid.c_str()), 0);
-		sqlite3_bind_text(dbStatement, 3, rel->pclass.c_str(), strlen(rel->pclass.c_str()), 0);
-		sqlite3_bind_text(dbStatement, 4, rel->sclass.c_str(), strlen(rel->sclass.c_str()), 0);
-		sqlite3_bind_text(dbStatement, 5, rel->relation.c_str(), strlen(rel->relation.c_str()), 0);
+		sqlite3_bind_text(dbStatement, 3, rel->relation.c_str(), strlen(rel->relation.c_str()), 0);
 
 		sqlCode = sqlite3_step(dbStatement);
 		if (sqlCode != SQLITE_DONE) {
@@ -193,7 +189,7 @@ namespace Dungeon {
 			return E_UPDATE_ERROR;
 		}
 		finalize();
-		LOGS("DatabaseHandler", Debug) << "Relation " << rel->relation << " (" << rel->pid << " -> " << rel->sid << ") successfully added." << LOGF;
+		LOGS("DatabaseHandler", Debug) << "Relation " << rel->relation << " (" << rel->mid << " -> " << rel->sid << ") successfully added." << LOGF;
 		return E_OK;
 	}
 
@@ -270,10 +266,8 @@ namespace Dungeon {
 			"className TEXT NOT NULL," \
 			"data BLOB NOT NULL);";
 		const char* create2 = "CREATE TABLE relations (" \
-			"pid TEXT NOT NULL," \
-			"pclass TEXT NOT NULL," \
+			"mid TEXT NOT NULL," \
 			"sid TEXT NOT NULL," \
-			"sclass TEXT NOT NULL, " \
 			"relation TEXT NOT NULL);";
 		// Parent id, type, Slave id, type, type of relation
 

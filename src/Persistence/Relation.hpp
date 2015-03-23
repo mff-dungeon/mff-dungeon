@@ -20,8 +20,8 @@ namespace Dungeon {
          */
 	class Relation {
 	public:
-            objId pid, sid;
-            string pclass, sclass, relation;
+            objId mid, sid;
+            string relation;
             
             enum Dir : bool {
                 Slave = false,
@@ -31,14 +31,11 @@ namespace Dungeon {
             /**
              * Constructs a new relation. May be supplied with empty string 
              * considering them as wildcards (*) for the database queries
-             * @param pid objectId of the parent object
-             * @param sid objectId of the son object
-             * @param pclass className of the parent object
-             * @param sclass className of the son object
+             * @param mid objectId of the master object
+             * @param sid objectId of the slave object
              * @param relation the identifier of the relation
              */
-            Relation(objId pid, objId sid, string pclass,
-                    string sclass, string relation);
+            Relation(objId mid, objId sid, string relation) : mid(mid), sid(sid), relation(relation) { }
 
             /**
              * Forms a select query matching the member variables of the object
@@ -61,9 +58,7 @@ namespace Dungeon {
 		bool addWhere(stringstream& query);
 	};
         
-        
-            
-        inline Relation::Dir operator!(const Relation::Dir dir) { return Relation::Dir(!(bool) dir); }
+	inline Relation::Dir operator!(const Relation::Dir dir) { return Relation::Dir(!(bool) dir); }
 }
 
 #endif

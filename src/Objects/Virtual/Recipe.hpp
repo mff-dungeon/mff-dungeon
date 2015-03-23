@@ -11,8 +11,8 @@ namespace Dungeon {
 	 */
 	class Recipe : public IDescriptable {
 	public:
-		Recipe() { }
-		Recipe(const objId& id) : IDescriptable(id) { }
+		Recipe() { initResources(); }
+		Recipe(const objId& id) : IDescriptable(id) { initResources(); }
 		virtual ~Recipe() { }
 
 		virtual string getDescription() const;
@@ -43,6 +43,7 @@ namespace Dungeon {
 		int level = 1;
 		int experience = 0;
 		Human::Stats mainStat = Human::Crafting;
+		void initResources();
                 
 		int resources [Resource::Count];
 

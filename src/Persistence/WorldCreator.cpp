@@ -1303,7 +1303,7 @@ namespace Dungeon {
 				->setName("Big leather backpack")
 				->setLongName("...")
 				->save();
-		templates["recipe/dragonleatherpack"] = createObject<Recipe>("template/recipe/hardleatherpack/1")
+		templates["recipe/dragonleatherpack"] = createObject<Recipe>("template/recipe/dragonleatherpack/1")
 				->setExperience(350 * RECIPE_EXP_RATE)
 				->setLevel(41)
 				->setResource(Resource::DragonSkin, 25 * RECIPE_MAT_REQUIRED)
@@ -2168,7 +2168,7 @@ namespace Dungeon {
 				->save().unsafeCast<Location>();
 		rooms["brightlake"] = brightlake;
 		
-		createObject<Healing>("trap/healing/lightland")
+		createObject<Healing>("trap/healing/brightlake")
 				->setRate(400 * Healing::PerHour)
 				->setTarget(brightlake)
 				->save();
@@ -2693,7 +2693,8 @@ namespace Dungeon {
 							->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop.")
 							->save())
 						->setName("Wooden club")
-						->setLongName("Wooden club"))
+						->setLongName("Wooden club")
+						->save())
 					->setName("Old anvil")
 					->setDescription("An old rusty anvil.")
 					->save();

@@ -9,6 +9,12 @@
 
 namespace Dungeon {
 
+	void Recipe::initResources() {
+		for(size_t i = Resource::BEGIN; i != Resource::END; i++) {
+			this->resources[i] = 0;
+		}
+	}
+	
 	int Recipe::getLevel() const {
 		return level;
 	}

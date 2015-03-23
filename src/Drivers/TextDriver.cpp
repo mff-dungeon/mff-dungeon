@@ -20,6 +20,20 @@ namespace Dungeon {
 						debugfile.open("debug/messages.txt", ios::out | ios::app);
 						debugfile << message << ";";
 						
+						/*
+						 *					*** FIXME ***
+						 *	Broken. ActionList is not cleared when a match is uncertain because of thrown TrapException.
+						 *  Therefore, it leaves the list uncleared with old/invalid objects and next call of the affected 
+						 *  action breaks the game.
+						 *  Example: 
+						 *		- drink potion
+						 *		- which one, red or blue?
+						 *		- red
+						 *	( actions are left in the alist )
+						 *		- drink potion
+						 *		KABOOOOOOOOOOM
+						 */
+						
 						for (ActionList::iterator it = alist.begin(); it != alist.end(); ++it) {
 							Action* action = it->second;
 							LOGS("TextDriver", Debug) << "Matching action " << it->first << LOGF;

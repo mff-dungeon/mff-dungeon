@@ -111,6 +111,7 @@ namespace Dungeon {
 		bool isFinished() {
 			return dialogReplies.empty();
 		}
+		
 		/**
 		 * If this action isn't finished yet, driver should call this function
 		 * whenever user types a message.
@@ -121,6 +122,7 @@ namespace Dungeon {
 			dialogReplies.pop();
 			r(this, reply);
 		}
+		
 		void clearDialog() {
 			queue<dialogReply>().swap(dialogReplies); // Trick
 		}
