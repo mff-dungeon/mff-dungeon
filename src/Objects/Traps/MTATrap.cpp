@@ -9,15 +9,46 @@
 namespace Dungeon {
 
 	ObjectPointer MTATrap::wrapFind(ObjectMap objects, MultiTargetAction* action, string str, ActionDescriptor* ad) {
+		bool any = false;
 		try {
 			ObjectGroup grp(objects);
-			ObjectPointer target = grp.match(str);
+			ObjectPointer target;
+			string lower = Utils::decapitalize(string(str));
+			
+			size_t found = 0;
+			if(lower.find("any") == 0) {
+				found = str.find(" ");
+				any = true;
+			}
+			if(found == string::npos || found == str.size()-1) {
+				// There is nothing else than any[^ ]*, choose anything
+				target = grp.begin()->second;
+			}
+			else {
+				if(any) {
+					str = str.substr(found+1);
+				}
+				target = grp.match(str);
+			}
 			IDescriptable* obj = target.safeCast<IDescriptable>();
-			if (obj) LOGS("MTATrap", Debug) << "Selected " << obj->getLongName() << LOGF;
+			if (obj) {
+				if(any) {
+					*ad << "I've chosen " << obj->getName() << " for you." << eos;
+				}
+				LOGS("MTATrap", Debug) << "Selected " << obj->getLongName() << LOGF;
+			}
 			return target;
 		} catch (const StringMatcher::Uncertain<ObjectPointer>& e) {
 			if (!ad)
 				return ObjectPointer(); // Sorry, no chance
+			if (any) { // Starts with any, user doesn't care, return the first one
+				if(e.possibleTargets.size() > 0) {
+					// Unsafe cast is possible, in OG::match there are only IDescriptables added
+					IDescriptable* obj = e.possibleTargets.at(0).unsafeCast<IDescriptable>();
+					*ad << "If you don't care, I'll just take " << obj->getName() << "." << eos;
+					return e.possibleTargets.at(0);
+				}
+			}
 
 			ad->matched(action); // Because of thrown exception, this will be skipped
 			this->phase = Selecting;
@@ -50,6 +81,12 @@ namespace Dungeon {
 		switch (phase) {
 			case Selecting:
 				ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
+					if(Utils::decapitalize(string(reply)) == "none") { 
+						// using copied string, to prevent modifying the entry
+						*ad << "Okay, I won't do anything." << eos;
+						phase = Cancel;
+						throw TrapException(this);
+					}
 					target = wrapFind(this->objects, (MultiTargetAction*) ad->getAction(), reply, ad);
 					phase = Return;
 							throw TrapException(this);

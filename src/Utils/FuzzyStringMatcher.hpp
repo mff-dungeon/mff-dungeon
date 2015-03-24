@@ -114,6 +114,10 @@ namespace Dungeon {
 			return *this;
 		}
 		strMap.insert(pair<string, value_type>(searchstring,value));
+		if (strMap.size() == 2) {
+			strMap.insert(pair<string, value_type>(string("any"),value));
+			strMap.insert(pair<string, value_type>(string("anything"),value));
+		}
 		return *this;
 	}
 	
