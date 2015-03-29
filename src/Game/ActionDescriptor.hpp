@@ -97,7 +97,7 @@ namespace Dungeon {
 		 * @param callback Function receiving (AD*, string), where the string is user's reply.
 		 */
 		void waitForReply(dialogReply callback) {
-			LOGS("ActionDescriptor", Debug) << "Requested a dialog reply for user " << caller->getName() << "." << LOGF;
+			LOGS(Debug) << "Requested a dialog reply for user " << caller->getName() << "." << LOGF;
 			dialogReplies.push(callback);
 		}
 		/**

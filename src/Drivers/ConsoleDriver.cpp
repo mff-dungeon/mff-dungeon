@@ -5,7 +5,7 @@ namespace Dungeon {
 	ConsoleDriver::ConsoleDriver(ActionQueue* queue, Human* figure) : TextDriver(queue), figure(figure) { }
 
 	void ConsoleDriver::worker() {
-		LOG("ConsoleDriver") << "Worker started." << LOGF;
+		LOG << "Worker started." << LOGF;
 
 		string line;
 		while (getline(cin, line), !cin.eof()) {
@@ -16,7 +16,7 @@ namespace Dungeon {
 			queue->enqueue(ad);
 		}
 
-		LOG("ConsoleDriver") << "Worker ended." << LOGF;
+		LOG << "Worker ended." << LOGF;
 		this->queue->stop();
 	}
 

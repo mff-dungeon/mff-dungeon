@@ -110,7 +110,7 @@ namespace Dungeon {
 	template<typename value_type>
 	FuzzyStringMatcher<value_type>& FuzzyStringMatcher<value_type>::add(string searchstring, value_type value) {
 		if (searchstring.length() == 0) {
-			LOGS("FSM", Warning) << "Adding empty string." << LOGF;
+			LOGS(Warning) << "Adding empty string." << LOGF;
 			return *this;
 		}
 		strMap.insert(pair<string, value_type>(searchstring,value));
@@ -181,10 +181,10 @@ namespace Dungeon {
 	template<typename value_type>
 	value_type FuzzyStringMatcher<value_type>::find(const string& needle) {
 		if (needle.length() == 0) {
-			LOGS("FSM", Warning) << "Tried to find empty string." << LOGF;
+			LOGS(Warning) << "Tried to find empty string." << LOGF;
 			throw StringMatcher::NoCandidate("You must write something.");
 		}
-		LOGS("FuzzyMatcher", Debug) << "Looking for " << needle << LOGF;
+		LOGS(Debug) << "Looking for " << needle << LOGF;
 		int max = 0;
 		auto maxMatch = strMap.begin();
 		bool uncertain = true;
@@ -194,7 +194,7 @@ namespace Dungeon {
 		for (auto pair = strMap.begin(); pair != strMap.end(); pair++) {
 			vector<string> hTok = StringMatcher::tokenize(pair->first);
 			int d = getEqualness(nTok, hTok);
-			LOGS("FuzzyMatcher", Debug) << " in " << pair->first << " -> " << d << " equalness" << LOGF;
+			LOGS(Debug) << " in " << pair->first << " -> " << d << " equalness" << LOGF;
 			if (d > max) {
 				max = d;
 				maxMatch = pair;

@@ -33,13 +33,13 @@ namespace Dungeon {
 			ObjectPointer target = getTarget();
 			if (target->instanceOf(Alive)) {
 				target.unsafeCast<Alive>()->changeHp(healedHp, ad);
-				LOGS("Healing", Debug) << "Healed " << target->getId() << " for " << healedHp << LOGF;
+				LOGS(Debug) << "Healed " << target->getId() << " for " << healedHp << LOGF;
 			} else if (target->instanceOf(Location)) {
 				for (auto obj : target->getRelations(Relation::Master, R_INSIDE)) {
 					if (obj.second->instanceOf(Alive))
 						obj.second.unsafeCast<Alive>()->changeHp(healedHp, ad);
 				}
-				LOGS("Healing", Debug) << "Healed everything in " << target.getId() << " for " << healedHp << LOGF;
+				LOGS(Debug) << "Healed everything in " << target.getId() << " for " << healedHp << LOGF;
 			}
 
 			save();

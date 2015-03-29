@@ -87,7 +87,7 @@ namespace Dungeon {
         virtual ~Base()
         {
             if (isLocked())
-                LOGS("Object::Base", Error) << "Locked object is being deleted, something is wrong!" << LOGF;
+                LOGS(Error) << "Locked object is being deleted, something is wrong!" << LOGF;
         };
 
         virtual const objId& getId() const;

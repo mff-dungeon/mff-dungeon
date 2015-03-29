@@ -100,13 +100,13 @@ namespace Dungeon {
 		Node* f = this->mroot;
 		Node* p = nullptr;
 		if(obj == nullptr) {
-			LOGS("SplayTree", Fatal) << "Attempted to insert a null pointer." << LOGF;
+			LOGS(Fatal) << "Attempted to insert a null pointer." << LOGF;
 			return;
 		}
 		while(f != nullptr) {
 			p = f;
 			if(f->value->getId() == obj->getId()) {
-				LOGS("SplayTree", Error) << "Insertion failed. Node with id " << obj->getId() << " is already in the tree." << LOGF;
+				LOGS(Error) << "Insertion failed. Node with id " << obj->getId() << " is already in the tree." << LOGF;
 				return;
 			}
 			else if(f->value->getId() < obj->getId()) {
@@ -128,7 +128,7 @@ namespace Dungeon {
 		else
 			p->right = f;
 
-		LOGS("SplayTree", Debug) << "Node with id " << obj->getId() << " inserted." << LOGF;
+		LOGS(Debug) << "Node with id " << obj->getId() << " inserted." << LOGF;
 		this->splay(f);
 	};
 
@@ -164,7 +164,7 @@ namespace Dungeon {
 		}
 		
 		if(f == nullptr) {
-			LOGS("SplayTree", Debug) << "Requested removing node with id " << id << ", but it wasn't found." << LOGF;
+			LOGS(Debug) << "Requested removing node with id " << id << ", but it wasn't found." << LOGF;
 			return;
 		}
 
@@ -185,11 +185,11 @@ namespace Dungeon {
 		}
 
 		delete f;
-		LOGS("SplayTree", Debug) << "Node with id " << id << " removed from the tree." << LOGF;
+		LOGS(Debug) << "Node with id " << id << " removed from the tree." << LOGF;
 	};
 	
 	void SplayTree::clearTree() {
-		LOG("SplayTree") << "Clearing whole game tree." << LOGF;
+		LOG << "Clearing whole game tree." << LOGF;
 		Node *f = this->mroot;
 		while(f != nullptr) {
 			if(f->left != nullptr) {

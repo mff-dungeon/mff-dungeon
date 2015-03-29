@@ -101,7 +101,7 @@ namespace Dungeon {
 		Recipe* r = target.unsafeCast<Recipe>();
 		if (!r->checkStatReqs(ad->getCaller(), ad)) {
 			*ad << "You cannot craft this item yet." << eos;
-			LOGS("Crafter", Error) << "Somehow, an unsuitable item got to the create action." << LOGF;
+			LOGS(Error) << "Somehow, an unsuitable item got to the create action." << LOGF;
 		} else {
 			r->tryCraft(ad);
 		}

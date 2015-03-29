@@ -45,7 +45,7 @@ namespace Dungeon {
 			*ad << "There was no such stat found." << eos;
 			return;
 		}
-		LOGS("Stats", Debug) << "Requested raising stat " << selectedStat << "." << LOGF;
+		LOGS(Debug) << "Requested raising stat " << selectedStat << "." << LOGF;
 		Human* h = ad->getCaller();
 		if (h->getFreePoints() == 0) {
 			*ad << "You have no free points to distribute." << eos;

@@ -62,7 +62,7 @@ namespace Dungeon {
 				return "Your defense is boosted by " + getName() + ".";
 			case Slot::Invalid:
 			default:
-				LOGS("Wearable", Error) << "Undefined Wearable slot " << getSlot() << "." << LOGF;
+				LOGS(Error) << "Undefined Wearable slot " << getSlot() << "." << LOGF;
 				return getName() + " is fucking out of our tables for some reason.";
 		}
 	}

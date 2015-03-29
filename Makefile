@@ -11,6 +11,7 @@ DYNAMICS := $(shell find $(SRCDIR)/Objects/ -type f -iname "*.$(HEADEREXT)")
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -std=c++11 -g -Wall -I/usr/local/include
 LDFLAGS := -lstdc++ -lpthread -lsqlite3 -L/usr/local/lib -lgloox -lm
+LOGFLAGS :=
 
 $(TARGET): $(OBJECTS) build/main.o
 	@mkdir -p $(shell dirname $@)
@@ -26,12 +27,12 @@ src/dynamic.hpp: $(DYNAMICS)
 build/main.o: src/main.cpp src/dynamic.hpp
 	@mkdir -p $(shell dirname $@)
 	@echo "[ CC ] " $< " --> " $@
-	@$(CC) $(CFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) $(LOGFLAGS) -D_LOGUNIT=\"$(notdir $<)\" -c -o $@ $<
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) $(SRCDIR)/%.$(HEADEREXT)
 	@mkdir -p $(shell dirname $@)
 	@echo "[ CC ] " $< " --> " $@
-	@$(CC) $(CFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) $(LOGFLAGS) -D_LOGUNIT=\"$(notdir $<)\" -c -o $@ $<
 
 doc/Documentation.pdf: $(shell find doc/ -type f -not -iname "Documentation.pdf")
 	@echo [ TeX ] Generating documentation...
@@ -48,8 +49,11 @@ sedfix:
 tester: test/tester.cpp $(OBJECTS)
 	@echo "[ CC ]  test/tester.cpp --> bin/tester"
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o bin/tester $<
-	
+
 all: $(TARGET) doc
+
+debug: LOGFLAGS := -D_LOGMORE
+debug: clean all
 
 doc: doc/Documentation.pdf
 

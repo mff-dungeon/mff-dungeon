@@ -48,7 +48,7 @@ namespace Dungeon {
         void setLock(bool lock = true) {
             if (locked != lock) {
 				assertExists("Object must exist in order to be locked.");
-                LOGS("ObjectPointer", Debug) << "Object " << id << " is now " << (lock ? "locked" : "unlocked") << LOGF;
+                LOGS(Debug) << "Object " << id << " is now " << (lock ? "locked" : "unlocked") << LOGF;
                 if (locked) get()->loadLock++;
                 else get()->loadLock--;
                 locked = lock;
@@ -65,10 +65,10 @@ namespace Dungeon {
             try {
                 Base* target = dynamic_cast<T*>(get());
                 if (!target)
-                    LOG("ObjectPointer") << "Tried to cast " + id + " to " + typeid(T).name() + " but that's not possible." << LOGF;
+                    LOG << "Tried to cast " + id + " to " + typeid(T).name() + " but that's not possible." << LOGF;
                 return (T*) target;
             } catch (ObjectLost& exception) {
-                LOG("ObjectPointer") << "Safe-casted non-existing object id " << id << LOGF;
+                LOG << "Safe-casted non-existing object id " << id << LOGF;
                 return nullptr;
             }
         }

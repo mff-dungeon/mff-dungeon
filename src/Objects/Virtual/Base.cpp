@@ -39,7 +39,7 @@ namespace Dungeon {
 	void Base::delegateGetActions(ActionList* list, ObjectPointer callee, std::initializer_list<const string> relations) const {
 		for (auto& type : relations) {
 			for (auto& rel : getRelations(Relation::Master, type)) {
-				LOGS("Base", Debug) << getId() << " delegating by " << type << " to " << rel.first << LOGF;
+				LOGS(Debug) << getId() << " delegating by " << type << " to " << rel.first << LOGF;
 				rel.second->getActionsRecursive(list, callee);
 			}
 		}
@@ -60,7 +60,7 @@ namespace Dungeon {
 	Base* Base::load(Archiver& stream, const string& className) {
 		Base* clone = ObjectList::getInstance().create(className);
 		if(clone == 0) {
-			LOGS("Object::Base", Error) << "Error creating object of type " << className << "." << LOGF;
+			LOGS(Error) << "Error creating object of type " << className << "." << LOGF;
 			throw runtime_error("Object::Base::load: Error creating object.");
 		}
 
@@ -71,7 +71,7 @@ namespace Dungeon {
 	
 	bool Base::hasRelation(const string& type, ObjectPointer other, Relation::Dir dir) {
 		try {
-		LOGS("Object::Base", Verbose) << "Checking relation " << getId() << (dir ? "-->" : "<--") << other.getId() << " type " << type << LOGF;
+		LOGS(Verbose) << "Checking relation " << getId() << (dir ? "-->" : "<--") << other.getId() << " type " << type << LOGF;
 			if(dir == Relation::Master) {
 				return relation_master[type].find(other.getId()) != relation_master[type].end();
 			} else {
@@ -85,7 +85,7 @@ namespace Dungeon {
 	void Base::addRelation(const string& type, ObjectPointer other, Relation::Dir dir){
 		if (hasRelation(type, other, dir)) return;
 		
-		LOGS("Object::Base", Debug) << "Adding relation " << getId() << (dir ? " <-- " : " --> ") << other.getId() << " of type " << type << LOGF;
+		LOGS(Debug) << "Adding relation " << getId() << (dir ? " <-- " : " --> ") << other.getId() << " of type " << type << LOGF;
 		if(dir) {
 			relation_master[type][other.getId()] = other;
 		}
@@ -150,7 +150,7 @@ namespace Dungeon {
 	void Base::eraseRelation(const string& type, ObjectPointer other, Relation::Dir dir) {
 		if (!other || !hasRelation(type, other, dir)) return;
 		
-		LOGS("Object::Base", Debug) << "Erasing relation " << getId() << (dir ? " <-- " : " --> ") << other.getId() << " of type " << type << LOGF;
+		LOGS(Debug) << "Erasing relation " << getId() << (dir ? " <-- " : " --> ") << other.getId() << " of type " << type << LOGF;
 		if(dir) {
 			relation_master.at(type).erase(other.getId());
 		}
@@ -182,10 +182,10 @@ namespace Dungeon {
 	
 	ObjectPointer Base::triggerTraps(const string& event, ActionDescriptor* ad) {
 		try {
-			LOGS("Object::Base", Debug) << "Triggering event " << event << " on " << id << ":" << LOGF;
+			LOGS(Debug) << "Triggering event " << event << " on " << id << ":" << LOGF;
 			const ObjectMap& map = getRelations(Relation::Slave, Trap::getRelation(event));
 			for (const ObjectMap::value_type& pair : map) {
-				LOGS("Object::Base", Debug) << "	trap " << pair.second.getId() << LOGF;
+				LOGS(Debug) << "	trap " << pair.second.getId() << LOGF;
 				pair.second.safeCast<Trap>()->trigger(event, this, ad);
 			}
 		} catch (std::out_of_range& e) {}

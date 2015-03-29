@@ -20,7 +20,7 @@ namespace Dungeon {
 		map<string, const Base*>::const_iterator it = names.find(className);
 		if (it == names.end()) {
 			names.insert(pair<string, const Base*>(className,o));
-			LOGS("ObjectList", Debug) << "Registered class " << className << " into an object list." << LOGF;
+			LOGS(Debug) << "Registered class " << className << " into an object list." << LOGF;
 		}
 	}
 
@@ -29,10 +29,10 @@ namespace Dungeon {
 	Base* ObjectList::create(string className) {
 		map<string, const Base*>::const_iterator it = names.find(className);
 		if (it == names.end()) {
-			LOGS("ObjectList", Error) << "Attempted to create an instance of unknown class: " << className << "." << LOGF;
+			LOGS(Error) << "Attempted to create an instance of unknown class: " << className << "." << LOGF;
 			return nullptr;
 		}
-		LOGS("ObjectList", Debug) << "Created a new instance of " << className << LOGF;
+		LOGS(Debug) << "Created a new instance of " << className << LOGF;
 		return it->second->createObject();
 	}
 }

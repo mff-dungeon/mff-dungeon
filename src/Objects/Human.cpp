@@ -60,7 +60,7 @@ namespace Dungeon {
 	}
 
 	Human* Human::addExperience(int exp, ActionDescriptor* ad) {
-		LOGS("Human", Debug) << getId() << " has acquired " << exp << " experience pts." << LOGF;
+		LOGS(Debug) << getId() << " has acquired " << exp << " experience pts." << LOGF;
 		this->exp += exp;
 		while (getRequiredExp(getCharacterLevel() + 1) <= this->exp) {
 			doLevelUp(ad);
@@ -75,7 +75,7 @@ namespace Dungeon {
 	void Human::doLevelUp(ActionDescriptor* ad) {
 		this->level++;
 		this->freepoints += Config::LevelStats();
-		LOGS("Human", Debug) << getId() << " has acquired a new level." << LOGF;
+		LOGS(Debug) << getId() << " has acquired a new level." << LOGF;
 		if (ad) {
 			*ad << "You have just advanced to a new level. You have just gained "
 					<< Config::LevelStats()
@@ -221,7 +221,7 @@ namespace Dungeon {
 	}
 
 	Alive* Human::die(ActionDescriptor* ad) {
-		LOGS("Human", Verbose) << getId() << " has died. What a poor person." << LOGF;
+		LOGS(Verbose) << getId() << " has died. What a poor person." << LOGF;
 		this->setState(State::Dead);
 		if (getGameManager()->getGameMode() == GameManager::Hardcore) {
 			HardcoreRespawn* trap = new HardcoreRespawn("HardcoreRespawn/trap/" + RANDID);

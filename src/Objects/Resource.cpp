@@ -80,7 +80,7 @@ namespace Dungeon {
 			case ResourceType::Sand:
 				return "Stuff from beaches (" + to_string(getQuantity()) + " units).";
 			default:
-				LOGS("Resource", Error) << "Invalid resource type requested " << getType() << "." << LOGF;
+				LOGS(Error) << "Invalid resource type requested " << getType() << "." << LOGF;
 				return "They are more adorable than you would believe.";
 		}
 	}

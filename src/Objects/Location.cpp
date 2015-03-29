@@ -40,7 +40,7 @@ namespace Dungeon {
 	}
 
 	void Location::getActions(ActionList* list, ObjectPointer callee) {
-		LOGS("Location", Debug) << "Getting actions on " << this->getName() << "." << LOGF;
+		LOGS(Debug) << "Getting actions on " << this->getName() << "." << LOGF;
 		delegateGetActions(list, callee, R_INSIDE);
 
 		// Add pickup for items
@@ -79,7 +79,7 @@ namespace Dungeon {
 	}
 
 	void Location::examine(ActionDescriptor* ad) {
-		LOGS("Location", Debug) << "Exploring " << this->getName() << "." << LOGF;
+		LOGS(Debug) << "Exploring " << this->getName() << "." << LOGF;
 		triggerTraps("examine", ad);
 		if (!ad) return;
 		ObjectPointer alive = ad->getCaller();
@@ -164,7 +164,7 @@ namespace Dungeon {
 		Location* current = item->getSingleRelation(R_INSIDE, Relation::Slave, "The item is located in more than one location.")
 				.safeCast<Location>();
 		if (!current) {
-			LOGS("PickupAction", Error) << "The item is nowhere?!" << LOGF;
+			LOGS(Error) << "The item is nowhere?!" << LOGF;
 			return;
 		}
 		ad->getGM()->removeRelation(current, item, R_INSIDE);

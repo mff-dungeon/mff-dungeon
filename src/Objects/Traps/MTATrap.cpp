@@ -35,7 +35,7 @@ namespace Dungeon {
 				if(any) {
 					*ad << "I've chosen " << obj->getName() << " for you." << eos;
 				}
-				LOGS("MTATrap", Debug) << "Selected " << obj->getLongName() << LOGF;
+				LOGS(Debug) << "Selected " << obj->getLongName() << LOGF;
 			}
 			return target;
 		} catch (const StringMatcher::Uncertain<ObjectPointer>& e) {

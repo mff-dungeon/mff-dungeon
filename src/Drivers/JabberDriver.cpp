@@ -36,7 +36,7 @@ namespace Dungeon {
 	}
 
 	void JabberDriver::worker() {
-		LOG("JabberDriver") << "Worker started." << LOGF;
+		LOG << "Worker started." << LOGF;
 
 		// register event handlers
 		client->registerMessageHandler(this);
@@ -47,7 +47,7 @@ namespace Dungeon {
 		// connect and block this thread until the connection is closed
 		client->connect(true);
 
-		LOG("JabberDriver") << "Worker ended." << LOGF;
+		LOG << "Worker ended." << LOGF;
 	}
 
 	void JabberDriver::stop() {
@@ -105,7 +105,7 @@ namespace Dungeon {
 				return;
 			}
 
-			LOGS("JabberDriver", Verbose) << "User '" << figureId << "' sent a message: '" << contents << "'" << LOGF;
+			LOGS(Verbose) << "User '" << figureId << "' sent a message: '" << contents << "'" << LOGF;
 
 			TextActionDescriptor* ad;
 			if (isInDialog(figureId)) {
@@ -147,12 +147,12 @@ namespace Dungeon {
 			string contents = message.body();
 			string sender = message.from().bare();
 
-			LOGS("JabberDriver", Verbose) << "Received unsupported message type: '" << typeName << "', sender: '" << sender << "', body: '" << contents << "'" << LOGF;
+			LOGS(Verbose) << "Received unsupported message type: '" << typeName << "', sender: '" << sender << "', body: '" << contents << "'" << LOGF;
 		}
 	}
 
 	void JabberDriver::onConnect() {
-		LOG("JabberDriver") << "Connection estabilished." << LOGF;
+		LOG << "Connection estabilished." << LOGF;
 		client->setPresence(Presence::Available, presencePriority(), "The adventure awaits!");
 		connected = true;
 	}
@@ -161,17 +161,17 @@ namespace Dungeon {
 		connected = false;
 
 		if (!shuttingDown) {
-			LOGS("JabberDriver", Error) << "Connection lost, retrying. Error: " << e << LOGF;
+			LOGS(Error) << "Connection lost, retrying. Error: " << e << LOGF;
 
 			this_thread::sleep_for(chrono::seconds(10));
 			client->connect(true);
 		} else {
-			LOG("JabberDriver") << "Connection closed. Error: " << e << LOGF;
+			LOG << "Connection closed. Error: " << e << LOGF;
 		}
 	}
 
 	bool JabberDriver::onTLSConnect(const CertInfo& info) {
-		LOG("JabberDriver") << "TLS connected." << LOGF;
+		LOG << "TLS connected." << LOGF;
 		return true;
 	}
 
@@ -184,7 +184,7 @@ namespace Dungeon {
 		string buffer;
 		bool found = false;
 
-		LOGS("JabberDriver", Debug) << "Looking for figure with objId: '" << figureId << "'." << LOGF;
+		LOGS(Debug) << "Looking for figure with objId: '" << figureId << "'." << LOGF;
 
 		userFile.seekg(0, ios_base::beg);
 		while (getline(userFile, buffer, userFileSeparator())) {
@@ -198,14 +198,14 @@ namespace Dungeon {
 				found = true;
 
 				jid = JID(sessionJid);
-				LOGS("JabberDriver", Debug) << "Found corresponding JID: '" << sessionJid << "'." << LOGF;
+				LOGS(Debug) << "Found corresponding JID: '" << sessionJid << "'." << LOGF;
 				break;
 			}
 		}
 		userFile.clear();
 
 		if (!found) {
-			LOGS("JabberDriver", Debug) << "Not found, discarding..." << LOGF;
+			LOGS(Debug) << "Not found, discarding..." << LOGF;
 		}
 
 		return jid;
@@ -258,12 +258,12 @@ namespace Dungeon {
 				break;
 		}
 
-		LOGS("JabberDriver", Debug) << "Received presence: '" << typeName << "', sender: '" << sender << "', status: '" << status << "'" << LOGF;
+		LOGS(Debug) << "Received presence: '" << typeName << "', sender: '" << sender << "', status: '" << status << "'" << LOGF;
 	}
 
 	void JabberDriver::createNewFigure(JID jid) {
 		objId figureId = this->findFigureId(jid);
-		LOGS("JabberDriver", Info) << "Yay! We've got a new player: " << figureId << LOGF;
+		LOGS(Info) << "Yay! We've got a new player: " << figureId << LOGF;
 
 		Alive* figure = new Human(figureId, jid.username(), jid.bare());
 		this->gm->addNewFigure(figure);
@@ -318,6 +318,6 @@ namespace Dungeon {
 				break;
 		}
 
-		LOGS("JabberDriver", Debug) << "Received subcription packet: '" << typeName << "', sender '" << sender << "', status: '" << status << "'" << LOGF;
+		LOGS(Debug) << "Received subcription packet: '" << typeName << "', sender '" << sender << "', status: '" << status << "'" << LOGF;
 	}
 }

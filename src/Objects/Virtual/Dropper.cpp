@@ -66,7 +66,7 @@ namespace Dungeon {
 				}
 			}
 			string itemName = getItem().safeCast<IDescriptable>()->getName();
-			LOGS("Dropper", Debug) << "Dropped " << amount
+			LOGS(Debug) << "Dropped " << amount
 					<< " items of type " << itemName << "." << LOGF;
 			return true;
 		}

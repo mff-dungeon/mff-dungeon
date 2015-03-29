@@ -1,10 +1,11 @@
 #include "../common.hpp"
 
 #ifndef LOGGER_HPP
-#define	LOGGER_HPP
+#define LOGGER_HPP
 
 #include <iomanip>
 #include <ctime>
+#include <string>
 #include <sstream>
 #include <fstream>
 #include <mutex>
@@ -12,10 +13,23 @@
 
 using namespace std;
 
-#define LOGS(source, severity) Logger::getInstance().writeMessage(source, Logger::Severity::severity, (stringstream()
-#define LOG(source) LOGS(source, Info)
-#define LOGH(headline) { Logger::getInstance().setHeadline(headline); } 
-#define LOGF ""))
+#ifndef _LOGUNIT
+	#define _LOGUNIT "unknown"
+#endif
+
+#define _LOGS(source, severity) Logger::getInstance().writeMessage(source, Logger::Severity::severity, (stringstream()
+#define _LOGF ""))
+
+#ifdef _LOGMORE
+	#define LOGS(severity) _LOGS((std::string(_LOGUNIT) + ":" + std::to_string(__LINE__)), severity)
+	#define LOGF "   (" << __PRETTY_FUNCTION__ << ")" << _LOGF
+#else
+	#define LOGS(severity) _LOGS(_LOGUNIT, severity)
+	#define LOGF _LOGF
+#endif
+
+#define LOG LOGS(Info)
+#define LOGH(headline) { Logger::getInstance().setHeadline(headline); }
 
 namespace Dungeon {
 

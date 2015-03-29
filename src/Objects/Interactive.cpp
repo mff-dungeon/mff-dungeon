@@ -9,7 +9,7 @@ using namespace std;
 namespace Dungeon {
 	
 	void Interactive::attachInteraction(const string& verb, const string& explanation, const string& content) {
-		LOGS("Interactive", Verbose) << "Attaching interactive behavior on " << getId() << ",verb " << verb << LOGF;
+		LOGS(Verbose) << "Attaching interactive behavior on " << getId() << ",verb " << verb << LOGF;
 		BasicInteraction* interaction = new BasicInteraction("trap/interaction/" + getId() + "/" + RANDID);
 		interaction->setContent(content)
 			->setVerb(verb)

@@ -9,7 +9,7 @@ namespace Dungeon {
 
 	void AttackTrap::trigger(const string& event, ObjectPointer room, ActionDescriptor* ad) {
 		if (!ad || ad->state != ActionDescriptor::RoundEnd || ad->getCaller()->getState() == Alive::Dead) {
-			LOGS("AttackTrap", Debug) << "No AD or wrong time" << LOGF;
+			LOGS(Debug) << "No AD or wrong time" << LOGF;
 			return;
 		}
 		target = getSingleRelation(R_TARGET);
@@ -20,13 +20,13 @@ namespace Dungeon {
 					target = pair.second;
 		}
 		if (!target) {
-			LOGS("AttackTrap", Debug) << "No creature" << LOGF;
+			LOGS(Debug) << "No creature" << LOGF;
 			return;
 		}
 
 		target.assertType<Creature>("Attack trap set for non-creature");
 		if (target.unsafeCast<Creature>()->getState() != Alive::Living) {
-			LOGS("AttackTrap", Debug) << "Creature dead" << LOGF;
+			LOGS(Debug) << "Creature dead" << LOGF;
 			return;
 		}
 

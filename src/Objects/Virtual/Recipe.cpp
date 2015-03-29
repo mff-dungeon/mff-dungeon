@@ -125,7 +125,7 @@ namespace Dungeon {
 	}
 
 	void Recipe::tryCraft(ActionDescriptor* ad) {
-		LOGS("Recipe", Debug) << "Requested crafting item" << LOGF;
+		LOGS(Debug) << "Requested crafting item" << LOGF;
 		if (!checkStatReqs(ad->getCaller(), ad)) return; // Stats not high enough
 		for (int i = Resource::ManaShard; i >= 0; i--) {
 			if (!ad->getCaller()->hasResourceGreaterThan((Resource::ResourceType) i, getResource(i))) {

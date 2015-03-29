@@ -97,9 +97,9 @@ namespace Dungeon {
 
 	void Creature::getActions(ActionList* list, ObjectPointer callee) {
 		// FIXME: The object should be removed, not in the world anymore - check method die()
-		LOGS("Creature", Debug) << "Listing all actions on " << getId() << "." << LOGF;
+		LOGS(Debug) << "Listing all actions on " << getId() << "." << LOGF;
 		if (getState() == State::Invalid) {
-			LOGS("Creature", Warning) << "A creature " << getId() << " is still existing even though it should have been removed from the world." << LOGF;
+			LOGS(Warning) << "A creature " << getId() << " is still existing even though it should have been removed from the world." << LOGF;
 			return;
 		}
 
@@ -159,7 +159,7 @@ namespace Dungeon {
 					dead << cr->getName();
 					break;
 				default:
-					LOG("Creature") << "Some invalid creature would like to be explored." << LOGF;
+					LOG << "Some invalid creature would like to be explored." << LOGF;
 			}
 		}
 

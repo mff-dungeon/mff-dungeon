@@ -17,10 +17,10 @@ namespace Dungeon {
 		sqlCode = sqlite3_open(Config::DbName().c_str(), &dbConnection);
 		if (sqlCode != SQLITE_OK) {
 			sqlite3_close(dbConnection);
-			LOGS("DatabaseHandler", Error) << "Couldn't open connection, SQLite error code " << sqlCode << "." << LOGF;
+			LOGS(Error) << "Couldn't open connection, SQLite error code " << sqlCode << "." << LOGF;
 			return false;
 		}
-		LOGS("DatabaseHandler", Debug) << "Database connection opened." << LOGF;
+		LOGS(Debug) << "Database connection opened." << LOGF;
 		return true;
 	}
 
@@ -30,7 +30,7 @@ namespace Dungeon {
 
 	bool DatabaseHandler::closeConnection() {
 		sqlCode = sqlite3_close(dbConnection);
-		LOGS("DatabaseHandler", Debug) << "Database connection closed." << LOGF;
+		LOGS(Debug) << "Database connection closed." << LOGF;
 		return true;
 	}
 
@@ -58,7 +58,7 @@ namespace Dungeon {
 			finalize();
 		} else {
 			finalize();
-			LOGS("DatabaseHandler", Error) << "Couldn't count table rows, SQLite error code " << sqlCode << "." << LOGF;
+			LOGS(Error) << "Couldn't count table rows, SQLite error code " << sqlCode << "." << LOGF;
 			return E_COUNT_ERROR;
 		}
 		if (count == 0) {
@@ -76,11 +76,11 @@ namespace Dungeon {
 		sqlCode = sqlite3_step(dbStatement);
 		if (sqlCode != SQLITE_DONE) {
 			finalize();
-			LOGS("DatabaseHandler", Error) << "Update query failed while saving an object, SQLite error code " << sqlCode << "." << LOGF;
+			LOGS(Error) << "Update query failed while saving an object, SQLite error code " << sqlCode << "." << LOGF;
 			return E_UPDATE_ERROR;
 		}
 		finalize();
-		LOGS("DatabaseHandler", Debug) << "Updated object with id " << oid << "." << LOGF;
+		LOGS(Debug) << "Updated object with id " << oid << "." << LOGF;
 		return E_OK;
 	}
 
@@ -109,12 +109,12 @@ namespace Dungeon {
 			delete[] datac;
 		} else {
 			finalize();
-			LOGS("DatabaseHandler", Debug) << "No object with id " << oid << " found." << LOGF;
+			LOGS(Debug) << "No object with id " << oid << " found." << LOGF;
 			return E_NO_ROW; //DatabaseHandler error: No object with id objId found
 		}
 
 		finalize();
-		LOGS("DatabaseHandler", Debug) << "Found object with id " << oid << "." << LOGF;
+		LOGS(Debug) << "Found object with id " << oid << "." << LOGF;
 		return E_OK;
 	}
 
@@ -129,7 +129,7 @@ namespace Dungeon {
 		}
 
 		finalize();
-		LOGS("DatabaseHandler", Debug) << "Queried an object list." << LOGF;
+		LOGS(Debug) << "Queried an object list." << LOGF;
 		return E_OK;
 	}
 
@@ -142,10 +142,10 @@ namespace Dungeon {
 
 		finalize();
 		if (sqlCode != SQLITE_DONE) {
-			LOGS("DatabaseHandler", Error) << "Deleting object with id " << oid << " failed, SQLite error code " << sqlCode << "." << LOGF;
+			LOGS(Error) << "Deleting object with id " << oid << " failed, SQLite error code " << sqlCode << "." << LOGF;
 			return E_DELETE_ERROR;
 		}
-		LOGS("DatabaseHandler", Debug) << "Deleted object with id " << oid << "." << LOGF;
+		LOGS(Debug) << "Deleted object with id " << oid << "." << LOGF;
 		return E_OK;
 	}
 
@@ -154,7 +154,7 @@ namespace Dungeon {
 		// None parameters were handed, that is weird...
 		if (qtmp == "") {
 			sqlite3_close(dbConnection);
-			LOGS("DatabaseHandler", Warning) << "Attempted to execute an invalid getRelations query." << LOGF;
+			LOGS(Warning) << "Attempted to execute an invalid getRelations query." << LOGF;
 			return E_INVALID_QUERY;
 		}
 
@@ -170,7 +170,7 @@ namespace Dungeon {
 			sqlCode = sqlite3_step(dbStatement);
 		}
 		finalize();
-		LOGS("DatabaseHandler", Debug) << "Relations query executed." << LOGF;
+		LOGS(Debug) << "Relations query executed." << LOGF;
 		return E_OK;
 	}
 
@@ -185,11 +185,11 @@ namespace Dungeon {
 		sqlCode = sqlite3_step(dbStatement);
 		if (sqlCode != SQLITE_DONE) {
 			finalize();
-			LOGS("DatabaseHandler", Error) << "Relation inserting failed, SQLite error code " << sqlCode << "." << LOGF;
+			LOGS(Error) << "Relation inserting failed, SQLite error code " << sqlCode << "." << LOGF;
 			return E_UPDATE_ERROR;
 		}
 		finalize();
-		LOGS("DatabaseHandler", Debug) << "Relation " << rel->relation << " (" << rel->mid << " -> " << rel->sid << ") successfully added." << LOGF;
+		LOGS(Debug) << "Relation " << rel->relation << " (" << rel->mid << " -> " << rel->sid << ") successfully added." << LOGF;
 		return E_OK;
 	}
 
@@ -208,10 +208,10 @@ namespace Dungeon {
 
 		finalize();
 		if (sqlCode != SQLITE_DONE) {
-			LOGS("DatabaseHandler", Error) << "Relation removing failed, SQLite error code " << sqlCode << "." << LOGF;
+			LOGS(Error) << "Relation removing failed, SQLite error code " << sqlCode << "." << LOGF;
 			return E_DELETE_ERROR;
 		}
-		LOGS("DatabaseHandler", Debug) << "Relations were successfully removed." << LOGF;
+		LOGS(Debug) << "Relations were successfully removed." << LOGF;
 		return E_OK;
 	}
 
@@ -219,7 +219,7 @@ namespace Dungeon {
 		const string qtmp = rel->getSelectQuery();
 		if (qtmp == "") {
 			sqlite3_close(dbConnection);
-			LOGS("DatabaseHandler", Warning) << "Attempted to execute an invalid hasRelation query." << LOGF;
+			LOGS(Warning) << "Attempted to execute an invalid hasRelation query." << LOGF;
 			return E_INVALID_QUERY;
 		}
 
@@ -234,7 +234,7 @@ namespace Dungeon {
 		}
 
 		finalize();
-		LOGS("DatabaseHandler", Debug) << "Executed a hasRelation query." << LOGF;
+		LOGS(Debug) << "Executed a hasRelation query." << LOGF;
 		return E_OK;
 	}
 
@@ -247,7 +247,7 @@ namespace Dungeon {
 		if (sqlCode == SQLITE_ROW) {
 			int count = sqlite3_column_int(dbStatement, 0);
 			finalize();
-			LOGS("DatabaseHandler", Verbose) << "Executed count query, found " << count << " database tables." << LOGF;
+			LOGS(Verbose) << "Executed count query, found " << count << " database tables." << LOGF;
 			if (count == TABLE_COUNT) {
 				return E_OK;
 			} else {
@@ -255,7 +255,7 @@ namespace Dungeon {
 			}
 		} else {
 			finalize();
-			LOGS("DatabaseHandler", Error) << "Couldn't count table rows, SQLite error code " << sqlCode << "." << LOGF;
+			LOGS(Error) << "Couldn't count table rows, SQLite error code " << sqlCode << "." << LOGF;
 			return E_COUNT_ERROR;
 		}
 	}
@@ -276,7 +276,7 @@ namespace Dungeon {
 		sqlCode = sqlite3_step(dbStatement);
 		if (sqlCode != SQLITE_DONE) {
 			finalize();
-			LOGS("DatabaseHandler", Error) << "Couldn't create database table, SQLite error code " << sqlCode << "." << LOGF;
+			LOGS(Error) << "Couldn't create database table, SQLite error code " << sqlCode << "." << LOGF;
 			return E_TABLE_CREATE_ERROR;
 		}
 		sqlite3_finalize(dbStatement);
@@ -286,12 +286,12 @@ namespace Dungeon {
 		sqlCode = sqlite3_step(dbStatement);
 		if (sqlCode != SQLITE_DONE) {
 			finalize();
-			LOGS("DatabaseHandler", Error) << "Couldn't create database table, SQLite error code " << sqlCode << "." << LOGF;
+			LOGS(Error) << "Couldn't create database table, SQLite error code " << sqlCode << "." << LOGF;
 			return E_TABLE_CREATE_ERROR;
 		}
 
 		sqlite3_close(dbConnection);
-		LOG("DatabaseHandler") << "Database tables created." << LOGF;
+		LOG << "Database tables created." << LOGF;
 		return E_OK;
 	}
 
@@ -303,7 +303,7 @@ namespace Dungeon {
 		sqlCode = sqlite3_step(dbStatement);
 		if (sqlCode != SQLITE_DONE) {
 			finalize();
-			LOGS("DatabaseHandler", Error) << "Couldn't drop database table, SQLite error code " << sqlCode << "." << LOGF;
+			LOGS(Error) << "Couldn't drop database table, SQLite error code " << sqlCode << "." << LOGF;
 			return E_TABLE_DROP_ERROR;
 		}
 		sqlite3_finalize(dbStatement);
@@ -311,12 +311,12 @@ namespace Dungeon {
 		sqlCode = sqlite3_step(dbStatement);
 		if (sqlCode != SQLITE_DONE) {
 			finalize();
-			LOGS("DatabaseHandler", Error) << "Couldn't drop database table, SQLite error code " << sqlCode << "." << LOGF;
+			LOGS(Error) << "Couldn't drop database table, SQLite error code " << sqlCode << "." << LOGF;
 			return E_TABLE_DROP_ERROR;
 		}
 
 		finalize();
-		LOG("DatabaseHandler") << "Database tables dropped." << LOGF;
+		LOG << "Database tables dropped." << LOGF;
 		return E_OK;
 	}
 

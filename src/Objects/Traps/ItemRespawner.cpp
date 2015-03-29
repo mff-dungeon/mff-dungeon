@@ -19,7 +19,7 @@ namespace Dungeon {
 		inst->setSingleRelation(R_INSIDE, location, Relation::Slave);
 		inst->attachTrap(this, "picked");
 		setSingleRelation("last-created", inst);
-		LOGS("ItemRespawn", Debug) << "Respawned " << templ.getId() << " as " << inst.getId() << LOGF;
+		LOGS(Debug) << "Respawned " << templ.getId() << " as " << inst.getId() << LOGF;
 		return inst;
 	}
 

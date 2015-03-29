@@ -196,6 +196,6 @@ namespace Dungeon {
 
 	void Logger::setHeadline(string title) {
 		// headline is actually just a fancy message
-		LOG("") << "------------------------------------------------=[ " << title << " ]" << LOGF;
+		LOG << "------------------------------------------------=[ " << title << " ]" << LOGF;
 	}
 }

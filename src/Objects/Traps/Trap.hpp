@@ -30,7 +30,7 @@ namespace Dungeon {
 		 * @param ad Can be NULL sometimes, then use the exception trigger
 		 */
 		virtual void trigger(const string& event, ObjectPointer target, ActionDescriptor* ad) {
-			LOGS("Trap", Debug) << "Empty trap triggered." << LOGF;
+			LOGS(Debug) << "Empty trap triggered." << LOGF;
 		}
 
 		/**
@@ -52,7 +52,7 @@ namespace Dungeon {
 		 * This method should never be called on Trap.
 		 */
 		virtual void getActions(ActionList * list, ObjectPointer callee) {
-			LOGS("Trap", Error) << "Getting actions od Trap? Srsly?" << LOGF;
+			LOGS(Error) << "Getting actions od Trap? Srsly?" << LOGF;
 		}
 		/**
 		 * Returns name of relation for that event

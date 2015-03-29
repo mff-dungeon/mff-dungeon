@@ -7,26 +7,26 @@ static string ns = "";
 
 void assert(bool cond, string msg) {
     if (!cond) {
-        LOGS("Tester", Error) << "[ F ] " << ns << ":" << msg << LOGF;
+        LOGS(Error) << "[ F ] " << ns << ":" << msg << LOGF;
         failedTests++;
     } else {
-        LOGS("Tester", Verbose) << "[ . ] " << ns << ":" << msg << LOGF;
+        LOGS(Verbose) << "[ . ] " << ns << ":" << msg << LOGF;
 	}
 }
 
 template<typename T>
 void assertEqual(T a, T b, string msg) {
     if (a != b) {
-        LOGS("Tester", Error) << "[ F ] " << ns << ":" << msg << " expected (" << b << ") got (" << a << ")" << LOGF;
+        LOGS(Error) << "[ F ] " << ns << ":" << msg << " expected (" << b << ") got (" << a << ")" << LOGF;
         failedTests++;
     } else {
-        LOGS("Tester", Verbose) << "[ . ] " << ns << ":" << msg << LOGF;
+        LOGS(Verbose) << "[ . ] " << ns << ":" << msg << LOGF;
 	}
 }
 
 void testing(string _namespace) {
     ns = _namespace;
-	LOGS("Tester", Info) << "[---] " << ns << LOGF;
+	LOGS(Info) << "[---] " << ns << LOGF;
 }
 
 void testStart() {
@@ -39,10 +39,10 @@ int testFinish() {
     LOGH("Tester finished.");
     
     if (failedTests) {
-        LOGS("Tester", Error) << "Some tests failed!" << LOGF;
+        LOGS(Error) << "Some tests failed!" << LOGF;
         return failedTests;
     } 
 
-    LOG("Tester") << "All OK!" << LOGF;
+    LOG << "All OK!" << LOGF;
     return 0;
 }

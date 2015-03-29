@@ -55,17 +55,17 @@ string getStacktace() {
 void finish(int signal) {
     if (finishing) {
         LOGH("Hard shutdown");
-        if (signal == SIGINT) LOG("main") << "Caught another SIGINT, already in shutdown mode." << LOGF;
-        else if (signal == SIGTERM) LOG("main") << "Caught another SIGTERM, already in shutdown mode." << LOGF;
+        if (signal == SIGINT) LOG << "Caught another SIGINT, already in shutdown mode." << LOGF;
+        else if (signal == SIGTERM) LOG << "Caught another SIGTERM, already in shutdown mode." << LOGF;
         
-        LOGS("main", Fatal) << "Resolving potentially uncontrollable hang by voluntary suicide (SIGABRT)..." << LOGF;
+        LOGS(Fatal) << "Resolving potentially uncontrollable hang by voluntary suicide (SIGABRT)..." << LOGF;
         abort();
         return;
     }
     
 	LOGH("Finish");
-	if (signal == SIGINT) LOGS("main", Warning) << "Caught SIGINT, terminating..." << LOGF;
-	else if (signal == SIGTERM) LOGS("main", Warning) << "Caught SIGTERM, terminating..." << LOGF;
+	if (signal == SIGINT) LOGS(Warning) << "Caught SIGINT, terminating..." << LOGF;
+	else if (signal == SIGTERM) LOGS(Warning) << "Caught SIGTERM, terminating..." << LOGF;
     
     finishing = true;
 
@@ -78,7 +78,7 @@ void finish(int signal) {
  *  Handles segfault.
  */
 void crash_segv(int signal) {
-    LOGS("main", Fatal) << "Caught SIGSEGV (" << signal << "), crashing... " << getStacktace() << LOGF;
+    LOGS(Fatal) << "Caught SIGSEGV (" << signal << "), crashing... " << getStacktace() << LOGF;
 	throw GameException("Segmentation fault.");
 }
 
@@ -88,20 +88,20 @@ void crash_segv(int signal) {
  */
 void start() {
 	LOGH("Start");
-	LOG("main") << "This is Jabber Dungeon starting." << LOGF;
+	LOG << "This is Jabber Dungeon starting." << LOGF;
 	gm = new GameManager(initWorld);
 
 	//dungeon@eideo.cz, somemagicshit - release user/passwd
 	jabber = new JabberDriver(gm, Config::JabberName(), Config::JabberPasswd());
 	jabber->run();
-	LOG("main") << "Drivers started, starting queue." << LOGF;
+	LOG << "Drivers started, starting queue." << LOGF;
 
 	signal(SIGTERM, finish);
 	signal(SIGINT, finish);
     signal(SIGSEGV, crash_segv);
 	gm->getQueue()->loopToFinish();
 
-	LOG("main") << "Dungeon ends. Bye!" << LOGF;
+	LOG << "Dungeon ends. Bye!" << LOGF;
 }
 
 /*
@@ -124,11 +124,11 @@ void printHelp() {
  */
 void dbRestart() {
 	string answer;
-	LOG("main") << "Database cleanup requested. Are you sure? [y/N]" << LOGF;
+	LOG << "Database cleanup requested. Are you sure? [y/N]" << LOGF;
 
 	getline(cin, answer);
 	if (answer != "y") {
-		LOG("main") << "Cleanup canceled." << LOGF;
+		LOG << "Cleanup canceled." << LOGF;
 	} else {
         initWorld = true;
 	}
@@ -146,27 +146,27 @@ bool parseArguments(vector<string>& args) {
 		} else if(*it == "cleanDB" || *it == "--cleanDB" || *it == "-c") {
 			dbRestart();
 		} else if (*it == "--verbose" || *it == "verbose" || *it == "-v") {
-			LOG("args") << "Requested verbose logging on stdout." << LOGF;
+			LOG << "Requested verbose logging on stdout." << LOGF;
 			Logger::getInstance().setMinSeverity(cout, Logger::Severity::Verbose);
 		} else if (*it == "--debug" || *it == "debug" || *it == "-d") {
-			LOG("args") << "Requested debugging information, debug file was opened." << LOGF;
+			LOG << "Requested debugging information, debug file was opened." << LOGF;
 			debugFile.open(Utils::currentTime("%Y-%m-%d") + "_debug.log", fstream::out | fstream::app | fstream::ate);
 			Logger::getInstance().linkStream(debugFile, Logger::Severity::Debug);
 		} else if (*it == "--printDebug" || *it == "printDebug" || *it == "-p") {
-			LOG("args") << "Requested logging debugging information on stdout." << LOGF;
+			LOG << "Requested logging debugging information on stdout." << LOGF;
 			Logger::getInstance().setMinSeverity(cout, Logger::Severity::Debug);
 		} else if (*it == "--config" || *it == "config" || *it == "-f") {
 			if(Config::isInitialized()) {
-				LOGS("args", Fatal) << "Config is already initialized." << LOGF;
+				LOGS(Fatal) << "Config is already initialized." << LOGF;
 				return false;
 			}
 			if(it+1 == args.end()) {
-				LOGS("args", Fatal) << "Specified config argument has no value." << LOGF;
+				LOGS(Fatal) << "Specified config argument has no value." << LOGF;
 				return false;
 			}
 			string& fname = *(it+1);
 			if(fname.find("-") == 0) {
-				LOGS("args", Fatal) << "Specified config file name starts with a dash. "
+				LOGS(Fatal) << "Specified config file name starts with a dash. "
 						<< "It is possible that you have forgot to put a filename after the config argument. Please use a filename without a dash." << LOGF;
 				return false;
 			}
@@ -174,16 +174,16 @@ bool parseArguments(vector<string>& args) {
 				Config::initialize(fname);
 			}
 			catch (ConfigParser::InvalidFileException& e) {
-				LOGS("args", Fatal) << "Configuration loading error: " << e.what() << LOGF;
+				LOGS(Fatal) << "Configuration loading error: " << e.what() << LOGF;
 				return false;
 			}
 			catch (ConfigParser::InvalidFieldException& e) {
-				LOGS("args", Fatal) << "Configuration loading error: Field " << e.fieldName << " - " << e.what() << LOGF;
+				LOGS(Fatal) << "Configuration loading error: Field " << e.fieldName << " - " << e.what() << LOGF;
 				return false;
 			}
 			it++;
 		} else {
-			LOGS("args", Fatal) << "Unknown argument: " << *it << LOGF;
+			LOGS(Fatal) << "Unknown argument: " << *it << LOGF;
 			cout << "Unknown argument: " << *it << ". Use -h or --help argument to get a list of accepted arguments." << endl;
 			return false;
 		}
@@ -212,13 +212,13 @@ int main(int argc, char** argv) {
 			Config::initialize("config");
 		}
 		catch (ConfigParser::InvalidFileException& e) {
-			LOGS("main", Fatal) << "Configuration loading error: " << e.what() << LOGF;
-			LOGS("main", Fatal) << "There must be either a configuration file in the current folder called \"config\", "
+			LOGS(Fatal) << "Configuration loading error: " << e.what() << LOGF;
+			LOGS(Fatal) << "There must be either a configuration file in the current folder called \"config\", "
 					<< "or you must specify a path to a valid configuration file using command line arguments." << LOGF;
 			return 2;
 		}
 		catch (ConfigParser::InvalidFieldException& e) {
-			LOGS("main", Fatal) << "Configuration loading error: Field " << e.fieldName << " - " << e.what() << LOGF;
+			LOGS(Fatal) << "Configuration loading error: Field " << e.fieldName << " - " << e.what() << LOGF;
 			return 2;
 		}
 	}
@@ -226,7 +226,7 @@ int main(int argc, char** argv) {
 	/*
 	 *	Regular dungeon start 
 	 */
-	LOG("main") << "Starting dungeon..." << LOGF;
+	LOG << "Starting dungeon..." << LOGF;
 	start();
 	if(debugFile.is_open()) debugFile.close();
 	return 0;

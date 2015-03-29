@@ -16,7 +16,7 @@ namespace Dungeon {
 	}
 
 	void Behavior::getActions(ActionList* list, ObjectPointer callee, ObjectPointer target) {
-		LOGS("Behavior", Debug) << "Adding behavior " << verb << " on " << target << LOGF;
+		LOGS(Debug) << "Adding behavior " << verb << " on " << target << LOGF;
 		auto action = new BehaviorAction("behavior-" + verb, this);
 		action->addTarget(target);
 		list->addAction(action);

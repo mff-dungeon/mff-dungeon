@@ -23,7 +23,7 @@ namespace Dungeon {
 		cloned->afterLoad(*this);
 		cloned->save();
 		
-		LOGS("Cloner", Debug) << "Created a copy with id " << newId << "." << LOGF;
+		LOGS(Debug) << "Created a copy with id " << newId << "." << LOGF;
 
 		return cloned;
 	}
@@ -59,13 +59,13 @@ namespace Dungeon {
 
 	ObjectPointer Cloner::shallowClone(ObjectPointer original) {
 		Cloner cl = Cloner(original);
-		LOGS("Cloner", Debug) << "Making shallow clone of object " << original.getId() << "." << LOGF;
+		LOGS(Debug) << "Making shallow clone of object " << original.getId() << "." << LOGF;
 		return cl.getShallowClone();
 	}
 
 	ObjectPointer Cloner::deepClone(ObjectPointer original) {
 		Cloner cl = Cloner(original);
-		LOGS("Cloner", Debug) << "Making deep clone of object " << original.getId() << "." << LOGF;
+		LOGS(Debug) << "Making deep clone of object " << original.getId() << "." << LOGF;
 		return cl.getDeepClone();
 	}
 

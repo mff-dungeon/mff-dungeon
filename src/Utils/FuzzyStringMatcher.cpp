@@ -4,7 +4,7 @@ namespace Dungeon {
 	
     vector<string> StringMatcher::tokenize(const string& instr) {
 		if (instr.length() == 0) {
-			LOGS("FSM", Error) << "Tried to tokenize empty string." << LOGF;
+			LOGS(Error) << "Tried to tokenize empty string." << LOGF;
 			return vector<string>(0);
 		}
         char * str = strdup(instr.c_str());

@@ -20,11 +20,11 @@ namespace Dungeon {
 		if (it == end()) {
 			insert(std::make_pair(action->type, action));
 			action->remember();
-			LOGS("ActionList", Debug) << "Added a multitarget action of type " << action->type << "." << LOGF;
+			LOGS(Debug) << "Added a multitarget action of type " << action->type << "." << LOGF;
 			return action;
 		} else {
 			((MultiTargetAction*) it->second)->merge(action);
-			LOGS("ActionList", Debug) << "Added and merged a multitarget action of type " << action->type << "." << LOGF;
+			LOGS(Debug) << "Added and merged a multitarget action of type " << action->type << "." << LOGF;
 			action->remember()->forget(); // Dispose if not used
 			return (MultiTargetAction*) it->second;
 		}
@@ -33,7 +33,7 @@ namespace Dungeon {
 	Action* ActionList::addAction(Action* action) {
 		insert(std::make_pair(action->type, action));
 		action->remember();
-		LOGS("ActionList", Debug) << "Added an action of type " << action->type << "." << LOGF;
+		LOGS(Debug) << "Added an action of type " << action->type << "." << LOGF;
 		return action;
 	}
 

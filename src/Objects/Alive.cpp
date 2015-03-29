@@ -21,10 +21,10 @@ namespace Dungeon {
 	 *		- done temporary workaround for now
 	 **************************************/
 	void Alive::getAllActions(ActionList* list) {
-		LOGS("Alive", Debug) << "Getting all actions for " << this->getId() << "." << LOGF;
+		LOGS(Debug) << "Getting all actions for " << this->getId() << "." << LOGF;
 		triggerTraps("get-all-actions", nullptr);
 
-		LOGS("Alive", Debug) << "Getting actions in location - " << this->getId() << "." << LOGF;
+		LOGS(Debug) << "Getting actions in location - " << this->getId() << "." << LOGF;
 		auto room = getSingleRelation(R_INSIDE, Relation::Slave);
 		if (!room)
 			this->getActionsRecursive(list, this);
@@ -34,12 +34,12 @@ namespace Dungeon {
 
 	void Alive::getActions(ActionList* list, ObjectPointer callee) {
 		if (getState() == State::Dead) {
-			LOGS("Alive", Debug) << this->getId() << " is dead." << LOGF; 
+			LOGS(Debug) << this->getId() << " is dead." << LOGF; 
 			return;
 		}
 		
 		if (this == callee) { // Remove this condition to allow stealing ;)
-			LOGS("Alive", Debug) << "Getting actions on inventory of " << this->getId() << "." << LOGF;
+			LOGS(Debug) << "Getting actions on inventory of " << this->getId() << "." << LOGF;
 			delegateGetActions(list, this, { R_INVENTORY, "special-th" });
 			for (int slot = 1; slot < Wearable::Slot::Count; slot++)
 				delegateGetActions(list, this, Wearable::SlotRelations[slot]);
@@ -115,7 +115,7 @@ namespace Dungeon {
 			*ad << "Your current hitpoints have changed to " + to_string(hp) + "." << eos;
 		}
 		this->currentHp = hp;
-		LOGS("Alive", Debug) << "Hitpoints of " << getId() << " were changed to " << hp << "." << LOGF;
+		LOGS(Debug) << "Hitpoints of " << getId() << " were changed to " << hp << "." << LOGF;
 		return this;
 	}
 
@@ -179,7 +179,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::damageAlive(ObjectPointer attackerPtr, int amount, ActionDescriptor* ad) {
-		LOGS("Alive", Debug) << "Damaging alive " << attackerPtr.getId() << "." << LOGF;
+		LOGS(Debug) << "Damaging alive " << attackerPtr.getId() << "." << LOGF;
 		Alive* attacker = attackerPtr.safeCast<Alive>();
 		if (amount <= 0) return this;
 		if (ad != nullptr) {
@@ -313,7 +313,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::regenerate(int rate) {
-		LOGS("Alive", Debug) << "Attached healing trap to " << getId() << " healing at rate " << rate << "." << LOGF;
+		LOGS(Debug) << "Attached healing trap to " << getId() << " healing at rate " << rate << "." << LOGF;
 		Healing* heal = new Healing("trap/healing/" + getId());
 		heal->setRate(rate);
 		getGameManager()->insertObject(heal);

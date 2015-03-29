@@ -85,7 +85,7 @@ namespace Dungeon {
 	}
 
 	ActionDescriptor::EndOfSentence *eos() {
-		LOGS("ActionDescriptor", Error) << "Tried to call invalid method eos." << LOGF;
+		LOGS(Error) << "Tried to call invalid method eos." << LOGF;
 		throw GameException("AD: Method eos is not callable.");
 	}
 
@@ -120,7 +120,7 @@ namespace Dungeon {
 	
 	string ActionDescriptor::formatMessage(string msg)
 	{
-		LOGS("formatMessage", Verbose) << "Input: " << msg << LOGF;
+		LOGS(Verbose) << "Input: " << msg << LOGF;
 		string out;
 		for (auto it = msg.begin(); it != msg.end(); ++it) {
 			if (*it == '%') {
@@ -133,7 +133,7 @@ namespace Dungeon {
 					out.append(caller->getUsername());
 					break;
 				default:
-					LOGS("formatMessage", Error) << "Unexpected modifier %" << *it << "!" << LOGF;
+					LOGS(Error) << "Unexpected modifier %" << *it << "!" << LOGF;
 					out.push_back('%');
 					out.push_back(*it);
 				}
@@ -141,7 +141,7 @@ namespace Dungeon {
 				out.push_back(*it);
 			}
 		}
-		LOGS("formatMessage", Verbose) << "Output: " << out << LOGF;
+		LOGS(Verbose) << "Output: " << out << LOGF;
 		return std::move(out);
 	}
 

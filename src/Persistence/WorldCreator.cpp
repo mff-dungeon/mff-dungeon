@@ -30,7 +30,7 @@ namespace Dungeon {
 				->setName("Template storage")
 				->setDescription("Just a room to keep all the templates at one place.")
 				->save().unsafeCast<Location>();
-		LOG("WorldCreator") << "Template room created. " << LOGF;
+		LOG << "Template room created. " << LOGF;
 		
 		/***********************************************************************
 		 *			Resources templates for droppers
@@ -84,7 +84,7 @@ namespace Dungeon {
 				->setWeight(3)
 				->setSize(10)
 				->save();
-		LOG("WorldCreator") << "Resource templates created. " << LOGF;
+		LOG << "Resource templates created. " << LOGF;
 		
 		/**********************************************************************
 		 *			Weapons (weak and strong forms)
@@ -299,7 +299,7 @@ namespace Dungeon {
 				->setLongName("a very powerful enhanced steel sword")
 				->setDescription("...")
 				->save();
-		LOG("WorldCreator") << "Weapon templates created. " << LOGF;
+		LOG << "Weapon templates created. " << LOGF;
 		/**********************************************************************
 		 *			Armor (weak and strong forms)
          **********************************************************************/
@@ -725,7 +725,7 @@ namespace Dungeon {
 				->setName("Magical Dragon leather backpack")
 				->setLongName("...")
 				->save();
-		LOG("WorldCreator") << "Armor templates created. " << LOGF;
+		LOG << "Armor templates created. " << LOGF;
 		/**********************************************************************
 		 *			Potions (weak and strong forms)
          **********************************************************************/
@@ -777,7 +777,7 @@ namespace Dungeon {
 				->setLongName("a dark red potion in a flask")
 				->setDescription("...")
 				->save();
-		LOG("WorldCreator") << "Potion templates created. " << LOGF;
+		LOG << "Potion templates created. " << LOGF;
 		/**********************************************************************
 		 *					Keys 
          **********************************************************************/
@@ -818,7 +818,7 @@ namespace Dungeon {
 				->setLongName("a key in a shape of heptagon")
 				->setDescription("I'll need this key to access the most dangerous areas of the dungeon.")
 				->save();
-		LOG("WorldCreator") << "Key templates created. " << LOGF;
+		LOG << "Key templates created. " << LOGF;
 		/**********************************************************************
 		 *					Recipes - weapons
          **********************************************************************/
@@ -974,7 +974,7 @@ namespace Dungeon {
 				->setName("Enhanced steel sword")
 				->setLongName("a very powerful enhanced steel sword")
 				->save();
-		LOG("WorldCreator") << "Weapon recipe templates created. " << LOGF;
+		LOG << "Weapon recipe templates created. " << LOGF;
 		/**********************************************************************
 		 *					Recipes - potions
          **********************************************************************/
@@ -1031,7 +1031,7 @@ namespace Dungeon {
 				->setName("Large red potion")
 				->setLongName("a dark red potion in a flask")
 				->save();
-		LOG("WorldCreator") << "Potion recipe templates created. " << LOGF;
+		LOG << "Potion recipe templates created. " << LOGF;
 		/**********************************************************************
 		 *					Recipes - Armours
          **********************************************************************/
@@ -1323,7 +1323,7 @@ namespace Dungeon {
 				->setName("Magical dragon leather backpack")
 				->setLongName("...")
 				->save();
-		LOG("WorldCreator") << "Armor recipe templates created. " << LOGF;
+		LOG << "Armor recipe templates created. " << LOGF;
 		/**********************************************************************
 		 *					Recipes - Keys
          **********************************************************************/
@@ -1390,7 +1390,7 @@ namespace Dungeon {
 				->setName("Dragon key")
 				->setLongName("a key with an imprint of dragon")
 				->save();
-		LOG("WorldCreator") << "Key recipe templates created. " << LOGF;
+		LOG << "Key recipe templates created. " << LOGF;
 		/**********************************************************************
 		 *					Crafters
          **********************************************************************/
@@ -1474,7 +1474,7 @@ namespace Dungeon {
 				->setLongName("a glowing tanning rack")
 				->setDescription("...")
 				->save();
-		LOG("WorldCreator") << "Crafters created. " << LOGF;
+		LOG << "Crafters created. " << LOGF;
 		/**********************************************************************
 		 *					Creatures
          **********************************************************************/
@@ -1976,7 +1976,7 @@ namespace Dungeon {
 				->setLongName("...")
 				->setDescription("...")
 				->save();
-		LOG("WorldCreator") << "Creature templates created. " << LOGF;
+		LOG << "Creature templates created. " << LOGF;
 		/*
 		 *	Spells & scrolls created here
 		 */
@@ -2577,24 +2577,24 @@ namespace Dungeon {
 
 	void WorldCreator::bigBang() {
 		LOGH("Big bang");
-		LOG("WorldCreator") << "Big bang initiated. Everything is being created... " << LOGF;
+		LOG << "Big bang initiated. Everything is being created... " << LOGF;
 		createObject<MTATrap>("trap/mta");
 		
 		LOGH("Rooms");
 		initRooms();
-		LOG("WorldCreator") << "Rooms created. " << LOGF;
+		LOG << "Rooms created. " << LOGF;
 		LOGH("Templates");
 		initTemplates();
-		LOG("WorldCreator") << "Templates created. " << LOGF;
+		LOG << "Templates created. " << LOGF;
 		LOGH("Doors");
 		initDoors();
-		LOG("WorldCreator") << "Doors created. " << LOGF;
+		LOG << "Doors created. " << LOGF;
 		LOGH("Admins");
 		initAdmins();
-		LOG("WorldCreator") << "Admins created. " << LOGF;
+		LOG << "Admins created. " << LOGF;
 		LOGH("World");
 		initObjects();
-		LOG("WorldCreator") << "World created. " << LOGF;
+		LOG << "World created. " << LOGF;
 		LOGH("Testing stuff");
 
 		AttackTrap* autoAttack = createObject<AttackTrap>("trap/attack");
