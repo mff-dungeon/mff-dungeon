@@ -1,5 +1,6 @@
 Dungeon
 =======
+[![Build Status](https://travis-ci.org/mff-dungeon/mff-dungeon.svg?branch=master)](https://travis-ci.org/mff-dungeon/mff-dungeon)
 
 An interactive Jabber D&D game.
 
