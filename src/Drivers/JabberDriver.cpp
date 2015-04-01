@@ -73,12 +73,20 @@ namespace Dungeon {
 				.unsafeCast<Human>();
 		// Really need to do it on every reply. Alive object could have been disposed in meantime...
 		ad->assigned(figure);
-
+                
+                // Let user know we are thinking about him right now
+                Message stateMsg(Message::Chat, ad->from);
+                stateMsg.addExtension(new ChatState(ChatStateComposing));
+                client->send(stateMsg);
+   
+                // Do the actual thinking                
 		this->process(ad);
 
-		Message msg(Message::Chat, ad->from, ad->getReply());
+                // Reply
+		Message responseMsg(Message::Chat, ad->from, ad->getReply());
+                responseMsg.addExtension(new ChatState(ChatStateActive));
 		ad->clearReply();
-		client->send(msg);
+		client->send(responseMsg);
 
 		if (ad->isFinished()) {
 			dialogs.erase(figureId);
