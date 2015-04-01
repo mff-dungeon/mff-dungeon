@@ -55,6 +55,9 @@ all: $(TARGET) doc
 debug: LOGFLAGS := -D_LOGMORE
 debug: clean all
 
+ci: CC = $$CXX
+ci: clean all
+
 doc: doc/Documentation.pdf
 
 worldgraph: dumps/world-last.dot
@@ -64,4 +67,4 @@ worldgraph: dumps/world-last.dot
 	@dot -Tpng <dumps/world-last.dot >dumps/world.png
 
 
-.PHONY: clean all doc worldgraph
+.PHONY: clean all ci doc debug worldgraph
