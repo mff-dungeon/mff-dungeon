@@ -133,7 +133,8 @@ namespace Dungeon {
                     << "Is there any way to convince you I don't know what you mean?" << endr
                     << "You must be really bored by now." << endr
                     << "Nope. Still don't know what you mean." << endr
-                    << "Don't test my patience." << endr;
+                    << "Don't test my patience." << endr
+                    << "You just lost the game." << endr;
     }
     
     Action* TextDriver::getCreateAction() {
