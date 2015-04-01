@@ -22,7 +22,10 @@ install:
   - if [ "$CXX" == "clang++" ]; then sudo apt-get install --allow-unauthenticated -qq clang-3.4; fi
   - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.4"; fi
 
-script: make ci
+  # gloox 8
+  - sudo apt-get install --allow-unauthenticated -qq libgloox8
+
+script: make
 
 os:
   - linux
