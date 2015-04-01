@@ -49,15 +49,17 @@ namespace Dungeon {
 
 						if (!ad->isValid(this)) {
 							LOGS(Verbose) << "The query didn't match any possible action." << LOGF;
-							*ad << getDontUnderstandResponse(ad->in_msg) << eos;
+							*ad << getDontUnderstandResponse(ad->in_msg, getPatience(ad->getCaller()->getId())) << eos;
 							debugfile << "!!!!!" << endl;
 							debugfile.close();
+                                                        incrementPatience(ad->getCaller()->getId());
 							return false;
 						}
 					}
 
 					ad->getAction()->validate();
-
+                                        resetPatience(ad->getCaller()->getId());
+                                        
 					ad->state = ActionDescriptor::RoundBegin;
 					ad->getCaller()->onBeforeAction(ad);
 					ad->getCaller()->triggerTraps("action-" + ad->getAction()->type, ad);
@@ -97,6 +99,8 @@ namespace Dungeon {
 			}
 		}
 		catch (GameException& gameException) {
+                        resetPatience(ad->getCaller()->getId());
+                                        
 			LOGS(Error) << "Exception was thrown: " << gameException.what() << LOGF;
 			if (ad->getAction() && ad->getAction()->handleException(gameException, ad))
 				return false;
@@ -106,14 +110,30 @@ namespace Dungeon {
         return false;
     }
     
-    string TextDriver::getDontUnderstandResponse(string input) {
-        return RandomString::get()
-                << "What do you mean \"" + input + "\"?" << endr
-                << "The day may come when I understand \"" + input + "\" but it's not this day." << endr
-                << "You just don't get it, do you? I do not understand \"" + input + "\"!" << endr
-                << "One does not simply ask me to \"" + input + "\"." << endr
-                << "I wouldn't do that if I were you. Besides, I can't do that." << endr
-				<< "This is not the thing you are trying to do." << endr;
+    string TextDriver::getDontUnderstandResponse(string input, int timeSinceLastMatched) {
+        if (timeSinceLastMatched < 0)
+            return "Impossibru.";
+        else if (timeSinceLastMatched < 3)
+            return RandomString::get()
+                    << "Pardon me?" << endr
+                    << "Come again?" << endr
+                    << "I don't understand. Could you please rephrase your last message?" << endr
+                    << "What do you mean \"" + input + "\"?" << endr;
+        else if (timeSinceLastMatched < 10)
+            return RandomString::get()
+                    << "You just don't get it, do you? I don't understand \"" + input + "\"!" << endr
+                    << "One does not simply ask me to \"" + input + "\"." << endr
+                    << "You can try sending this one more time. Perhaps it will change something." << endr
+                    << "This is not the thing you're trying to do." << endr
+                    << "The day may come when I understand you but it's not this day." << endr
+                    << "I wouldn't do that if I were you. Besides, I can't do that." << endr;
+        else
+            return RandomString::get()
+                    << "I think I may have just failed my Turing test." << endr
+                    << "Is there any way to convince you I don't know what you mean?" << endr
+                    << "You must be really bored by now." << endr
+                    << "Nope. Still don't know what you mean." << endr
+                    << "Don't test my patience." << endr;
     }
     
     Action* TextDriver::getCreateAction() {
