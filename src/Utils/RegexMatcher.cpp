@@ -2,11 +2,11 @@
 
 namespace Dungeon {
     
-    bool RegexMatcher::match(string reg, string text) {
+    bool RegexMatcher::match(const string& reg, const string& text) {
 		return regex_match(text, regex(reg));
     }
 	
-    bool RegexMatcher::match(string reg, string text, smatch& matches) {
+    bool RegexMatcher::match(const string& reg, const string& text, smatch& matches) {
 		return regex_match(text, matches, regex(reg));
     }
     
