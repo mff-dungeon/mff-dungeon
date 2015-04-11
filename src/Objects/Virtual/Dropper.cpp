@@ -50,13 +50,13 @@ namespace Dungeon {
 
 	bool Dropper::tryDrop(ObjectPointer loc) {
 		loc.assertExists("You cannot drop item nowhere.").assertType<Location>("You must drop items in the room.");
-		int random = Utils::getRandomInt(1, 1000000);
+		int random = Utils::getRandomInt(0.0_p, 100.0_p);
 		if (random <= getChance()) { // Let's drop it
 			int amount = Utils::getRandomInt(getMin(), getMax());
-			if (getItem()->isInstanceOf(Resource::ResourceClassName)) {
+			if (getItem()->instanceOf(Resource)) {
 				ObjectPointer item = Cloner::deepClone(getItem());
 				getGameManager()->clearRelationsOfType(item, "dropper-item", Relation::Slave);
-				item.safeCast<Resource>()->setQuantity(amount)->attachSumTrap()->save();
+				item.safeCast<Resource>()->setQuantity(amount)->save();
 				item->setSingleRelation(R_INSIDE, loc, Relation::Slave);
 			} else {
 				for (int i = 1; i <= amount; i++) {
@@ -66,8 +66,7 @@ namespace Dungeon {
 				}
 			}
 			string itemName = getItem().safeCast<IDescriptable>()->getName();
-			LOGS(Debug) << "Dropped " << amount
-					<< " items of type " << itemName << "." << LOGF;
+			LOGS(Debug) << "Dropped " << amount << " items of type " << itemName << "." << LOGF;
 			return true;
 		}
 		return false;
@@ -80,8 +79,6 @@ namespace Dungeon {
 		
 		Base::registerProperties(storage);
 	}
-
-	void Dropper::getActions(ActionList* list, ObjectPointer callee) { }
 
 	PERSISTENT_IMPLEMENTATION(Dropper)
 }

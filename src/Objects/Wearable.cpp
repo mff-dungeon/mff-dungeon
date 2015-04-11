@@ -79,16 +79,16 @@ namespace Dungeon {
 		return ss.str();
 	}
 
-	void Wearable::getActions(ActionList* list, ObjectPointer callee) {
+	void Wearable::getActions(ActionDescriptor *ad) {
 		// Do I see this equipped or not?
 
-		if (hasRelation(Wearable::SlotRelations[this->getSlot()], callee, Relation::Slave)) {
-			list->addAction(new UnequipAction)
+		if (hasRelation(Wearable::SlotRelations[this->getSlot()], ad->getCaller(), Relation::Slave)) {
+			ad->getActionList().addAction(new UnequipAction)
 					->addTarget(this);
 		} else {
-			list->addAction(new EquipAction)
+			ad->getActionList().addAction(new EquipAction)
 					->addTarget(this)
-					->useActionFor(this, list);
+					->useActionFor(this, ad);
 		}
 	}
 

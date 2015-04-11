@@ -21,6 +21,10 @@ namespace Dungeon {
 		virtual ~TextDriver() { }
 
 		bool process(TextActionDescriptor* ad);
+		void processFill(TextActionDescriptor* ad);
+		void processMatch(TextActionDescriptor* ad);
+		void processUserReply(TextActionDescriptor* ad);
+		void processRun(TextActionDescriptor* ad);
 
                 /**
                  * Get some fancy response to unmatchable input
@@ -59,9 +63,6 @@ namespace Dungeon {
                 void resetPatience(objId who) {
                     matchingPatience.erase(who);
                 }
-
-	private:
-		ActionList alist;
 	};
 }
 #endif

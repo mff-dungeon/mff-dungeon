@@ -49,7 +49,7 @@ namespace Dungeon {
 		 */
 		virtual string getDescription() const;
 
-		virtual void getActions(ActionList* list, ObjectPointer callee);
+		virtual void getActions(ActionDescriptor* ad);
 		virtual void registerProperties(IPropertyStorage& storage);
 
 	private:

@@ -41,11 +41,7 @@ namespace Dungeon {
 
 		virtual void registerProperties(IPropertyStorage& storage);
 
-		/**
-		 * These will be merged together in some near future. Temporary HACK.
-		 */
-		virtual void getActions(ActionList* list, ObjectPointer callee);
-		virtual void getActions(ActionList* list, ObjectPointer callee, ObjectPointer target);
+		virtual void getActions(ActionDescriptor *ad);
 
 
 		/**

@@ -16,33 +16,30 @@ namespace Dungeon {
 	/*************************************
 	 *	HUGE FIXME
 	 *		- move this method to Human - alive shouldn't call actions in general
-	 *		- clean the method
-	 *		- fix the action finding - now, it always goes through all relations
-	 *		- done temporary workaround for now
 	 **************************************/
-	void Alive::getAllActions(ActionList* list) {
+	void Alive::getAllActions(ActionDescriptor* ad){
 		LOGS(Debug) << "Getting all actions for " << this->getId() << "." << LOGF;
-		triggerTraps("get-all-actions", nullptr);
+		triggerTraps("get-all-actions", ad);
 
 		LOGS(Debug) << "Getting actions in location - " << this->getId() << "." << LOGF;
 		auto room = getSingleRelation(R_INSIDE, Relation::Slave);
 		if (!room)
-			this->getActionsRecursive(list, this);
+			this->getActionsRecursive(ad);
 		else // Adding actions on ourselves will be delegated.
-			room->getActionsRecursive(list, this);
+			room->getActionsRecursive(ad);
 	}
 
-	void Alive::getActions(ActionList* list, ObjectPointer callee) {
+	void Alive::getActions(ActionDescriptor* ad) {
 		if (getState() == State::Dead) {
 			LOGS(Debug) << this->getId() << " is dead." << LOGF; 
 			return;
 		}
 		
-		if (this == callee) { // Remove this condition to allow stealing ;)
+		if (this == ad->getCaller()) { // Remove this condition to allow stealing ;)
 			LOGS(Debug) << "Getting actions on inventory of " << this->getId() << "." << LOGF;
-			delegateGetActions(list, this, { R_INVENTORY, "special-th" });
+			delegateGetActions(ad, { R_INVENTORY, "special-th" });
 			for (int slot = 1; slot < Wearable::Slot::Count; slot++)
-				delegateGetActions(list, this, Wearable::SlotRelations[slot]);
+				delegateGetActions(ad, Wearable::SlotRelations[slot]);
 		}
 	}
 
@@ -275,9 +272,13 @@ namespace Dungeon {
 
 		if (!!current) {
 			Resource* res = current.unsafeCast<Resource>();
-			res->setQuantity(quantity);
-			res->save();
-		} else {
+			if (quantity != 0) {
+				res->setQuantity(quantity);
+				res->save();
+			} else {
+				getGameManager()->deleteObject(current);
+			}
+		} else if (quantity != 0) {
 			Resource* res = new Resource(type, quantity);
 			GameManager* gm = getGameManager();
 

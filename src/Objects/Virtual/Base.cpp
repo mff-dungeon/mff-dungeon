@@ -27,26 +27,32 @@ namespace Dungeon {
 		return type.substr(0, type.rfind("/"));
 	}
 
-	void Base::getActionsRecursive(ActionList* list, ObjectPointer callee) {
+	void Base::getActionsRecursive(ActionDescriptor *ad) {
 		triggerTraps("get-actions", nullptr);
-
-		// TODO replace by delegation once possible
-		for (auto& rel : getRelations(Relation::Master, R_BEHAVIOR)) {
-			rel.second.safeCast<Behavior>()->getActions(list, callee, this);
-		}
+		delegateGetActions(ad, R_BEHAVIOR);
 	}
 
-	void Base::delegateGetActions(ActionList* list, ObjectPointer callee, std::initializer_list<const string> relations) const {
+	void Base::delegateGetActions(ActionDescriptor *ad, std::initializer_list<const string> relations) const {
+		ad->delegationStack.push(this);
 		for (auto& type : relations) {
 			for (auto& rel : getRelations(Relation::Master, type)) {
 				LOGS(Debug) << getId() << " delegating by " << type << " to " << rel.first << LOGF;
-				rel.second->getActionsRecursive(list, callee);
+				rel.second->getActionsRecursive(ad);
 			}
 		}
+		if (ad->delegationStack.top() != this) {
+			LOGS(Error) << "Some piece of shitty code broken the delegation stack. Dump:" << LOGF;
+			while (!ad->delegationStack.empty()) {
+				LOGS(Debug) << " - " << ad->delegationStack.top().getId() << LOGF;
+				ad->delegationStack.pop();
+			}
+			throw logic_error("Some piece of shitty code broken the delegation stack.");
+		}
+		ad->delegationStack.pop();
 	}
 
-	void Base::delegateGetActions(ActionList* list, ObjectPointer callee, const string& relation) const {
-		delegateGetActions(list, callee, { relation });
+	void Base::delegateGetActions(ActionDescriptor* ad, const string& relation) const {
+		delegateGetActions(ad, { relation });
 	}
 
 	void Base::store(Archiver& stream, objId& oid, string& className) const {
@@ -137,11 +143,11 @@ namespace Dungeon {
 	ObjectPointer Base::setSingleRelation(const string& type, ObjectPointer other, Relation::Dir dir, const string& errMsg) {
 		if(dir == Relation::Master) {
 			gm->removeRelation(this, getSingleRelation(type, dir, errMsg), type);
-			gm->createRelation(this, other, type);
+			if (!!other) gm->createRelation(this, other, type);
 		}
 		else {
 			gm->removeRelation(getSingleRelation(type, dir, errMsg), this, type);
-			gm->createRelation(other, this, type);
+			if (!!other) gm->createRelation(other, this, type);
 		}
 		return this;
 	}

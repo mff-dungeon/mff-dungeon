@@ -19,8 +19,8 @@ namespace Dungeon {
 		this->gm = gm;
 	}
 
-	void ActionDescriptor::assigned(Human* human) {
-		this->caller = human;
+	void ActionDescriptor::assigned(ObjectPointer caller) {
+		this->caller = caller;
 	}
 
 	void ActionDescriptor::matched(Action* action) {
@@ -38,7 +38,7 @@ namespace Dungeon {
 	}
 
 	Human* ActionDescriptor::getCaller() {
-		return caller;
+		return caller.unsafeCast<Human>();
 	}
 
 	GameManager* ActionDescriptor::getGM() {
@@ -68,7 +68,7 @@ namespace Dungeon {
 			message += trimmed;
 		}
 	}
-
+	
 	ActionDescriptor& ActionDescriptor::operator<<(const string& msg) {
 		currentSentence << msg;
 		return *this;
@@ -130,7 +130,7 @@ namespace Dungeon {
 					out.append("%");
 					break;
 				case 'u':
-					out.append(caller->getUsername());
+					out.append(getCaller()->getName());
 					break;
 				default:
 					LOGS(Error) << "Unexpected modifier %" << *it << "!" << LOGF;

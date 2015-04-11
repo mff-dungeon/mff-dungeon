@@ -16,7 +16,7 @@ namespace Dungeon {
 		virtual ~HardcoreRespawn() { };
 
 		virtual void trigger(const string& event, ObjectPointer target, ActionDescriptor* ad);
-		virtual bool exceptionTrigger(ActionDescriptor* ad);
+		virtual void exceptionTrigger(ActionDescriptor* ad);
 
 	private:
 

@@ -48,7 +48,7 @@ namespace Dungeon {
 
 		virtual void registerProperties(IPropertyStorage& storage);
 
-		virtual void getActions(ActionList* list, ObjectPointer callee);
+		virtual void getActions(ActionDescriptor* ad) {}
 
 	private:
 		int chance = 0; // 1000000 = 100_p = 100%

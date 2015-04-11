@@ -20,7 +20,7 @@ namespace Dungeon {
 
 		virtual string getDescriptionSentence();
 		virtual string getInsideSentence();
-		virtual void getActions(ActionList* list, ObjectPointer calee);
+		virtual void getActions(ActionDescriptor* ad);
 		virtual void examine(ActionDescriptor* ad);
 
 		virtual void registerProperties(IPropertyStorage& storage);

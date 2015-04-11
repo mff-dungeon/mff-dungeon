@@ -5,8 +5,8 @@ namespace Dungeon {
 	/*
 	 * TODO: workout a way to deal with old characters and replace them with new characters
 	 */
-	bool HardcoreRespawn::exceptionTrigger(ActionDescriptor* ad) {
-		return false;
+	void HardcoreRespawn::exceptionTrigger(ActionDescriptor* ad) {
+		Trap::exceptionTrigger(ad);
 	}
 
 	void HardcoreRespawn::trigger(const string& event, ObjectPointer target, ActionDescriptor* ad) {

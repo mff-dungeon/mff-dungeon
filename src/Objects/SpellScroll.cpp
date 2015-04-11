@@ -23,12 +23,10 @@ namespace Dungeon {
 		return getSingleRelation("spell-teach", Relation::Master);
 	}
 
-	void SpellScroll::getActions(ActionList* list, ObjectPointer callee) {
-		Item::getActions(list, callee);
-
-		list->addAction(new ReadScrollAction)
+	void SpellScroll::getActions(ActionDescriptor* ad) {
+		ad->getActionList().addAction(new ReadScrollAction)
 				->addTarget(this)
-				->useActionFor(this, list);
+				->useActionFor(this, ad);
 	}
 
 	PERSISTENT_IMPLEMENTATION(SpellScroll)

@@ -14,7 +14,7 @@ namespace Dungeon {
 		virtual bool match(const string& command, ActionDescriptor* ad);
 		virtual void explain(ActionDescriptor* ad);
 
-		static void setFor(ObjectPointer target, ActionList* list, MultiTargetAction* action);
+		static void setFor(ObjectPointer target, ActionDescriptor* ad, MultiTargetAction* action);
 	};
 }
 

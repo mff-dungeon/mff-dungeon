@@ -41,8 +41,8 @@ namespace Dungeon {
 		Base::registerProperties(storage);
 	}
 
-	void IDescriptable::getActions(ActionList* list, ObjectPointer callee) {
-		list->addAction(new ExamineEction())
+	void IDescriptable::getActions(ActionDescriptor* ad) {
+		ad->getActionList().addAction(new ExamineEction())
 				->addTarget(this);
 	}
 

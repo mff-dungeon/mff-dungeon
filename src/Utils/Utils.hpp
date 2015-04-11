@@ -107,7 +107,7 @@ namespace Dungeon {
             return s;
         }
 
-        static inline std::string& decapitalize(std::string&& s)
+        static inline std::string decapitalize(std::string&& s)
         {
             for (size_t i = 0; i <= s.length(); i++) {
                 if (isalpha(s[i])) {

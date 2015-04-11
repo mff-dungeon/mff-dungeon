@@ -11,15 +11,12 @@ namespace Dungeon {
 		Base::registerProperties(storage);
 	}
 
-	void Behavior::getActions(ActionList* list, ObjectPointer callee) {
-		throw GameStateInvalid("Behavior's getAction must be called with a target.");
-	}
-
-	void Behavior::getActions(ActionList* list, ObjectPointer callee, ObjectPointer target) {
+	void Behavior::getActions(ActionDescriptor* ad) {
+		auto& target = ad->delegationStack.top();
 		LOGS(Debug) << "Adding behavior " << verb << " on " << target << LOGF;
 		auto action = new BehaviorAction("behavior-" + verb, this);
 		action->addTarget(target);
-		list->addAction(action);
+		ad->getActionList().addAction(action);
 	}
 
 	BehaviorAction::BehaviorAction(const string& type, ObjectPointer behavior)

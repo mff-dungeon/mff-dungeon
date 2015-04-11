@@ -1,6 +1,7 @@
 #include "DoorLock.hpp"
 #include "../Alive.hpp"
 #include "../Inventory.hpp"
+#include "../../Game/ActionDescriptor.hpp"
 
 namespace Dungeon {
 
@@ -44,9 +45,9 @@ namespace Dungeon {
 		}
 	}
 
-	bool DoorLock::exceptionTrigger(ActionDescriptor* ad) {
+	void DoorLock::exceptionTrigger(ActionDescriptor* ad) {
 		*ad << "You need to have a " << getKey().safeCast<IDescriptable>()->getName() << " to pass this door." << eos;
-		return false;
+		Trap::exceptionTrigger(ad);
 	}
 
 	void DoorLock::registerProperties(IPropertyStorage& storage) {

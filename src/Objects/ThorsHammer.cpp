@@ -24,8 +24,9 @@ namespace Dungeon {
 
 	ThorsHammer::~ThorsHammer() { }
 
-	void ThorsHammer::getActions(ActionList* list, ObjectPointer callee) {
-		list->addAction(new CallbackAction("dump", "(TH) dump - If you want to get some info...",
+	void ThorsHammer::getActions(ActionDescriptor* ad) {
+		auto& list = ad->getActionList();
+		list.addAction(new CallbackAction("dump", "(TH) dump - If you want to get some info...",
 				RegexMatcher::matcher("^dump( relations)?( of)?(.*)$"),
 				[this] (ActionDescriptor * ad) {
 					smatch matches;
@@ -70,7 +71,7 @@ namespace Dungeon {
 					*ad << eos;
 				}));
 
-		list->addAction(new CallbackAction("shutdown", "(TH) server shutdown - Shutdown's the server.",
+		list.addAction(new CallbackAction("shutdown", "(TH) server shutdown - Shutdown's the server.",
 				RegexMatcher::matcher("server shutdown"),
 				[] (ActionDescriptor * ad) {
 					LOGS(Warning) << "Admin " << ad->getCaller()->getName() << " initiated server shutdown!!!" << LOGF;
@@ -78,7 +79,7 @@ namespace Dungeon {
 					*ad << "OK. I will just finish the queue. Bye!" << eos;
 				}));
 
-		list->addAction(new CallbackAction("dot-dump", "(TH) server dump dot - generate game graph in dot format.",
+		list.addAction(new CallbackAction("dot-dump", "(TH) server dump dot - generate game graph in dot format.",
 				RegexMatcher::matcher("server dump dot"),
 				[] (ActionDescriptor * ad) {
 					LOGS(Warning) << "Admin " << ad->getCaller()->getName() << " requested dot dump." << LOGF;
@@ -93,7 +94,7 @@ namespace Dungeon {
 					dd.endDump();
 				}));
 
-		list->addAction(new CallbackAction("bigBang", "(TH) server initialize - Delete & recreate tables.",
+		list.addAction(new CallbackAction("bigBang", "(TH) server initialize - Delete & recreate tables.",
 				RegexMatcher::matcher("server initialize"),
 				[] (ActionDescriptor * ad) {
 					LOGS(Warning) << "Admin " << ad->getCaller()->getName() << " requested server reinitialization!!!" << LOGF;
@@ -102,7 +103,7 @@ namespace Dungeon {
 							*ad << "... can you hear me? Yes? It worked!" << eos;
 				}));
 
-		list->addAction(new CallbackAction("heal", "(TH) heal yourself - heals you to full hp.",
+		list.addAction(new CallbackAction("heal", "(TH) heal yourself - heals you to full hp.",
 				RegexMatcher::matcher("heal( myself| me)?"),
 				[] (ActionDescriptor * ad) {
 					LOG << "Admin " << ad->getCaller()->getName() << " healed himself using Thors' Hammer." << LOGF;
@@ -110,19 +111,19 @@ namespace Dungeon {
 					*ad << "You have fully healed yourself." << eos;
 				}));
 
-		list->addAction(new CallbackAction("addexp (int)", "(TH) addexp - increases your level.",
+		list.addAction(new CallbackAction("addexp (int)", "(TH) addexp - increases your level.",
 				RegexMatcher::matcher("addexp [0-9]+"),
 				[] (ActionDescriptor * ad) {
 					LOG << "Admin " << ad->getCaller()->getName() << " increased his experience points using Thors' Hammer." << LOGF;
 					string sexp = ad->in_msg.substr(7);
 					int exp = stoi(sexp);
 					if(exp != 0) {
-						ad->getCaller()->addExperience(exp);
+						ad->getCaller()->addExperience(exp, ad)->save();
 						*ad << "You have increased your exp by " << exp << " using your hammer." << eos;
 					}
 				}, false));
 
-		list->addAction(new CallbackAction("teleport", "(TH) teleport to <id> - teleport yourself everywhere.",
+		list.addAction(new CallbackAction("teleport", "(TH) teleport to <id> - teleport yourself everywhere.",
 				RegexMatcher::matcher("teleport to .+"),
 				[] (ActionDescriptor * ad) {
 					smatch matches;
@@ -143,19 +144,20 @@ namespace Dungeon {
 				}));
 
 		PropertyEditor* pe = new PropertyEditor;
-		for (auto pair : callee.safeCast<Alive>()->getLocation()->getRelations(Relation::Master, R_INSIDE)) {
+		for (auto pair : ad->getCaller()->getLocation()->getRelations(Relation::Master, R_INSIDE)) {
 			pe->addTarget(pair.second);
 		}
-		list->addAction(pe);
+		list.addAction(pe);
 	}
 
 	bool ThorsHammer::PropertyEditor::match(const string& command, ActionDescriptor* ad) {
 		smatch matches;
-		if (RegexMatcher::match("^edit (properties (of )?)?(.+)$", command, matches)) {
+		if (RegexMatcher::match("edit (properties (of )?)?(.+)", command, matches)) {
 			GameManager* gm = ad->getGM();
 			if (gm->hasObject(matches[3])) {
 				setTarget(gm->getObject(matches[3]));
 			} else {
+				LOGS(Debug) << "WTF " << matches[3] << LOGF;
 				selectBestTarget(matches[3], ad);
 			}
 			this->ad = ad;

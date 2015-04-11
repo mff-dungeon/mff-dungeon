@@ -23,7 +23,7 @@ namespace Dungeon {
 		SpellScroll* setSpell(ObjectPointer spell);
 		ObjectPointer getSpell() const;
 
-		virtual void getActions(ActionList* list, ObjectPointer callee);
+		virtual void getActions(ActionDescriptor* ad);
 
 	private:
 

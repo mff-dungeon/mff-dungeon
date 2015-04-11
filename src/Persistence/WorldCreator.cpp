@@ -2657,7 +2657,6 @@ namespace Dungeon {
                                 createObject<Resource>("resource/gold/" + RANDID, potionChest)
                                                 ->setType(Resource::ResourceType::Gold)
                                                 ->setQuantity(42)
-                                                ->attachSumTrap()
                                                 ->save();
 
 			ObjectPointer equipChest = createObject<Location>("chest/equipRoom/2", equipRoom)
@@ -2702,7 +2701,6 @@ namespace Dungeon {
 			createObject<Resource>("resource/wood/" + RANDID, equipChest)
 						->setType(Resource::ResourceType::Wood)
 						->setQuantity(200)
-						->attachSumTrap()
 						->save();
 
 				createObject<Inventory>("inventory/hardleatherbackpack/" + RANDID, equipChest)
@@ -2731,7 +2729,6 @@ namespace Dungeon {
 				createObject<Resource>("resource/gold/" + RANDID, equipChest)
 								->setType(Resource::ResourceType::Gold)
 								->setQuantity(200)
-								->attachSumTrap()
 								->save();
 
 			ObjectPointer trapChest = createObject<Location>("chest/equipRoom/3", equipRoom)

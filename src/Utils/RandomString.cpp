@@ -21,14 +21,7 @@ namespace Dungeon {
 		uniform_int_distribution<> dist(0, messages.size() - 1);
 		return messages[dist(random)];
 	}
-	
-	RandomString::operator string() {
-		string r = getRandom();
-		if (this == RandomString::instance)
-			messages.clear();
-		return r;
-	}
-	
+
 	RandomString& RandomString::operator<<(RandomString::EndOfMessage* (*endofmessage)()) {
 		messages.push_back(current.str());
 		current.str("");

@@ -15,7 +15,7 @@ namespace Dungeon {
 	public:
 		Door();
 		Door(const objId& id) : IDescriptable(id) { }
-		virtual void getActions(ActionList* list, ObjectPointer callee);
+		virtual void getActions(ActionDescriptor* ad);
 
 		virtual string getDescriptionSentence();
 		virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);

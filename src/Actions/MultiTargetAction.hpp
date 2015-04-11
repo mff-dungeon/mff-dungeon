@@ -54,7 +54,7 @@ namespace Dungeon {
 
 		virtual void commit(ActionDescriptor* ad);
 
-		void useActionFor(ObjectPointer target, ActionList* list);
+		void useActionFor(ObjectPointer target, ActionDescriptor* ad);
 
 	protected:
 		ObjectMap targets;

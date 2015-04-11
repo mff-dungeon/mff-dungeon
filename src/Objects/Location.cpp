@@ -39,9 +39,8 @@ namespace Dungeon {
 		return this;
 	}
 
-	void Location::getActions(ActionList* list, ObjectPointer callee) {
-		LOGS(Debug) << "Getting actions on " << this->getName() << "." << LOGF;
-		delegateGetActions(list, callee, R_INSIDE);
+	void Location::getActions(ActionDescriptor* ad) {
+		delegateGetActions(ad, R_INSIDE);
 
 		// Add pickup for items
 		PickupAction* pickAction = new PickupAction;
@@ -56,7 +55,7 @@ namespace Dungeon {
 
 		}
 		if (pickAction->getTargets().size() > 0) {
-			list->addAction(pickAction);
+			ad->getActionList().addAction(pickAction);
 		} else {
 			delete pickAction;
 		}

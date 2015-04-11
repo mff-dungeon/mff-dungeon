@@ -43,11 +43,11 @@ private: \
 	inline virtual bool isInstanceOf(char const * cname) const { \
 		return cName##ClassName == cname || pName::isInstanceOf(cname); \
 	}; \
-    inline virtual void getActionsRecursive(ActionList* list, ObjectPointer callee) { \
+    virtual void getActionsRecursive(ActionDescriptor* ad) { \
         if (!cName##GettingActions) { /* Loop prevention */ \
             cName##GettingActions = true; \
-            pName::getActionsRecursive(list, callee); \
-            cName::getActions(list, callee); \
+            pName::getActionsRecursive(ad); \
+            cName::getActions(ad); \
             cName##GettingActions = false; \
         } \
     } \
@@ -97,22 +97,22 @@ namespace Dungeon {
          * Which actions can be performed by callee on this object?
          * Do NOT call directly, use @see getActionsRecursive instead.
          */
-        virtual void getActions(ActionList * list, ObjectPointer callee) = 0;
+        virtual void getActions(ActionDescriptor *ad) = 0;
 
         /**
          * Which actions can be performed by callee on this object?
          */
-        virtual void getActionsRecursive(ActionList * list, ObjectPointer callee);
+        virtual void getActionsRecursive(ActionDescriptor *ad);
 
         /**
          * Should be called in getActions whenever you want to delegate certain action.
          */
-        void delegateGetActions(ActionList* list, ObjectPointer callee, std::initializer_list<const string> relations) const;
+        void delegateGetActions(ActionDescriptor *ad, std::initializer_list<const string> relations) const;
 
         /**
          * Should be called in getActions whenever you want to delegate certain action.
          */
-        void delegateGetActions(ActionList* list, ObjectPointer callee, const string& relation) const;
+        void delegateGetActions(ActionDescriptor *ad, const string& relation) const;
 
         /*
          * Serializing functions: 

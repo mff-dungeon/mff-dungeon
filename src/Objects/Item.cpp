@@ -57,10 +57,6 @@ namespace Dungeon {
 		return this;
 	}
 
-	void Item::getActions(ActionList* list, ObjectPointer callee) {
-		// Intentionally left blank?
-	}
-
 	Item* Item::addStatReq(ObjectPointer reqPtr) {
 		reqPtr.assertExists("The requirement doesn't exist.")
 				.assertType<StatReq>("You can only add a stat requirement");

@@ -13,17 +13,18 @@ namespace Dungeon {
 
 	Door::Door() { }
 
-	void Door::getActions(ActionList* list, ObjectPointer callee) {
+	void Door::getActions(ActionDescriptor *ad) {
 		LOGS(Debug) << "Getting actions on " << this->getId() << "." << LOGF;
 		// Add move actions to all rooms
 		try {
 			const ObjectMap& targets = this->getRelations(Relation::Master, R_TARGET);
 			DoorwalkAction* action = new DoorwalkAction;
+			auto loc = ad->getCaller()->getLocation();
 			for (auto& obj : targets) {
-				if (obj.second != callee.safeCast<Alive>()->getLocation()) {
+				if (obj.second != loc) {
 					action->addTarget(this);
-					list->addAction(action)
-							->useActionFor(this, list);
+					ad->getActionList().addAction(action)
+							->useActionFor(this, ad);
 					break;
 				}
 			}

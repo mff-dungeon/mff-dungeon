@@ -5,111 +5,110 @@
 #include "../Objects/Human.hpp"
 
 namespace Dungeon {
-    
-    bool TextDriver::process(TextActionDescriptor* ad) {
-		try { // Catching regular exceptions
-			try { // TrapExceptions to modify life-cycle
-				if (ad->isFinished()) {
-					if (!ad->getAction()) {
-						ad->getCaller()->getAllActions(&alist);
 
-						string message (ad->in_msg);
-						transform(message.begin(), message.end(), message.begin(), ::tolower);
+	bool TextDriver::process(TextActionDescriptor* ad) {
+		LOGS(Debug) << "Starting process cycle with AD in state " << ad->state << "." << LOGF;
+		try {
+			try {
+				ad->getCaller()->markInteraction()->save();
 
-						ofstream debugfile;
-						debugfile.open("debug/messages.txt", ios::out | ios::app);
-						debugfile << message << ";";
-						
-						/*
-						 *					*** FIXME ***
-						 *	Broken. ActionList is not cleared when a match is uncertain because of thrown TrapException.
-						 *  Therefore, it leaves the list uncleared with old/invalid objects and next call of the affected 
-						 *  action breaks the game.
-						 *  Example: 
-						 *		- drink potion
-						 *		- which one, red or blue?
-						 *		- red
-						 *	( actions are left in the alist )
-						 *		- drink potion
-						 *		KABOOOOOOOOOOM
-						 */
-						
-						for (ActionList::iterator it = alist.begin(); it != alist.end(); ++it) {
-							Action* action = it->second;
-							LOGS(Debug) << "Matching action " << it->first << LOGF;
-							if (action->match(message, ad)) {
-								ad->matched(action);
-								LOGS(Verbose) << "Matched action " << it->first << LOGF;
-								debugfile << action->type << endl;
-								debugfile.close();
-								break;
-							}
-						}
-						alist.clear();
+				if (ad->state == ActionDescriptor::Waiting)
+					processUserReply(ad);
 
-						if (!ad->isValid(this)) {
-							LOGS(Verbose) << "The query didn't match any possible action." << LOGF;
-							*ad << getDontUnderstandResponse(ad->in_msg, getPatience(ad->getCaller()->getId())) << eos;
-							debugfile << "!!!!!" << endl;
-							debugfile.close();
-                                                        incrementPatience(ad->getCaller()->getId());
-							return false;
-						}
-					}
+				if (ad->state == ActionDescriptor::Empty)
+					processFill(ad);
 
-					ad->getAction()->validate();
-                                        resetPatience(ad->getCaller()->getId());
-                                        
-					ad->state = ActionDescriptor::RoundBegin;
-					ad->getCaller()->onBeforeAction(ad);
-					ad->getCaller()->triggerTraps("action-" + ad->getAction()->type, ad);
+				if (ad->state == ActionDescriptor::ActionsFilled)
+					processMatch(ad);
 
-					ad->state = ActionDescriptor::Round;
-					ad->getAction()->commit(ad);
+				if (ad->state == ActionDescriptor::ActionReady)
+					processRun(ad);
 
-					ad->state = ActionDescriptor::RoundEnd;
-					ad->getCaller()->onAfterAction(ad);
-				} else { // ! finished
-					LOGS(Verbose) << "Action was already set in previous processing to " << ad->getAction()->type << ", using user dialog reply." << LOGF;
-					ad->state = ActionDescriptor::Round;
-					ad->userReplied(ad->in_msg);
-				}	
-				LOGS(Verbose) << "Finished action, user response: " << ad->getReply() << LOGF;
-				return true;
 			} catch (TrapException& te) {
-				ad->state = ActionDescriptor::Trap;
-				if (!te.getTrap().unsafeCast<Trap>()->exceptionTrigger(ad)) {
-					LOGS(Verbose) << "Finished trap processing, user response: " << ad->getReply() << LOGF;
-					return true;
-				}
+				LOGS(Debug) << "Trap thrown." << LOGF;
+				ad->state = ActionDescriptor::Trapped;
+				te.getTrap().unsafeCast<Trap>()->exceptionTrigger(ad);
+				
+				// After trap we want to restart the process,
+				// unless reply is awaited.
+				if (ad->state != ActionDescriptor::Waiting)
+					return process(ad); 
 			}
-			
-			while (ad->isValid(this)) {
-				try {
-					LOGS(Verbose) << "Action was already set in previous processing to " << ad->getAction()->type << LOGF;
-					ad->getAction()->commit(ad);
-					LOGS(Verbose) << "Finished action, user response: " << ad->getReply() << LOGF;
-					return true;
-				} catch (TrapException& te) {
-					if (!te.getTrap().unsafeCast<Trap>()->exceptionTrigger(ad)) {
-						LOGS(Verbose) << "Finished trap processing, user response: " << ad->getReply() << LOGF;
-						return true;
-					}
-				}
-			}
-		}
-		catch (GameException& gameException) {
-                        resetPatience(ad->getCaller()->getId());
-                                        
+		} catch (GameException& gameException) {
+			resetPatience(ad->getCaller()->getId());
 			LOGS(Error) << "Exception was thrown: " << gameException.what() << LOGF;
-			if (ad->getAction() && ad->getAction()->handleException(gameException, ad))
-				return false;
-			*ad << gameException.what() << eos;
+			ad->state = ActionDescriptor::Error;
+			if (ad->getAction())
+				ad->getAction()->handleException(gameException, ad);
+			if (ad->state == ActionDescriptor::Error) {
+				*ad << gameException.what() << eos;
+				ad->state = ActionDescriptor::Finished;
+			}
 		}
-        LOGS(Warning) << "Somehow, nothing happened at TextDriver processing." << LOGF;
-        return false;
-    }
-    
+		LOGS(Verbose) << "Finished processing action, user response: " << ad->getReply() << LOGF;
+		return ad->state == ActionDescriptor::Finished;
+	}
+
+	void TextDriver::processFill(TextActionDescriptor *ad) {
+		LOGS(Debug) << "Filling actions." << LOGF;
+		ad->prepareFilling();
+		ad->getCaller()->getAllActions(ad);
+		ad->state = ActionDescriptor::ActionsFilled;
+	}
+
+	void TextDriver::processMatch(TextActionDescriptor *ad) {
+		LOGS(Debug) << "Matching actions." << LOGF;
+		string message (ad->in_msg);
+		transform(message.begin(), message.end(), message.begin(), ::tolower);
+
+		ofstream debugfile;
+		debugfile.open("debug/messages.txt", ios::out | ios::app);
+		debugfile << message << ";";
+
+		ActionList& alist = ad->getActionList();
+		for (ActionList::iterator it = alist.begin(); it != alist.end(); ++it) {
+			Action* action = it->second;
+			LOGS(Debug) << "Matching action " << it->first << LOGF;
+			if (action->match(message, ad)) {
+				ad->matched(action);
+				LOGS(Verbose) << "Matched action " << it->first << LOGF;
+				debugfile << action->type << endl;
+				ad->state = ActionDescriptor::ActionReady;
+				return;
+			}
+		}
+
+		LOGS(Verbose) << "The query didn't match any possible action." << LOGF;
+		*ad << getDontUnderstandResponse(ad->in_msg, getPatience(ad->getCaller()->getId())) << eos;
+		ad->state = ActionDescriptor::Finished;
+		debugfile << "??????" << endl;
+		incrementPatience(ad->getCaller()->getId());
+	}
+	
+
+	void TextDriver::processRun(TextActionDescriptor *ad) {
+		LOGS(Debug) << "Running action " << ad->getAction()->type << LOGF;
+		ad->getAction()->validate();
+		resetPatience(ad->getCaller()->getId());
+		ad->getCaller()->onBeforeAction(ad);
+
+		ad->state = ActionDescriptor::ActionRunning;
+		ad->getCaller()->triggerTraps("action-" + ad->getAction()->type, ad);
+		ad->getAction()->commit(ad);
+
+		ad->state = ad->isFinished() ? ActionDescriptor::ActionFinished : ActionDescriptor::Waiting;
+		ad->getCaller()->onAfterAction(ad);
+		ad->state = ad->isFinished() ? ActionDescriptor::Finished : ActionDescriptor::Waiting;
+	}
+
+	void TextDriver::processUserReply(TextActionDescriptor *ad) {
+		LOGS(Debug) << "Processing reply." << LOGF;
+		LOGS(Verbose) << "Action was already set in previous processing to " << ad->getAction()->type << ", using user dialog reply." << LOGF;
+		ad->state = ActionDescriptor::ActionRunning;
+		ad->userReplied(ad->in_msg);
+		ad->state = ad->isFinished() ? ActionDescriptor::Finished : ActionDescriptor::Waiting;
+	}
+
     string TextDriver::getDontUnderstandResponse(string input, int timeSinceLastMatched) {
         if (timeSinceLastMatched < 0)
             return "Impossibru.";
@@ -142,9 +141,10 @@ namespace Dungeon {
 				RegexMatcher::matcher(".+"),
 				[this] (ActionDescriptor * ad) {
 					*ad << (RandomString::get()
-                                                << "Greetings, brave warrior! How may I call you?"  << endr
-                                                << "You have discovered the mighty Dungeon. What is thy name?" << endr
-                                                << "Beware of the great Dungeon! How do you wish to be called?" << endr) << eos;
+							<< "Greetings, brave warrior! How may I call you?"  << endr
+							<< "You have discovered the mighty Dungeon. What is thy name?" << endr
+							<< "Beware of the great Dungeon! How do you wish to be called?" << endr)
+							<< eos;
 					ad->waitForReply([] (ActionDescriptor *ad, string reply) {
 						((Human*) ad->getCaller())->setUsername(reply)
 								->save();

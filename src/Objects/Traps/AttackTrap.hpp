@@ -18,7 +18,7 @@ namespace Dungeon {
 		const static string doNotAttackRelation;
 
 		virtual void trigger(const string& event, ObjectPointer room, ActionDescriptor* ad);
-		virtual bool exceptionTrigger(ActionDescriptor* ad);
+		virtual void exceptionTrigger(ActionDescriptor* ad);
 
 	private:
 		ObjectPointer target;

@@ -20,7 +20,7 @@ namespace Dungeon {
 		Crafter* addRecipe(ObjectPointer recipe);
 		Crafter* removeRecipe(ObjectPointer recipe);
 
-		virtual void getActions(ActionList* list, ObjectPointer callee);
+		virtual void getActions(ActionDescriptor* ad);
 
 	private:
 		PERSISTENT_DECLARATION(Crafter, IDescriptable)

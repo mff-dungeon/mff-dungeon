@@ -27,7 +27,7 @@ namespace Dungeon {
 		virtual Alive* die(ActionDescriptor* ad = nullptr);
 		virtual Alive* respawn(ActionDescriptor* ad = nullptr);
 
-		virtual void getActions(ActionList* list, ObjectPointer callee);
+		virtual void getActions(ActionDescriptor* ad);
 
 		virtual void examine(ActionDescriptor* ad);
 		virtual string getDescriptionSentence();

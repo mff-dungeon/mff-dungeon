@@ -14,9 +14,8 @@ namespace Dungeon {
 		this->trap.setLock();
 	}
 
-	bool Trap::exceptionTrigger(ActionDescriptor* ad) {
-		ad->setAction(nullptr);
-		return false;
+	void Trap::exceptionTrigger(ActionDescriptor* ad) {
+		ad->state = ActionDescriptor::Finished;
 	}
 
 	ObjectPointer TrapException::getTrap() const {

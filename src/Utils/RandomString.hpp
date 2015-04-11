@@ -44,7 +44,12 @@ namespace Dungeon {
         /**
          * @return Random string
          */
-        operator string();
+        operator string() {
+            string r = getRandom();
+            if (this == RandomString::instance)
+                    messages.clear();
+            return r;
+        }
 
         /**
          * Finishes current message. @see endr

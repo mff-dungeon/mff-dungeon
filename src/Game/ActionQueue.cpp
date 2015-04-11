@@ -33,15 +33,10 @@ namespace Dungeon {
 		try {
 			ad->driver->processDescriptor(ad);
 
-			// Record interaction
-			// FIXME uninitialised caller -> memory error
-			ad->getCaller()->markInteraction()->save();
-
 			flawless = true;
 		} catch (GameException& ge) {
 			LOGS(Error) << "Game exception occured and Driver missed it. " << ge.what() << LOGF;
 		}
-		/* Disabled for debugging, enable on production
 		catch (char const * e) {
 			LOGS(Error) << e << LOGF;			
 		}
@@ -50,7 +45,7 @@ namespace Dungeon {
 		}
 		catch (...) {
 			LOGS(Error) << "Unknown error has occured while processing." << LOGF;	
-		}*/
+		}
 
 		gm->roundEnd(flawless);
 	}

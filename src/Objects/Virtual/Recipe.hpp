@@ -35,7 +35,7 @@ namespace Dungeon {
 		bool checkStatReqs(ObjectPointer userPtr, ActionDescriptor* ad = 0);
 
 		void tryCraft(ActionDescriptor* ad);
-		virtual void getActions(ActionList* list, ObjectPointer callee) { };
+		virtual void getActions(ActionDescriptor* ad) { };
 
 		virtual void registerProperties(IPropertyStorage& storage);
 

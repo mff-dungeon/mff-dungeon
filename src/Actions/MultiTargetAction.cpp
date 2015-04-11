@@ -33,7 +33,7 @@ namespace Dungeon {
 		setTarget(trap.unsafeCast<MTATrap>()->wrapFind(targets, this, str, ad));
 	}
 
-	void MultiTargetAction::useActionFor(ObjectPointer target, ActionList* list) {
-		UseAction::setFor(target, list, this);
+	void MultiTargetAction::useActionFor(ObjectPointer target, ActionDescriptor* ad) {
+		UseAction::setFor(target, ad, this);
 	}
 }

@@ -9,7 +9,7 @@ namespace Dungeon {
         class ActionDescriptor;
         
 	/* 
-	 * Common class for drivers.
+	 * Common class for drivers
 	 */
 	class Driver {
 	public:

@@ -33,8 +33,8 @@ namespace Dungeon {
 		Alive() { } // Constructor allowing to load class later
 		Alive(const objId& id) : IDescriptable(id) { }
 		
-		void getAllActions(ActionList* list);
-		virtual void getActions(ActionList* list, ObjectPointer callee);
+		void getAllActions(ActionDescriptor* list);
+		virtual void getActions(ActionDescriptor* list);
 
 		virtual string getDescriptionSentence();
 		virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);

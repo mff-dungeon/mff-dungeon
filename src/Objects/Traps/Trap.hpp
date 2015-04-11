@@ -42,17 +42,18 @@ namespace Dungeon {
 		 * 
 		 * The return value was added because you may need to remember 
 		 * action while interrupting it's processing.
+                 * 
+                 * By default finishes processing of AD.
 		 * 
 		 * TL;DR The action in ad, if any, will be run afterwards.
-		 * 
-		 * @return true if processing should continue, false otherwise
 		 */
-		virtual bool exceptionTrigger(ActionDescriptor* ad);
+		virtual void exceptionTrigger(ActionDescriptor* ad);
+                
 		/**
 		 * This method should never be called on Trap.
 		 */
-		virtual void getActions(ActionList * list, ObjectPointer callee) {
-			LOGS(Error) << "Getting actions od Trap? Srsly?" << LOGF;
+		virtual void getActions(ActionDescriptor*) {
+			LOGS(Error) << "Getting actions on Trap? Srsly?" << LOGF;
 		}
 		/**
 		 * Returns name of relation for that event

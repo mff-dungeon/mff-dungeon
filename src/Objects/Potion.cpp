@@ -16,10 +16,10 @@ namespace Dungeon {
 		return this;
 	}
 
-	void Potion::getActions(ActionList* list, ObjectPointer callee) {
-		list->addAction(new DrinkPotionAction)
+	void Potion::getActions(ActionDescriptor* ad) {
+		ad->getActionList().addAction(new DrinkPotionAction)
 				->addTarget(this)
-				->useActionFor(this, list);
+				->useActionFor(this, ad);
 	}
 
 	string Potion::getDescription() const {

@@ -21,7 +21,7 @@ namespace Dungeon {
 		DoorLock* setConsumesKey(bool consumesKey);
 
 		virtual void trigger(const string& event, ObjectPointer target, ActionDescriptor* ad);
-		virtual bool exceptionTrigger(ActionDescriptor* ad);
+		virtual void exceptionTrigger(ActionDescriptor* ad);
 
 		virtual void registerProperties(IPropertyStorage& storage);
 

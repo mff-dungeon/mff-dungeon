@@ -5,31 +5,27 @@
 #include "../../Actions/MultiTargetAction.hpp"
 #include "../../Game/ObjectGroup.hpp"
 #include "../../Game/ActionDescriptor.hpp"
+#include <regex>
 
 namespace Dungeon {
 
-	ObjectPointer MTATrap::wrapFind(ObjectMap objects, MultiTargetAction* action, string str, ActionDescriptor* ad) {
+	ObjectPointer MTATrap::wrapFind(ObjectMap objects, MultiTargetAction* action, const string& str, ActionDescriptor* ad) {
 		bool any = false;
 		try {
 			ObjectGroup grp(objects);
 			ObjectPointer target;
-			string lower = Utils::decapitalize(string(str));
+			string lower = Utils::decapitalize(str);
 			
-			size_t found = 0;
-			if(lower.find("any") == 0) {
-				found = str.find(" ");
-				any = true;
-			}
-			if(found == string::npos || found == str.size()-1) {
-				// There is nothing else than any[^ ]*, choose anything
-				target = grp.begin()->second;
-			}
-			else {
-				if(any) {
-					str = str.substr(found+1);
-				}
+			smatch matches;
+			if (regex_match(lower, matches, regex("any\\s+(.*)"))) {
+				if (matches[1].length() > 0) 
+					target = grp.match(matches[1]);
+				else
+					target = grp.begin()->second;
+			} else {
 				target = grp.match(str);
 			}
+			
 			IDescriptable* obj = target.safeCast<IDescriptable>();
 			if (obj) {
 				if(any) {
@@ -77,29 +73,30 @@ namespace Dungeon {
 		}
 	}
 
-	bool MTATrap::exceptionTrigger(ActionDescriptor* ad) {
+	void MTATrap::exceptionTrigger(ActionDescriptor* ad) {
 		switch (phase) {
 			case Selecting:
 				ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
-					if(Utils::decapitalize(string(reply)) == "none") { 
-						// using copied string, to prevent modifying the entry
+					if(Utils::decapitalize(reply) == "none") { 
 						*ad << "Okay, I won't do anything." << eos;
 						phase = Cancel;
 						throw TrapException(this);
 					}
 					target = wrapFind(this->objects, (MultiTargetAction*) ad->getAction(), reply, ad);
 					phase = Return;
-							throw TrapException(this);
+					throw TrapException(this);
 				});
+				ad->state = ActionDescriptor::Waiting;
+				break;
 			case Cancel:
-				return false;
+				ad->state = ActionDescriptor::Finished;
+				break;
 			case Return:
 				MultiTargetAction* mta = (MultiTargetAction*) (ad->getAction());
 				mta->setTarget(target);
-				// If it's not MTA, why to call this at all?
-				return true;
+				ad->state = ActionDescriptor::ActionReady;
+				break;
 		}
-		return false;
 	}
 
 	PERSISTENT_IMPLEMENTATION(MTATrap)

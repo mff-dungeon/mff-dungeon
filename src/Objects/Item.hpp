@@ -3,7 +3,6 @@
 
 #include "../common.hpp"
 #include "Virtual/IDescriptable.hpp"
-#include "../Game/ActionList.hpp"
 
 namespace Dungeon {
 
@@ -33,7 +32,7 @@ namespace Dungeon {
 		bool isDropable() const;
 		Item* setDropable(bool dropable);
 
-		virtual void getActions(ActionList* list, ObjectPointer callee);
+		virtual void getActions(ActionDescriptor* ad) {}
 
 		/**
 		 * Must be inserted to world and be "inside" something to work.

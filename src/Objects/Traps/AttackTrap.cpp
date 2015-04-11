@@ -7,15 +7,15 @@ namespace Dungeon {
 
 	PERSISTENT_IMPLEMENTATION(AttackTrap)
 
-	void AttackTrap::trigger(const string& event, ObjectPointer room, ActionDescriptor* ad) {
-		if (!ad || ad->state != ActionDescriptor::RoundEnd || ad->getCaller()->getState() == Alive::Dead) {
+	void AttackTrap::trigger(const string& event, ObjectPointer location, ActionDescriptor* ad) {
+		if (!ad || ad->state != ActionDescriptor::ActionFinished || ad->getCaller()->getState() == Alive::Dead) {
 			LOGS(Debug) << "No AD or wrong time" << LOGF;
 			return;
 		}
 		target = getSingleRelation(R_TARGET);
 		if (!target) {
-			// Find some creature in that room (not necessarily room, but...)
-			for (const ObjectMap::value_type& pair : room->getRelations(Relation::Master, R_INSIDE))
+			// Find some creature in that location
+			for (const ObjectMap::value_type& pair : location->getRelations(Relation::Master, R_INSIDE))
 				if (pair.second->instanceOf(Creature) && pair.second.unsafeCast<Creature>()->getState() == Alive::Living)
 					target = pair.second;
 		}
@@ -33,18 +33,18 @@ namespace Dungeon {
 		throw TrapException(this);
 	}
 
-	bool AttackTrap::exceptionTrigger(ActionDescriptor* ad) {
+	void AttackTrap::exceptionTrigger(ActionDescriptor* ad) {
 		string name = target.unsafeCast<Creature>()->getName();
 		*ad << (RandomString::get()
-				<< name + " has immedietely attacked you." << endr
+				<< name + " has immediately attacked you." << endr
 				<< "You've seen some motion, that was  " + name + " attacking you." << endr
 				<< "Before you could have done anything else, " + name + " striked." << endr) << eos;
 
 		CombatAction* c = new CombatAction;
 		c->setTarget(target);
 		ad->setAction(c);
+		ad->state = ActionDescriptor::ActionReady;
 		target = nullptr;
-		return true;
 	}
 }
 

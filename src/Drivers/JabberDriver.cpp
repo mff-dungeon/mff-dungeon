@@ -71,9 +71,9 @@ namespace Dungeon {
 		Human* figure = gm->getObject(figureId)
 				.assertType<Human>("I work only with Humans.")
 				.unsafeCast<Human>();
-		// Really need to do it on every reply. Alive object could have been disposed in meantime...
-		ad->assigned(figure);
-                
+				// Really need to do it on every reply. Alive object could have been disposed in meantime...
+				ad->assigned(figure);
+
                 // Let user know we are thinking about him right now
                 Message stateMsg(Message::Chat, ad->from);
                 stateMsg.addExtension(new ChatState(ChatStateComposing));

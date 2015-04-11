@@ -9,6 +9,7 @@
 #include "Virtual/Dropper.hpp"
 #include <time.h>
 #include <vector>
+#include <functional>
 namespace Dungeon {
 
 	Creature* Creature::calculateDrops(ActionDescriptor* ad) {
@@ -95,7 +96,7 @@ namespace Dungeon {
 		return this->expReward;
 	}
 
-	void Creature::getActions(ActionList* list, ObjectPointer callee) {
+	void Creature::getActions(ActionDescriptor* ad) {
 		// FIXME: The object should be removed, not in the world anymore - check method die()
 		LOGS(Debug) << "Listing all actions on " << getId() << "." << LOGF;
 		if (getState() == State::Invalid) {
@@ -112,12 +113,12 @@ namespace Dungeon {
 				return;
 			}
 		} else if (getState() == State::Dying) {
-			list->addAction(new KillAction)
+			ad->getActionList().addAction(new KillAction)
 					->addTarget(this);
 			return;
 		}
 
-		list->addAction(new CombatAction)
+		ad->getActionList().addAction(new CombatAction)
 				->addTarget(this);
 	}
 	
@@ -260,6 +261,7 @@ namespace Dungeon {
 		CombatAction::CombatMatch action = matchAnswer(reply);
 		if (action == CombatAction::CombatMatch::Invalid) {
 			*ad << "What was that supposed to be?" << eos;
+			ad->waitForReply(this, &CombatAction::combatLoop);
 		} else if (action == CombatAction::CombatMatch::Check) {
 			if (creature->getPercentageHp() > 0.75) {
 				*ad << creature->getName() << " looks very vital." << eos;
@@ -271,9 +273,7 @@ namespace Dungeon {
 				*ad << creature->getName() << " is seriously wounded, finish it while you can!" << eos;
 			}
 			*ad << text;
-			ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
-				this->combatLoop(ad, reply);
-			});
+			ad->waitForReply(this, &CombatAction::combatLoop);
 		} else if (action == CombatAction::CombatMatch::Run) {
 			ad->getCaller()->damageAlive(creaturePtr, ad->getCaller()->calculateDamage(creaturePtr, creature->getAttack()), ad);
 			if (ad->getCaller()->getState() == Alive::State::Living) {
@@ -292,9 +292,7 @@ namespace Dungeon {
 			*ad << text;
 			*ad << "\n" << creature->getName() << ": [" << Utils::progressBar(creature->getCurrentHp(), creature->getMaxHp(), 10) << "]"
 					<< "     You: [" << Utils::progressBar(ad->getCaller()->getCurrentHp(), ad->getCaller()->getMaxHp(), 10) << "]" << eos;
-			ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
-				this->combatLoop(ad, reply);
-			});
+			ad->waitForReply(this, &CombatAction::combatLoop);
 		}
 	}
 

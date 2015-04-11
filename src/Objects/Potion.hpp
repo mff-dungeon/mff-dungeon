@@ -19,7 +19,7 @@ namespace Dungeon {
 		Potion(const objId& id) : Item(id) { }
 		virtual ~Potion() {}
 
-		virtual void getActions(ActionList* list, ObjectPointer callee);
+		virtual void getActions(ActionDescriptor* list);
 
 		Potion* setType(PotionType type);
 		Potion* setStrength(int strength);

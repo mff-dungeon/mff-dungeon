@@ -24,13 +24,13 @@ namespace Dungeon {
 			Cancel
 		};
 
-		virtual ObjectPointer wrapFind(ObjectMap group, MultiTargetAction* action, string str, ActionDescriptor* ad);
+		virtual ObjectPointer wrapFind(ObjectMap group, MultiTargetAction* action, const string& str, ActionDescriptor* ad);
 
 		/**
 		 * It's fucking magic :) Can explain personally if you want.
 		 * @param ad
 		 */
-		virtual bool exceptionTrigger(ActionDescriptor* ad);
+		virtual void exceptionTrigger(ActionDescriptor* ad);
 
 	private:
 		ObjectMap objects;

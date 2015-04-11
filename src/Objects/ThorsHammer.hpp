@@ -17,7 +17,7 @@ namespace Dungeon {
 		ThorsHammer();
 		virtual ~ThorsHammer();
 
-		virtual void getActions(ActionList* list, ObjectPointer calee);
+		virtual void getActions(ActionDescriptor* ad);
 
 	private:
 		/**

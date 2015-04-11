@@ -21,27 +21,26 @@ namespace Dungeon {
 		return this;
 	}
 
-	void Crafter::getActions(ActionList* list, ObjectPointer callee) {
+	void Crafter::getActions(ActionDescriptor* ad) {
 		// Info action
-		list->addAction(new CraftAction)
+		auto& list = ad->getActionList();
+		list.addAction(new CraftAction)
 				->addTarget(this)
-				->useActionFor(this, list);
+				->useActionFor(this, ad);
 
 		// Recipes action
 		CreateAction* createAct = new CreateAction;
 		try {
-			callee.assertType<Human>("Only humans can craft.");
-
 			const ObjectMap& recipes = getRelations(Relation::Master, R_RECIPE);
 			for (auto& recipe : recipes) {
 				recipe.second.assertExists("Recipe somehow disappeared.").assertType<Recipe>("This is not a recipe! ");
-				if (recipe.second.unsafeCast<Recipe>()->checkStatReqs(callee)) {
+				if (recipe.second.unsafeCast<Recipe>()->checkStatReqs(ad->getCaller())) {
 					createAct->addTarget(recipe.second);
 				}
 			}
 		
 			if (createAct->getTargets().size() > 0) {
-				list->addAction(createAct);
+				list.addAction(createAct);
 			} else {
 				delete createAct;
 			}

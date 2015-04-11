@@ -121,22 +121,21 @@ namespace Dungeon {
 		return ss.str();
 	}
 
-	void Inventory::getActions(ActionList* list, ObjectPointer callee) {
-
+	void Inventory::getActions(ActionDescriptor* ad) {
 		// Drop action, adding only if there is anything to drop
 		DropAction* action = new DropAction;
 		try {
 			const ObjectMap& itemsIn = this->getRelations(Relation::Master, R_INVENTORY);
 			for (auto& item : itemsIn) {
 				// TODO - R_INVENTORY delegating
-				item.second->getActionsRecursive(list, callee);
+				item.second->getActionsRecursive(ad);
 				action->addTarget(item.second);
 			}
 		} catch (const std::out_of_range& e) {
 
 		}
 		if (action->getTargets().size() > 0) {
-			list->addAction(action);
+			ad->getActionList().addAction(action);
 		} else {
 			delete action;
 		}

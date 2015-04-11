@@ -16,7 +16,7 @@ namespace Dungeon {
 			this->stat = stat;
 			this->value = value;
 		};
-		virtual void getActions(ActionList* list, ObjectPointer callee) { };
+		virtual void getActions(ActionDescriptor* ad) { };
 		int getValue() const;
 		StatReq* setValue(int value);
 		Human::Stats getStat() const;
