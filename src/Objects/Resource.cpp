@@ -90,28 +90,19 @@ namespace Dungeon {
 		storage.have(quantity, "resource-quantity", "Quantity of the resource");
 		Item::registerProperties(storage);
 	}
-
-	Resource* Resource::attachSumTrap() {
-		GameManager* gm = getGameManager();
-		ResourceSumTrap* trap = new ResourceSumTrap(this->getId() + "/sumtrap");
-
-		gm->insertObject(trap);
-		trap->save();
-
-		this->attachTrap(trap, "picked");
+	
+	ObjectPointer Resource::onPick(ActionDescriptor* ad) {
+		string rel = R_RESOURCE(resourceType);
+		Item::onPick(ad);
+		ad->getCaller()->addResource(this);
+		return ad->getCaller()->getSingleRelation(rel, Relation::Master);
+	}
+	
+	ObjectPointer Resource::onDrop(ActionDescriptor* ad) {
+		Item::onDrop(ad);
+		ad->getCaller()->setSingleRelation(R_RESOURCE(resourceType), nullptr, Relation::Master);
 		return this;
 	}
-
-	void ResourceSumTrap::trigger(const string& event, ObjectPointer target, ActionDescriptor* ad) {
-		target.assertType<Resource>("Tried to sum non-resource.");
-
-		Resource* newResource = target.safeCast<Resource>();
-		Human* sender = ad->getCaller();
-
-		sender->addResource(newResource);
-	}
-
-	PERSISTENT_IMPLEMENTATION(ResourceSumTrap)
 
 	PERSISTENT_IMPLEMENTATION(Resource)
 }

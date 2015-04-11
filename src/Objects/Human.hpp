@@ -46,11 +46,11 @@ namespace Dungeon {
 		Human(const objId& id);
 		Human(const objId& id, const string& username, const string& contact);
 
-		virtual void getActions(ActionList* list, ObjectPointer callee);
+		virtual void getActions(ActionDescriptor* ad);
 
 		Human* learnSpell(ObjectPointer spell);
 		bool knowsSpell(ObjectPointer spell);
-		void addCastableSpells(ActionList* list);
+		void addCastableSpells(ActionDescriptor* ad);
 
 		virtual Alive* die(ActionDescriptor* ad = nullptr);
 		virtual Alive* respawn(ActionDescriptor* ad = nullptr);

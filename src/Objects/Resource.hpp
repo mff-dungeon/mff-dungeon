@@ -59,8 +59,6 @@ namespace Dungeon {
 		virtual int getSize() const;
 		virtual Item* setSize(int size);
 
-		Resource* attachSumTrap();
-
 		virtual void registerProperties(IPropertyStorage& storage);
 		static inline std::string getResourceAmountWord(int amount) {
 			if (amount > 10000) {
@@ -113,6 +111,10 @@ namespace Dungeon {
 			}
 		}
 
+            virtual ObjectPointer onPick(ActionDescriptor* ad);
+            virtual ObjectPointer onDrop(ActionDescriptor* ad);
+
+
 	private:
 		ResourceType resourceType = Resource::Gold;
 		int quantity = 0;
@@ -120,18 +122,6 @@ namespace Dungeon {
 		objId getResourceTypeId(ResourceType type) const;
 
 		PERSISTENT_DECLARATION(Resource, Item)
-	};
-
-	class ResourceSumTrap : public Trap {
-	public:
-		ResourceSumTrap() : Trap() { }
-		ResourceSumTrap(const string& id) : Trap(id) { }
-		virtual ~ResourceSumTrap() { }
-
-		virtual void trigger(const string& event, ObjectPointer target, ActionDescriptor* ad);
-
-	private:
-		PERSISTENT_DECLARATION(ResourceSumTrap, Trap)
 	};
 
 }

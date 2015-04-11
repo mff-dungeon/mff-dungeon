@@ -93,6 +93,7 @@ namespace Dungeon {
 		if (stat == Stats::End) throw GameException("Invalid stat change requested.");
 		if (this->stats[stat] + delta <= 0) throw GameException("Stats must be always positive numbers.");
 		this->stats[stat] += delta;
+		calculateBonuses();
 		if (ad) {
 			if (delta > 0) {
 				*ad << "Your " << getStatName(stat) << " has been raised";
@@ -117,6 +118,7 @@ namespace Dungeon {
 		if (stat == Stats::End) throw GameException("Invalid stat change requested.");
 		if (value <= 0) throw GameException("Stats must be always positive numbers.");
 		this->stats[stat] = value;
+		calculateBonuses();
 		if (ad) {
 			*ad << "Your " << getStatName(stat) << " has been changed to " << value << "." << eos;
 		}
@@ -274,16 +276,18 @@ namespace Dungeon {
 		Alive::registerProperties(storage);
 	}
 
-	void Human::getActions(ActionList* list, ObjectPointer callee) {
-		if (this == callee) {
+	void Human::getActions(ActionDescriptor* ad) {
+		if (this == ad->getCaller()) {
+			auto& list = ad->getActionList();
+			
 			// Actions always available 
-			list->addAction(new CallbackAction("hello", "hello - When you wanna be polite to your Dungeon",
+			list.addAction(new CallbackAction("hello", "hello - When you wanna be polite to your Dungeon",
 					RegexMatcher::matcher("hello|hi|whats up|wazzup|yo|hey"),
 					[this] (ActionDescriptor * ad) {
 						*ad << "Hi!" << eos;
 					}, false));
 
-			list->addAction(new CallbackAction("who am i", "who am i - In case you forget your identity",
+			list.addAction(new CallbackAction("who am i", "who am i - In case you forget your identity",
 					RegexMatcher::matcher("who( )?am( )?i"),
 					[this] (ActionDescriptor * ad) {
 						*ad << "You are " + ad->getCaller()->getName() + "." << eos;
@@ -291,7 +295,7 @@ namespace Dungeon {
 
 			// Dead related actions, do not add rest if user is dead	
 			if (getState() == State::Dead) {
-				list->addAction(new CallbackAction("respawn", "respawn - respawns you in the city",
+				list.addAction(new CallbackAction("respawn", "respawn - respawns you in the city",
 						RegexMatcher::matcher("respawn"),
 						[this] (ActionDescriptor * ad) {
 							if (time(0) >= getRespawnTime()) {
@@ -303,7 +307,7 @@ namespace Dungeon {
 						}));
 
 				// This one should match everything except the allowed actions, to inform user to wait
-				list->addAction(new CallbackAction("info-dead", "Informs user of death",
+				list.addAction(new CallbackAction("info-dead", "Informs user of death",
 						RegexMatcher::matcher("(?!respawn|who( )?am( )?i|hello|hi|whats up|wazzup|yo).*"),
 						[this] (ActionDescriptor * ad) {
 							*ad << "You cannot do anything when you are dead." << eos;
@@ -318,27 +322,26 @@ namespace Dungeon {
 				return;
 			}
 
-			list->addAction(new CallbackAction("suicide", "commit suicide - If you just dont want to live on this planet anymore.",
+			list.addAction(new CallbackAction("suicide", "commit suicide - If you just dont want to live on this planet anymore.",
 					RegexMatcher::matcher("commit( a)? suicide|kill me( now)?"),
 					[this] (ActionDescriptor * ad) {
 						this->changeHp(-9999999, ad);
 					}));
 
-			list->addAction(new CallbackAction("help", "help - Well...",
+			list.addAction(new CallbackAction("help", "help - Well...",
 					RegexMatcher::matcher("help|what can i do|list actions"),
 					[this] (ActionDescriptor * ad) {
 						*ad << "This is an non-interactive help. You can do following actions:\n";
-						ActionList list;
-								this->getAllActions(&list);
-
-								ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
+						// TODO - Is this really correct? Will there always be the actions we want?
+						ActionList& list = ad->getActionList();
+						ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
 						for (auto& a : list) {
 							if (!a.second->isVisibleInHelp) continue;
 									a.second->explain(ad);
 							}
 					}, false));
 
-			list->addAction(new CallbackAction("explore", "explore - List items you can see in your current location",
+			list.addAction(new CallbackAction("explore", "explore - List items you can see in your current location",
 					RegexMatcher::matcher("explore|examine|(tell me )?where (the fuck )?am i|locate me|tell me my location|investigate"),
 					[this] (ActionDescriptor * ad) {
 						ObjectMap rooms = getRelations(Relation::Slave, R_INSIDE);
@@ -358,7 +361,7 @@ namespace Dungeon {
 						}
 					}));
 
-			list->addAction(new CallbackAction("fuck", "",
+			list.addAction(new CallbackAction("fuck", "",
 					RegexMatcher::matcher("fuck.*"),
 					[this] (ActionDescriptor * ad) {
 						*ad << (RandomString::get()
@@ -370,7 +373,7 @@ namespace Dungeon {
 								ad->getCaller()->changeHp(-50, ad);
 					}, false));
 
-			list->addAction(new CallbackAction("what do i own", "what do i own - A list of items in backpack",
+			list.addAction(new CallbackAction("what do i own", "what do i own - A list of items in backpack",
 					RegexMatcher::matcher("(what (do )?i (have|own)|inventory|list items)"),
 					[this] (ActionDescriptor * ad) {
 						bool empty = true;
@@ -391,7 +394,7 @@ namespace Dungeon {
 								<< "You don't have anything." << endr) << eos;
 						}, false));
 
-			list->addAction(new CallbackAction("combat stats", "Prints all your combat stats",
+			list.addAction(new CallbackAction("combat stats", "Prints all your combat stats",
 					RegexMatcher::matcher(".*combat stats|hitpoints"),
 					[this] (ActionDescriptor * ad) {
 						Human* me = ad->getCaller();
@@ -402,7 +405,7 @@ namespace Dungeon {
 								*ad << "Defense value: " + to_string(me->getDefense()) << eos;
 					}, false));
 
-			list->addAction(new CallbackAction("character stats", "Prints all your stats",
+			list.addAction(new CallbackAction("character stats", "Prints all your stats",
 					RegexMatcher::matcher(".*character stats|.*human stats"),
 					[this] (ActionDescriptor * ad) {
 						Human* me = ad->getCaller();
@@ -423,9 +426,9 @@ namespace Dungeon {
 						}
 					}, false));
 
-			list->addAction(new RaiseStatAction);
+			list.addAction(new RaiseStatAction);
 
-			list->addAction(new CallbackAction("resource stats", "Prints all your resource stats",
+			list.addAction(new CallbackAction("resource stats", "Prints all your resource stats",
 					RegexMatcher::matcher(".*resource stats|.*resources"),
 					[this] (ActionDescriptor * ad) {
 						Human* me = ad->getCaller();
@@ -439,31 +442,25 @@ namespace Dungeon {
 						}
 					}, false));
 
-			list->addAction(new CallbackAction("self-rename", "",
+			list.addAction(new CallbackAction("self-rename", "",
 					RegexMatcher::matcher("rename( myself)?"),
 					[this] (ActionDescriptor * ad) {
 						*ad << "Well then, what do you want your new name to be?" << eos;
 						ad->waitForReply([] (ActionDescriptor *ad, string reply) {
-							ad->getCaller()->setUsername(reply)
-									->save();
+							ad->getCaller()->setUsername(reply)->save();
 							*ad << "OK. You shall now be called " << ad->getCaller()->getName() << "." << eos; // A common mistake
 									*ad << "I'm just curious, why did you change your name?" << eos;
 						});
-						// Just to show how dialog can be longer :)
 						ad->waitForReply([] (ActionDescriptor *ad, string reply) {
 							*ad << "Interesting. Now, back to the dungeon!" << eos;
 						});
-						// Notice that both functions are prepared immediately. They 
-						// can else be created after the reply in the closure, but 
-						// that render long dialogs overindented and unreadable.
-						// 
 					}, false));
 
-			addCastableSpells(list);
+			addCastableSpells(ad);
 		}
 	}
 
-	void Human::addCastableSpells(ActionList* list) {
+	void Human::addCastableSpells(ActionDescriptor* ad) {
 		CastAction* casting = new CastAction;
 		try {
 			const ObjectMap& spells = getRelations(Relation::Master, "spell");
@@ -473,7 +470,7 @@ namespace Dungeon {
 				casting->addTarget(spell.second);
 			}
 			if (casting->getTargets().size() > 0) {
-				list->addAction(casting);
+				ad->getActionList().addAction(casting);
 			} else {
 				delete casting;
 			}
