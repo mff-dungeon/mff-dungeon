@@ -45,6 +45,7 @@ namespace Dungeon {
 		static const string& DbName() {	return p_dbName; }
 		static const string& JabberName() {	return p_jabberName; }
 		static const string& JabberPasswd() { return p_jabberPasswd; }
+		static const int GobackStackSize() { return p_gobackStackSize; }
 		static const int GameMode() { return p_gameMode; }
 		static const int RespawnTime() { return p_respawnTime; }
 		static const int LevelStats() { return p_levelStats; }
@@ -71,6 +72,7 @@ namespace Dungeon {
 		static string p_dbName;
 		static string p_jabberName;
 		static string p_jabberPasswd;
+		static int p_gobackStackSize;
 		static int p_gameMode;
 		static int p_respawnTime;
 		static int p_levelStats;

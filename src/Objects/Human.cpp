@@ -525,7 +525,7 @@ namespace Dungeon {
 	ObjectPointer Human::popGoBackStack() {
 		if(gobackBase == gobackCurrent) return ObjectPointer();		
 		gobackCurrent--;
-		if(gobackCurrent == -1) gobackCurrent = 41;
+		if(gobackCurrent == -1) gobackCurrent = Config::GobackStackSize() - 1;
 		string rel = "go-back-stack-" + to_string(gobackCurrent);
 		ObjectPointer target = getSingleRelation(rel, Relation::Master);
 		if(!!target) {
@@ -555,8 +555,8 @@ namespace Dungeon {
 	void Human::pushGoBackStack(ObjectPointer op) {
 		string rel = "go-back-stack-" + to_string(gobackCurrent);
 		setSingleRelation(rel, op);
-		gobackCurrent = (gobackCurrent + 1) % 42;
-		if(gobackBase == gobackCurrent) gobackBase = (gobackBase + 1) % 42;
+		gobackCurrent = (gobackCurrent + 1) % Config::GobackStackSize();
+		if(gobackBase == gobackCurrent) gobackBase = (gobackBase + 1) % Config::GobackStackSize();
 	}
 
 	

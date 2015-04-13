@@ -10,6 +10,12 @@ JABBER_NAME = dungeon-test@eideo.cz
 # Default: ********
 JABBER_PASSWD = losethegame
 
+# Sets the size of the go back stack. Remembers user's "go" history
+# up to N actions, the higher the value, the longer the stack is created,
+# but uses more memory and may cause confusion
+# Default: 10
+GOBACK_STACK_SIZE = 10
+
 ####################### Character Settings
 
 # Used game mode for this Dungeon world
