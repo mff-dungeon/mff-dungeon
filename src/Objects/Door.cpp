@@ -32,7 +32,7 @@ namespace Dungeon {
 			// What a weird door pointing nowhere...
 		}
 	}
-
+	
 	void DoorwalkAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer door) {
 		door.assertType<Door>("How do you want to walk through door?");
 		door->triggerTraps("doorwalk", ad);
@@ -48,7 +48,7 @@ namespace Dungeon {
 			// What a weird door pointing nowhere...
 		}
 
-		target.assertType<Location>("That seemed to head nowhere. You've decided not to go there.");
+		target.assertType<Location>("That seemed to head nowhere. You've decided not to go there.");		
 		ad->getGM()->moveAlive(ad->getCaller(), target);
 		door.unsafeCast<Door>()->onGoThrough(ad);
 		target->triggerTraps("inside", ad);
@@ -87,7 +87,7 @@ namespace Dungeon {
 		storage.have(goThroughMessage, "door-gothrough", "Message that will be displayed when user goes through");
 		IDescriptable::registerProperties(storage);
 	}
-
+	
 	void DoorwalkAction::explain(ActionDescriptor* ad) {
 		*ad << "go to ... - enter another room." << eos;
 	}

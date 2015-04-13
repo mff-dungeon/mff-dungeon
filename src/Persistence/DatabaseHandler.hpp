@@ -72,7 +72,7 @@ namespace Dungeon {
 		 * @param data object data saved in a string
 		 * @return DatabaseHandler state value
 		 */
-		int saveObject(objId oid, string cName, string data);
+		int saveObject(const objId& oid, const string& cName, const string& data);
 
 		/**
 		 * Loads an object from the database. 
@@ -81,14 +81,14 @@ namespace Dungeon {
 		 * @param sData stringstream which will be used to store the object
 		 * @return DatabaseHandler state value
 		 */
-		int loadObject(objId oid, string& cName, stringstream& sData);
+		int loadObject(const objId& oid, string& cName, stringstream& sData);
 
 		/**
 		 * Deletes an object from the database
 		 * @param oid objectId of the deleted object
 		 * @return DatabaseHandler state value
 		 */
-		int deleteObject(objId oid);
+		int deleteObject(const objId& oid);
 
 		/**
 		 * Fetches list of all IDs
@@ -124,21 +124,21 @@ namespace Dungeon {
 		 * @param rel Relation required
 		 * @return DatabaseHandler state value
 		 */
-		int getRelations(vector<Relation*>& result, Relation* rel);
+		int getRelations(vector<Relation>& result, const Relation& rel);
 
 		/**
 		 * Adds a new relation to the database
 		 * @param rel Relation to be added
 		 * @return DatabaseHandler state value
 		 */
-		int addRelation(Relation* rel);
+		int addRelation(const Relation& rel);
 
 		/**
 		 * Removes relation from the database matching the supplied values
 		 * @param rel Relation to be removed
 		 * @return DatabaseHandler state value
 		 */
-		int deleteRelation(Relation* rel);
+		int deleteRelation(const Relation& rel);
 
 		/**
 		 * 
@@ -146,7 +146,7 @@ namespace Dungeon {
 		 * @param found is set to true, if the relation was found
 		 * @return DatabaseHandler state value
 		 */
-		int hasRelation(Relation* rel, bool& found);
+		int hasRelation(const Relation& rel, bool& found);
 
 		/**
 		 * Begins transaction

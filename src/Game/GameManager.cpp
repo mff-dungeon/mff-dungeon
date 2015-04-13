@@ -9,7 +9,6 @@ namespace Dungeon {
 	GameManager::GameManager(bool init) {
 		LOG << "Created." << LOGF;
 		gameMode = (GameMode) Config::GameMode();
-		loader = new ObjectLoader();
 
 		int dbCode = DatabaseHandler::getInstance().checkDatabase();
 		if (dbCode == DatabaseHandler::E_CONNECTION_ERROR) {
@@ -71,7 +70,7 @@ namespace Dungeon {
 		LOGH("Database cleanup finished");
 	}
 
-	Base* GameManager::getObjectInstance(objId id) {
+	Base* GameManager::getObjectInstance(const objId& id) {
 		Base * r;
 		LOGS(Debug) << "Looking up object with id '" << id << "'." << LOGF;
 		r = this->objects.find(id);
@@ -80,40 +79,36 @@ namespace Dungeon {
 			if (r != nullptr)
 				this->objects.insert(r);
 			else
-				throw new ObjectLost("No such object found");
+				throw ObjectLost("No such object found");
 		}
 		return r;
 	}
 
-	Base* GameManager::loadObject(objId id) {
-		Base* r = 0;
-		r = loader->loadObject(id);
-		if (r == 0) return 0;
+	Base* GameManager::loadObject(const objId& id) {
+		Base* r = nullptr;
+		r = loader.loadObject(id);
+		if (r == nullptr) return 0;
 		LOGS(Debug) << "Loaded object '" << id << "' with class " << r->className() << "." << LOGF;
 		r->setGameManager(this);
 
 		// Load the relations
-		Relation* ref_master = new Relation(id, "0", "0");
-		vector<Relation*> list_master;
+		Relation ref_master(id, "0", "0");
+		vector<Relation> list_master;
 		DatabaseHandler::getInstance().getRelations(list_master, ref_master);
-		for (Relation* n : list_master) {
-			r->addRelation(n->relation, getObject(n->sid), Relation::Master);
-			delete n;
+		for (Relation& n : list_master) {
+			r->addRelation(n.relation, getObject(n.sid), Relation::Master);
 		}
-		delete ref_master;
 
-		Relation* ref_slave = new Relation("0", id, "0");
-		vector<Relation*> list_slave;
+		Relation ref_slave("0", id, "0");
+		vector<Relation> list_slave;
 		DatabaseHandler::getInstance().getRelations(list_slave, ref_slave);
-		for (Relation* n : list_slave) {
-			r->addRelation(n->relation, getObject(n->mid), Relation::Slave);
-			delete n;
+		for (Relation& n : list_slave) {
+			r->addRelation(n.relation, getObject(n.mid), Relation::Slave);
 		}
-		delete ref_slave;
 		return r;
 	}
 
-	bool GameManager::hasObject(objId id) {
+	bool GameManager::hasObject(const objId& id) {
 		Base * r;
 		r = this->objects.find(id);
 		if (r == 0) {
@@ -128,14 +123,14 @@ namespace Dungeon {
 	}
 
 	vector<objId> GameManager::getObjectList() {
-		return loader->getObjectList();
+		return loader.getObjectList();
 	}
 
-	bool GameManager::hasObjectLoaded(objId id) {
+	bool GameManager::hasObjectLoaded(const objId& id) {
 		return this->objects.find(id) != 0;
 	}
 
-	ObjectPointer GameManager::getObject(objId id) {
+	ObjectPointer GameManager::getObject(const objId& id) {
 		return ObjectPointer(this, id);
 	}
 
@@ -148,7 +143,7 @@ namespace Dungeon {
 
 	void GameManager::saveObject(Base* obj) {
 		LOGS(Debug) << "Saving object " << obj->getId() << "." << LOGF;
-		loader->saveObject(obj);
+		loader.saveObject(obj);
 	}
 
 	void GameManager::deleteObject(Base* obj) {
@@ -173,18 +168,17 @@ namespace Dungeon {
 		delete obj;
 	}
 
-	void GameManager::addRelation(Relation* rel) {
+	void GameManager::addRelation(const Relation& rel) {
 		int err = DatabaseHandler::getInstance().addRelation(rel);
-		LOGS(Debug) << "Adding relation " << rel->mid << " --> " << rel->sid << "." << LOGF;
+		LOGS(Debug) << "Adding relation " << rel.mid << " --> " << rel.sid << "." << LOGF;
 		if (err != DatabaseHandler::E_OK) {
 			LOGS(Error) << "Error adding relation to database." << LOGF;
 		}
 	}
 
-	void GameManager::addRelation(ObjectPointer master, ObjectPointer slave, string relation) {
-		Relation* ref = new Relation(master.getId(), slave.getId(), relation);
+	void GameManager::addRelation(ObjectPointer master, ObjectPointer slave, const string& relation) {
+		Relation ref(master.getId(), slave.getId(), relation);
 		this->addRelation(ref);
-		delete ref;
 	}
 
 	ActionQueue* GameManager::getQueue() {
@@ -214,22 +208,20 @@ namespace Dungeon {
 		return figure;
 	}
 
-	void GameManager::createRelation(ObjectPointer master, ObjectPointer slave, string relation) {
+	void GameManager::createRelation(ObjectPointer master, ObjectPointer slave, const string& relation) {
 		Relation rel(master.getId(), slave.getId(), relation);
-		this->addRelation(&rel);
+		this->addRelation(rel);
 		if (master.isLoaded())
 			master->addRelation(relation, slave, Relation::Master);
 		if (slave.isLoaded())
 			slave->addRelation(relation, master, Relation::Slave);
 	}
 
-	void GameManager::clearRelationsOfType(ObjectPointer obj, string relation, Relation::Dir master) {
-		Relation* ref_obj;
-		if (master)
-			ref_obj = new Relation(obj.getId(), "0", relation);
-		else ref_obj = new Relation("0", obj.getId(), relation);
-		DatabaseHandler::getInstance().deleteRelation(ref_obj);
-		delete ref_obj;
+	void GameManager::clearRelationsOfType(ObjectPointer obj, const string& relation, Relation::Dir master) {
+		if (master) 
+			DatabaseHandler::getInstance().deleteRelation(Relation(obj.getId(), "0", relation));
+		else 
+			DatabaseHandler::getInstance().deleteRelation(Relation("0", obj.getId(), relation));
 
 		// Need to load it because of the "others"
 		for (const RelationList::value_type& rel : obj->getRelations(master)) {
@@ -239,33 +231,34 @@ namespace Dungeon {
 		}
 	}
 
-	bool GameManager::hasRelation(ObjectPointer master, ObjectPointer slave, string relation) {
+	bool GameManager::hasRelation(ObjectPointer master, ObjectPointer slave, const string& relation) {
 		if (master->hasRelation(relation, slave, Relation::Master) && slave->hasRelation(relation, master, Relation::Slave))
 			return true;
 		else {
-			Relation* refRel = new Relation(master.getId(), slave.getId(), relation);
+			Relation refRel(master.getId(), slave.getId(), relation);
 			bool found = false;
 			DatabaseHandler::getInstance().hasRelation(refRel, found);
-			delete refRel;
-			if (found)
-				return true;
-			else return false;
+			return found;
 		}
 	}
 
-	void GameManager::removeRelation(ObjectPointer master, ObjectPointer slave, string relation) {
+	void GameManager::removeRelation(ObjectPointer master, ObjectPointer slave, const string& relation) {
 		if (!master || !slave) return;
 		master->eraseRelation(relation, slave, Relation::Master);
-		Relation* ref_obj = new Relation(master.getId(), slave.getId(), relation);
+		Relation ref_obj(master.getId(), slave.getId(), relation);
 		DatabaseHandler::getInstance().deleteRelation(ref_obj);
-		delete ref_obj;
 	}
 
 	void GameManager::moveAlive(Alive* alive, ObjectPointer room) {
 		LOGS(Debug) << "Moving alive to " << room->getId() << "." << LOGF;
+		// Deals with going back
+		if(alive->instanceOf(Human)) {
+			Human* h = (Human*) alive;
+ 			h->pushGoBackStack(alive->getLocation());
+		}
 		this->removeRelation(alive->getLocation(), alive, R_INSIDE);
 		this->createRelation(room, alive, R_INSIDE);
-		if (room.safeCast<Location>()->isRespawnable() && alive->isInstanceOf(Human::HumanClassName)) {
+		if (room.safeCast<Location>()->isRespawnable() && alive->instanceOf(Human)) {
 			alive->setRespawnLocation(room);
 		}
 	}

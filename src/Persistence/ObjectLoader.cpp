@@ -8,7 +8,7 @@
 
 namespace Dungeon {
 
-	Base* ObjectLoader::loadObject(objId oid) {
+	Base* ObjectLoader::loadObject(const objId& oid) {
 		stringstream cDataStream;
 		string cName;
 		int err = DatabaseHandler::getInstance().loadObject(oid, cName, cDataStream);

@@ -105,7 +105,7 @@ namespace Dungeon {
 		if (this == &right)
 			return *this;
 
-		throw new logic_error("AD cannot be copied.");
+		throw logic_error("AD cannot be copied.");
 	}
 
 	TextActionDescriptor::TextActionDescriptor(Driver* driver) : ActionDescriptor(driver) { }

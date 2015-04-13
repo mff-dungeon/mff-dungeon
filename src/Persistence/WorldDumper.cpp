@@ -69,17 +69,17 @@ namespace Dungeon {
 		}
 	}
 	
-	IPropertyStorage& DotDumper::have(int& prop, string id, string desc, bool editable) {
+	IPropertyStorage& DotDumper::have(int& prop, const string& id, const string& desc, bool editable) {
 		file << "<b>" << id << "</b>: " << prop << "<br/>";
 		return *this;
 	}
 	
-	IPropertyStorage& DotDumper::have(long& prop, string id, string desc, bool editable) {
+	IPropertyStorage& DotDumper::have(long& prop, const string& id, const string& desc, bool editable) {
 		file << "<b>" << id << "</b>: " << prop << "<br/>";
 		return *this;
 	}
 	
-	IPropertyStorage& DotDumper::have(string& prop, string id, string desc, bool editable) {
+	IPropertyStorage& DotDumper::have(string& prop, const string& id, const string& desc, bool editable) {
 		if (prop.length() > 10)
 			file << "<b>" << id << "</b>: (long string)<br/>";
 		else
@@ -87,7 +87,7 @@ namespace Dungeon {
 		return *this;
 	}
 	
-	IPropertyStorage& DotDumper::have(bool& prop, string id, string desc, bool editable) {
+	IPropertyStorage& DotDumper::have(bool& prop, const string& id, const string& desc, bool editable) {
 		file << "<b>" << id << "</b>: " << (prop ? "yes" : "no") << "<br/>";
 		return *this;
 	}

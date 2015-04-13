@@ -11,6 +11,7 @@
 #include "Location.hpp"
 #include "Inventory.hpp"
 #include "Spells/Spell.hpp"
+#include "Door.hpp"
 #include <time.h>
 #include <cmath>
 
@@ -269,7 +270,9 @@ namespace Dungeon {
 				.have(level, "human-level", "Human's character level")
 				.have(exp, "human-exp", "Human's experience points")
 				.have(freepoints, "human-free-points", "Human's stat points to distribute")
-				.have(lastInteraction, "alive-last-interaction", "UNIX timestamp of last interaction");
+				.have(lastInteraction, "alive-last-interaction", "UNIX timestamp of last interaction")
+				.have(gobackBase, "go-back-base", "The base of the cyclic go-back stack")
+				.have(gobackCurrent, "go-back-current", "The current position of the cyclic go-back stack");
 		for (int i = Stats::Begin; i < Stats::End; i++) {
 			storage.have(stats[i], string("human-stats-") + getStatName(i, true), string("Value of stat ") + getStatName(i));
 		}
@@ -324,10 +327,26 @@ namespace Dungeon {
 
 			list.addAction(new CallbackAction("suicide", "commit suicide - If you just dont want to live on this planet anymore.",
 					RegexMatcher::matcher("commit( a)? suicide|kill me( now)?|lose( the game)?"),
-					[this] (ActionDescriptor * ad) {
+					[this] (ActionDescriptor* ad) {
 						*ad << "Die!" << eos;
 						this->changeHp(-9999999, ad);
 					}));
+					
+			list.addAction(new CallbackAction("go back", "returns to previous location", 
+					RegexMatcher::matcher("go back|return"), 
+					[this] (ActionDescriptor* ad) {
+						ObjectPointer backLocation = popGoBackStack();
+						if(!backLocation) {
+							*ad << "You cannot return to your previous location." << eos;
+						}
+						else {
+							DoorwalkAction da;
+							da.addTarget(backLocation);
+							da.setTarget(backLocation);
+							da.commit(ad);
+							popGoBackStack();
+						}
+					}, false));
 
 			list.addAction(new CallbackAction("help", "help - Well...",
 					RegexMatcher::matcher("help|what can i do|list actions"),
@@ -502,7 +521,45 @@ namespace Dungeon {
 	bool Human::knowsSpell(ObjectPointer spell) {
 		return hasRelation("spell", spell, Relation::Master);
 	}
+	
+	ObjectPointer Human::popGoBackStack() {
+		if(gobackBase == gobackCurrent) return ObjectPointer();		
+		gobackCurrent--;
+		if(gobackCurrent == -1) gobackCurrent = 41;
+		string rel = "go-back-stack-" + to_string(gobackCurrent);
+		ObjectPointer target = getSingleRelation(rel, Relation::Master);
+		if(!!target) {
+			bool found = false;
+			try {
+				for(const auto& door : getLocation()->getRelations(Relation::Master, R_INSIDE)) {
+					if(door.second->instanceOf(Door)) {
+						for(const auto& loc : door.second->getRelations(Relation::Master, R_TARGET)) {
+							if(loc.second == target) {
+								target = door.second;
+								found = true;
+								break;
+							}
+						}
+					}
+					if(found) break;
+				}
+			}
+			catch (out_of_range& e) {}
+			if(!found) {
+				target = ObjectPointer();
+				gobackCurrent = gobackBase;
+			}
+		}
+		return target;
+	}
+	void Human::pushGoBackStack(ObjectPointer op) {
+		string rel = "go-back-stack-" + to_string(gobackCurrent);
+		setSingleRelation(rel, op);
+		gobackCurrent = (gobackCurrent + 1) % 42;
+		if(gobackBase == gobackCurrent) gobackBase = (gobackBase + 1) % 42;
+	}
 
+	
 	string Human::getWeaponName() const {
 		Wearable* weapon = getSingleRelation(Wearable::SlotRelations[Wearable::Slot::Weapon]).safeCast<Wearable>();
 		if (weapon)

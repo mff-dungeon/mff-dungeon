@@ -44,7 +44,7 @@ namespace Dungeon {
 
 	// Saves object from stringstream into DB, returns 0 if successful
 
-	int DatabaseHandler::saveObject(objId oid, string cName, string cData) {
+	int DatabaseHandler::saveObject(const objId& oid, const string& cName, const string& cData) {
 
 		// Count, to find out if we should delete or update
 		const char *countstate = "SELECT COUNT(*) FROM objects WHERE id = ?;";
@@ -86,7 +86,7 @@ namespace Dungeon {
 
 	// Loading object into a stringstream, returns 0 if loaded successfuly
 
-	int DatabaseHandler::loadObject(objId oid, string& cName, stringstream& sData) {
+	int DatabaseHandler::loadObject(const objId& oid, string& cName, stringstream& sData) {
 		const char *state = "SELECT * FROM objects WHERE id = ?;";
 		const char *coid = oid.c_str();
 		sqlite3_prepare_v2(dbConnection, state, (int) strlen(state), &dbStatement, 0);
@@ -133,7 +133,7 @@ namespace Dungeon {
 		return E_OK;
 	}
 
-	int DatabaseHandler::deleteObject(objId oid) {
+	int DatabaseHandler::deleteObject(const objId& oid) {
 		const char* cquery = "DELETE FROM objects WHERE id = ?;";
 
 		sqlite3_prepare_v2(dbConnection, cquery, strlen(cquery), &dbStatement, 0);
@@ -149,8 +149,8 @@ namespace Dungeon {
 		return E_OK;
 	}
 
-	int DatabaseHandler::getRelations(vector<Relation*>& result, Relation* rel) {
-		const string qtmp = rel->getSelectQuery();
+	int DatabaseHandler::getRelations(vector<Relation>& result, const Relation& rel) {
+		const string qtmp = rel.getSelectQuery();
 		// None parameters were handed, that is weird...
 		if (qtmp == "") {
 			sqlite3_close(dbConnection);
@@ -163,7 +163,7 @@ namespace Dungeon {
 		sqlite3_prepare(dbConnection, cquery, strlen(cquery), &dbStatement, 0);
 		sqlCode = sqlite3_step(dbStatement);
 		while (sqlCode == SQLITE_ROW) {
-			Relation* r = new Relation(objId((char *) sqlite3_column_text(dbStatement, 0)),
+			Relation r(objId((char *) sqlite3_column_text(dbStatement, 0)),
 					objId((char *) sqlite3_column_text(dbStatement, 1)), // FIXME: Leaks!!!
 					string((char *) sqlite3_column_text(dbStatement, 2))); // FIXME: Leaks!!! leaves unallocated memory somehow
 			result.push_back(r);
@@ -174,13 +174,13 @@ namespace Dungeon {
 		return E_OK;
 	}
 
-	int DatabaseHandler::addRelation(Relation* rel) {
+	int DatabaseHandler::addRelation(const Relation& rel) {
 		const char *statement = "INSERT INTO relations (mid, sid, relation) VALUES (?, ?, ?)";
 		sqlite3_prepare_v2(dbConnection, statement, (int) strlen(statement), &dbStatement, 0);
 
-		sqlite3_bind_text(dbStatement, 1, rel->mid.c_str(), strlen(rel->mid.c_str()), 0);
-		sqlite3_bind_text(dbStatement, 2, rel->sid.c_str(), strlen(rel->sid.c_str()), 0);
-		sqlite3_bind_text(dbStatement, 3, rel->relation.c_str(), strlen(rel->relation.c_str()), 0);
+		sqlite3_bind_text(dbStatement, 1, rel.mid.c_str(), strlen(rel.mid.c_str()), 0);
+		sqlite3_bind_text(dbStatement, 2, rel.sid.c_str(), strlen(rel.sid.c_str()), 0);
+		sqlite3_bind_text(dbStatement, 3, rel.relation.c_str(), strlen(rel.relation.c_str()), 0);
 
 		sqlCode = sqlite3_step(dbStatement);
 		if (sqlCode != SQLITE_DONE) {
@@ -189,12 +189,12 @@ namespace Dungeon {
 			return E_UPDATE_ERROR;
 		}
 		finalize();
-		LOGS(Debug) << "Relation " << rel->relation << " (" << rel->mid << " -> " << rel->sid << ") successfully added." << LOGF;
+		LOGS(Debug) << "Relation " << rel.relation << " (" << rel.mid << " -> " << rel.sid << ") successfully added." << LOGF;
 		return E_OK;
 	}
 
-	int DatabaseHandler::deleteRelation(Relation* rel) {
-		const string qtmp = rel->getDeleteQuery();
+	int DatabaseHandler::deleteRelation(const Relation& rel) {
+		const string qtmp = rel.getDeleteQuery();
 		// None parameters were handed, that is weird...
 		if (qtmp == "") {
 			sqlite3_close(dbConnection);
@@ -215,8 +215,8 @@ namespace Dungeon {
 		return E_OK;
 	}
 
-	int DatabaseHandler::hasRelation(Relation* rel, bool& found) {
-		const string qtmp = rel->getSelectQuery();
+	int DatabaseHandler::hasRelation(const Relation& rel, bool& found) {
+		const string qtmp = rel.getSelectQuery();
 		if (qtmp == "") {
 			sqlite3_close(dbConnection);
 			LOGS(Warning) << "Attempted to execute an invalid hasRelation query." << LOGF;

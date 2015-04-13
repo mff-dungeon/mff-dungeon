@@ -69,7 +69,7 @@ namespace Dungeon {
 		return cl.getDeepClone();
 	}
 
-	IPropertyStorage& Cloner::have(bool& prop, string id, string desc, bool editable) {
+	IPropertyStorage& Cloner::have(bool& prop, const string& id, const string& desc, bool editable) {
 		if (storing) {
 			prop = *((bool*) properties.front());
 			properties.pop();
@@ -79,7 +79,7 @@ namespace Dungeon {
 		return *this;
 	}
 
-	IPropertyStorage& Cloner::have(int& prop, string id, string desc, bool editable) {
+	IPropertyStorage& Cloner::have(int& prop, const string& id, const string& desc, bool editable) {
 		if (storing) {
 			prop = *((int*) properties.front());
 			properties.pop();
@@ -89,7 +89,7 @@ namespace Dungeon {
 		return *this;
 	}
 
-	IPropertyStorage& Cloner::have(long& prop, string id, string desc, bool editable) {
+	IPropertyStorage& Cloner::have(long& prop, const string& id, const string& desc, bool editable) {
 		if (storing) {
 			prop = *((long*) properties.front());
 			properties.pop();
@@ -99,7 +99,7 @@ namespace Dungeon {
 		return *this;
 	}
 
-	IPropertyStorage& Cloner::have(string& prop, string id, string desc, bool editable) {
+	IPropertyStorage& Cloner::have(string& prop, const string& id, const string& desc, bool editable) {
 		if (storing) {
 			prop.assign(*((string*) properties.front()));
 			properties.pop();

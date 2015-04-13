@@ -9,7 +9,7 @@ namespace Dungeon {
 			target->attachTrap(this, "inside");
 		} else if (target->instanceOf(Alive)) {
 			target->attachTrap(this, "get-actions");
-		} else throw new InvalidType("Healed target must be either Alive or Location.");
+		} else throw InvalidType("Healed target must be either Alive or Location.");
 
 		if (!!getTarget()) {
 			getTarget()->detachTrap(this, "inside");

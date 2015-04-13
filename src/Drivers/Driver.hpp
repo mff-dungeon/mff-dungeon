@@ -20,7 +20,7 @@ namespace Dungeon {
                 {
                     if (this == &right)
                         return *this;
-                    throw new logic_error("Driver cannot be copied.");
+                    throw logic_error("Driver cannot be copied.");
                 }
                 
 

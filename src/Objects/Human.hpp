@@ -87,6 +87,9 @@ namespace Dungeon {
 		const string& getContact() const;
 		Human* setUsername(const string& username);
 		const string& getUsername() const;
+		
+		ObjectPointer popGoBackStack();
+		void pushGoBackStack(ObjectPointer op);
 
 		/**
 		 * Finds out whether the guy is online.
@@ -115,6 +118,9 @@ namespace Dungeon {
 		// Free points to be distributed to stats
 		int freepoints = 0;
 		int stats [Stats::End];
+		
+		int gobackCurrent = 0;
+		int gobackBase = 0;
 
 		/**
 		 * Calculates the exp needed to level up

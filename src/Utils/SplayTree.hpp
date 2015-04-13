@@ -30,8 +30,8 @@ namespace Dungeon {
     public:
         SplayTree();
         void insert(Base* obj);
-        void remove(objId id);
-        Base* find(objId id);
+        void remove(const objId& id);
+        Base* find(const objId& id);
 		/**
 		 * Removes the whole tree and deletes all Nodes and their values
          */

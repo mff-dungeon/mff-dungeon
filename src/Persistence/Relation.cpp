@@ -3,7 +3,7 @@
 
 namespace Dungeon {
 	
-	string Relation::getSelectQuery() {
+	string Relation::getSelectQuery() const {
 		stringstream query;
 		query << "SELECT * FROM relations ";
 		bool result = this->addWhere(query);
@@ -15,7 +15,7 @@ namespace Dungeon {
 		}
 	}
 	
-	string Relation::getDeleteQuery() {
+	string Relation::getDeleteQuery() const {
 		stringstream query;
 		query << "DELETE FROM relations ";
 		bool result = this->addWhere(query);
@@ -27,7 +27,7 @@ namespace Dungeon {
 		}
 	}
 
-	bool Relation::addWhere(stringstream& query) {
+	bool Relation::addWhere(stringstream& query) const {
 		bool valid = false;
 		query << "WHERE ";
 		if(mid != "0") {

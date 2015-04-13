@@ -24,7 +24,7 @@ class ActionDescriptor {
 public:
     typedef function<void (ActionDescriptor*, const string&) > dialogReply;
 
-    ActionDescriptor(Driver * driver);
+    ActionDescriptor(Driver* driver);
     virtual ~ActionDescriptor();
 
     ActionDescriptor& operator=(const ActionDescriptor& right);

@@ -47,6 +47,11 @@ namespace Dungeon {
 		 *         should not be notified any further
 		 */
 		virtual bool handleException(GameException& exception, ActionDescriptor *ad);
+		
+		// TODO - implement action comparing where needed for priority reasons
+		virtual int compare(const Action& other) {
+			return 0;
+		}
 
 		string type;
 

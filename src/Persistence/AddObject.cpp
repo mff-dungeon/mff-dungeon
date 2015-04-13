@@ -3,7 +3,7 @@
 
 namespace Dungeon {
 
-	AddObject::AddObject(string className, const Base* o) {
+	AddObject::AddObject(const string& className, const Base* o) {
 		ObjectList::getInstance().addIObject(className, o);
 	}
 }

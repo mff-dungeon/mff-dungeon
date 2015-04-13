@@ -3,7 +3,7 @@
 namespace Dungeon {
 
 	MultiTargetAction* Polyaction::addTarget(ObjectPointer op) {
-		throw new GameException("You can't add just target to Polyaction, you must provide the action too.");
+		throw GameException("You can't add just target to Polyaction, you must provide the action too.");
 	}
 
 	Polyaction* Polyaction::addTarget(ObjectPointer op, MultiTargetAction* action) {

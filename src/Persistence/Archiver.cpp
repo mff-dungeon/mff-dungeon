@@ -72,28 +72,28 @@ namespace Dungeon {
 		return *this;
 	}
 
-	IPropertyStorage& Archiver::have(int& prop, string id, string desc, bool editable) {
+	IPropertyStorage& Archiver::have(int& prop, const string& id, const string& desc, bool editable) {
 		if (storing)
 			* this << prop;
 		else *this >> prop;
 		return *this;
 	}
 
-	IPropertyStorage& Archiver::have(long& prop, string id, string desc, bool editable) {
+	IPropertyStorage& Archiver::have(long& prop, const string& id, const string& desc, bool editable) {
 		if (storing)
 			* this << prop;
 		else *this >> prop;
 		return *this;
 	}
 
-	IPropertyStorage& Archiver::have(string& prop, string id, string desc, bool editable) {
+	IPropertyStorage& Archiver::have(string& prop, const string& id, const string& desc, bool editable) {
 		if (storing)
 			* this << prop;
 		else *this >> prop;
 		return *this;
 	}
 
-	IPropertyStorage& Archiver::have(bool& prop, string id, string desc, bool editable) {
+	IPropertyStorage& Archiver::have(bool& prop, const string& id, const string& desc, bool editable) {
 		if (storing)
 			* this << prop;
 		else *this >> prop;

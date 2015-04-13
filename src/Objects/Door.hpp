@@ -52,7 +52,7 @@ namespace Dungeon {
 
 		virtual void explain(ActionDescriptor* ad);
 		virtual bool match(const string& command, ActionDescriptor* ad);
-
+		
 		/**
 		 * Will move the target to another Room.
 		 * @param target Must be Door.

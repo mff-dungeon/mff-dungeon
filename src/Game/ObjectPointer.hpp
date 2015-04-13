@@ -10,8 +10,11 @@ namespace Dungeon {
     public:
         ObjectPointer() : gm(NULL), id("") {} // "Null OP"
         ObjectPointer(const nullptr_t n) :  ObjectPointer() {} // "Null OP"
-        ObjectPointer(const ObjectPointer& other) : ObjectPointer(other.gm, other.id) {}
         ObjectPointer(const Base* ptr) : ObjectPointer(ptr->gm, ptr->id) {}
+		ObjectPointer(const ObjectPointer& other) = default;
+		ObjectPointer& operator=(const ObjectPointer& other) = default;
+		ObjectPointer(ObjectPointer&& old) = default;
+		ObjectPointer& operator=(ObjectPointer&& old) = default;
 
         virtual ~ObjectPointer() {
             setLock(false);
@@ -89,7 +92,7 @@ namespace Dungeon {
         template<typename T>
         inline const ObjectPointer& assertType(string msg = "") const {
             if (safeCast<T>() == nullptr)
-		throw InvalidType(msg);
+				throw InvalidType(msg);
             return *this;
         }
         
@@ -103,7 +106,7 @@ namespace Dungeon {
          * Requires the given relation to exist
          * @throws GameStateChanged
          */
-        const ObjectPointer& assertRelation(string type, ObjectPointer other, Relation::Dir master = Relation::Master, string msg = "") const;
+        const ObjectPointer& assertRelation(const string& type, ObjectPointer other, Relation::Dir master = Relation::Master, string msg = "") const;
         
         Base* operator*() const {
             return get();
@@ -147,7 +150,7 @@ namespace Dungeon {
         /**
          * Only GM should use this constructor to create new OP.
          */
-        ObjectPointer(GameManager *gm, objId id)  : gm(gm), id(id) {}
+        ObjectPointer(GameManager *gm, const objId& id)  : gm(gm), id(id) {}
 
     private:
         GameManager *gm;

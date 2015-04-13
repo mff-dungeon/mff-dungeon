@@ -24,9 +24,9 @@ namespace Dungeon {
 		GameManager(bool init = false);
 		GameMode getGameMode() const;
 		void initWorld(bool askOnConsole = true);
-		bool hasObject(objId id);
-		bool hasObjectLoaded(objId id);
-		Base* loadObject(objId id);
+		bool hasObject(const objId& id);
+		bool hasObjectLoaded(const objId& id);
+		Base* loadObject(const objId& id);
 		vector<objId> getObjectList();
 
 		/**
@@ -49,13 +49,13 @@ namespace Dungeon {
 		 * @param id
 		 * @return 
 		 */
-		ObjectPointer getObject(objId id);
+		ObjectPointer getObject(const objId& id);
 
 		/**
 		 * Adds a relation to the database
 		 * @param rel Relation to be added
 		 */
-		void addRelation(Relation* rel);
+		void addRelation(const Relation& rel);
 
 		/**
 		 * Checks if the relation exists either in the DB, or in the world
@@ -64,7 +64,7 @@ namespace Dungeon {
 		 * @param relation Relation Type
 		 * @return 
 		 */
-		bool hasRelation(ObjectPointer master, ObjectPointer slave, string relation);
+		bool hasRelation(ObjectPointer master, ObjectPointer slave, const string& relation);
 
 		/**
 		 * Creates relation on already loaded objects
@@ -72,7 +72,7 @@ namespace Dungeon {
 		 * @param slave Slave
 		 * @param relation Relation type
 		 */
-		void createRelation(ObjectPointer master, ObjectPointer slave, string relation);
+		void createRelation(ObjectPointer master, ObjectPointer slave, const string& relation);
 
 		/**
 		 * Removes all the relations of given type.
@@ -80,7 +80,7 @@ namespace Dungeon {
 		 * @param relation relations to be removed
 		 * @param master true, if the relation is a master relation
 		 */
-		void clearRelationsOfType(ObjectPointer obj, string relation, Relation::Dir master = Relation::Master);
+		void clearRelationsOfType(ObjectPointer obj, const string& relation, Relation::Dir master = Relation::Master);
 
 		/**
 		 * Removes a relation from the object and from storage
@@ -88,7 +88,7 @@ namespace Dungeon {
 		 * @param slave Pointer to the slave object
 		 * @param relation type of removed relation
 		 */
-		void removeRelation(ObjectPointer master, ObjectPointer slave, string relation);
+		void removeRelation(ObjectPointer master, ObjectPointer slave, const string& relation);
 
 		ActionQueue* getQueue();
 
@@ -118,7 +118,7 @@ namespace Dungeon {
 		void roundEnd(bool noException);
 
 	protected:
-		Base* getObjectInstance(objId id);
+		Base* getObjectInstance(const objId& id);
 
 		/**
 		 * Adds a relation to the database
@@ -126,11 +126,11 @@ namespace Dungeon {
 		 * @param slave Pointer to the slave object
 		 * @param relation type of the relation
 		 */
-		void addRelation(ObjectPointer master, ObjectPointer slave, string relation);
+		void addRelation(ObjectPointer master, ObjectPointer slave, const string& relation);
 	private:
 		GameMode gameMode;
 		SplayTree objects;
-		ObjectLoader *loader;
+		ObjectLoader loader;
 		ActionQueue* aqueue;
 	};
 }

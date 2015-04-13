@@ -59,19 +59,19 @@ namespace Dungeon {
 		 * @param sid objectId of the slave object
 		 * @param relation the identifier of the relation
 		 */
-		Relation(objId mid, objId sid, string relation) : mid(mid), sid(sid), relation(relation) { }
+		Relation(const objId& mid, const objId& sid, const string& relation) : mid(mid), sid(sid), relation(relation) { }
 
 		/**
 		 * Forms a select query matching the member variables of the object
 		 * @return a string containing a database query
 		 */
-		string getSelectQuery();
+		string getSelectQuery() const;
 
 		/**
 		 * Forms a delete query matching the member variables of the object
 		 * @return a string containing a database query
 		 */
-		string getDeleteQuery();
+		string getDeleteQuery() const;
             
 	private:
         /**
@@ -79,7 +79,7 @@ namespace Dungeon {
         * @param query stream to insert query into
         * @return validity of the WHERE clause
         */
-		bool addWhere(stringstream& query);
+		bool addWhere(stringstream& query) const;
 	};
         
 	inline Relation::Dir operator!(const Relation::Dir dir) { return Relation::Dir(!(bool) dir); }

@@ -18,7 +18,7 @@ namespace Dungeon {
 	private:
 		AddObject() {}
 	public:
-		AddObject(string className, const Base* o);
+		AddObject(const string& className, const Base* o);
 	};
 }
 #endif

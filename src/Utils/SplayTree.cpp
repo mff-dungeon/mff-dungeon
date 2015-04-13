@@ -135,7 +135,7 @@ namespace Dungeon {
 	/* 
 	 * Finds and returns the object in the tree with id = objId id
 	 */
-	Base* SplayTree::find(objId id) {
+	Base* SplayTree::find(const objId& id) {
 		Node* f = this->mroot;
 		while(f != nullptr) {
 			if(f->value->getId() == id) 
@@ -154,7 +154,7 @@ namespace Dungeon {
 	/* 
 	 * Removes node with IObject having id = objId id
 	 */
-	void SplayTree::remove(objId id) {
+	void SplayTree::remove(const objId& id) {
 		Node* f = this->mroot;
 		while(f != nullptr && f->value->getId() != id) {
 			if(f->value->getId() < id)

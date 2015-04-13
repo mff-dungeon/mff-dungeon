@@ -24,8 +24,8 @@ namespace Dungeon {
 
 	public:
 		static ObjectList& getInstance();
-		void addIObject(string className, const Base* o);
-		Base* create(string className);
+		void addIObject(const string& className, const Base* o);
+		Base* create(const string& className);
 	};
 }
 #endif

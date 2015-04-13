@@ -5,6 +5,7 @@
 
 namespace Dungeon {
 
+	using namespace std;
 	/**
 	 * Class should implement this interface when 
 	 * it's able to load & store properties.
@@ -13,10 +14,10 @@ namespace Dungeon {
 	 */
 	class IPropertyStorage {
 	public:
-		virtual IPropertyStorage& have(int& prop, std::string id, std::string desc, bool editable = true) = 0;
-		virtual IPropertyStorage& have(long& prop, std::string id, std::string desc, bool editable = true) = 0;
-		virtual IPropertyStorage& have(std::string& prop, std::string id, std::string desc, bool editable = true) = 0;
-		virtual IPropertyStorage& have(bool& prop, std::string id, std::string desc, bool editable = true) = 0;
+		virtual IPropertyStorage& have(int& prop, const string& id, const string& desc, bool editable = true) = 0;
+		virtual IPropertyStorage& have(long& prop, const string& id, const string& desc, bool editable = true) = 0;
+		virtual IPropertyStorage& have(string& prop, const string& id, const string& desc, bool editable = true) = 0;
+		virtual IPropertyStorage& have(bool& prop, const string& id, const string& desc, bool editable = true) = 0;
 
 	private:
 

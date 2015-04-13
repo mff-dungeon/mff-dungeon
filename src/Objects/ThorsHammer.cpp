@@ -200,7 +200,7 @@ namespace Dungeon {
 		*ad << "Enter value for " << descr << ". ('.' = skip)" << eos;
 	}
 
-	IPropertyStorage& ThorsHammer::PropertyEditor::have(string& prop, string id, string desc, bool editable) {
+	IPropertyStorage& ThorsHammer::PropertyEditor::have(string& prop, const string& id, const string& desc, bool editable) {
 		if (!editable) return *this;
 		descriptions.push(desc + "(" + prop + ")");
 		ad->waitForReply([&] (ActionDescriptor* ad, string reply) {
@@ -214,7 +214,7 @@ namespace Dungeon {
 		return *this;
 	}
 
-	IPropertyStorage& ThorsHammer::PropertyEditor::have(int& prop, string id, string desc, bool editable) {
+	IPropertyStorage& ThorsHammer::PropertyEditor::have(int& prop, const string& id, const string& desc, bool editable) {
 		if (!editable) return *this;
 		std::stringstream ss;
 		ss << desc << "(" << prop << ")";
@@ -231,7 +231,7 @@ namespace Dungeon {
 		return *this;
 	}
 
-	IPropertyStorage& ThorsHammer::PropertyEditor::have(long& prop, string id, string desc, bool editable) {
+	IPropertyStorage& ThorsHammer::PropertyEditor::have(long& prop, const string& id, const string& desc, bool editable) {
 		if (!editable) return *this;
 		std::stringstream ss;
 		ss << desc << "(" << prop << ")";
@@ -248,7 +248,7 @@ namespace Dungeon {
 		return *this;
 	}
 
-	IPropertyStorage& ThorsHammer::PropertyEditor::have(bool& prop, string id, string desc, bool editable) {
+	IPropertyStorage& ThorsHammer::PropertyEditor::have(bool& prop, const string& id, const string& desc, bool editable) {
 		if (!editable) return *this;
 		descriptions.push(desc + "(" + (prop ? "True" : "False") + ")");
 		ad->waitForReply([&] (ActionDescriptor* ad, string reply) {

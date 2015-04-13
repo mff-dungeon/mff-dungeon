@@ -32,10 +32,10 @@ namespace Dungeon {
          */
 		static ObjectPointer deepClone(ObjectPointer original);
 		
-		virtual IPropertyStorage& have(bool& prop, string id, string desc, bool editable);
-		virtual IPropertyStorage& have(int& prop, string id, string desc, bool editable);
-		virtual IPropertyStorage& have(long& prop, string id, string desc, bool editable);
-		virtual IPropertyStorage& have(string& prop, string id, string desc, bool editable);
+		virtual IPropertyStorage& have(bool& prop, const string& id, const string& desc, bool editable);
+		virtual IPropertyStorage& have(int& prop, const string& id, const string& desc, bool editable);
+		virtual IPropertyStorage& have(long& prop, const string& id, const string& desc, bool editable);
+		virtual IPropertyStorage& have(string& prop, const string& id, const string& desc, bool editable);
 		
 	private:		
 		ObjectPointer orig;

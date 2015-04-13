@@ -21,7 +21,7 @@ namespace Dungeon
 		return *this;
 	}
 	
-	const ObjectPointer& ObjectPointer::assertRelation(string type, ObjectPointer other, Relation::Dir master, string msg) const {
+	const ObjectPointer& ObjectPointer::assertRelation(const string& type, ObjectPointer other, Relation::Dir master, string msg) const {
 		if (isLoaded()) {
 			if (!get()->hasRelation(type, other, master))
 				throw ObjectLost(msg);

@@ -14,7 +14,7 @@ namespace Dungeon {
 	 */
 	class ObjectLoader {
 	public:
-		Base* loadObject(objId oid);
+		Base* loadObject(const objId& oid);
 		void saveObject(Base *obj);
 		vector<objId> getObjectList();
 	};

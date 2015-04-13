@@ -49,7 +49,7 @@ namespace Dungeon {
 		}
 		virtual void validate() {
 			if (!this->selectedTarget)
-				throw new GameException("Target must be set prior to committing.");
+				throw GameException("Target must be set prior to committing.");
 		}
 
 		virtual void commit(ActionDescriptor* ad);

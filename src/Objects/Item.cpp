@@ -90,7 +90,7 @@ namespace Dungeon {
 		item.assertExists("Item must exist to be respawnable");
 		ObjectPointer location = getSingleRelation(R_INSIDE, Relation::Slave);
 		if (!location)
-			throw new GameException("Item must be inside something to be respawnable.");
+			throw GameException("Item must be inside something to be respawnable.");
 
 		ItemRespawner* trap = new ItemRespawner("trap/respawn/" + getId());
 		trap->setInterval(seconds);
