@@ -282,7 +282,7 @@ namespace Dungeon {
 			
 			// Actions always available 
 			list.addAction(new CallbackAction("hello", "hello - When you wanna be polite to your Dungeon",
-					RegexMatcher::matcher("hello|hi|whats up|wazzup|yo|hey"),
+					RegexMatcher::matcher("(hello|hi|whats up|wazzup|yo|hey)( dungeon)?"),
 					[this] (ActionDescriptor * ad) {
 						*ad << "Hi!" << eos;
 					}, false));
@@ -323,8 +323,9 @@ namespace Dungeon {
 			}
 
 			list.addAction(new CallbackAction("suicide", "commit suicide - If you just dont want to live on this planet anymore.",
-					RegexMatcher::matcher("commit( a)? suicide|kill me( now)?"),
+					RegexMatcher::matcher("commit( a)? suicide|kill me( now)?|lose( the game)?"),
 					[this] (ActionDescriptor * ad) {
+						*ad << "Die!" << eos;
 						this->changeHp(-9999999, ad);
 					}));
 
@@ -393,35 +394,47 @@ namespace Dungeon {
 								<< "You're poor as a church mouse." << endr
 								<< "You don't have anything." << endr) << eos;
 						}, false));
+						
+			list.addAction(new CallbackAction("stats help", "stats help - Prints help about player statistics", 
+					RegexMatcher::matcher("(stats( help)?|my info).*"),
+					[this] (ActionDescriptor* ad) {
+						*ad << "Here is a list of commands to get details on yourself:" << eos;
+						ad->setReplyFormat(ActionDescriptor::List);
+						*ad << "To print combat related information, use 'combat stats'." << eos;
+						*ad << "To print characted related information, use 'character stats'." << eos;
+						*ad << "To print resource related information, use 'resource stats'." << eos;
+						ad->setReplyFormat(ActionDescriptor::Paragraph);
+					}, true));
 
 			list.addAction(new CallbackAction("combat stats", "Prints all your combat stats",
 					RegexMatcher::matcher(".*combat stats|hitpoints"),
 					[this] (ActionDescriptor * ad) {
 						Human* me = ad->getCaller();
 						*ad << "Here is your current combat profile:" << eos;
-								ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
-								*ad << "Hitpoints: " + to_string(me->getCurrentHp()) + "/" + to_string(me->getMaxHp()) << eos;
-								*ad << "Attack value: " + to_string(me->getAttack()) << eos;
-								*ad << "Defense value: " + to_string(me->getDefense()) << eos;
+						ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
+						*ad << "Hitpoints: " + to_string(me->getCurrentHp()) + "/" + to_string(me->getMaxHp()) << eos;
+						*ad << "Attack value: " + to_string(me->getAttack()) << eos;
+						*ad << "Defense value: " + to_string(me->getDefense()) << eos;
 					}, false));
 
 			list.addAction(new CallbackAction("character stats", "Prints all your stats",
-					RegexMatcher::matcher(".*character stats|.*human stats"),
+					RegexMatcher::matcher(".*char(acter)? stats|.*human stats"),
 					[this] (ActionDescriptor * ad) {
 						Human* me = ad->getCaller();
 						*ad << "Your current level is " << me->getCharacterLevel() << "." << eos;
-								int lastExp, nextExp, progress;
-								lastExp = getRequiredExp(me->getCharacterLevel());
-								nextExp = getRequiredExp(me->getCharacterLevel() + 1);
-								progress = ((me->getExperience() - lastExp)*100 / (nextExp - lastExp));
-								*ad << "You have already received " << progress << "% of experience required for next level up." << eos;
-								*ad << "Your current stats are: " << eos;
-								ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
+						int lastExp, nextExp, progress;
+						lastExp = getRequiredExp(me->getCharacterLevel());
+						nextExp = getRequiredExp(me->getCharacterLevel() + 1);
+						progress = ((me->getExperience() - lastExp)*100 / (nextExp - lastExp));
+						*ad << "You have received " << progress << "% of experience required for next level up." << eos;
+						*ad << "Your current stats are: " << eos;
+						ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
 						for (int i = Human::Stats::Begin; i < Human::Stats::End; i++) {
 							*ad << Human::getStatName(i) << ": " << me->getStatValue(i) << eos;
 						}
 						if (me->getFreePoints() > 0) {
 							ad->setReplyFormat(ActionDescriptor::ReplyFormat::Paragraph);
+							*ad << eos; // Required for a newline after the last stat info
 							*ad << "I also have " << me->getFreePoints() << " free points to distribute." << eos;
 						}
 					}, false));
@@ -429,7 +442,7 @@ namespace Dungeon {
 			list.addAction(new RaiseStatAction);
 
 			list.addAction(new CallbackAction("resource stats", "Prints all your resource stats",
-					RegexMatcher::matcher(".*resource stats|.*resources"),
+					RegexMatcher::matcher(".*res(ource)? stats|.*resources"),
 					[this] (ActionDescriptor * ad) {
 						Human* me = ad->getCaller();
 
@@ -498,9 +511,9 @@ namespace Dungeon {
 	}
 
 	string Human::getRoundedTime(int seconds) {
-		if (seconds < 60) {
+		if (seconds < 120) {
 			return to_string(seconds) + " seconds";
-		} else if (seconds < 3600) {
+		} else if (seconds < 7200) {
 			return to_string(seconds / 60) + " minutes";
 		} else
 			return to_string(seconds / 3600) + " hours";

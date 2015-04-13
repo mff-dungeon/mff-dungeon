@@ -140,7 +140,7 @@ namespace Dungeon {
 					LOG << "Admin " << ad->getCaller()->getName() << " teleported to " << name << " using Thors' Hammer." << LOGF;
 					ad->getGM()->moveAlive(ad->getCaller(), ad->getGM()->getObject(name));
 					*ad << "You have teleported to " 
-							<< ad->getCaller()->getLocation().safeCast<IDescriptable>()->getName() << eos;
+							<< ad->getCaller()->getLocation().safeCast<IDescriptable>()->getName() << "." << eos;
 				}));
 
 		PropertyEditor* pe = new PropertyEditor;

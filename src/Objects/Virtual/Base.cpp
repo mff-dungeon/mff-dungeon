@@ -77,7 +77,7 @@ namespace Dungeon {
 	
 	bool Base::hasRelation(const string& type, ObjectPointer other, Relation::Dir dir) {
 		try {
-		LOGS(Verbose) << "Checking relation " << getId() << (dir ? "-->" : "<--") << other.getId() << " type " << type << LOGF;
+		LOGS(Debug) << "Checking relation " << getId() << (dir ? "-->" : "<--") << other.getId() << " type " << type << LOGF;
 			if(dir == Relation::Master) {
 				return relation_master[type].find(other.getId()) != relation_master[type].end();
 			} else {

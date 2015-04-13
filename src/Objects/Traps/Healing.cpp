@@ -37,7 +37,7 @@ namespace Dungeon {
 			} else if (target->instanceOf(Location)) {
 				for (auto obj : target->getRelations(Relation::Master, R_INSIDE)) {
 					if (obj.second->instanceOf(Alive))
-						obj.second.unsafeCast<Alive>()->changeHp(healedHp, ad);
+						obj.second.unsafeCast<Alive>()->changeHp(healedHp, nullptr); // The user doesn't have to be notified
 				}
 				LOGS(Debug) << "Healed everything in " << target.getId() << " for " << healedHp << LOGF;
 			}

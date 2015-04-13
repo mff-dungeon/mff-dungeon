@@ -77,7 +77,8 @@ namespace Dungeon {
 		switch (phase) {
 			case Selecting:
 				ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
-					if(Utils::decapitalize(reply) == "none") { 
+					if(Utils::decapitalize(reply) == "none" 
+							|| Utils::decapitalize(reply) == "nothing") { 
 						*ad << "Okay, I won't do anything." << eos;
 						phase = Cancel;
 						throw TrapException(this);
