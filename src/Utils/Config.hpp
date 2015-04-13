@@ -5,7 +5,23 @@
 #include "../common.hpp"
 #include "ConfigParser.hpp"
 
+/*
+ * How to add a new config value with name "Name" and type "T":
+ * 1) add the value to the config file + description (with default value)
+ * 2) add private "static T p_Name" to .hpp member field holding the value
+ * 3) add public "static const T Name() const" to .hpp, which gives the config value
+ * 4) add static initialization for the field "T Config::Name = defaultValue;" to .cpp
+ *		- required by the compiler and allows to permanently store the default value somewhere
+ * 5) add call to parserFunction to .cpp to Config::loadFile() – refer to ConfigParser methods
+ */
+
 namespace Dungeon {
+	/**
+	 * Holds all the configuration values for the dungeon. 
+	 * Stores the values in private static member fields, which are accessed by 
+	 * public static functions. The values are loaded when initialize() 
+	 * is called from a given file.
+	 */
 	class Config {
 	public:
 		/**

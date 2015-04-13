@@ -18,16 +18,78 @@ namespace Dungeon {
 		ConfigParser(const string& fileName);
 		~ConfigParser() {};
 		
+		/**
+		 * Returns string value associated with the supplied key.
+         * @param key key to be searched for
+		 * @throws InvalidFieldException when no such field in configuration file is found
+         * @return a string value found in config
+         */
 		string getString(const string& key) const;
+		
+		/**
+		 * Returns string value associated with the supplied key. The value is also tested 
+		 * using the predicate function, which allows to filter results (create enums, etc.)
+         * @param key key to be searched for
+         * @param predicate a function taking string and returning bool, which verifies the loaded value
+         * @param error a message handed to the exception, if the verification fails
+		 * @throws InvalidFieldException when no such field in configuration file is found or the value didn't pass the test
+         * @return a string value found in config
+         */
 		string getString(const string& key, const function<bool(string)> &predicate, string error) const;
+		
+		/**
+		 * Returns an integer value associated with the supplied key.
+         * @param key key to be searched for
+		 * @throws InvalidFieldException when there is no such field in the configuration file or it is not a valid integer
+         * @return an integer value found in config
+         */
 		int getInt(const string& key) const;
+		
+		/**
+		 * Returns an integer value associated  with the supplied key. The value is also tested using
+		 * the supplied predicate function to filter the results.
+         * @param key key to be searched for
+         * @param predicate a function taking an integer and returning bool, which verifies the loaded value
+         * @param error a message handed to the exception, if the verification fails
+		 * @throws InvalidFieldException when there is no such field in the configuration file, 
+		 *	it is not a valid integer value or it didn't pass the value test
+         * @return an integer value found in config
+         */
 		int getInt(const string& key, const function<bool(int)> &predicate, string error) const;
+		
+		/**
+		 * Returns a double value associated with the supplied key.
+         * @param key key to be searched for
+		 * @throws InvalidFieldException when there is no such field in the configuration file or
+		 *	it is not a valid double value
+         * @return a double value found in config
+         */
 		double getDouble(const string& key) const;
+		
+		/**
+		 * Returns a double value associated with the supplied key. The value is also tested using
+		 * the supplied predicate function to filter the results.
+         * @param key key to be searched for
+         * @param predicate a function taking a double and returning bool, which verifies the loaded value
+         * @param error a message handed to the exception, if the verification fails
+		 * @throws InvalidFieldException when there is no such field in the configuration file, 
+		 *	it is not a valid double value or it didn't pass the value test
+         * @return a double value found in config
+         */
 		double getDouble(const string& key, const function<bool(double)> &predicate, string error) const;
+		
+		/**
+		 * Returns a bool value associated with the supplied key. The method is able to 
+		 * recognize a case-insensitive t/true and f/false strings. Otherwise, throws exception.
+         * @param key key to be searched for
+		 * @throws InvalidFieldException when there is no such field in the configuration file or 
+		 *	it is not recognized as a bool value
+         * @return a bool value found in config
+         */
 		bool getBool(const string& key) const;
 		
 		/*
-		 * Used to notify that there was a field which couldn't be found or understood
+		 * Used to notify that there was a field which couldn't be found or parsed
 		 */
 		class InvalidFieldException : public exception {
 		public:
