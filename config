@@ -62,3 +62,7 @@ RECIPE_MAT_REQUIRED = 5
 # The cost multiplier used while crafting keys
 # Default: 1
 RECIPE_KEY_MAT_REQUIRED = 1
+
+# Whether to send xhtml formatted messages
+# Default: true
+FEATURE_XHTMLIM = true

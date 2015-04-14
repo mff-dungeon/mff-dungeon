@@ -71,15 +71,15 @@ namespace Dungeon {
 		Human* figure = gm->getObject(figureId)
 				.assertType<Human>("I work only with Humans.")
 				.unsafeCast<Human>();
-				// Really need to do it on every reply. Alive object could have been disposed in meantime...
-				ad->assigned(figure);
+		// Really need to do it on every reply. Alive object could have been disposed in meantime...
+		ad->assigned(figure);
 
-                // Let user know we are thinking about him right now
-                Message stateMsg(Message::Chat, ad->from);
-                stateMsg.addExtension(new ChatState(ChatStateComposing));
-                client->send(stateMsg);
-   
-                // Do the actual thinking                
+		// Let user know we are thinking about him right now
+		Message stateMsg(Message::Chat, ad->from);
+		stateMsg.addExtension(new ChatState(ChatStateComposing));
+		client->send(stateMsg);
+
+		// Do the actual thinking                
 		this->process(ad);
 
                 // Reply
@@ -87,13 +87,15 @@ namespace Dungeon {
 		Message responseMsg(Message::Chat, ad->from, message.plainString());
 		responseMsg.addExtension(new ChatState(ChatStateActive));
 		
-		Tag xhtml ("html");
-		xhtml.setXmlns(gloox::XMLNS_XHTML_IM);
-		Tag * body = new Tag(&xhtml, "body");
-		body->addAttribute(gloox::XMLNS, "http://www.w3.org/1999/xhtml");
-		message.xhtml(body);
-		LOGS(Debug) << "XHtmlIM response: " << xhtml.xml() << LOGF;
-		responseMsg.addExtension(new XHtmlIM(&xhtml));
+		if (useXHtmlIM) {
+			Tag xhtml ("html");
+			xhtml.setXmlns(gloox::XMLNS_XHTML_IM);
+			Tag * body = new Tag(&xhtml, "body");
+			body->addAttribute(gloox::XMLNS, "http://www.w3.org/1999/xhtml");
+			message.xhtml(body);
+			LOGS(Debug) << "XHtmlIM response: " << xhtml.xml() << LOGF;
+			responseMsg.addExtension(new XHtmlIM(&xhtml));
+		}
 		ad->clearReply();
 		client->send(responseMsg);
 

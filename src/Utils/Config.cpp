@@ -20,6 +20,8 @@ namespace Dungeon {
 	int Config::p_recipeMat = 5;
 	int Config::p_recipeKeyMat = 1;
 	
+	bool Config::p_feature_xhtmlim = true;
+	
 	void Config::loadFile(const string& fileName) {
 		ConfigParser cp(fileName);
 
@@ -38,6 +40,8 @@ namespace Dungeon {
 		Config::p_recipeExp = cp.getInt("RECIPE_EXP_RATE", [](int i) -> bool {return i > 0 && i <= 1000; }, "The recipe exp rate must be set to a value between 1 and 1000.");
 		Config::p_recipeMat = cp.getInt("RECIPE_MAT_REQUIRED", [](int i) -> bool {return i > 0 && i <= 1000; }, "The recipe material requirement rate must be set to a value between 1 and 1000.");
 		Config::p_recipeKeyMat = cp.getInt("RECIPE_KEY_MAT_REQUIRED", [](int i) -> bool {return i > 0 && i <= 1000; }, "The recipe key material requirement rate must be set to a value between 1 and 1000.");
+
+		Config::p_feature_xhtmlim = cp.getBool("FEATURE_XHTMLIM");
 
 		initialized = true;
 	}

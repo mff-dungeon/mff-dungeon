@@ -57,6 +57,8 @@ namespace Dungeon {
 		static const int RecipeExp() { return p_recipeExp; }
 		static const int RecipeMat() { return p_recipeMat; }
 		static const int RecipeKeyMat() { return p_recipeKeyMat; }
+                
+		static const bool FeatureXHtmlIM() { return p_feature_xhtmlim; }
 		
 	private:
 		Config() {};
@@ -84,6 +86,8 @@ namespace Dungeon {
 		static int p_recipeExp;
 		static int p_recipeMat;
 		static int p_recipeKeyMat;
+                
+                static bool p_feature_xhtmlim;
 	};
 }
 #endif	/* CONFIG_HPP */

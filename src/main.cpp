@@ -93,6 +93,7 @@ void start() {
 
 	//dungeon@eideo.cz, somemagicshit - release user/passwd
 	jabber = new JabberDriver(gm, Config::JabberName(), Config::JabberPasswd());
+	jabber->useXHtmlIM = Config::FeatureXHtmlIM();
 	jabber->run();
 	LOG << "Drivers started, starting queue." << LOGF;
 

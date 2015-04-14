@@ -58,6 +58,7 @@ namespace Dungeon {
 		void handleSubscription(const gloox::Subscription &subscription);
 
 		bool connected;
+        bool useXHtmlIM = true;
 
 	private:
 		void worker();
