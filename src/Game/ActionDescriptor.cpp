@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "ActionDescriptor.hpp"
+#include "../Output/Output.hpp"
 
 namespace Dungeon {
 
@@ -49,23 +50,15 @@ namespace Dungeon {
 		return gm && caller && action && driver == this->driver;
 	}
 
-	void ActionDescriptor::addSentence(string msg) {
+	void ActionDescriptor::addSentence(const string& msg) {
 		string trimmed = Utils::trim(msg);
 		if (trimmed == "") return;
 
+		Output::PlainString* ps = new Output::PlainString(trimmed);
 		if (replyFormat == ReplyFormat::List) {
-			if (++sentences > 1) {
-				message += "\n";
-			}
-
-			message += "  - ";
-			message += trimmed;
+			listedMessage.insert(ps);
 		} else {
-			if (++sentences > 1) {
-				message += " ";
-			}
-
-			message += trimmed;
+			sentencedMessage.insert(ps);
 		}
 	}
 	
@@ -83,20 +76,30 @@ namespace Dungeon {
 		currentSentence << msg;
 		return *this;
 	}
+	
+	ActionDescriptor& ActionDescriptor::operator<<(ActionDescriptor::EndOfSentence*(*endofsentence)()) {
+		this->addSentence(currentSentence.str());
+		currentSentence.str("");
+		return *this;
+	}
+	
+	ActionDescriptor& ActionDescriptor::operator<<(Output::Base* o) {
+		message.insert(o);
+		return *this;
+	}	
+	ActionDescriptor& ActionDescriptor::operator<<(Output::Container::ptr_t&& o) {
+		message.insert(move(o));
+		return *this;
+	}	
 
 	ActionDescriptor::EndOfSentence *eos() {
 		LOGS(Error) << "Tried to call invalid method eos." << LOGF;
 		throw GameException("AD: Method eos is not callable.");
 	}
 
-	ActionDescriptor& ActionDescriptor::operator <<(ActionDescriptor::EndOfSentence*(*endofsentence)()) {
-		this->addSentence(currentSentence.str());
-		currentSentence.str("");
-		return *this;
-	}
-
 	ActionDescriptor* ActionDescriptor::setReplyFormat(ReplyFormat format) {
 		*this << eos;
+		flushContainers();
 		replyFormat = format;
 		return this;
 	}
@@ -110,12 +113,13 @@ namespace Dungeon {
 
 	TextActionDescriptor::TextActionDescriptor(Driver* driver) : ActionDescriptor(driver) { }
 
-	string TextActionDescriptor::getReply() {
-		return message;
+	const Output::Base& TextActionDescriptor::getReply() {
+		return getOutputContainer();
 	}
 
 	void TextActionDescriptor::clearReply() {
-		message = "";
+		flushContainers();
+		message.clear();
 	}
 	
 	string ActionDescriptor::formatMessage(string msg)

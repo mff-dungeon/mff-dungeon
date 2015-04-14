@@ -66,25 +66,19 @@ namespace Dungeon {
 
         // courtesy of http://stackoverflow.com/questions/1798112/removing-leading-and-trailing-spaces-from-a-string
 
-        // trim from left
-
-        static inline std::string& ltrim(std::string& s, const char* t = " \t\n\r\f")
+        static inline std::string ltrim(std::string s, const char* t = " \t\n\r\f")
         {
             s.erase(0, s.find_first_not_of(t));
             return s;
         }
 
-        // trim from right
-
-        static inline std::string& rtrim(std::string& s, const char* t = " \t\n\r\f")
+        static inline std::string rtrim(std::string s, const char* t = " \t\n\r\f")
         {
             s.erase(s.find_last_not_of(t) + 1);
             return s;
         }
-
-        // trim from left & right
-
-        static inline std::string& trim(std::string& s, const char* t = " \t\n\r\f")
+        
+        static inline std::string trim(const std::string& s, const char* t = " \t\n\r\f")
         {
             return ltrim(rtrim(s, t), t);
         }

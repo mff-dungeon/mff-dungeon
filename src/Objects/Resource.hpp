@@ -3,6 +3,7 @@
 
 #include "../common.hpp"
 #include "../Utils/RandomString.hpp"
+#include "../Utils/FuzzyStringMatcher.hpp"
 #include "Traps/Trap.hpp"
 #include "Item.hpp"
 
@@ -111,6 +112,13 @@ namespace Dungeon {
 			}
 		}
 
+            static inline FuzzyStringMatcher<ResourceType> resourceTypeMatcher() {
+                FuzzyStringMatcher<ResourceType> fsm;
+                for (int it = ResourceType::BEGIN; it != ResourceType::END; it++)
+                    fsm.add(ResourceName[it], (ResourceType) it);
+                return fsm;
+            }
+            
             virtual ObjectPointer onPick(ActionDescriptor* ad);
             virtual ObjectPointer onDrop(ActionDescriptor* ad);
 

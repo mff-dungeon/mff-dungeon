@@ -17,6 +17,19 @@ namespace Dungeon {
         static bool match (const string& reg, const string& text, smatch& matches);
         static function<bool (string)> matcher(string reg);
     };
+    
+    class CaptureMatcher {
+    public:
+        bool match(const string& reg, const string& text) {
+            storage = text;
+            return RegexMatcher::match(reg, text, matches);
+        }
+        
+        function<bool (string)> matcher(string reg);
+        
+        smatch matches;
+        string storage;
+    };
 }
 
 #endif

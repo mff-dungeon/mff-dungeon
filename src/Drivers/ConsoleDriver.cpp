@@ -26,7 +26,7 @@ namespace Dungeon {
 
 		this->process(ad);
 
-		cout << ">>> " << ad->getReply() << endl;
+		cout << ">>> " << ad->getReply().plainString() << endl;
 	}
 
 	void ConsoleDriver::run() {

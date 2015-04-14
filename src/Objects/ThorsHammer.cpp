@@ -7,6 +7,7 @@
 #include "../Game/ActionDescriptor.hpp"
 #include "../Game/ActionList.hpp"
 #include "../Game/GameManager.hpp"
+#include "../Objects/Resource.hpp"
 
 namespace Dungeon {
 
@@ -121,6 +122,17 @@ namespace Dungeon {
 						ad->getCaller()->addExperience(exp, ad)->save();
 						*ad << "You have increased your exp by " << exp << " using your hammer." << eos;
 					}
+				}, false));
+				
+		list.addAction(new CallbackAction("th-set-resource", "(TH) th set-resource (str) (int) - set's your resource amount",
+				captureMatcher.matcher("th set-resource (.*) ([0-9]+)"),
+				[this] (ActionDescriptor * ad) {
+					auto typeMatcher = Resource::resourceTypeMatcher();
+					Resource::ResourceType res = typeMatcher.find(captureMatcher.matches[1]);
+					int quantity = stoi(captureMatcher.matches[2]);
+					LOG << "Admin " << ad->getCaller()->getName() << " set his resource " << Resource::ResourceName[res] << " to " << quantity << " units using Thors' Hammer." << LOGF;
+					ad->getCaller()->setResourceQuantity(res, quantity)->save();
+					*ad << "You have set your " << Resource::ResourceName[res] << " quantity to " << quantity << " using your hammer." << eos;
 				}, false));
 
 		list.addAction(new CallbackAction("teleport", "(TH) teleport to <id> - teleport yourself everywhere.",

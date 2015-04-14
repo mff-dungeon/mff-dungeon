@@ -45,7 +45,7 @@ namespace Dungeon {
 				ad->state = ActionDescriptor::Finished;
 			}
 		}
-		LOGS(Verbose) << "Finished processing action, user response: " << ad->getReply() << LOGF;
+		LOGS(Verbose) << "Finished processing action, user response: " << ad->getReply().plainString() << LOGF;
 		return ad->state == ActionDescriptor::Finished;
 	}
 

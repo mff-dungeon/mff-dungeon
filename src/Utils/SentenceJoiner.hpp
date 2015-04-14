@@ -76,9 +76,14 @@ namespace Dungeon {
                 return *this  << value.getId();
         }
         
-        SentenceJoiner& setConjunction(string all, string last) {
+        SentenceJoiner& setConjunction(const string& all, const string& last) {
             conjunction = all;
             lastConjunction = last;
+            return *this;
+        }
+
+        SentenceJoiner& setConjunction(const string& all) {
+            lastConjunction = conjunction = all;
             return *this;
         }
 

@@ -83,8 +83,17 @@ namespace Dungeon {
 		this->process(ad);
 
                 // Reply
-		Message responseMsg(Message::Chat, ad->from, ad->getReply());
-                responseMsg.addExtension(new ChatState(ChatStateActive));
+		const Output::Base& message = ad->getReply(); 
+		Message responseMsg(Message::Chat, ad->from, message.plainString());
+		responseMsg.addExtension(new ChatState(ChatStateActive));
+		
+		Tag xhtml ("html");
+		xhtml.setXmlns(gloox::XMLNS_XHTML_IM);
+		Tag * body = new Tag(&xhtml, "body");
+		body->addAttribute(gloox::XMLNS, "http://www.w3.org/1999/xhtml");
+		message.xhtml(body);
+		LOGS(Debug) << "XHtmlIM response: " << xhtml.xml() << LOGF;
+		responseMsg.addExtension(new XHtmlIM(&xhtml));
 		ad->clearReply();
 		client->send(responseMsg);
 

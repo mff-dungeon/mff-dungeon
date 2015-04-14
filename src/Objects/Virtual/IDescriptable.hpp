@@ -4,6 +4,7 @@
 #include "../../common.hpp"
 #include "../../Utils/RegexMatcher.hpp"
 #include "../../Actions/MultiTargetAction.hpp"
+#include "../../Output/Output.hpp"
 #include "Base.hpp"
 
 namespace Dungeon {
@@ -68,6 +69,29 @@ namespace Dungeon {
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 		virtual void explain(ActionDescriptor* ad);
 	};
+        
+    namespace Output {
+        class ObjectName : public PlainString
+        {
+        public:
+            ObjectName(ObjectPointer& o) {
+                if (o->instanceOf(IDescriptable)) {
+                    str = o.unsafeCast<IDescriptable>()->getName();
+                } else {
+                    str = o.getId();
+                }
+            }        
+
+            virtual string plainString() const {
+                return str;
+            }
+
+            virtual void xhtml(Tag* parent) const {
+                new Tag(parent, 
+                        "em", str);
+            }
+        };
+    }
 }
 
 #endif

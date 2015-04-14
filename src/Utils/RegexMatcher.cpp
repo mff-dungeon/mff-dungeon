@@ -15,4 +15,10 @@ namespace Dungeon {
             return RegexMatcher::match(reg, text);
         };
     }
+    
+    function<bool (string)> CaptureMatcher::matcher(string reg) {
+        return [reg, this] (string text) {
+            return this->match(reg, text);
+        };
+    }
 }

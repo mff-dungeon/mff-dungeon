@@ -9,6 +9,7 @@
 #include "../Game/ActionList.hpp"
 #include "../Drivers/Driver.hpp"
 #include "../Objects/Human.hpp"
+#include "../Output/Container.hpp"
 
 namespace Dungeon {
 
@@ -55,7 +56,6 @@ public:
         Invalid // WTF?
     } state = Empty;
     
-
     enum ReplyFormat {
         Paragraph,
         List
@@ -82,7 +82,7 @@ public:
 
     /**
      * Sets the action for this AD.
-     * It will be automatically deleted after replacing or deletign AD.
+     * It will be automatically deleted after replacing or deleting AD.
      * @param del To avoid deleting the action
      */
     void setAction(Action* action);
@@ -90,20 +90,29 @@ public:
     /**
      * Add some text to the reply. @see operator <<
      */
-    void addSentence(string msg);
+    void addSentence(const string& msg);
 
     /**
-     * Shortcut for addMessage. Do not try to template this,
-     * e.g. RandomString needs to be explicitly converted to string.
+     * Only to remain backward compatible it accepts the weirdo replyformat.
+     * For anything more fancy just use Output correctly.
+     * 
+     * Mixing direct Output passing and these functions can have weird results.
      */
     ActionDescriptor& operator<<(const string& msg);
     ActionDescriptor& operator<<(const char * msg);
     ActionDescriptor& operator<<(const int& msg);
-
+    
     /**
      * Finishes current sentence. @see eos
      */
     ActionDescriptor& operator<<(ActionDescriptor::EndOfSentence* (*endofsentence)());
+    
+    /**
+     * Directly adds output instance to reply.
+     * @return 
+     */
+    ActionDescriptor& operator<<(Output::Base* output);
+    ActionDescriptor& operator<<(Output::Container::ptr_t&& output);
 
     bool isValid(Driver* driver);
 
@@ -185,8 +194,32 @@ public:
         delegationStack.push(caller);
     }
 
+    Output::Container& getOutputContainer() {
+        flushContainers();
+        return message;
+    }
+    
 protected:
-    string message;
+    Output::SentenceContainer sentencedMessage;
+    Output::ListContainer listedMessage;
+    Output::Container message;
+    
+    /**
+     * This was added just to remain compatible.
+     * Try to use the fancy new output method.
+     */
+    void flushContainers()
+    {
+        if (!sentencedMessage.empty()) {
+            message.consume<Output::SentenceContainer>(move(sentencedMessage));
+            sentencedMessage.clear();
+        }
+        if (!listedMessage.empty()) {
+            message.consume<Output::ListContainer>(move(listedMessage));
+            listedMessage.clear();
+        }
+    }
+
 
 private:
     Action* action;
@@ -196,7 +229,7 @@ private:
     ReplyFormat replyFormat = ReplyFormat::Paragraph;
     int id;
 
-    queue<dialogReply> dialogReplies;
+    queue<dialogReply> dialogReplies;    
 
     int sentences = 0;
     stringstream currentSentence;
@@ -217,7 +250,7 @@ public:
     TextActionDescriptor(Driver * driver);
     string from;
 
-    string getReply();
+    const Output::Base& getReply();
     void clearReply();
 
 };

@@ -17,10 +17,8 @@ namespace Dungeon {
 			if(line.find("=") == string::npos) {
 				throw InvalidFileException("Invalid config file format on line " + to_string(lc) + ".");
 			}
-			key = line.substr(0, line.find("="));
-			val = line.substr(line.find("=")+1, line.length());
-			Utils::trim(key);
-			Utils::trim(val);
+			key = Utils::trim(line.substr(0, line.find("=")));
+			val = Utils::trim(line.substr(line.find("=")+1, line.length()));
 			loadedValues.insert(pair<string, string>(key, val));
 		}
 		input.close();

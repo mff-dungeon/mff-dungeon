@@ -5,6 +5,7 @@
 #include "../Game/GameManager.hpp"
 #include "Virtual/Recipe.hpp"
 #include "Human.hpp"
+#include "../Output/Table.hpp"
 
 namespace Dungeon {
 
@@ -68,15 +69,27 @@ namespace Dungeon {
 			const ObjectMap& recipes = target.unsafeCast<Crafter>()->getRelations(Relation::Master, R_RECIPE);
 			if (recipes.empty()) return;
 			int found = 0;
+			Output::Table table;
 			for (auto& recipe : recipes) {
 				recipe.second.assertExists("Recipe has disappeared.").assertType<Recipe>("There is a non-recipe registered.");
 				Recipe* r = recipe.second.unsafeCast<Recipe>();
 				if (r->checkStatReqs(ad->getCaller())) {
-					*ad << r->getDescription() << eos;
+					table << r->getName();
+					for (int i = Resource::ResourceType::BEGIN; i != Resource::ResourceType::END; i++) {
+						if (r->getResource(i) > 0) {
+							table << to_string(r->getResource(i)) + " " + Resource::ResourceName[i];
+						} else table << "";
+					}
+					table.finishRow();
 					found++;
 				}
 			}
-			if (!found) *ad << "You cannot craft anything here yet. Try to raise your stats." << eos;
+			if (found) {
+				ad->getOutputContainer().emplace<Output::PlainString>("You can create following items using these resources:");
+				ad->getOutputContainer().consume<Output::Table>(move(table));
+			} else {
+				*ad << "You cannot craft anything here yet. Try to raise your stats." << eos;
+			}
 		} catch (const std::out_of_range& e) {
 
 		}

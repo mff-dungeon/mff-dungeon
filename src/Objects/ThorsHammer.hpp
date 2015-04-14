@@ -20,6 +20,9 @@ namespace Dungeon {
 		virtual void getActions(ActionDescriptor* ad);
 
 	private:
+            
+            CaptureMatcher captureMatcher;
+            
 		/**
 		 * TODO his really needs to prevent target from unloading in Splay tree,
 		 * otherwise it could do terrible things!

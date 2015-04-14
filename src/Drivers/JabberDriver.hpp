@@ -15,6 +15,7 @@
 #include <gloox/disco.h>
 #include <gloox/rostermanager.h>
 #include <gloox/chatstate.h>
+#include <gloox/xhtmlim.h>
 #include "../common.hpp"
 #include "TextDriver.hpp"
 
