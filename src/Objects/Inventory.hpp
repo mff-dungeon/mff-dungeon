@@ -32,10 +32,20 @@ namespace Dungeon {
 		virtual Inventory* setBaseWeight(int weight);
 		virtual int getBaseWeight() const;
 
-		void addItem(ObjectPointer itemPtr);
+		ObjectPointer addItem(ObjectPointer itemPtr);
 		bool canAdd(ObjectPointer itemPtr);
-		void removeItem(ObjectPointer itemPtr);
+		ObjectPointer removeItem(ObjectPointer itemPtr, int amount = 1);
 		bool contains(ObjectPointer itemPtr);
+		
+		/*
+		 * The following methods return true, if the resource was added,
+		 * false if it couldn't be added/removed due to inventory size/weight limits
+         */
+		int getResourceQuantity(Resource::ResourceType type);
+		bool changeResourceQuantity(Resource::ResourceType type, int deltaQuantity);
+		bool addResource(Resource::ResourceType type, int added);
+		bool removeResource(Resource::ResourceType type, int removed);
+		bool setResource(Resource::ResourceType type, int newAmount);
 
 		/**
 		 * Makes a string describing what is inside
@@ -68,6 +78,10 @@ namespace Dungeon {
 		virtual void explain(ActionDescriptor* ad);
 		virtual bool match(const string& command, ActionDescriptor* ad);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
+		
+	private:
+		int amount = 0;
+		CaptureMatcher captureMatcher;
 	};
 }
 

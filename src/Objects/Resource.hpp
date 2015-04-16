@@ -46,10 +46,17 @@ namespace Dungeon {
 
 		ResourceType getType() const;
 		Resource* setType(ResourceType type);
-		string getTypeName() const;
 
 		int getQuantity() const;
 		Resource* setQuantity(int quantity);
+		/**
+		 * Splits the resource into two items and returns pointer to the new one
+         * @param secondAmount the amount of the resource in the second part
+         * @return a new resource, or nullptr, if the split doesn't make sense
+         */
+		ObjectPointer split(int secondAmount);
+		
+		ObjectPointer join(ObjectPointer other);
 
 		virtual string getDescription() const;
 		virtual string getName() const;

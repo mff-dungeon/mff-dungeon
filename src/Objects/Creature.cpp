@@ -13,7 +13,7 @@
 namespace Dungeon {
 
 	Creature* Creature::calculateDrops(ActionDescriptor* ad) {
-		bool dropped = false;
+		SentenceJoiner dropInfo;
 		try {
 			const ObjectMap& drops = getRelations(Relation::Master, R_DROP);
 			if (!drops.empty()) {
@@ -22,9 +22,7 @@ namespace Dungeon {
 							.assertExists("Creature has a non-existing drop")
 							.assertType<Dropper>("Create has an invalid drop");
 					Dropper* drop = dropPtr.unsafeCast<Dropper>();
-					if (drop->tryDrop(this->getLocation())) {
-						dropped = true;
-					}
+					drop->tryDrop(this->getLocation(), dropInfo);
 				}
 			}
 		} catch (const std::out_of_range& e) {
@@ -32,11 +30,8 @@ namespace Dungeon {
 		}
 
 		if (ad != nullptr) {
-			if (dropped) {
-				*ad << this->getName() << " has dropped some items on the ground!" << eos;
-			} else {
-				*ad << this->getName() << " has dropped nothing." << eos;
-			}
+			*ad << dropInfo.getSentence("It has dropped nothing.", 
+					"It has dropped %.") << eos;
 		}
 		return this;
 	}
@@ -54,6 +49,9 @@ namespace Dungeon {
 	}
 
 	Alive* Creature::die(ActionDescriptor* ad) {
+		if (ad != nullptr) {
+			*ad << "You have killed " << getName() << "." << eos;
+		}
 		this->calculateDrops(ad);
 		ad->getCaller()->addExperience(getExpReward(), ad);
 		if (this->getRespawnInterval() == -1) { // Remove
@@ -63,9 +61,6 @@ namespace Dungeon {
 		} else {
 			this->setRespawnTime(time(0) + getRespawnInterval());
 			this->setState(State::Dead);
-		}
-		if (ad != nullptr) {
-			*ad << "You have killed " << getName() << "." << eos;
 		}
 		save();
 

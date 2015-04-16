@@ -8,6 +8,7 @@
 #include "../Game/ActionList.hpp"
 #include "../Game/GameManager.hpp"
 #include "../Objects/Resource.hpp"
+#include "../Objects/Inventory.hpp"
 
 namespace Dungeon {
 
@@ -124,15 +125,23 @@ namespace Dungeon {
 					}
 				}, false));
 				
+				// FIX - add to inv
 		list.addAction(new CallbackAction("th-set-resource", "(TH) th set-resource (str) (int) - set's your resource amount",
 				captureMatcher.matcher("th set-resource (.*) ([0-9]+)"),
 				[this] (ActionDescriptor * ad) {
 					auto typeMatcher = Resource::resourceTypeMatcher();
 					Resource::ResourceType res = typeMatcher.find(captureMatcher.matches[1]);
 					int quantity = stoi(captureMatcher.matches[2]);
-					LOG << "Admin " << ad->getCaller()->getName() << " set his resource " << Resource::ResourceName[res] << " to " << quantity << " units using Thors' Hammer." << LOGF;
-					ad->getCaller()->setResourceQuantity(res, quantity)->save();
-					*ad << "You have set your " << Resource::ResourceName[res] << " quantity to " << quantity << " using your hammer." << eos;
+					if(ad->getCaller()->getBackpack().unsafeCast<Inventory>()->setResource(res, quantity)) {
+						LOG << "Admin " << ad->getCaller()->getName() << " set his resource " 
+								<< Resource::ResourceName[res] << " to " << quantity << " units using Thors' Hammer." << LOGF;
+						*ad << "You have set your " << Resource::ResourceName[res] << " quantity to " << quantity << " using your hammer." << eos;
+					}
+					else {
+						LOG << "Admin " << ad->getCaller()->getName() << " tried to set his resource " 
+								<< Resource::ResourceName[res] << " to " << quantity << " units using, but his inventory can't make it." << LOGF;
+						*ad << "Your backpack protests, because it's not willing to take that much into itself." << eos;
+					}
 				}, false));
 
 		list.addAction(new CallbackAction("teleport", "(TH) teleport to <id> - teleport yourself everywhere.",

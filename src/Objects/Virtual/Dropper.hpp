@@ -4,6 +4,7 @@
 #include "../../common.hpp"
 #include "Base.hpp"
 #include "../../Game/ObjectPointer.hpp"
+#include "../../Utils/SentenceJoiner.hpp"
 
 namespace Dungeon {
 
@@ -44,7 +45,7 @@ namespace Dungeon {
 		 * @param loc Location to put the drop to
 		 * @return true, if it dropped something, false otherwise
 		 */
-		bool tryDrop(ObjectPointer loc);
+		bool tryDrop(ObjectPointer loc, SentenceJoiner& info);
 
 		virtual void registerProperties(IPropertyStorage& storage);
 

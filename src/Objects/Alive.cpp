@@ -178,25 +178,42 @@ namespace Dungeon {
 	Alive* Alive::damageAlive(ObjectPointer attackerPtr, int amount, ActionDescriptor* ad) {
 		LOGS(Debug) << "Damaging alive " << attackerPtr.getId() << "." << LOGF;
 		Alive* attacker = attackerPtr.safeCast<Alive>();
-		if (amount <= 0) return this;
+		if (amount < 0) amount = 0;
 		if (ad != nullptr) {
 			if (ad->getCaller() == this) {
-				if (attacker->getWeaponName() != "")
-					*ad << (RandomString::get()
-						<< "You have received " << amount << " damage from " + attacker->getName() + "'s " + Utils::decapitalize(attacker->getWeaponName()) + "." << endr
-						<< attacker->getName() << " caused you " << amount << " damage with its " << Utils::decapitalize(attacker->getWeaponName()) << "." << endr) << eos;
-				else
-					*ad << "You have received " + to_string(amount) + " damage from " + attacker->getName() + "." << eos;
+				if (amount > 0) {
+					if (attacker->getWeaponName() != "")
+						*ad << (RandomString::get()
+							<< "You have received " << amount << " damage from " + attacker->getName() + "'s " + Utils::decapitalize(attacker->getWeaponName()) + "." << endr
+							<< attacker->getName() << " caused you " << amount << " damage with its " << Utils::decapitalize(attacker->getWeaponName()) << "." << endr) << eos;
+					else
+						*ad << "You have received " + to_string(amount) + " damage from " + attacker->getName() + "." << eos;
+				}
+				else {
+					if (attacker->getWeaponName() != "")
+						*ad << "Your enemy's " << Utils::decapitalize(attacker->getWeaponName()) << " doesn't even scratch you." << eos;
+					else 
+						*ad << "Your evemy is too weak to damage you." << eos;
+				}
 			} else {
 				string weapon = ad->getCaller()->getWeaponName();
-				if (weapon != "")
-					*ad << (RandomString::get()
-						<< "You have dealt " << amount << " damage to " + this->getName() + " with your " + Utils::decapitalize(move(weapon)) + "." << endr
-						<< "Your " + Utils::decapitalize(move(weapon)) + " has caused " << amount << " damage to " + this->getName() + "." << endr) << eos;
-				else
-					*ad << "You have dealt " << amount << " damage to " + this->getName() + "." << eos;
+				if(amount > 0) {
+					if (weapon != "")
+						*ad << (RandomString::get()
+							<< "You have dealt " << amount << " damage to " + this->getName() + " with your " + Utils::decapitalize(move(weapon)) + "." << endr
+							<< "Your " + Utils::decapitalize(move(weapon)) + " has caused " << amount << " damage to " + this->getName() + "." << endr) << eos;
+					else
+						*ad << "You have dealt " << amount << " damage to " + this->getName() + "." << eos;
+				}
+				else {
+					if(weapon != "")
+						*ad << "Your " << Utils::decapitalize(move(weapon)) << " can't even touch " << getName() << "." << eos;
+					else 
+						*ad << "You are too weak to damage " << getName() << "." << eos;
+				}
 			}
 		}
+		if (amount == 0) return this;
 		changeHp(-amount, ad);
 		return this;
 	}
@@ -256,63 +273,7 @@ namespace Dungeon {
 		this->currentState = newState;
 		return this;
 	}
-
-	int Alive::getResourceQuantity(Resource::ResourceType type) {
-		ObjectPointer resource = getSingleRelation(R_RESOURCE(type), Relation::Master);
-
-		if (!!resource) {
-			return resource.unsafeCast<Resource>()->getQuantity();
-		} else {
-			return 0;
-		}
-	}
-
-	Alive* Alive::setResourceQuantity(Resource::ResourceType type, int quantity) {
-		ObjectPointer current = getSingleRelation(R_RESOURCE(type), Relation::Master);
-
-		if (!!current) {
-			Resource* res = current.unsafeCast<Resource>();
-			if (quantity != 0) {
-				res->setQuantity(quantity);
-				res->save();
-			} else {
-				getGameManager()->deleteObject(current);
-			}
-		} else if (quantity != 0) {
-			Resource* res = new Resource(type, quantity);
-			GameManager* gm = getGameManager();
-
-			gm->insertObject(res);
-			res->save();
-			this->setSingleRelation(R_RESOURCE(res->getType()), res);
-		}
-
-		return this;
-	}
-
-	Alive* Alive::changeResourceQuantity(Resource::ResourceType type, int deltaQuantity) {
-		int currentQuantity = this->getResourceQuantity(type);
-		this->setResourceQuantity(type, currentQuantity + deltaQuantity);
-
-		return this;
-	}
-
-	Alive* Alive::addResource(Resource* resource) {
-		ObjectPointer current = getSingleRelation(R_RESOURCE(resource->getType()), Relation::Master);
-
-		if (!!current) {
-			Resource* res = current.unsafeCast<Resource>();
-			res->setQuantity(res->getQuantity() + resource->getQuantity());
-			res->save();
-
-			this->getGameManager()->deleteObject(resource);
-		} else {
-			this->setSingleRelation(R_RESOURCE(resource->getType()), resource);
-		}
-
-		return this;
-	}
-
+	
 	Alive* Alive::regenerate(int rate) {
 		LOGS(Debug) << "Attached healing trap to " << getId() << " healing at rate " << rate << "." << LOGF;
 		Healing* heal = new Healing("trap/healing/" + getId());

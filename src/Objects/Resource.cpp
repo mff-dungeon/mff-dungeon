@@ -2,6 +2,7 @@
 #include "../Game/ActionDescriptor.hpp"
 #include "../Game/GameManager.hpp"
 #include "Alive.hpp"
+#include "../Persistence/Cloner.hpp"
 
 namespace Dungeon {
 
@@ -30,6 +31,26 @@ namespace Dungeon {
 
 	Resource* Resource::setQuantity(int quantity) {
 		this->quantity = quantity;
+		save();
+		return this;
+	}
+
+	ObjectPointer Resource::split(int secondAmount) {
+		if(secondAmount <= 0 || secondAmount >= getQuantity()) return nullptr;
+		ObjectPointer newResPtr = Cloner::shallowClone(this);
+		this->setQuantity(getQuantity() - secondAmount);
+		newResPtr.unsafeCast<Resource>()->setQuantity(secondAmount);
+		LOGS(Debug) << "Split " << Resource::ResourceName[getType()] 
+				<< " into 2 parts (" << getQuantity() << ", " << secondAmount << ")." << LOGF;
+		return newResPtr;
+	}
+	
+	ObjectPointer Resource::join(ObjectPointer other) {
+		other.assertType<Resource>();
+		LOGS(Debug) << "Joining " << Resource::ResourceName[getType()] 
+				<< " (" << getQuantity() << ", " << other.unsafeCast<Resource>()->getQuantity() << ")." << LOGF;
+		setQuantity(getQuantity() + other.unsafeCast<Resource>()->getQuantity());
+		getGameManager()->deleteObject(other);
 		return this;
 	}
 
@@ -92,15 +113,12 @@ namespace Dungeon {
 	}
 	
 	ObjectPointer Resource::onPick(ActionDescriptor* ad) {
-		string rel = R_RESOURCE(resourceType);
 		Item::onPick(ad);
-		ad->getCaller()->addResource(this);
-		return ad->getCaller()->getSingleRelation(rel, Relation::Master);
+		return this;
 	}
 	
 	ObjectPointer Resource::onDrop(ActionDescriptor* ad) {
 		Item::onDrop(ad);
-		ad->getCaller()->setSingleRelation(R_RESOURCE(resourceType), nullptr, Relation::Master);
 		return this;
 	}
 

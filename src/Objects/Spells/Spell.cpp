@@ -1,6 +1,7 @@
 #include "Spell.hpp"
 #include "../Human.hpp"
 #include "../../Utils/RegexMatcher.hpp"
+#include "../Inventory.hpp"
 #include <cmath>
 
 namespace Dungeon {
@@ -64,7 +65,7 @@ namespace Dungeon {
 				.assertType<Human>("Only humans can cast spells.");
 		Human* caster = casterPtr.unsafeCast<Human>();
 
-		if (!caster->hasResourceGreaterThan(Resource::ManaShard, getManaCost(casterPtr))) {
+		if (caster->getBackpack().unsafeCast<Inventory>()->getResourceQuantity(Resource::ManaShard) < getManaCost(casterPtr)) {
 			*ad << "You don't have enough mana to cast " << getName() << "." << eos;
 			return false;
 		}

@@ -33,7 +33,10 @@ namespace Dungeon {
 		LOG << "Template room created. " << LOGF;
 		
 		/***********************************************************************
-		 *			Resources templates for droppers
+		 *					Resources templates 
+		 * Each resource must have its template of quantity 1, called template/resource/ID/1
+		 * It is used by droppers and inventory to create and merge resources
+		 * The quantity 1 is  required for correct weight calculation
 		 **********************************************************************/
 		
 		templates["resource/wood"] = createObject<Resource>("template/resource/wood/1", templateRoom)

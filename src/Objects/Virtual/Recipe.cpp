@@ -127,14 +127,15 @@ namespace Dungeon {
 	void Recipe::tryCraft(ActionDescriptor* ad) {
 		LOGS(Debug) << "Requested crafting item" << LOGF;
 		if (!checkStatReqs(ad->getCaller(), ad)) return; // Stats not high enough
+		Inventory* backpack = ad->getCaller()->getBackpack().unsafeCast<Inventory>();
 		for (int i = Resource::ManaShard; i >= 0; i--) {
-			if (!ad->getCaller()->hasResourceGreaterThan((Resource::ResourceType) i, getResource(i))) {
+			if (backpack->getResourceQuantity((Resource::ResourceType) i) < getResource(i)) {
 				*ad << "You don't have enough " << Resource::ResourceName[i] << " to craft " << getName() << "." << eos;
 				return;
 			}
 		}
 		for (int i = Resource::ManaShard; i >= 0; i--) {
-			ad->getCaller()->changeResourceQuantity((Resource::ResourceType) i, -getResource(i));
+			backpack->removeResource((Resource::ResourceType) i, getResource(i));
 		}
 		Human* crafter = ad->getCaller();
 		int levelDiff = crafter->getStatValue(getMainStat()) - getMainStatReq();
@@ -163,7 +164,6 @@ namespace Dungeon {
 			crafter->addExperience(getExperience());
 		}
 
-		Inventory* backpack = crafter->getBackpack().safeCast<Inventory>();
 		if (backpack->canAdd(created)) {
 			backpack->addItem(created);
 			*ad << "You have acquired a " << created->getName() << " and put it in your backpack." << eos;

@@ -48,24 +48,29 @@ namespace Dungeon {
 		return this;
 	}
 
-	bool Dropper::tryDrop(ObjectPointer loc) {
+	bool Dropper::tryDrop(ObjectPointer loc, SentenceJoiner& info) {
 		loc.assertExists("You cannot drop item nowhere.").assertType<Location>("You must drop items in the room.");
+		Location* l = loc.unsafeCast<Location>();
+		LOGS(Debug) << "Using " << getId() << " to calculate drop." << LOGF;
 		int random = Utils::getRandomInt(0.0_p, 100.0_p);
 		if (random <= getChance()) { // Let's drop it
+			string itemName;
 			int amount = Utils::getRandomInt(getMin(), getMax());
 			if (getItem()->instanceOf(Resource)) {
 				ObjectPointer item = Cloner::deepClone(getItem());
 				getGameManager()->clearRelationsOfType(item, "dropper-item", Relation::Slave);
-				item.safeCast<Resource>()->setQuantity(amount)->save();
-				item->setSingleRelation(R_INSIDE, loc, Relation::Slave);
+				itemName = Resource::ResourceName[getItem().unsafeCast<Resource>()->getType()];
+				item.safeCast<Resource>()->setQuantity(amount);
+				l->addItem(item);
 			} else {
 				for (int i = 1; i <= amount; i++) {
 					ObjectPointer item = Cloner::deepClone(getItem());
 					getGameManager()->clearRelationsOfType(item, "dropper-item", Relation::Slave);
-					item->setSingleRelation(R_INSIDE, loc, Relation::Slave);
+					l->addItem(item);
 				}
+				itemName = getItem().safeCast<IDescriptable>()->getName();
 			}
-			string itemName = getItem().safeCast<IDescriptable>()->getName();
+			info << (amount > 1 ? to_string(amount) + " " + itemName : itemName);
 			LOGS(Debug) << "Dropped " << amount << " items of type " << itemName << "." << LOGF;
 			return true;
 		}

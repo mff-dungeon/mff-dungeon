@@ -9,6 +9,7 @@
 #include "Item.hpp"
 #include "Inventory.hpp"
 #include "Wearable.hpp"
+#include "../Persistence/Cloner.hpp"
 
 using namespace std;
 
@@ -17,6 +18,29 @@ namespace Dungeon {
 	bool Location::contains(ObjectPointer object) {
 		return hasRelation(R_INSIDE, object, Relation::Master);
 	}
+	
+	ObjectPointer Location::addItem(ObjectPointer object) {
+		object.assertType<Item>();
+		LOGS(Debug) << "Adding item " 
+				<< (object->instanceOf(IDescriptable) ? object.unsafeCast<IDescriptable>()->getName() : object.getId()) 
+				<< " to " << getName() << "." << LOGF;
+		if(object->instanceOf(Resource)) {
+			Resource* old = object.unsafeCast<Resource>();
+			try {
+				for(auto& rel : getRelations(Relation::Master, R_INSIDE)) {
+					if(rel.second->instanceOf(Resource)) {
+						Resource* r = rel.second.unsafeCast<Resource>();
+						if(r->getType() == old->getType()) {
+							return r->join(object);
+						}
+					}
+				}
+			} catch(out_of_range& e) {}
+		}
+		getGameManager()->createRelation(this, object, R_INSIDE);
+		return object;
+	}
+
 
 	bool Location::isRespawnable() const {
 		return respawnable;
@@ -120,9 +144,11 @@ namespace Dungeon {
 	}
 
 	bool PickupAction::match(const string& command, ActionDescriptor* ad) {
-		smatch matches;
-		if (RegexMatcher::match("(pick( up)?|take|grab|obtain|catch|seize) (.+)", command, matches)) {
-			selectBestTarget(matches[3], ad);
+		if (captureMatcher.match("(pick( up)?|take|grab|obtain|catch|seize) ([0-9]+ )?(.*)", command)) {
+			try {
+				amount = stoi(captureMatcher.matches[3]);
+			} catch (invalid_argument& e) {}
+			selectBestTarget(captureMatcher.matches[4], ad);
 			return true;
 		}
 		return false;
@@ -146,29 +172,37 @@ namespace Dungeon {
 		Inventory* inventory = backpack
 				.assertType<Inventory>(GameStateInvalid::BackpackNotInventory)
 				.unsafeCast<Inventory>();
-
-
+		
+		ObjectPointer current = item->getSingleRelation(R_INSIDE, Relation::Slave, "The item is located in more than one location.")
+				.assertType<Location>("Where the fuck is the item?");
+		
+		ObjectPointer orig = target;
+		bool split = false;
+		if (item->instanceOf(Resource)) {
+			Resource* r = (Resource*) item;
+			if(r->getQuantity() > amount && amount >= 0) {
+				target = r->split(amount);
+				item = target.unsafeCast<Item>();
+				split = true;
+			}
+		}
+		
 		if (inventory->getFreeWeight() < item->getWeight()) {
 			*ad << "Content of " << inventory->getName() << " would be too heavy with " << item->getName() << "." << eos;
 			*ad << item->getName() << " weights " << Utils::weightStr(item->getWeight())
 					<< ", but there's only " << Utils::weightStr(inventory->getFreeWeight()) << " available." << eos;
+			if(split) orig.unsafeCast<Resource>()->join(target);
 			return;
 		}
 
 		if (inventory->getFreeSpace() < item->getSize()) {
 			*ad << "There is not enough space left for " << item->getName() << " in " << inventory->getName() << "." << eos;
+			if(split) orig.unsafeCast<Resource>()->join(target);
 			return;
 		}
-		// Everything is allright, let's add it
-		Location* current = item->getSingleRelation(R_INSIDE, Relation::Slave, "The item is located in more than one location.")
-				.safeCast<Location>();
-		if (!current) {
-			LOGS(Error) << "The item is nowhere?!" << LOGF;
-			return;
-		}
+		// Everything is alright, let's add it
 		ad->getGM()->removeRelation(current, item, R_INSIDE);
-		inventory->addItem(item);
 		*ad << "You've picked up " + item->getName() + "." << eos;
-		item->onPick(ad);
+		inventory->addItem(item).unsafeCast<Item>()->onPick(ad);
 	}
 }

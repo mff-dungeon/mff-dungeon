@@ -463,14 +463,14 @@ namespace Dungeon {
 			list.addAction(new CallbackAction("resource stats", "Prints all your resource stats",
 					RegexMatcher::matcher(".*res(ource)? stats|.*resources"),
 					[this] (ActionDescriptor * ad) {
-						Human* me = ad->getCaller();
+						Inventory* pack = ad->getCaller()->getBackpack().unsafeCast<Inventory>();
 
 						*ad << "Here are your current resources:" << eos;
 								ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
 						for (int type = (int) Resource::ResourceType::BEGIN; type != (int) Resource::ResourceType::END; type++) {
 							*ad << Utils::capitalize(Resource::ResourceName[type], true) << ": ";
-									int quantity = me->getResourceQuantity((Resource::ResourceType)type);
-									*ad << "[ " << quantity << " ] " << Resource::getResourceAmountWord(quantity) << eos;
+							int quantity = pack->getResourceQuantity((Resource::ResourceType)type);
+							*ad << "[ " << quantity << " ] " << Resource::getResourceAmountWord(quantity) << eos;
 						}
 					}, false));
 

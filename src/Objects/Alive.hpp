@@ -116,24 +116,7 @@ namespace Dungeon {
 		virtual void onAfterAction(ActionDescriptor* ad) {
 			getLocation()->triggerTraps("inside", ad);
 		}
-
-		int getResourceQuantity(Resource::ResourceType type);
-		Alive* setResourceQuantity(Resource::ResourceType type, int quantity);
-		Alive* changeResourceQuantity(Resource::ResourceType type, int deltaQuantity);
-		bool hasResourceGreaterThan(Resource::ResourceType type, int quantity) {
-			int actual = getResourceQuantity(type);
-			return actual >= quantity;
-		}
-		bool hasResourceLowerThan(Resource::ResourceType type, int quantity) {
-			int actual = getResourceQuantity(type);
-			return actual <= quantity;
-		}
-		bool hasResourceEqual(Resource::ResourceType type, int quantity) {
-			int actual = getResourceQuantity(type);
-			return actual == quantity;
-		}
-
-		Alive* addResource(Resource* resource);
+		
 		virtual string getWeaponName() const {
 			return weaponName;
 		}
