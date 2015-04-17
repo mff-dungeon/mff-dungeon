@@ -189,7 +189,8 @@ namespace Dungeon {
 	ObjectPointer Base::triggerTraps(const string& event, ActionDescriptor* ad) {
 		try {
 			LOGS(Debug) << "Triggering event " << event << " on " << id << ":" << LOGF;
-			const ObjectMap& map = getRelations(Relation::Slave, Trap::getRelation(event));
+			// Intentionally copying - relations usually change in traps
+			const ObjectMap map = getRelations(Relation::Slave, Trap::getRelation(event));
 			for (const ObjectMap::value_type& pair : map) {
 				LOGS(Debug) << "	trap " << pair.second.getId() << LOGF;
 				pair.second.safeCast<Trap>()->trigger(event, this, ad);

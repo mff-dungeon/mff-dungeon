@@ -199,11 +199,6 @@ public:
         return message;
     }
     
-protected:
-    Output::SentenceContainer sentencedMessage;
-    Output::ListContainer listedMessage;
-    Output::Container message;
-    
     /**
      * This was added just to remain compatible.
      * Try to use the fancy new output method.
@@ -219,6 +214,11 @@ protected:
             listedMessage.clear();
         }
     }
+protected:
+    Output::SentenceContainer sentencedMessage;
+    Output::ListContainer listedMessage;
+    Output::Container message;
+    
 
 
 private:

@@ -15,6 +15,8 @@ namespace Dungeon {
 		friend struct ObjectPointer;
 
 	public:
+		typedef std::shared_ptr<Base> ptr_t;
+		typedef std::weak_ptr<Base> weak_ptr_t;
 
 		enum GameMode {
 			Normal = 0, // The basic intented game mode
@@ -42,7 +44,7 @@ namespace Dungeon {
 		/**
 		 * Deletes object from the world.
 		 */
-		void deleteObject(Base *object);
+		void deleteObject(ObjectPointer object);
 
 		/**
 		 * Gets OP for an object.
@@ -118,7 +120,7 @@ namespace Dungeon {
 		void roundEnd(bool noException);
 
 	protected:
-		Base* getObjectInstance(const objId& id);
+		ptr_t getObjectInstance(const objId& id);
 
 		/**
 		 * Adds a relation to the database

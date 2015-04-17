@@ -1,25 +1,47 @@
 #include "../common.hpp"
+#include <memory>
 
 #ifndef OBJECTPOINTER_HPP
 #define	OBJECTPOINTER_HPP
 
 namespace Dungeon {
 
+    /**
+     * Kind of a proxy class for pointer to Object. Semantics:
+     * 
+     * If strong_obj is not null, this pointer behaves as a lock and the object
+     * should not be deleted for any reason.
+     * 
+     * If weak_obj can be locked, it will be used to access the object.
+     * 
+     * Else, the gm and id will be used to load new weak_obj from the object 
+     * storage.
+     */
     struct ObjectPointer {
     friend class GameManager;
     public:
-        ObjectPointer() : gm(NULL), id("") {} // "Null OP"
+        typedef std::shared_ptr<Base> ptr_t;
+        typedef std::weak_ptr<Base> weak_ptr_t;
+
+        ObjectPointer() : gm(nullptr), id("") {} // "Null OP"
         ObjectPointer(const nullptr_t n) :  ObjectPointer() {} // "Null OP"
         ObjectPointer(const Base* ptr) : ObjectPointer(ptr->gm, ptr->id) {}
-		ObjectPointer(const ObjectPointer& other) = default;
-		ObjectPointer& operator=(const ObjectPointer& other) = default;
-		ObjectPointer(ObjectPointer&& old) = default;
-		ObjectPointer& operator=(ObjectPointer&& old) = default;
 
-        virtual ~ObjectPointer() {
-            setLock(false);
+        ObjectPointer(const ObjectPointer& other) = default;
+        ObjectPointer& operator=(const ObjectPointer& other) = default;
+        ObjectPointer(ObjectPointer&& old) = default;
+        ObjectPointer& operator=(ObjectPointer&& old) = default;
+        
+        ObjectPointer(const weak_ptr_t ptr) : gm(nullptr), id(""), weak_obj(ptr) {
+            ptr_t lptr = weak_obj.lock();
+            if (!!lptr) {
+                gm = lptr->getGameManager();
+                id = lptr->getId();
+            }
         }
         
+        ObjectPointer(const ptr_t ptr) : ObjectPointer(weak_ptr_t(ptr)) {}
+
         const objId& getId() const
         {
             return this->id;
@@ -30,32 +52,33 @@ namespace Dungeon {
         /**
          * You can use it either as an Base*...
          */
-        operator Base* () const {
+        operator ptr_t () const {
             return get();
+        }
+        
+        operator Base* () const {
+            return get().get();
         }
         
         /**
          * ... or as id ...
          */
-        operator const char * () {
+        operator const char* () {
             return getId().c_str();
         }
         
         /**
          * .. or as a pointer.
          */
-        Base* operator->() const {
+        ptr_t operator->() const {
             return get();
         }
         
         void setLock(bool lock = true) {
-            if (locked != lock) {
-				assertExists("Object must exist in order to be locked.");
-                LOGS(Debug) << "Object " << id << " is now " << (lock ? "locked" : "unlocked") << LOGF;
-                if (locked) get()->loadLock++;
-                else get()->loadLock--;
-                locked = lock;
-            }
+            if (lock)
+                strong_obj = get();
+            else 
+                strong_obj.reset();
         }
         
         /**
@@ -66,10 +89,10 @@ namespace Dungeon {
         template<typename T>
         inline T* safeCast() const {
             try {
-                Base* target = dynamic_cast<T*>(get());
+                T* target = dynamic_cast<T*>(get().get());
                 if (!target)
                     LOG << "Tried to cast " + id + " to " + typeid(T).name() + " but that's not possible." << LOGF;
-                return (T*) target;
+                return target;
             } catch (ObjectLost& exception) {
                 LOG << "Safe-casted non-existing object id " << id << LOGF;
                 return nullptr;
@@ -82,7 +105,7 @@ namespace Dungeon {
          */
         template<typename T>
         inline T* unsafeCast() const {
-            return (T*) get();
+            return (T*) get().get();
         }
         
         /**
@@ -92,7 +115,7 @@ namespace Dungeon {
         template<typename T>
         inline const ObjectPointer& assertType(string msg = "") const {
             if (safeCast<T>() == nullptr)
-				throw InvalidType(msg);
+		throw InvalidType(msg);
             return *this;
         }
         
@@ -108,7 +131,7 @@ namespace Dungeon {
          */
         const ObjectPointer& assertRelation(const string& type, ObjectPointer other, Relation::Dir master = Relation::Master, string msg = "") const;
         
-        Base* operator*() const {
+        ptr_t operator*() const {
             return get();
         }
         
@@ -124,8 +147,16 @@ namespace Dungeon {
             return other.id != id;
         }
         
+        bool operator==(const ptr_t other) const {
+            return get() == other;
+        }
+        
+        bool operator!=(const ptr_t other) const {
+            return !(*this == other);
+        }
+        
         bool operator==(const Base* other) const {
-            return isLoaded() && get() == other;
+            return get().get() == other;
         }
         
         bool operator!=(const Base* other) const {
@@ -145,7 +176,7 @@ namespace Dungeon {
          * Intentionally protected. 
          * OP shall be used as regular pointer, and type-casted with [un]safeCast().
          */
-        Base *get() const;
+	ptr_t get() const;
         
         /**
          * Only GM should use this constructor to create new OP.
@@ -155,6 +186,8 @@ namespace Dungeon {
     private:
         GameManager *gm;
         objId id;
+	weak_ptr_t weak_obj;
+	ptr_t strong_obj;
         bool locked = false;
     };
 }

@@ -87,6 +87,7 @@ namespace Dungeon {
 		message.insert(o);
 		return *this;
 	}	
+	
 	ActionDescriptor& ActionDescriptor::operator<<(Output::Container::ptr_t&& o) {
 		message.insert(move(o));
 		return *this;

@@ -21,9 +21,9 @@ namespace Dungeon {
 	class Archiver : public IPropertyStorage {
 	private:
 		bool storing;
-		std::stringstream* stream;
+		std::stringstream& stream;
 	public:
-		Archiver(std::stringstream* stream, bool isStoring = true);
+		Archiver(std::stringstream& stream, bool isStoring = true);
 		virtual ~Archiver();
 
 		void write(const void* buffer, size_t length);

@@ -19,7 +19,7 @@ namespace Dungeon {
 		n->left = t->right;
 		if(t->right != nullptr) t->right->parent = n;
 		t->parent = n->parent;
-		if(n->parent == nullptr) this->mroot = t;
+		if(n->parent == nullptr) mroot = t;
 		else if(n == n->parent->left) n->parent->left = t;
 		else n->parent->right = t;
 		t->right = n;
@@ -35,7 +35,7 @@ namespace Dungeon {
 		n->right = t->left;
 		if(t->left != nullptr) t->left->parent = n;
 		t->parent = n->parent;
-		if(n->parent == nullptr) this->mroot = t;
+		if(n->parent == nullptr) mroot = t;
 		else if(n == n->parent->left) n->parent->left = t;
 		else n->parent->right = t;
 		t->left = n;
@@ -78,7 +78,7 @@ namespace Dungeon {
 	 *	so Node u can be deleted
 	 */
 	void SplayTree::replace(Node* u, Node* v) {
-		if(u->parent == nullptr) this->mroot = v;
+		if(u->parent == nullptr) mroot = v;
 		else if(u == u->parent->left) u->parent->left = v;
 		else u->parent->right = v;
 		if(v != nullptr) v->parent = u->parent;
@@ -96,8 +96,8 @@ namespace Dungeon {
 	/* 
 	 * Insert IObject obj into the tree
 	 */
-	void SplayTree::insert(Base* obj) {
-		Node* f = this->mroot;
+	void SplayTree::insert(ptr_t obj) {
+		Node* f = mroot;
 		Node* p = nullptr;
 		if(obj == nullptr) {
 			LOGS(Fatal) << "Attempted to insert a null pointer." << LOGF;
@@ -122,25 +122,25 @@ namespace Dungeon {
 		f->value = obj;
 		f->parent = p;	
 		if(p == nullptr)
-			this->mroot = f;
+			mroot = f;
 		else if(f->value->getId() < p->value->getId())
 			p->left = f;
 		else
 			p->right = f;
 
 		LOGS(Debug) << "Node with id " << obj->getId() << " inserted." << LOGF;
-		this->splay(f);
+		splay(f);
 	};
 
 	/* 
 	 * Finds and returns the object in the tree with id = objId id
 	 */
-	Base* SplayTree::find(const objId& id) {
-		Node* f = this->mroot;
+	SplayTree::ptr_t SplayTree::find(const objId& id) {
+		Node* f = mroot;
 		while(f != nullptr) {
 			if(f->value->getId() == id) 
 			{
-				this->splay(f);
+				splay(f);
 				return f->value;
 			}
 			else if(f->value->getId() < id)
@@ -155,7 +155,7 @@ namespace Dungeon {
 	 * Removes node with IObject having id = objId id
 	 */
 	void SplayTree::remove(const objId& id) {
-		Node* f = this->mroot;
+		Node* f = mroot;
 		while(f != nullptr && f->value->getId() != id) {
 			if(f->value->getId() < id)
 				f = f->right;
@@ -169,28 +169,30 @@ namespace Dungeon {
 		}
 
 		if(f->left == nullptr)
-			this->replace(f, f->right);
+			replace(f, f->right);
 		else if(f->right == nullptr)
-			this->replace(f, f->left);
+			replace(f, f->left);
 		else {
-			Node *t = this->findMinimum(f->right);
+			Node *t = findMinimum(f->right);
 			if(t->parent != f) {
-				this->replace(t, t->right);
+				replace(t, t->right);
 				t->right = f->right;
 				t->right->parent = t;
 			}
 			replace(f, t);
 			t->left = f->left;
 			t->left->parent = t;
-		}
-
+		}	
+		if (!f->value.unique())
+			throw GameException("The object is strongly held somewhere else.");
+		
 		delete f;
 		LOGS(Debug) << "Node with id " << id << " removed from the tree." << LOGF;
 	};
 	
 	void SplayTree::clearTree() {
 		LOG << "Clearing whole game tree." << LOGF;
-		Node *f = this->mroot;
+		Node *f = mroot;
 		while(f != nullptr) {
 			if(f->left != nullptr) {
 				f = f->left;
@@ -200,9 +202,8 @@ namespace Dungeon {
 			}
 			else {
 				Node *p = f->parent;
-				if(f->value != nullptr) {
-					delete f->value;
-				}
+				if (!f->value.unique())
+					throw GameException("The object is strongly held somewhere else.");
 				if (p) {
 					if (p->left == f) 
 						p->left = nullptr;
@@ -213,7 +214,7 @@ namespace Dungeon {
 				f = p;
 			}
 		}
-		this->mroot = nullptr;
+		mroot = nullptr;
 	}
         
 	/*

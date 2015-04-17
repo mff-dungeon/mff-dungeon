@@ -16,26 +16,25 @@ namespace Dungeon {
 			LOGS(Warning) << "Loading object with id " << oid << " failed." << LOGF;
 			return nullptr;
 		}
-		Archiver as(&cDataStream);
+		Archiver as(cDataStream);
 		Base* loaded = Base::load(as, cName);
 		loaded->setId(oid);
-		LOGS(Debug) << "Loaded object with id " << oid << "." << LOGF;
+		LOGS(Debug) << "Loaded object with id " << oid << " (" << cName << ")." << LOGF;
 		return loaded;
 	}
 
 	void ObjectLoader::saveObject(Base* object) {
 		stringstream s;
-		Archiver as(&s);
+		Archiver as(s);
 
 		string id, cName;
 		object->store(as, id, cName);
 
-		stringstream *cDataStream = new stringstream();
-		*cDataStream << as.printStream();
-		string cData = cDataStream->str();
+		stringstream cDataStream;
+		cDataStream << as.printStream();
+		string cData = cDataStream.str();
 
 		int err = DatabaseHandler::getInstance().saveObject(id, cName, cData);
-		delete cDataStream;
 		if (err != DatabaseHandler::E_OK) {
 			LOGS(Error) << "Saving object with " << id << " failed." << LOGF;
 		}

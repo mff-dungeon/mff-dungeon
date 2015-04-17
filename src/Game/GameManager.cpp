@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 namespace Dungeon {
+	typedef std::shared_ptr<Base> ptr_t;
 
 	GameManager::GameManager(bool init) {
 		LOG << "Created." << LOGF;
@@ -70,12 +71,11 @@ namespace Dungeon {
 		LOGH("Database cleanup finished");
 	}
 
-	Base* GameManager::getObjectInstance(const objId& id) {
-		Base * r;
+	ptr_t GameManager::getObjectInstance(const objId& id) {
 		LOGS(Debug) << "Looking up object with id '" << id << "'." << LOGF;
-		r = this->objects.find(id);
+		ptr_t r = objects.find(id);
 		if (r == nullptr) {
-			r = loadObject(id);
+			r = ptr_t(loadObject(id));
 			if (r != nullptr)
 				this->objects.insert(r);
 			else
@@ -109,10 +109,9 @@ namespace Dungeon {
 	}
 
 	bool GameManager::hasObject(const objId& id) {
-		Base * r;
-		r = this->objects.find(id);
+		auto r = this->objects.find(id);
 		if (r == 0) {
-			r = loadObject(id);
+			r = ptr_t(loadObject(id));
 			if (r != 0)
 				this->objects.insert(r);
 			else
@@ -136,7 +135,7 @@ namespace Dungeon {
 
 	void GameManager::insertObject(Base* obj) {
 		LOGS(Debug) << "Inserting object " << obj->getId() << "." << LOGF;
-		objects.insert(obj);
+		objects.insert(ptr_t(obj));
 		saveObject(obj);
 		obj->setGameManager(this);
 	}
@@ -146,8 +145,9 @@ namespace Dungeon {
 		loader.saveObject(obj);
 	}
 
-	void GameManager::deleteObject(Base* obj) {
-		LOGS(Debug) << "Deleting object " << obj->getId() << "." << LOGF;
+	void GameManager::deleteObject(ObjectPointer obj) {
+		string id = obj.getId();
+		LOGS(Debug) << "Deleting object " << id << "." << LOGF;
 
 		RelationList copy = obj->getRelations(Relation::Master);
 		for (const RelationList::value_type& rel : copy) {
@@ -164,8 +164,8 @@ namespace Dungeon {
 		}
 
 		DatabaseHandler::getInstance().deleteObject(obj->getId());
-		this->objects.remove(obj->getId());
-		delete obj;
+		objects.remove(id);
+		LOGS(Verbose) << "Removed object " << id << " from the world." << LOGF;
 	}
 
 	void GameManager::addRelation(const Relation& rel) {

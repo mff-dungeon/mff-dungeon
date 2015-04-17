@@ -2,6 +2,7 @@
 #define	SPLAYTREE_HPP
 
 #include <fstream>
+#include <memory>
 #include "../common.hpp"
 
 namespace Dungeon {
@@ -11,11 +12,12 @@ namespace Dungeon {
      */
     class SplayTree {
     private:
+        typedef std::shared_ptr<Base> ptr_t;
         struct Node {
             Node* left;
             Node* right;
             Node* parent;
-            Base* value;
+            ptr_t value;
         };
 
         Node* mroot;
@@ -29,9 +31,9 @@ namespace Dungeon {
         void printDotVertex(Node* node, std::ofstream& stream);
     public:
         SplayTree();
-        void insert(Base* obj);
+        void insert(ptr_t obj);
         void remove(const objId& id);
-        Base* find(const objId& id);
+        ptr_t find(const objId& id);
 		/**
 		 * Removes the whole tree and deletes all Nodes and their values
          */

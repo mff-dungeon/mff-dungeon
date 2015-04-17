@@ -284,8 +284,11 @@ namespace Dungeon {
 			ad->getCaller()->damageAlive(creaturePtr, ad->getCaller()->calculateDamage(creaturePtr, creature->getAttack()), ad);
 			if (ad->getCaller()->getState() != Alive::State::Living) return;
 			// Should be able to use potion, or so (later)
+			ad->flushContainers();
 			*ad << text;
-			*ad << "\n" << creature->getName() << ": [" << Utils::progressBar(creature->getCurrentHp(), creature->getMaxHp(), 10) << "]"
+			// TODO - nicer progressbars
+			*ad << new Output::Newline();
+			*ad << creature->getName() << ": [" << Utils::progressBar(creature->getCurrentHp(), creature->getMaxHp(), 10) << "]"
 					<< "     You: [" << Utils::progressBar(ad->getCaller()->getCurrentHp(), ad->getCaller()->getMaxHp(), 10) << "]" << eos;
 			ad->waitForReply(this, &CombatAction::combatLoop);
 		}

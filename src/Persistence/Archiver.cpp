@@ -6,10 +6,9 @@ using namespace std;
 
 namespace Dungeon {
 	
-	Archiver::Archiver(stringstream* stream, bool isStoring) : storing(isStoring), stream(stream) { }
+	Archiver::Archiver(stringstream& stream, bool isStoring) : storing(isStoring), stream(stream) { }
 
 	Archiver::~Archiver() {
-		// clear stream
 	}
 
 	bool Archiver::isStoring() const {
@@ -21,24 +20,22 @@ namespace Dungeon {
 	}
 
 	string Archiver::printStream() {
-		return this->stream->str();
+		return this->stream.str();
 	}
 
 	Archiver& Archiver::operator<<(const string& s) {
-		int l = s.length();
-		*this << l;
+		size_t l = s.length();
+		write(&l, sizeof (l));
 		write(s.c_str(), sizeof (char) * l);
 		return *this;
 	}
 
 	Archiver& Archiver::operator>>(string& s) {
-		int l = -1;
-		*this >> l;
-		vector<char> mem(l + 1);
-		char* pChars = &mem[0];
-		read(pChars, sizeof (char) * l);
-		mem[l] = 0;
-		s = pChars; // FIXME: Leaks!!!
+		size_t l = 0;
+		read(&l, sizeof (l));
+		char mem [l];
+		read(mem, sizeof (char) * l);
+		s = string(mem, l);
 		return *this;
 	}
 
@@ -101,14 +98,14 @@ namespace Dungeon {
 	}
 
 	void Archiver::write(const void* buffer, size_t length) {
-		stream->write((const char*) buffer, length);
-		if (! *stream)
+		stream.write((const char*) buffer, length);
+		if (stream.bad())
 			throw runtime_error("Archiver::write Error");
 	}
 
 	void Archiver::read(void* buffer, size_t length) {
-		stream->read((char*) buffer, length);
-		if (! *stream)
+		stream.read((char*) buffer, length);
+		if (stream.bad())
 			throw runtime_error("Archiver::read Error");
 	}
 }

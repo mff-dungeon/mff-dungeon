@@ -84,11 +84,7 @@ namespace Dungeon {
 
         Base(const objId& id) : id(id) {};
 
-        virtual ~Base()
-        {
-            if (isLocked())
-                LOGS(Error) << "Locked object is being deleted, something is wrong!" << LOGF;
-        };
+        virtual ~Base() {};
 
         virtual const objId& getId() const;
 		virtual string getObjectType() const;
@@ -207,14 +203,6 @@ namespace Dungeon {
          * and in-game configuration.
          */
         virtual void registerProperties(IPropertyStorage& storage);
-
-        /**
-         * If the object is locked, it should not be deleted.
-         */
-        virtual bool isLocked()
-        {
-            return loadLock > 0;
-        }
         
         /**
          * Shortcut for invoking all traps associated with this object for event
@@ -239,8 +227,6 @@ namespace Dungeon {
         GameManager* gm;
         objId id;
         RelationList relation_master, relation_slave;
-
-        int loadLock = 0;
 
         /**
          * Only some classes can set id
