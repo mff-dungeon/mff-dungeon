@@ -23,6 +23,11 @@ namespace Dungeon {
 		virtual ~FuzzyStringMatcher() { }
 
 		int WordMatch = 100;
+                
+                /**
+                 * Bonus for matching all words
+                 */
+                int matchAllBonus = 10;
 
 		/**
 		 * Costs are taken as changes needle --> haystack
@@ -161,7 +166,7 @@ namespace Dungeon {
 
 	template<typename value_type>
 	int FuzzyStringMatcher<value_type>::getEqualness(const vector<string>& needle, const vector<string>& haystack) const {
-		size_t i = 0, sum = 0, lastmatch = 0;
+		size_t i = 0, sum = 0, lastmatch = 0, matched = 0;
 		for (const string& nWord : needle) {
 			for (; i < haystack.size(); i++) {
 				int tol = std::min(nWord.length(), haystack[i].length());
@@ -170,12 +175,13 @@ namespace Dungeon {
 				if (cost < tol) {
 					sum += WordMatch - cost;
 					lastmatch = i + 1;
+                                        matched++;
 					break; // next word from needle
 				}
 			}
 			i = lastmatch; // this one is missing - let's try another
 		}
-		return sum;
+		return sum + (matched == haystack.size()) * matchAllBonus;
 	}
 
 	template<typename value_type>
