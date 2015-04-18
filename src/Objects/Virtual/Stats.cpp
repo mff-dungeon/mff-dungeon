@@ -10,8 +10,9 @@ namespace Dungeon {
 	}
 
 	bool RaiseStatAction::match(const string& command, ActionDescriptor* ad) {
-		if (RegexMatcher::match("raise .+", command)) {
-			selectStat(command.substr(6), ad);
+		RegexMatcher::matches matches;
+		if (RegexMatcher::match("raise (.+)", command)) {
+			selectStat(matches[1], ad);
 			return true;
 		}
 		return false;

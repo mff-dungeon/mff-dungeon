@@ -36,8 +36,9 @@ namespace Dungeon {
 	}
 
 	bool ReadScrollAction::match(const string& command, ActionDescriptor* ad) {
-		if (RegexMatcher::match("read .+", command)) {
-			selectBestTarget(command.substr(5), ad);
+		RegexMatcher::matches matches;
+		if (RegexMatcher::match("read( .+)?", command, matches)) {
+			selectBestTarget(matches[1], ad);
 			return true;
 		}
 		return false;

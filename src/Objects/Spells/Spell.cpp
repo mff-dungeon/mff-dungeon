@@ -92,8 +92,9 @@ namespace Dungeon {
 	}
 
 	bool CastAction::match(const string& command, ActionDescriptor* ad) {
-		if (RegexMatcher::match("cast .+", command)) {
-			selectBestTarget(command.substr(5), ad);
+		RegexMatcher::matches matches;
+		if (RegexMatcher::match("cast( .+)?", command, matches)) {
+			selectBestTarget(matches[1], ad);
 			return true;
 		}
 		return false;

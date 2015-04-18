@@ -394,7 +394,7 @@ namespace Dungeon {
 					}, false));
 
 			list.addAction(new CallbackAction("what do i own", "what do i own - A list of items in backpack",
-					RegexMatcher::matcher("(what (do )?i (have|own)|inventory|list items)"),
+					RegexMatcher::matcher("(what (do )?i (have|own)|inventory|backpack|list items)"),
 					[this] (ActionDescriptor * ad) {
 						bool empty = true;
 						for (int i = Wearable::Slot::BodyArmor; i != Wearable::Slot::Invalid; i--) {

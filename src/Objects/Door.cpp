@@ -93,9 +93,9 @@ namespace Dungeon {
 	}
 
 	bool DoorwalkAction::match(const string& command, ActionDescriptor* ad) {
-		smatch matches;
-		if (RegexMatcher::match("(go to|cd|walk through|enter) (.+)", command, matches)) {
-			selectBestTarget(matches[2], ad);
+		RegexMatcher::matches matches;
+		if (RegexMatcher::match("(go( to)?|cd|walk through|enter)( (.+))?", command, matches)) {
+			selectBestTarget(matches[4], ad);
 			return true;
 		}
 		return false;

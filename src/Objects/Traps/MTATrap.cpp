@@ -11,13 +11,29 @@ namespace Dungeon {
 
 	ObjectPointer MTATrap::wrapFind(ObjectMap objects, MultiTargetAction* action, const string& str, ActionDescriptor* ad) {
 		bool any = false;
+		ad->matched(action); // Because of thrown exception, this will be skipped
+		
 		try {
 			ObjectGroup grp(objects);
 			ObjectPointer target;
 			string lower = Utils::decapitalize(str);
 
 			smatch matches;
-			if (regex_match(lower, matches, regex("any\\s+(.*)"))) {
+			if (str.length() == 0 && grp.size() > 1) {
+				this->phase = Selecting;
+				SentenceJoiner targets;
+				targets.setConjunction(", ", " or ");
+				for (auto& pair : objects)
+					targets << pair.second;
+				this->objects = move(objects);
+				*ad << "And which one - " << targets << "?" << eos;
+				throw TrapException(this);
+			} else if (objects.size() == 1) {
+				if (!regex_match(lower, matches, regex("it|there"))) {
+					*ad << "You should specify what next time. " << eos;
+				}
+				target = objects.begin()->second;
+			}  else if (regex_match(lower, matches, regex("any\\s+(.*)"))) {
 				if (matches[1].length() > 0)
 					target = grp.match(matches[1]);
 				else
@@ -46,7 +62,6 @@ namespace Dungeon {
 				}
 			}
 
-			ad->matched(action); // Because of thrown exception, this will be skipped
 			this->phase = Selecting;
 
 			if (e.possibleTargets.size() > 0) {

@@ -60,6 +60,9 @@ namespace Dungeon {
 		LOGS(Debug) << "Matching actions." << LOGF;
 		string message (ad->in_msg);
 		transform(message.begin(), message.end(), message.begin(), ::tolower);
+		size_t sentence = message.find_first_of(".?!");
+		if (sentence != string::npos)
+			message = message.substr(0, sentence);
 
 		ofstream debugfile;
 		debugfile.open("debug/messages.txt", ios::out | ios::app);

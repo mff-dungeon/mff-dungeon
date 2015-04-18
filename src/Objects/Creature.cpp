@@ -208,8 +208,9 @@ namespace Dungeon {
 	}
 
 	bool CombatAction::match(const string& command, ActionDescriptor* ad) {
-		if (RegexMatcher::match("attack .+", command)) {
-			selectBestTarget(command.substr(7), ad);
+		RegexMatcher::matches matches;
+		if (RegexMatcher::match("attack( .+)?", command, matches)) {
+			selectBestTarget(matches[1], ad);
 			return true;
 		}
 		return false;
@@ -284,7 +285,7 @@ namespace Dungeon {
 		} else {
 			creature->damageAlive(ad->getCaller(), creature->calculateDamage(ad->getCaller(), ad->getCaller()->getAttack()), ad);
 			if (creature->getState() == Alive::State::Dying) {
-				*ad << creature->getName() << " is mortally wounded. Use 'kill ...' to finish it." << eos;
+				creature->die(ad);
 				return;
 			}
 			ad->getCaller()->damageAlive(creaturePtr, ad->getCaller()->calculateDamage(creaturePtr, creature->getAttack()), ad);

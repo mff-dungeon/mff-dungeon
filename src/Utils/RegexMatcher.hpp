@@ -13,6 +13,8 @@ namespace Dungeon {
 
     class RegexMatcher {
     public:
+        typedef std::smatch matches;
+        
         static bool match (const string& reg, const string& text);
         static bool match (const string& reg, const string& text, smatch& matches);
         static function<bool (string)> matcher(string reg);

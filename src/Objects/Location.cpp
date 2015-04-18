@@ -144,11 +144,11 @@ namespace Dungeon {
 	}
 
 	bool PickupAction::match(const string& command, ActionDescriptor* ad) {
-		if (captureMatcher.match("(pick( up)?|take|grab|obtain|catch|seize) ([0-9]+ )?(.*)", command)) {
+		if (captureMatcher.match("(pick( up)?|take|grab|obtain|catch|seize|get)( ([0-9]+ )?(.*))?", command)) {
 			try {
-				amount = stoi(captureMatcher.matches[3]);
+				amount = stoi(captureMatcher.matches[4]);
 			} catch (invalid_argument& e) {}
-			selectBestTarget(captureMatcher.matches[4], ad);
+			selectBestTarget(captureMatcher.matches[5], ad);
 			return true;
 		}
 		return false;

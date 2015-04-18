@@ -56,8 +56,9 @@ namespace Dungeon {
 	}
 
 	bool CraftAction::match(const string& command, ActionDescriptor* ad) {
-		if (RegexMatcher::match("craft .+", command)) {
-			selectBestTarget(command.substr(6), ad);
+		RegexMatcher::matches matches;
+		if (RegexMatcher::match("craft( .+)?", command, matches)) {
+			selectBestTarget(matches[1], ad);
 			return true;
 		}
 		return false;
@@ -112,8 +113,9 @@ namespace Dungeon {
 	}
 
 	bool CreateAction::match(const string& command, ActionDescriptor* ad) {
-		if (RegexMatcher::match("create .+", command)) {
-			selectBestTarget(command.substr(7), ad);
+		RegexMatcher::matches matches;
+		if (RegexMatcher::match("create( .+)?", command)) {
+			selectBestTarget(matches[1], ad);
 			return true;
 		}
 		return false;

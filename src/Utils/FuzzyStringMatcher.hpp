@@ -186,11 +186,7 @@ namespace Dungeon {
 
 	template<typename value_type>
 	value_type FuzzyStringMatcher<value_type>::find(const string& needle) {
-		if (needle.length() == 0) {
-			LOGS(Warning) << "Tried to find empty string." << LOGF;
-			throw StringMatcher::NoCandidate("You must write something.");
-		}
-		LOGS(Debug) << "Looking for " << needle << LOGF;
+		LOGS(Debug) << "Looking for '" << needle << "'" << LOGF;
 		int max = 0;
 		auto maxMatch = strMap.begin();
 		bool uncertain = true;
