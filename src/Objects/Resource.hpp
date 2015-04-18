@@ -16,7 +16,7 @@ namespace Dungeon {
 	public:
 
 		/**
-		 * Determines the type of the resource. 
+		 * Determines the type of the resource.
 		 * Mana shard should always be the last as many iterations depend on it
 		 * Gold and Mana shards not used yet
 		 */
@@ -34,7 +34,7 @@ namespace Dungeon {
 			ManaShard = 9,
 			END // do not use, for iteration purposes only!
 		};
-                
+
         static const int Count = ResourceType::END;
 
 		static const char* ResourceName[];
@@ -55,7 +55,7 @@ namespace Dungeon {
          * @return a new resource, or nullptr, if the split doesn't make sense
          */
 		ObjectPointer split(int secondAmount);
-		
+
 		ObjectPointer join(ObjectPointer other);
 
 		virtual string getDescription() const;
@@ -125,7 +125,7 @@ namespace Dungeon {
                     fsm.add(ResourceName[it], (ResourceType) it);
                 return fsm;
             }
-            
+
             virtual ObjectPointer onPick(ActionDescriptor* ad);
             virtual ObjectPointer onDrop(ActionDescriptor* ad);
 

@@ -7,12 +7,12 @@ namespace Dungeon {
 		if (!ad) throw InvalidEvent("This behavior needs AD.");
 		*ad << ad->formatMessage(content) << eos;
 	}
-	
+
 	void BasicInteraction::registerProperties(IPropertyStorage& storage) {
 		storage.have(content, "interactive-content", "Readable content:");
 		Behavior::registerProperties(storage);
 	}
-	
+
 	PERSISTENT_IMPLEMENTATION(BasicInteraction)
 }
 

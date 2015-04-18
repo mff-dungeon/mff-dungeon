@@ -13,12 +13,12 @@ namespace Dungeon {
 				->setWeaponName("powerful hands of administrator")
 				->setSingleRelation("special-th", th)
 				->save().unsafeCast<Human>();
-		
+
 		gm->addNewFigure(new Human("human/asaru@jabbim.cz", "Salmelu", "asaru@jabbim.cz"))
 				->setWeaponName("powerful hands of administrator")
 				->setSingleRelation("special-th", th)
 				->save().unsafeCast<Human>();
-		
+
 		gm->addNewFigure(new Human("human/petr.manek@jabbim.com", "CiTrus", "petr.manek@jabbim.com"))
 				->setWeaponName("powerful hands of administrator")
 				->setSingleRelation("special-th", th)
@@ -31,14 +31,14 @@ namespace Dungeon {
 				->setDescription("Just a room to keep all the templates at one place.")
 				->save().unsafeCast<Location>();
 		LOG << "Template room created. " << LOGF;
-		
+
 		/***********************************************************************
-		 *					Resources templates 
+		 *					Resources templates
 		 * Each resource must have its template of quantity 1, called template/resource/ID/1
 		 * It is used by droppers and inventory to create and merge resources
 		 * The quantity 1 is  required for correct weight calculation
 		 **********************************************************************/
-		
+
 		templates["resource/wood"] = createObject<Resource>("template/resource/wood/1", templateRoom)
 				->setType(Resource::ResourceType::Wood)
 				->setQuantity(1)
@@ -88,7 +88,7 @@ namespace Dungeon {
 				->setSize(10)
 				->save();
 		LOG << "Resource templates created. " << LOGF;
-		
+
 		/**********************************************************************
 		 *			Weapons (weak and strong forms)
          **********************************************************************/
@@ -661,7 +661,7 @@ namespace Dungeon {
 				->setLongName("...")
 				->setDescription("...")
 				->save();
-		
+
 		/**********************************************************************
 		 *			Backpacks (weak and strong forms)
          **********************************************************************/
@@ -782,7 +782,7 @@ namespace Dungeon {
 				->save();
 		LOG << "Potion templates created. " << LOGF;
 		/**********************************************************************
-		 *					Keys 
+		 *					Keys
          **********************************************************************/
 		templates["item/spiderkey"] = createObject<Item>("template/item/spiderkey/1", templateRoom)
 				->setName("Spider key")
@@ -2000,7 +2000,7 @@ namespace Dungeon {
 		/*
 		 * OLD STUFF THERE IS, WILL BE REMOVED LATER, NOW MAY BE USED FOR TESTING
          */
-		
+
 		templates["potion/greenhealing"] = createObject<Potion>("template/potion/greenhealing/1", templateRoom)
 				->setType(Potion::PotionType::Healing)
 				->setStrength(100)
@@ -2010,7 +2010,7 @@ namespace Dungeon {
 				->setLongName("A green potion in gold vial.")
 				->setDescription("The vial is untouched, and the color of the liquid is some kind of scary.")
 				->save();
-		
+
 		templates["item/trianglekey"] = createObject<Item>("template/item/trianglekey/1", templateRoom)
 				->setName("Triangular key")
 				->setLongName("A small triangular key.")
@@ -2020,211 +2020,211 @@ namespace Dungeon {
 
 	void WorldCreator::initRooms() {
 		AttackTrap* autoAttack = createObject<AttackTrap>("trap/attack1");
-		
+
 		Location* landcastle = createObject<Location>("location/room/landcastle")
 				->setRespawnable(true)
 				->setName("Landcastle")
 				->setDescription("A nice stone castle, having a magical aura surrounding it. You feel the aura and feel much better here. If you are confused what to do, try typing 'help'.")
 				->save().unsafeCast<Location>();
 		rooms["landcastle"] = landcastle;
-		
+
 		createObject<Healing>("trap/healing/landcastle")
 				->setRate(300 * Healing::PerHour)
 				->setTarget(landcastle)
 				->save();
-		
+
 		Location* shadowcliff = createObject<Location>("location/room/shadowcliff")
 				->setName("Shadowcliff")
 				->setDescription("Dark dangerous cliffs. You shouldn't leave the path you are currently on.")
 				->save().unsafeCast<Location>();
 		rooms["shadowcliff"] = shadowcliff;
-		
+
 		Location* appledale = createObject<Location>("location/room/appledale")
 				->setName("Appledale")
 				->setDescription("A small crafting village.")
 				->save().unsafeCast<Location>();
 		rooms["appledale"] = appledale;
-		
+
 		Location* faygrass = createObject<Location>("location/room/faygrass")
 				->setName("Faygrass")
 				->setDescription("A vast grass field.")
 				->save().unsafeCast<Location>();
 		rooms["faygrass"] = faygrass;
-		
+
 		Location* winddell = createObject<Location>("location/room/winddell")
 				->setName("Winddell")
 				->setDescription("A quite windy valley. The birds here seem hungry.")
 				->attachTrap(autoAttack, "inside")
 				->save().unsafeCast<Location>();
 		rooms["winddell"] = winddell;
-		
+
 		Location* iceedge = createObject<Location>("location/room/iceedge")
 				->setName("Iceedge")
 				->setDescription("A narrow icy edge. It looks like you won't be able to climb back.")
 				->save().unsafeCast<Location>();
 		rooms["iceedge"] = iceedge;
-		
+
 		Location* estermoor = createObject<Location>("location/room/estermoor")
 				->setName("Estermoor")
 				->setDescription("Dark and dangerous moor. The creatures here are kind of big.")
 				->save().unsafeCast<Location>();
 		rooms["estermoor"] = estermoor;
-		
+
 		Location* fayden = createObject<Location>("location/room/fayden")
 				->setName("Fayden")
 				->setDescription("An astounding cave with some ancient paintings on the walls.")
 				->save().unsafeCast<Location>();
 		rooms["fayden"] = fayden;
-		
+
 		Location* glasscoast = createObject<Location>("location/room/glasscoast")
 				->setName("Glasscoat")
 				->setDescription("There is a crystal clean sea and a sand which looks like it is shattered glass.")
 				->save().unsafeCast<Location>();
 		rooms["glasscoast"] = glasscoast;
-		
+
 		Location* pinelyn = createObject<Location>("location/room/pinelyn")
 				->setName("Pinelyn")
 				->setDescription("A dense pine forest. You sense there may be enraged creatures.")
 				->attachTrap(autoAttack, "inside")
 				->save().unsafeCast<Location>();
 		rooms["pinelyn"] = pinelyn;
-		
+
 		Location* lightland = createObject<Location>("location/room/lightland")
 				->setRespawnable(true)
 				->setName("Lightland")
 				->setDescription("This looks like a holy clearing. You sense some strange power around which makes you calm and you are starting to feel better.")
 				->save().unsafeCast<Location>();
 		rooms["lightland"] = lightland;
-		
+
 		createObject<Healing>("trap/healing/lightland")
 				->setRate(350 * Healing::PerHour)
 				->setTarget(lightland)
 				->save();
-		
+
 		Location* newgate = createObject<Location>("location/room/newgate")
 				->setName("Newgate")
 				->setDescription("A long passage with a big gate at the end. There seem to be some goblin camps around.")
 				->save().unsafeCast<Location>();
 		rooms["newgate"] = newgate;
-		
+
 		Location* spidernest = createObject<Location>("location/room/spidernest")
 				->setName("Spider nest")
 				->setDescription("The nest of the infamous spider king. Beware!")
 				->save().unsafeCast<Location>();
 		rooms["spidernest"] = spidernest;
-		
+
 		Location* millburn = createObject<Location>("location/room/millburn")
 				->setName("Millburn")
 				->setDescription("A field with many old stone mills.")
 				->attachTrap(autoAttack, "inside")
 				->save().unsafeCast<Location>();
 		rooms["millburn"] = millburn;
-		
+
 		Location* oldcemetery = createObject<Location>("location/room/oldcemetery")
 				->setName("Old cemetary")
 				->setDescription("There are many graves around and some of them are opened!")
 				->save().unsafeCast<Location>();
 		rooms["oldcemetery"] = oldcemetery;
-		
+
 		Location* greenwolf = createObject<Location>("location/room/greenwolf")
 				->setName("Greenwolf")
 				->setDescription("These meadows are known to be ruled by wolfs.")
 				->attachTrap(autoAttack, "inside")
 				->save().unsafeCast<Location>();
 		rooms["greenwolf"] = greenwolf;
-		
+
 		Location* magemoor = createObject<Location>("location/room/magemoor")
 				->setName("Magemoor")
 				->setDescription("These moors are filled with magical energy.")
 				->save().unsafeCast<Location>();
 		rooms["magemoor"] = magemoor;
-		
+
 		Location* greybell = createObject<Location>("location/room/greybell")
 				->setName("Greybell")
 				->setDescription("A hill with a big old bell at the top.")
 				->attachTrap(autoAttack, "inside")
 				->save().unsafeCast<Location>();
 		rooms["greybell"] = greybell;
-		
+
 		Location* littlecave = createObject<Location>("location/room/littlecave")
 				->setName("Little cave")
 				->setDescription("The cave is deserted. The thiefs nearby may use it as a hideout.")
 				->save().unsafeCast<Location>();
 		rooms["littlecave"] = littlecave;
-		
+
 		Location* rockshore = createObject<Location>("location/room/rockshore")
 				->setName("Rockshore")
 				->setDescription("Rock cliffs at the edge of the sea.")
 				->save().unsafeCast<Location>();
 		rooms["rockshore"] = rockshore;
-		
+
 		Location* seacave = createObject<Location>("location/room/seacave")
 				->setName("Sea cave")
 				->setDescription("A small cave found underwater.")
 				->save().unsafeCast<Location>();
 		rooms["seacave"] = seacave;
-		
+
 		Location* brightlake = createObject<Location>("location/room/brightlake")
 				->setRespawnable(true)
 				->setName("Brightlake")
 				->setDescription("A small abandoned village with a healing lake at the town square.")
 				->save().unsafeCast<Location>();
 		rooms["brightlake"] = brightlake;
-		
+
 		createObject<Healing>("trap/healing/brightlake")
 				->setRate(400 * Healing::PerHour)
 				->setTarget(brightlake)
 				->save();
-		
+
 		Location* ashedge = createObject<Location>("location/room/ashedge")
 				->setName("Ashedge")
 				->setDescription("A desolated warcamp full of mummies.")
 				->save().unsafeCast<Location>();
 		rooms["ashedge"] = ashedge;
-		
+
 		Location* newoak = createObject<Location>("location/room/newoak")
 				->setName("Newoak")
 				->setDescription("The stands a majestic oak planted recently.")
 				->attachTrap(autoAttack, "inside")
 				->save().unsafeCast<Location>();
 		rooms["newoak"] = newoak;
-		
+
 		Location* crafthill = createObject<Location>("location/room/crafthill")
 				->setName("Craftsman's Hill")
 				->setDescription("A hill atop Brightlake once used by their finest craftmans.")
 				->save().unsafeCast<Location>();
 		rooms["crafthill"] = crafthill;
-		
+
 		Location* brownpond = createObject<Location>("location/room/brownpond")
 				->setName("Brownpond")
 				->setDescription("Fairly dirty pond which is full of fish.")
 				->save().unsafeCast<Location>();
 		rooms["brownpond"] = brownpond;
-		
+
 		Location* orangehedge = createObject<Location>("location/room/orangehedge")
 				->setName("Orangehedge")
 				->setDescription("Hedge lined with many orange trees.")
 				->attachTrap(autoAttack, "inside")
 				->save().unsafeCast<Location>();
 		rooms["orangehedge"] = orangehedge;
-		
+
 		Location* stonecircle = createObject<Location>("location/room/stonecircle")
 				->setName("Stonecircle")
 				->setDescription("")
 				->save().unsafeCast<Location>();
 		rooms["stonecircle"] = stonecircle;
-		
+
 		createObject<Healing>("trap/healing/stonecircle")
 				->setRate(500 * Healing::PerHour)
 				->setTarget(stonecircle)
 				->save();
-		
+
 		Location* witchburn = createObject<Location>("location/room/witchburn")
 				->setName("Witchburn")
 				->setDescription("A once famous home of witches.")
 				->save().unsafeCast<Location>();
 		rooms["witchburn"] = witchburn;
-		
+
 		Location* unicornforest = createObject<Location>("location/room/unicornforest")
 				->setName("Unicorn's forest")
 				->setDescription("A home of powerful magical unicorn.")
@@ -2297,147 +2297,147 @@ namespace Dungeon {
 				->setGoThroughMessage("You walk out of the cave.")
 				->setName("Forest exit")
 				->setLongName("you see some dense forest out there.")
-				->save(); 
+				->save();
 		createDoor("lightland-pinelyn", rooms["lightland"], rooms["pinelyn"], true)
 				->setGoThroughMessage("You cut through the bushes.")
 				->setName("Ingrown pathway")
 				->setLongName("it is full of bushes, but you may try to cut them down.")
-				->save(); 
+				->save();
 		createDoor("newgate-pinelyn", rooms["newgate"], rooms["pinelyn"], true)
 				->setGoThroughMessage("You carefully walk over the bridge.")
 				->setName("Wooden footbridge")
 				->setLongName("there are some missing logs, but it is still walkable.")
-				->save(); 
+				->save();
 		createDoor("newgate-spidernest", rooms["newgate"], rooms["spidernest"], false)
 				->setGoThroughMessage("You walk through the gate.")
 				->setName("Iron gate")
 				->setLongName("a big gate with a symbol of spider requiring some sort of key.")
-				->save(); 
+				->save();
 		createDoor("spidernest-fayden", rooms["spidernest"], rooms["fayden"], false)
 				->setGoThroughMessage("You manage to crawl through the crevice.")
 				->setName("Narrow crevice")
 				->setLongName("I can barely fit in there, but there is no other option.")
-				->save(); 
+				->save();
 		createDoor("estermoor-millburn", rooms["estermoor"], rooms["millburn"], true)
 				->setGoThroughMessage("You open the gate and walk through it.")
 				->setName("Gate")
 				->setLongName("a small iron gate.")
-				->save(); 
+				->save();
 		createDoor("oldcemetery-millburn", rooms["oldcemetery"], rooms["millburn"], true)
 				->setGoThroughMessage("You jump over the wall.")
 				->setName("Short wall")
 				->setLongName("a wall short enough to jump over it.")
-				->save(); 
+				->save();
 		createDoor("oldcemetery-brightlake", rooms["oldcemetery"], rooms["brightlake"], false)
 				->setGoThroughMessage("You ascend the stairs.")
 				->setName("Stairs")
 				->setLongName("marble stairs leading into a city")
-				->save(); 
+				->save();
 		createDoor("brightlake-oldcemetery", rooms["brightlake"], rooms["oldcemetery"], false)
 				->setGoThroughMessage("You descend the stairs.")
 				->setName("Stairs")
 				->setLongName("marble stairs leading to a cemetery.")
-				->save(); 
+				->save();
 		createDoor("rockshore-oldcemetery", rooms["rockshore"], rooms["oldcemetery"], true)
 				->setGoThroughMessage("You ford the river.")
 				->setName("Ford")
 				->setLongName("a place where the river is narrow and shallow.")
-				->save(); 
+				->save();
 		createDoor("rockshore-seacave", rooms["rockshore"], rooms["seacave"], false)
 				->setGoThroughMessage("You swim through the tunnel. The current helps you a lot, but you won't be able to swim back.")
 				->setName("Underwater tunnel")
 				->setLongName("a tunnel leading underwater.")
-				->save(); 
+				->save();
 		createDoor("seacave-millburn", rooms["seacave"], rooms["millburn"], false)
 				->setGoThroughMessage("You swim through the tunnel.")
 				->setName("Underwater tunnel")
 				->setLongName("another tunnel with the light at the end.")
-				->save(); 
+				->save();
 		createDoor("greenwolf-oldcemetery", rooms["greenwolf"], rooms["oldcemetery"], true)
 				->setGoThroughMessage("You follow the path.")
 				->setName("Wide path")
 				->setLongName("a wide stone path.")
-				->save(); 
+				->save();
 		createDoor("greenwolf-magemoor", rooms["greenwolf"], rooms["magemoor"], true)
 				->setGoThroughMessage("You walk through the gate and admire it silently.")
 				->setName("Natural gate")
 				->setLongName("a huge stone gate.")
-				->save(); 
+				->save();
 		createDoor("greybell-magemoor", rooms["greybell"], rooms["magemoor"], false)
 				->setGoThroughMessage("You walk down the hill.")
 				->setName("Windy path")
 				->setLongName("a descending path into the moor.")
-				->save(); 
+				->save();
 		createDoor("magemoor-greybell", rooms["magemoor"], rooms["greybell"], false)
 				->setGoThroughMessage("You walk up the hill.")
 				->setName("Windy path")
 				->setLongName("an ascending path up the hill.")
-				->save(); 
+				->save();
 		createDoor("littlecave-greybell", rooms["littlecave"], rooms["greybell"], false)
 				->setGoThroughMessage("You exit the cave.")
 				->setName("Cave exit")
 				->setLongName("there is just bright daylight.")
-				->save(); 
+				->save();
 		createDoor("greybell-littlecave", rooms["greybell"], rooms["littlecave"], false)
 				->setGoThroughMessage("You enter the cave.")
 				->setName("Cave entrance")
 				->setLongName("the cave seems quite small.")
-				->save(); 
+				->save();
 		createDoor("brightlake-ashedge", rooms["brightlake"], rooms["ashedge"], false)
 				->setGoThroughMessage("You board the raft and sail down the river.")
 				->setName("Raft")
 				->setLongName("you can use it to sail down the river.")
-				->save(); 
+				->save();
 		createDoor("ashedge-newoak", rooms["ashedge"], rooms["newoak"], false)
 				->setGoThroughMessage("You jump down the ledge.")
 				->setName("Ledge")
 				->setLongName("a not too high ledge, you will be able to jump it down.")
-				->save(); 
+				->save();
 		createDoor("newoak-crafthill", rooms["newoak"], rooms["crafthill"], false)
 				->setGoThroughMessage("You walk up the hill.")
 				->setName("Road")
 				->setLongName("a road, which was build by some fine stonemakers.")
-				->save(); 
+				->save();
 		createDoor("crafthill-newoak", rooms["crafthill"], rooms["newoak"], false)
 				->setGoThroughMessage("You walk down the hill.")
 				->setName("Road")
 				->setLongName("a road, which was build by some fine stonemakers.")
-				->save(); 
+				->save();
 		createDoor("crafthill-brightlake", rooms["crafthill"], rooms["brightlake"], false)
 				->setGoThroughMessage("You enjoy the slide.")
 				->setName("Stone slide")
 				->setLongName("a big slide, you should enjoy a little fun.")
-				->save(); 
+				->save();
 		createDoor("brownpond-brightlake", rooms["brownpond"], rooms["brightlake"], true)
 				->setGoThroughMessage("You walk over the bridge.")
 				->setName("Royal bridge")
 				->setLongName("a wide bridge with many statues.")
-				->save(); 
+				->save();
 		createDoor("brownpond-orangehedge", rooms["brownpond"], rooms["orangehedge"], true)
 				->setGoThroughMessage("You follow the road.")
 				->setName("King's Road")
 				->setLongName("a wide old road.")
-				->save(); 
+				->save();
 		createDoor("stonecircle-orangehedge", rooms["stonecircle"], rooms["orangehedge"], true)
 				->setGoThroughMessage("You follow the path.")
 				->setName("Beaten path")
 				->setLongName("it leads somewhere in the forest")
-				->save(); 
+				->save();
 		createDoor("witchburn-orangehedge", rooms["witchburn"], rooms["orangehedge"], true)
 				->setGoThroughMessage("You carefully open the gate and walk through it.")
 				->setName("Ancient gate")
 				->setLongName("an ancient city gate")
-				->save(); 
+				->save();
 		createDoor("witchburn-unicornforest", rooms["witchburn"], rooms["unicornforest"], false)
 				->setGoThroughMessage("You walk through the door.")
 				->setName("Locked door")
 				->setLongName("a door into a tunnel with some kind of lock and an image of unicorn")
-				->save(); 
+				->save();
 		createDoor("unicornforest-oldcemetery", rooms["unicornforest"], rooms["oldcemetery"], false)
 				->setGoThroughMessage("You use the tunnel to leave the forest.")
 				->setName("Glowing tunnel")
 				->setLongName("a tunnel which emits a faint light somehow")
-				->save(); 
+				->save();
 	}
 
 
@@ -2445,18 +2445,18 @@ namespace Dungeon {
 		deepCloneTemplate(templates["creature/smallspider"], rooms["shadowcliff"]);
 		deepCloneTemplate(templates["creature/smallspider"], rooms["shadowcliff"]);
 		deepCloneTemplate(templates["creature/rat"], rooms["shadowcliff"]);
-		
+
 		deepCloneTemplate(templates["crafter/stoneanvil"], rooms["appledale"]);
 		deepCloneTemplate(templates["crafter/tanning"], rooms["appledale"]);
 		deepCloneTemplate(templates["crafter/alchemy"], rooms["appledale"]);
-		
+
 		deepCloneTemplate(templates["creature/smallspider"], rooms["faygrass"]);
 		deepCloneTemplate(templates["creature/rat"], rooms["faygrass"]);
 		deepCloneTemplate(templates["creature/rat"], rooms["faygrass"]);
-		
+
 		deepCloneTemplate(templates["creature/raven"], rooms["winddell"]);
 		deepCloneTemplate(templates["creature/raven"], rooms["winddell"]);
-		
+
 		ObjectPointer iceedgechest = createObject<Location>("location/chest/iceedge", rooms["iceedge"])
 				->setEmptyMessage("There are only some icicles left.")
 				->setName("Frozen chest")
@@ -2469,47 +2469,47 @@ namespace Dungeon {
 				->save();
 		deepCloneTemplate(templates["potion/smallred"], iceedgechest).unsafeCast<Item>()->respawnEvery(210);
 		deepCloneTemplate(templates["spellscroll/telelandcastle"], iceedgechest).unsafeCast<Item>()->respawnEvery(600);
-		
+
 		deepCloneTemplate(templates["creature/bigrat"], rooms["estermoor"]);
 		deepCloneTemplate(templates["creature/bigrat"], rooms["estermoor"]);
 		deepCloneTemplate(templates["creature/snake"], rooms["estermoor"]);
-		
+
 		deepCloneTemplate(templates["creature/snake"], rooms["fayden"]);
 		deepCloneTemplate(templates["creature/snake"], rooms["fayden"]);
 		deepCloneTemplate(templates["creature/dog"], rooms["fayden"]);
-		
+
 		deepCloneTemplate(templates["creature/scorpion"], rooms["glasscoast"]);
 		deepCloneTemplate(templates["creature/scorpion"], rooms["glasscoast"]);
 		deepCloneTemplate(templates["creature/scorpion"], rooms["glasscoast"]);
-		
+
 		deepCloneTemplate(templates["creature/bigspider"], rooms["pinelyn"]);
 		deepCloneTemplate(templates["creature/bigspider"], rooms["pinelyn"]);
 		deepCloneTemplate(templates["creature/bigspider"], rooms["pinelyn"]);
-		
+
 		deepCloneTemplate(templates["creature/goblin"], rooms["newgate"]);
 		deepCloneTemplate(templates["creature/goblin"], rooms["newgate"]);
 		deepCloneTemplate(templates["creature/goblin"], rooms["newgate"]);
-		
+
 		deepCloneTemplate(templates["creature/spiderking"], rooms["spidernest"]);
-		
+
 		deepCloneTemplate(templates["creature/dog"], rooms["millburn"]);
 		deepCloneTemplate(templates["creature/dog"], rooms["millburn"]);
-		
+
 		deepCloneTemplate(templates["creature/zombie"], rooms["oldcemetery"]);
 		deepCloneTemplate(templates["creature/zombie"], rooms["oldcemetery"]);
 		deepCloneTemplate(templates["creature/skeleton"], rooms["oldcemetery"]);
-		
+
 		deepCloneTemplate(templates["creature/wolf"], rooms["greenwolf"]);
 		deepCloneTemplate(templates["creature/wolf"], rooms["greenwolf"]);
 		deepCloneTemplate(templates["creature/wolf"], rooms["greenwolf"]);
-		
+
 		deepCloneTemplate(templates["creature/zombie"], rooms["magemoor"]);
 		deepCloneTemplate(templates["creature/skeleton"], rooms["magemoor"]);
 		deepCloneTemplate(templates["creature/mummy"], rooms["magemoor"]);
-		
+
 		deepCloneTemplate(templates["creature/thief"], rooms["greybell"]);
 		deepCloneTemplate(templates["creature/thief"], rooms["greybell"]);
-		
+
 		ObjectPointer littlecavechest = createObject<Location>("location/chest/littlecave", rooms["littlecave"])
 				->setEmptyMessage("You find only a small cockroach. Eww.")
 				->setName("Ornate chest")
@@ -2519,11 +2519,11 @@ namespace Dungeon {
 		deepCloneTemplate(templates["potion/smallred"], littlecavechest).unsafeCast<Item>()->respawnEvery(120);
 		deepCloneTemplate(templates["potion/red"], littlecavechest).unsafeCast<Item>()->respawnEvery(210);
 		deepCloneTemplate(templates["item/spiderkey"], littlecavechest).unsafeCast<Item>()->respawnEvery(1800);
-		
+
 		deepCloneTemplate(templates["creature/orc"], rooms["rockshore"]);
 		deepCloneTemplate(templates["creature/orc"], rooms["rockshore"]);
 		deepCloneTemplate(templates["creature/orc"], rooms["rockshore"]);
-		
+
 		ObjectPointer seacavechest = createObject<Location>("location/chest/seacave", rooms["seacave"])
 				->setEmptyMessage("There is only some seaweed left.")
 				->setName("Wet small chest")
@@ -2537,38 +2537,38 @@ namespace Dungeon {
 		deepCloneTemplate(templates["potion/red"], seacavechest).unsafeCast<Item>()->respawnEvery(300);
 		deepCloneTemplate(templates["resource/sand"], seacavechest).unsafeCast<Resource>()->setQuantity(10*Config::EnemyMatsDrop())->respawnEvery(300);
 		deepCloneTemplate(templates["resource/wood"], seacavechest).unsafeCast<Resource>()->setQuantity(8*Config::EnemyMatsDrop())->respawnEvery(300);
-		
+
 		deepCloneTemplate(templates["creature/mummy"], rooms["ashedge"]);
 		deepCloneTemplate(templates["creature/mummy"], rooms["ashedge"]);
-		
+
 		deepCloneTemplate(templates["creature/grizzlybear"], rooms["newoak"]);
 		deepCloneTemplate(templates["creature/grizzlybear"], rooms["newoak"]);
 		deepCloneTemplate(templates["creature/grizzlybear"], rooms["newoak"]);
-		
+
 		deepCloneTemplate(templates["crafter/stoneanvil"], rooms["crafthill"]);
 		deepCloneTemplate(templates["crafter/ironanvil"], rooms["crafthill"]);
 		deepCloneTemplate(templates["crafter/tanning"], rooms["crafthill"]);
-		
+
 		deepCloneTemplate(templates["creature/gnome"], rooms["brownpond"]);
 		deepCloneTemplate(templates["creature/gnome"], rooms["brownpond"]);
 		deepCloneTemplate(templates["creature/gnome"], rooms["brownpond"]);
-		
+
 		deepCloneTemplate(templates["creature/thief"], rooms["orangehedge"]);
 		deepCloneTemplate(templates["creature/thief"], rooms["orangehedge"]);
-		
+
 		deepCloneTemplate(templates["crafter/alchemy"], rooms["stonecircle"]);
-		
+
 		deepCloneTemplate(templates["creature/ghost"], rooms["witchburn"]);
 		deepCloneTemplate(templates["creature/ghost"], rooms["witchburn"]);
-		
+
 		deepCloneTemplate(templates["creature/unicorn"], rooms["unicornforest"]);
-		
+
 		createObject<Interactive>("board/landcastle", rooms["landcastle"])
 			->reads("Gotcha! Nothing here.")
 			->setLongName("Board with little roof with some torn paper attached.")
 			->setName("WANTED! board")
 			->save();
-		
+
 		createObject<Interactive>("speaker/landcastle", rooms["landcastle"])
 			->says("Everybody please help!\nSome fuckin' rat 100%% stole my Ring. My wife's gonna be so mad! Bring it to me, %u, and gold won't miss you.")
 			->setLongName("")
@@ -2582,7 +2582,7 @@ namespace Dungeon {
 		LOGH("Big bang");
 		LOG << "Big bang initiated. Everything is being created... " << LOGF;
 		createObject<MTATrap>("trap/mta");
-		
+
 		LOGH("Rooms");
 		initRooms();
 		LOG << "Rooms created. " << LOGF;
@@ -2609,7 +2609,7 @@ namespace Dungeon {
 				->setName("Base Camp")
 				->setDescription("Nothing much to be found here, but get familiar with basic commands - try to type 'help'. By staying here, you are continuously healed a bit.")
 				->save().unsafeCast<Location>();
-		
+
 		createObject<Healing>("trap/healing/baseRoom")
 				->setRate(100 * Healing::PerHour)
 				->setTarget(baseRoom)
@@ -2656,7 +2656,7 @@ namespace Dungeon {
 						->setLongName("a red elixir to test uncertainity")
 						->setDescription("The vial has some scratches, but the color of the liquid is just beautiful.")
 						->save();
-                                
+
                                 createObject<Resource>("resource/gold/" + RANDID, potionChest)
                                                 ->setType(Resource::ResourceType::Gold)
                                                 ->setQuantity(42)
@@ -2666,9 +2666,9 @@ namespace Dungeon {
 					->setName("Big chest")
 					->setDescription("An old, rusty chest.")
 					->save();
-			
+
 			shallowCloneTemplate(templates["item/trianglekey"], equipChest).unsafeCast<Item>()->respawnEvery(60)->save();
-			
+
 			createObject<Crafter>("crafter/anvil/" + RANDID, equipRoom)
 					->addRecipe(createObject<Recipe>("recipe/woodenclub/" + RANDID)
 						->setExperience(10)
@@ -2700,7 +2700,7 @@ namespace Dungeon {
 					->setName("Old anvil")
 					->setDescription("An old rusty anvil.")
 					->save();
-			
+
 			createObject<Resource>("resource/wood/" + RANDID, equipChest)
 						->setType(Resource::ResourceType::Wood)
 						->setQuantity(200)
@@ -2728,7 +2728,7 @@ namespace Dungeon {
 						->setLongName("a weak wooden club")
 						->setDescription("It looks like a candy next to a sword, but still better than fighting with lollypop.")
 						->save();
-                                
+
 				createObject<Resource>("resource/gold/" + RANDID, equipChest)
 								->setType(Resource::ResourceType::Gold)
 								->setQuantity(200)
@@ -2755,7 +2755,7 @@ namespace Dungeon {
 				->setDescription("a scary room with a lack of light.")
 				->attachTrap(autoAttack, "inside")
 				->save().unsafeCast<Location>();
-		
+
 		deepCloneTemplate(templates["creature/smallspider"], darkRoom);
 		deepCloneTemplate(templates["creature/smallspider"], darkRoom);
 
@@ -2780,7 +2780,7 @@ namespace Dungeon {
 				->setName("Crevice")
 				->setLongName("hole just big enough to fit in")
 				->save();
-		
+
 		 createObject<Creature>("creature/megaspider/" + RANDID, bossRoom)
 				->drops(createObject<Wearable>("template/wearable/ironclub/1")
 							->setAttackBonus(20)

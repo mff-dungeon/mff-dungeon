@@ -10,8 +10,8 @@
 namespace Dungeon {
 
 	/**
-	 * An object with a name and some description. 
-	 * In fact, every object should be descriptable, 
+	 * An object with a name and some description.
+	 * In fact, every object should be descriptable,
 	 * but the functionality is split better this way.
 	 */
 	class IDescriptable : public Base {
@@ -32,7 +32,7 @@ namespace Dungeon {
 		IDescriptable* setLongName(const string& longName);
 
 		/**
-		 * Short name is used when there are many things 
+		 * Short name is used when there are many things
 		 * and we need to spare some bytes :)
 		 */
 		virtual string getName() const;
@@ -44,7 +44,7 @@ namespace Dungeon {
 		virtual string getDescriptionSentence();
 
 		/**
-		 * When there are more instances of this class, 
+		 * When there are more instances of this class,
 		 * we can produce better summary.
 		 */
 		virtual string getGroupDescriptionSentence(vector<ObjectPointer> others);
@@ -69,7 +69,7 @@ namespace Dungeon {
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
 		virtual void explain(ActionDescriptor* ad);
 	};
-        
+
     namespace Output {
         class ObjectName : public PlainString
         {
@@ -80,14 +80,14 @@ namespace Dungeon {
                 } else {
                     str = o.getId();
                 }
-            }        
+            }
 
             virtual string plainString() const {
                 return str;
             }
 
             virtual void xhtml(Tag* parent) const {
-                new Tag(parent, 
+                new Tag(parent,
                         "em", str);
             }
         };

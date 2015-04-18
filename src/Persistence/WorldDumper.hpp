@@ -20,20 +20,20 @@ namespace Dungeon {
          * @return name of file, URL or whatever how we can find the dump
          */
         virtual string startDump() = 0;
-        virtual void endDump() = 0; 
-        
+        virtual void endDump() = 0;
+
         virtual void dumpObject(ObjectPointer obj) = 0;
-        
+
         virtual string getTimestamp() const;
     };
-    
+
     class DotDumper : public WorldDumper {
     public:
         virtual void dumpObject(ObjectPointer obj);
 
         virtual string startDump();
         virtual void endDump();
-        
+
         virtual IPropertyStorage& have(int& prop, const string& id, const string& desc, bool editable);
         virtual IPropertyStorage& have(long& prop, const string& id, const string& desc, bool editable);
         virtual IPropertyStorage& have(string& prop, const string& id, const string& desc, bool editable);

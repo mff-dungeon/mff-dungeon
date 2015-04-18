@@ -13,7 +13,7 @@ namespace Dungeon {
 	class Cloner : IPropertyStorage {
 	public:
 		Cloner(ObjectPointer original) : orig(original) { }
-		
+
 		ObjectPointer getShallowClone();
 		ObjectPointer getDeepClone();
 		/**
@@ -31,13 +31,13 @@ namespace Dungeon {
          * @return an ObjectPointer to a new object
          */
 		static ObjectPointer deepClone(ObjectPointer original);
-		
+
 		virtual IPropertyStorage& have(bool& prop, const string& id, const string& desc, bool editable);
 		virtual IPropertyStorage& have(int& prop, const string& id, const string& desc, bool editable);
 		virtual IPropertyStorage& have(long& prop, const string& id, const string& desc, bool editable);
 		virtual IPropertyStorage& have(string& prop, const string& id, const string& desc, bool editable);
-		
-	private:		
+
+	private:
 		ObjectPointer orig;
 		Base* cloned;
 		std::queue<void*> properties;

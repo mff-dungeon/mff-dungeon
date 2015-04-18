@@ -23,7 +23,7 @@ namespace Dungeon {
 
     static random_device hw_random;
     class ActionDescriptor;
-    
+
     class Utils {
     public:
 
@@ -77,7 +77,7 @@ namespace Dungeon {
             s.erase(s.find_last_not_of(t) + 1);
             return s;
         }
-        
+
         static inline std::string trim(const std::string& s, const char* t = " \t\n\r\f")
         {
             return ltrim(rtrim(s, t), t);
@@ -110,7 +110,7 @@ namespace Dungeon {
             }
             return s;
         }
-		
+
         static inline std::string decapitalize(const std::string& cs)
         {
             std::string s(cs);
@@ -121,7 +121,7 @@ namespace Dungeon {
             }
             return s;
         }
-		
+
         /**
          * Gets current time in specified format
          * @param format datetime formatting used in strftime method

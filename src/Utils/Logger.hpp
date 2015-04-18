@@ -48,7 +48,7 @@ namespace Dungeon {
 			Error = 16,
 			Fatal = 32
 		};
-                
+
 		/** Retrieves the singleton instance
 		 */
 		static Logger& getInstance() {
@@ -60,7 +60,7 @@ namespace Dungeon {
 		static void initialize() {
 			Logger::getInstance();
 		}
-                
+
                 /** Outputs the message atomically.
 		 @param source      The section of application responsible for the message.
 		 @param severity    The importance of the message.

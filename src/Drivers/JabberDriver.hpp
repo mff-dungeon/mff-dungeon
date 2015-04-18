@@ -32,7 +32,7 @@ namespace Dungeon {
 		 */
 		JabberDriver(GameManager* gm, string jabberUsername, string jabberPassword);
 		virtual ~JabberDriver();
-                
+
 		/** Connects the driver to the Jabber server and starts listening for new messages.
 		 */
 		void run();

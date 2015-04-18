@@ -14,7 +14,7 @@ namespace Dungeon {
 			this->resources[i] = 0;
 		}
 	}
-	
+
 	int Recipe::getLevel() const {
 		return level;
 	}

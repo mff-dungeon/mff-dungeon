@@ -45,7 +45,7 @@ namespace Dungeon {
 		 * Calculates a drop and creates that item, if it succeeds
 		 * @param loc Location to put the drop to
 		 * @return true, if it dropped something, false otherwise
-                 * 
+                 *
                  * FIXME: Remove info, use the group returned, or just make it better :)
 		 */
 		ObjectGroup tryDrop(ObjectPointer loc, SentenceJoiner& info);

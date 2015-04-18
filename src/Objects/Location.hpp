@@ -47,7 +47,7 @@ namespace Dungeon {
 		virtual void explain(ActionDescriptor* ad);
 		virtual bool match(const string& command, ActionDescriptor* ad);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
-		
+
 	private:
 		int amount = 0;
 		CaptureMatcher captureMatcher;

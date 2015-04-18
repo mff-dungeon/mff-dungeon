@@ -27,7 +27,7 @@ namespace Dungeon {
 	#define R_RESOURCE(type) ( "resource-" + (string)(Resource::ResourceIdentifier[(int)type]) )
 	// Alive explores stuff
 	#define R_SEEN "seen"
-	
+
 	/**
 	 * Object representing a relation row in the DB.
 	 *
@@ -36,10 +36,10 @@ namespace Dungeon {
 	 *
 	 * It has a public access to its members(can be remade later).
 	 *
-	 * Also implements a getWhere() method returning a WHERE clause according to 
-	 * set members (unset member has a value of "0"), or empty string if a WHERE 
+	 * Also implements a getWhere() method returning a WHERE clause according to
+	 * set members (unset member has a value of "0"), or empty string if a WHERE
 	 * clause can't be constructed.
-	 * 
+	 *
 	 * Also holds all common relations as static constants, for quick and easy access
 	 */
 	class Relation {
@@ -53,7 +53,7 @@ namespace Dungeon {
 		};
 
 		/**
-		 * Constructs a new relation. May be supplied with empty string 
+		 * Constructs a new relation. May be supplied with empty string
 		 * considering them as wildcards (*) for the database queries
 		 * @param mid objectId of the master object
 		 * @param sid objectId of the slave object
@@ -72,7 +72,7 @@ namespace Dungeon {
 		 * @return a string containing a database query
 		 */
 		string getDeleteQuery() const;
-            
+
 	private:
         /**
         * Private method for creating the common WHERE part of the query
@@ -81,7 +81,7 @@ namespace Dungeon {
         */
 		bool addWhere(stringstream& query) const;
 	};
-        
+
 	inline Relation::Dir operator!(const Relation::Dir dir) { return Relation::Dir(!(bool) dir); }
 }
 

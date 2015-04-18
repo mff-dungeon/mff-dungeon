@@ -7,8 +7,8 @@ namespace Dungeon {
 
 	/**
 	 * Event handler, also known as Trap for DnD players.
-	 * 
-	 * Trap is a "virtual" object. It exists in the world, but it should not 
+	 *
+	 * Trap is a "virtual" object. It exists in the world, but it should not
 	 * be located anywhere, nor there should be any relation where trap is slave.
 	 * If you make a relation trap --> object, and the event handlers are
 	 * written properly, it should be triggered.
@@ -21,10 +21,10 @@ namespace Dungeon {
 		/**
 		 * Can either process everything (and continue processing original action),
 		 * or throw TrapException and stop it.
-		 * 
-		 * If the trap should not be triggered (probability, has skill etc.) 
+		 *
+		 * If the trap should not be triggered (probability, has skill etc.)
 		 * then just do nothing in this method.
-		 * 
+		 *
 		 * @param event The event given to Base->triggerTraps
 		 * @param target The target which triggered the trap
 		 * @param ad Can be NULL sometimes, then use the exception trigger
@@ -39,16 +39,16 @@ namespace Dungeon {
 		 *  - if the action shall be repeated, do nothing & return true
 		 *  - if no further action shall be processed, set action to null || return false
 		 *  - to redirect, just set the action to the new one & return true
-		 * 
-		 * The return value was added because you may need to remember 
+		 *
+		 * The return value was added because you may need to remember
 		 * action while interrupting it's processing.
-                 * 
+                 *
                  * By default finishes processing of AD.
-		 * 
+		 *
 		 * TL;DR The action in ad, if any, will be run afterwards.
 		 */
 		virtual void exceptionTrigger(ActionDescriptor* ad);
-                
+
 		/**
 		 * This method should never be called on Trap.
 		 */

@@ -8,8 +8,8 @@
 #include "../../Persistence/Relation.hpp"
 
 /*
- * Macro for each saveable object - defines a function returning a new blank 
- *  object, defines static AddIObject (which registers the object) and 
+ * Macro for each saveable object - defines a function returning a new blank
+ *  object, defines static AddIObject (which registers the object) and
  *  defines a className() method for saving purposes.
  * Should be used in class declaration.
  */
@@ -69,7 +69,7 @@ namespace Dungeon {
     class ActionDescriptor;
     class Archiver;
     class GameManager;
-    
+
     /**
      * Base class of everything in the world.
      */
@@ -111,7 +111,7 @@ namespace Dungeon {
         void delegateGetActions(ActionDescriptor *ad, const string& relation) const;
 
         /*
-         * Serializing functions: 
+         * Serializing functions:
          *	createObject() returns a new blank object - class needs to define
          *   a constructor with no parameters
          *  load/store - not to be overwritten, handles saving/loading objects
@@ -198,26 +198,26 @@ namespace Dungeon {
         };
 
         /**
-         * Must be overwritten if there is some property 
+         * Must be overwritten if there is some property
          * that we want to be configurable. Handles both load&store
          * and in-game configuration.
          */
         virtual void registerProperties(IPropertyStorage& storage);
-        
+
         /**
          * Shortcut for invoking all traps associated with this object for event
          * @param event identificator of event - be consistent
          * @param ad Is not required, but must be explicitly NULL
          */
         virtual ObjectPointer triggerTraps(const string& event, ActionDescriptor *ad);
-        
+
         ObjectPointer attachTrap(ObjectPointer trap, const string& event);
         ObjectPointer detachTrap(ObjectPointer trap, const string& event);
         bool hasTrapAttached(ObjectPointer trap, const string& event);
-        
+
         ObjectPointer deepClone() const;
         ObjectPointer shallowClone() const;
-        
+
 
     protected:
         GameManager* getGameManager() const;

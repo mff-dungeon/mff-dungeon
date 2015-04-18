@@ -32,7 +32,7 @@ namespace Dungeon {
 		}
 
 		if (ad != nullptr) {
-			*ad << dropInfo.getSentence("It has dropped nothing.", 
+			*ad << dropInfo.getSentence("It has dropped nothing.",
 					"It has dropped %.") << eos;
 			for (auto& item : droppedItems) {
 				ad->getCaller()->see(item.second);
@@ -122,7 +122,7 @@ namespace Dungeon {
 		ad->getActionList().addAction(new CombatAction)
 				->addTarget(this);
 	}
-	
+
 	void Creature::examine(ActionDescriptor* ad) {
 		triggerTraps("examine", ad);
 		if (ad) {
@@ -133,7 +133,7 @@ namespace Dungeon {
 			}
 			else if(percent > 0.2) {
 				*ad << "It's definitely strong, but I could make it with some friends.";
-			} 
+			}
 			else if(percent > 0.07) {
 				*ad << "I should be careful when attacking this.";
 			}

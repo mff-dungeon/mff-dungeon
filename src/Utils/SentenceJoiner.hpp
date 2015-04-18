@@ -9,12 +9,12 @@ namespace Dungeon {
 
     /**
      * Class that returns properly formatted sentence from parts.
-     * 
+     *
      * Usage:
      *      SentenceJoiner rnd;
-     *      rnd << "one" << "two" << "three"; 
-     *   
-     *      rnd.getSentence("There is %.", "There are %." ); 
+     *      rnd << "one" << "two" << "three";
+     *
+     *      rnd.getSentence("There is %.", "There are %." );
      *                == "There are one, two and three."
      */
     class SentenceJoiner {
@@ -38,7 +38,7 @@ namespace Dungeon {
         {
             if (count == 0)
                 return zero;
-            
+
             string sentence = decapitalize ? Utils::decapitalize(getSentence()) : getSentence();
             if (count == 1 || more == "")
                 return one.replace(one.find(placeholder), 1, sentence);
@@ -75,7 +75,7 @@ namespace Dungeon {
             else
                 return *this  << value.getId();
         }
-        
+
         SentenceJoiner& setConjunction(const string& all, const string& last) {
             conjunction = all;
             lastConjunction = last;
@@ -94,7 +94,7 @@ namespace Dungeon {
         int count = 0;
         stringstream parts;
         string last = "";
-        
+
         string conjunction = ", ";
         string lastConjunction = " and ";
     };

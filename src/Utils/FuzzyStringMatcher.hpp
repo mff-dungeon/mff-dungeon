@@ -11,7 +11,7 @@ namespace Dungeon {
 
 	/**
 	 * Uses some kind of Damerau-Levenshtein distance to find best matching string.
-	 * 
+	 *
 	 * TODO add some treshold to filter out more good enough matches
 	 */
 	template <typename value_type>
@@ -103,10 +103,10 @@ namespace Dungeon {
 
 		static vector<string> tokenize(const string& str);
 	};
-	
+
 	template<typename value_type>
 	FuzzyStringMatcher<value_type>::FuzzyStringMatcher(const FuzzyStringMatcher& orig) : strMap(orig.strMap) { }
-	
+
 	template<typename value_type>
 	FuzzyStringMatcher<value_type>& FuzzyStringMatcher<value_type>::add(string searchstring, value_type value) {
 		if (searchstring.length() == 0) {
@@ -120,7 +120,7 @@ namespace Dungeon {
 		}
 		return *this;
 	}
-	
+
 	template<typename value_type>
 	int FuzzyStringMatcher<value_type>::getWordDistance(const string& needle, const string& haystack) const {
 		const int nlen = needle.length(),
@@ -158,7 +158,7 @@ namespace Dungeon {
 		}
 		return row2.back();
 	}
-	
+
 	template<typename value_type>
 	int FuzzyStringMatcher<value_type>::getEqualness(const vector<string>& needle, const vector<string>& haystack) const {
 		size_t i = 0, sum = 0, lastmatch = 0;
@@ -177,7 +177,7 @@ namespace Dungeon {
 		}
 		return sum;
 	}
-	
+
 	template<typename value_type>
 	value_type FuzzyStringMatcher<value_type>::find(const string& needle) {
 		if (needle.length() == 0) {
@@ -214,7 +214,7 @@ namespace Dungeon {
 
 		return maxMatch->second;
 	}
-	
+
 	template<typename value_type>
 	int FuzzyStringMatcher<value_type>::getSubstCost(const char& a, const char& b) const {
 		if (::tolower(a) == ::tolower(b))

@@ -2,11 +2,11 @@
 
 namespace Dungeon {
 namespace Output {
-	
+
 	string PlainString::plainString() const {
 		return str;
 	}
-	
+
 	string Newline::plainString() const {
 		return "\n";
 	}

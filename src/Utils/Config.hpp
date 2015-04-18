@@ -17,9 +17,9 @@
 
 namespace Dungeon {
 	/**
-	 * Holds all the configuration values for the dungeon. 
-	 * Stores the values in private static member fields, which are accessed by 
-	 * public static functions. The values are loaded when initialize() 
+	 * Holds all the configuration values for the dungeon.
+	 * Stores the values in private static member fields, which are accessed by
+	 * public static functions. The values are loaded when initialize()
 	 * is called from a given file.
 	 */
 	class Config {
@@ -30,7 +30,7 @@ namespace Dungeon {
 		static bool isInitialized() {
 			return initialized;
 		}
-		
+
 		/**
 		 * Loads configuration informating from a file.
 		 * May throw a ConfigParser::InvalidFieldException and ConfigParser::InvalidFileException exceptions
@@ -41,7 +41,7 @@ namespace Dungeon {
 				loadFile(fileName);
 			}
 		}
-		
+
 		static const string& DbName() {	return p_dbName; }
 		static const string& JabberName() {	return p_jabberName; }
 		static const string& JabberPasswd() { return p_jabberPasswd; }
@@ -49,7 +49,7 @@ namespace Dungeon {
 		static const int GameMode() { return p_gameMode; }
 		static const int RespawnTime() { return p_respawnTime; }
 		static const int LevelStats() { return p_levelStats; }
-		
+
 		static const int EnemyHp() { return p_enemyHp; }
 		static const int EnemyRespawn() { return p_enemyRespawn; }
 		static const int EnemyMatsDrop() { return p_enemyMatsDrop; }
@@ -57,20 +57,20 @@ namespace Dungeon {
 		static const int RecipeExp() { return p_recipeExp; }
 		static const int RecipeMat() { return p_recipeMat; }
 		static const int RecipeKeyMat() { return p_recipeKeyMat; }
-                
+
 		static const bool FeatureXHtmlIM() { return p_feature_xhtmlim; }
-		
+
 	private:
 		Config() {};
 		Config(Config const&) = delete;
 		~Config() {};
 		void operator=(Config const&) = delete;
-		
+
 		// This method should be updated when new fiels are added
 		static void loadFile(const string& fileName);
-		
+
 		static bool initialized;
-		
+
 		static string p_dbName;
 		static string p_jabberName;
 		static string p_jabberPasswd;
@@ -78,7 +78,7 @@ namespace Dungeon {
 		static int p_gameMode;
 		static int p_respawnTime;
 		static int p_levelStats;
-		
+
 		static int p_enemyHp;
 		static int p_enemyRespawn;
 		static int p_enemyMatsDrop;
@@ -86,7 +86,7 @@ namespace Dungeon {
 		static int p_recipeExp;
 		static int p_recipeMat;
 		static int p_recipeKeyMat;
-                
+
                 static bool p_feature_xhtmlim;
 	};
 }

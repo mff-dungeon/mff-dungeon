@@ -13,7 +13,7 @@ namespace Dungeon {
 		virtual ~HealingSpell() {}
 
 		virtual void cast(ObjectPointer casterPtr, ActionDescriptor* ad = nullptr);
-		
+
 		PERSISTENT_DECLARATION(HealingSpell, Spell)
 	};
 }

@@ -8,8 +8,8 @@
 namespace Dungeon {
 
     /**
-     * If you look closer on the implementation, you'll find out that 
-     * Interactive is just a syntax sugar. Interactive action can be 
+     * If you look closer on the implementation, you'll find out that
+     * Interactive is just a syntax sugar. Interactive action can be
      * added to virtually any object in the game. But, as always, be careful.
      */
     class Interactive : public IDescriptable {
@@ -17,17 +17,17 @@ namespace Dungeon {
         Interactive() : IDescriptable() { }
         Interactive(const objId& id) : IDescriptable(id) { }
         virtual ~Interactive() { }
-        
+
         Interactive* reads(const string& content) {
             attachInteraction("read", "read ... - to read it", content);
             return this;
         }
-        
+
         Interactive* says(const string& content) {
             attachInteraction("(speak|talk|chat)( (with|to))?", "speak with ... - to speak with someone", content);
             return this;
         }
-        
+
         void attachInteraction(const string& verb, const string& explanation, const string& content);
 
         PERSISTENT_DECLARATION(Interactive, IDescriptable)

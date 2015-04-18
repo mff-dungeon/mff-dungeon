@@ -32,9 +32,9 @@ namespace Dungeon {
 		virtual void commit(ActionDescriptor *ad);
 
 		/**
-		 * Used in help text. Should fill the reply 
+		 * Used in help text. Should fill the reply
 		 * in ad with some useful information.
-		 * 
+		 *
 		 * If this action should not be visible, then just do nothing.
 		 */
 		virtual void explain(ActionDescriptor *ad);
@@ -47,7 +47,7 @@ namespace Dungeon {
 		 *         should not be notified any further
 		 */
 		virtual bool handleException(GameException& exception, ActionDescriptor *ad);
-		
+
 		// TODO - implement action comparing where needed for priority reasons
 		virtual int compare(const Action& other) {
 			return 0;
@@ -57,7 +57,7 @@ namespace Dungeon {
 
 		bool isVisibleInHelp;
 		/**
-		 * Basically implementation of shared pointers, 
+		 * Basically implementation of shared pointers,
 		 * but with more comfortable syntax
 		 */
 		Action* remember() {

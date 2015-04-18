@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 namespace Dungeon {
-	
+
 	string WorldDumper::getTimestamp() const {
         std::time_t t = std::time(NULL);
         char mbstr[100];
@@ -20,7 +20,7 @@ namespace Dungeon {
 		file << "digraph world {\n";
 		return path;
 	}
-	
+
 	void DotDumper::dumpObject(ObjectPointer obj) {
 		stringstream ss;
 		ss << "n" << objects.size();
@@ -45,20 +45,20 @@ namespace Dungeon {
 			obj->afterStore(*this);
 			file << ">";
 		} else {
-			
+
 			file << "\"" << obj->getId() << "\"";
 		}
 		file << ", shape=" + shape + "];\n";
-		
+
 		for (const RelationList::value_type& relPair : obj->getRelations(Relation::Master)) {
 			for (const ObjectMap::value_type& objPair : relPair.second) {
 				if (objects.find(objPair.first) != objects.end()) {
-					file << node << " -> " << objects[objPair.first] 
+					file << node << " -> " << objects[objPair.first]
 					     << " [label=\"" << relPair.first << "\"]\n";
 				}
 			}
 		}
-		
+
 		for (const RelationList::value_type& relPair : obj->getRelations(Relation::Slave)) {
 			for (const ObjectMap::value_type& objPair : relPair.second) {
 				if (objects.find(objPair.first) != objects.end()) {
@@ -68,17 +68,17 @@ namespace Dungeon {
 			}
 		}
 	}
-	
+
 	IPropertyStorage& DotDumper::have(int& prop, const string& id, const string& desc, bool editable) {
 		file << "<b>" << id << "</b>: " << prop << "<br/>";
 		return *this;
 	}
-	
+
 	IPropertyStorage& DotDumper::have(long& prop, const string& id, const string& desc, bool editable) {
 		file << "<b>" << id << "</b>: " << prop << "<br/>";
 		return *this;
 	}
-	
+
 	IPropertyStorage& DotDumper::have(string& prop, const string& id, const string& desc, bool editable) {
 		if (prop.length() > 10)
 			file << "<b>" << id << "</b>: (long string)<br/>";
@@ -86,17 +86,17 @@ namespace Dungeon {
 			file << "<b>" << id << "</b>: " << prop << "<br/>";
 		return *this;
 	}
-	
+
 	IPropertyStorage& DotDumper::have(bool& prop, const string& id, const string& desc, bool editable) {
 		file << "<b>" << id << "</b>: " << (prop ? "yes" : "no") << "<br/>";
 		return *this;
 	}
-	
+
 	void DotDumper::endDump() {
 		file << "}\n" << endl;
 		file.close();
-		
+
 	}
-	
+
 }
 

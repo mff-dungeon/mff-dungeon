@@ -15,10 +15,10 @@ namespace Dungeon {
 
 class ActionQueue;
 
-/* 
+/*
  * Contains information about commiting an action.
- * It is created when user types the command, then 
- * waiting in queue, when commited it is filled with 
+ * It is created when user types the command, then
+ * waiting in queue, when commited it is filled with
  * information to be returned to the user.
  */
 class ActionDescriptor {
@@ -35,12 +35,12 @@ public:
     GameManager* getGM();
 
     Driver* driver;
-    
+
     /**
      * While getting actions, this is used to know who delegates
      */
     stack<ObjectPointer> delegationStack;
-    
+
     string in_msg;
 
     enum State {
@@ -55,7 +55,7 @@ public:
         Finished, // Can be disposed
         Invalid // WTF?
     } state = Empty;
-    
+
     enum ReplyFormat {
         Paragraph,
         List
@@ -95,21 +95,21 @@ public:
     /**
      * Only to remain backward compatible it accepts the weirdo replyformat.
      * For anything more fancy just use Output correctly.
-     * 
+     *
      * Mixing direct Output passing and these functions can have weird results.
      */
     ActionDescriptor& operator<<(const string& msg);
     ActionDescriptor& operator<<(const char * msg);
     ActionDescriptor& operator<<(const int& msg);
-    
+
     /**
      * Finishes current sentence. @see eos
      */
     ActionDescriptor& operator<<(ActionDescriptor::EndOfSentence* (*endofsentence)());
-    
+
     /**
      * Directly adds output instance to reply.
-     * @return 
+     * @return
      */
     ActionDescriptor& operator<<(Output::Base* output);
     ActionDescriptor& operator<<(Output::Container::ptr_t&& output);
@@ -117,7 +117,7 @@ public:
     bool isValid(Driver* driver);
 
     /**
-     * Queries user for something. Given callback will be called 
+     * Queries user for something. Given callback will be called
      * on next user's message INSTEAD of regular action processing.
      * @param callback Function receiving (AD*, string), where the string is user's reply.
      */
@@ -126,13 +126,13 @@ public:
         LOGS(Debug) << "Requested a dialog reply for user " << caller << "." << LOGF;
         dialogReplies.push(callback);
     }
-    
+
     /**
      * Some gray magic here :)
-     * 
-     * Example: 
+     *
+     * Example:
      *   ad->waitForReply(this, &CombatAction::combatLoop);
-     * 
+     *
      * @param this_ptr "this"
      * @param callback &SomeClass::someFunction
      */
@@ -174,11 +174,11 @@ public:
 
     ActionDescriptor* setReplyFormat(ReplyFormat format);
 
-    /** 
+    /**
      * Printf-like formatted message will be replaced as following:
      *      %u -> Username
      *      %% -> %
-     * 
+     *
      * Obviously, more replacements will be added in time of development.
      */
     string formatMessage(string msg);
@@ -187,7 +187,7 @@ public:
     {
         return alist;
     }
-    
+
     void prepareFilling() {
         alist.clear();
         stack<ObjectPointer>().swap(delegationStack); // Clear the stack
@@ -198,7 +198,7 @@ public:
         flushContainers();
         return message;
     }
-    
+
     /**
      * This was added just to remain compatible.
      * Try to use the fancy new output method.
@@ -218,7 +218,7 @@ protected:
     Output::SentenceContainer sentencedMessage;
     Output::ListContainer listedMessage;
     Output::Container message;
-    
+
 
 
 private:
@@ -229,7 +229,7 @@ private:
     ReplyFormat replyFormat = ReplyFormat::Paragraph;
     int id;
 
-    queue<dialogReply> dialogReplies;    
+    queue<dialogReply> dialogReplies;
 
     int sentences = 0;
     stringstream currentSentence;

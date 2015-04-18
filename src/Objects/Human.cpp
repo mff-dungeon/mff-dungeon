@@ -282,8 +282,8 @@ namespace Dungeon {
 	void Human::getActions(ActionDescriptor* ad) {
 		if (this == ad->getCaller()) {
 			auto& list = ad->getActionList();
-			
-			// Actions always available 
+
+			// Actions always available
 			list.addAction(new CallbackAction("hello", "hello - When you wanna be polite to your Dungeon",
 					RegexMatcher::matcher("(hello|hi|whats up|wazzup|yo|hey)( dungeon)?"),
 					[this] (ActionDescriptor * ad) {
@@ -296,7 +296,7 @@ namespace Dungeon {
 						*ad << "You are " + ad->getCaller()->getName() + "." << eos;
 					}, false));
 
-			// Dead related actions, do not add rest if user is dead	
+			// Dead related actions, do not add rest if user is dead
 			if (getState() == State::Dead) {
 				list.addAction(new CallbackAction("respawn", "respawn - respawns you in the city",
 						RegexMatcher::matcher("respawn"),
@@ -321,7 +321,7 @@ namespace Dungeon {
 							}
 
 						}, false));
-						
+
 				return;
 			}
 
@@ -331,9 +331,9 @@ namespace Dungeon {
 						*ad << "Die!" << eos;
 						this->changeHp(-9999999, ad);
 					}));
-					
-			list.addAction(new CallbackAction("go back", "returns to previous location", 
-					RegexMatcher::matcher("go back|return"), 
+
+			list.addAction(new CallbackAction("go back", "returns to previous location",
+					RegexMatcher::matcher("go back|return"),
 					[this] (ActionDescriptor* ad) {
 						ObjectPointer backLocation = popGoBackStack();
 						if(!backLocation) {
@@ -413,8 +413,8 @@ namespace Dungeon {
 								<< "You're poor as a church mouse." << endr
 								<< "You don't have anything." << endr) << eos;
 						}, false));
-						
-			list.addAction(new CallbackAction("stats help", "stats help - Prints help about player statistics", 
+
+			list.addAction(new CallbackAction("stats help", "stats help - Prints help about player statistics",
 					RegexMatcher::matcher("(stats( help)?|my info).*"),
 					[this] (ActionDescriptor* ad) {
 						*ad << "Here is a list of commands to get details on yourself:" << eos;
@@ -521,9 +521,9 @@ namespace Dungeon {
 	bool Human::knowsSpell(ObjectPointer spell) {
 		return hasRelation("spell", spell, Relation::Master);
 	}
-	
+
 	ObjectPointer Human::popGoBackStack() {
-		if(gobackBase == gobackCurrent) return ObjectPointer();		
+		if(gobackBase == gobackCurrent) return ObjectPointer();
 		gobackCurrent--;
 		if(gobackCurrent == -1) gobackCurrent = Config::GobackStackSize() - 1;
 		string rel = "go-back-stack-" + to_string(gobackCurrent);
@@ -559,7 +559,7 @@ namespace Dungeon {
 		if(gobackBase == gobackCurrent) gobackBase = (gobackBase + 1) % Config::GobackStackSize();
 	}
 
-	
+
 	string Human::getWeaponName() const {
 		Wearable* weapon = getSingleRelation(Wearable::SlotRelations[Wearable::Slot::Weapon]).safeCast<Wearable>();
 		if (weapon)
@@ -575,11 +575,11 @@ namespace Dungeon {
 		} else
 			return to_string(seconds / 3600) + " hours";
 	}
-	
+
 	bool Human::haveSeen(const ObjectPointer& object) {
 		return hasRelation(R_SEEN, object);
 	}
-	
+
 	Human* Human::see(ObjectPointer& object) {
 		if (!haveSeen(object))
 			getGameManager()->createRelation(this, object, R_SEEN);

@@ -45,7 +45,7 @@ namespace Dungeon {
 		;
 	public:
 		/**
-		 * Returns the current opened instance of DatabaseHandler, opens a new 
+		 * Returns the current opened instance of DatabaseHandler, opens a new
 		 * one if there is none
 		 * @return current instance of DatabaseHandler
 		 */
@@ -75,7 +75,7 @@ namespace Dungeon {
 		int saveObject(const objId& oid, const string& cName, const string& data);
 
 		/**
-		 * Loads an object from the database. 
+		 * Loads an object from the database.
 		 * @param oid objectId of the desired object
 		 * @param cName className of the desired object
 		 * @param sData stringstream which will be used to store the object
@@ -93,13 +93,13 @@ namespace Dungeon {
 		/**
 		 * Fetches list of all IDs
 		 * @param list empty list to fill
-		 * @return DatabaseHandler 
+		 * @return DatabaseHandler
 		 */
 		int getObjectList(vector<objId>& list);
 
 		/**
-		 * Checks whether the database has correct table count. 
-		 * If not, something may be wrong / database is not set -> signal to 
+		 * Checks whether the database has correct table count.
+		 * If not, something may be wrong / database is not set -> signal to
 		 * init db
 		 * @return DatabaseHandler state value
 		 */
@@ -118,7 +118,7 @@ namespace Dungeon {
 		int dropDatabase();
 
 		/**
-		 * Asks the database for the list of objects using 
+		 * Asks the database for the list of objects using
 		 * supplied Relation object for the query
 		 * @param result vector of matching relations
 		 * @param rel Relation required
@@ -141,7 +141,7 @@ namespace Dungeon {
 		int deleteRelation(const Relation& rel);
 
 		/**
-		 * 
+		 *
 		 * @param rel Relation to be found
 		 * @param found is set to true, if the relation was found
 		 * @return DatabaseHandler state value

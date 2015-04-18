@@ -40,7 +40,7 @@ namespace Dungeon {
 		int getEffect(ObjectPointer casterPtr) const;
 
 		/**
-		 * Checks if the spell can be cast. Checks for mana, required stats, 
+		 * Checks if the spell can be cast. Checks for mana, required stats,
 		 * and other validity
 		 * @param casterPtr User casting this spell
 		 * @param ad An AD to message the user, if desired

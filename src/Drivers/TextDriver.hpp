@@ -44,13 +44,13 @@ namespace Dungeon {
 		bool isInDialog(objId who) {
 			return dialogs.find(who) != dialogs.end();
 		}
-                
+
                 map<objId, int> matchingPatience;
                 int getPatience(objId who) {
                     auto it = matchingPatience.find(who);
                     return it != matchingPatience.end() ? it->second : 0;
                 }
-                
+
                 void incrementPatience(objId who) {
                     auto it = matchingPatience.find(who);
                     if (it != matchingPatience.end()) {
@@ -59,7 +59,7 @@ namespace Dungeon {
                         matchingPatience.insert(pair<objId, int>(who, 1));
                     }
                 }
-                
+
                 void resetPatience(objId who) {
                     matchingPatience.erase(who);
                 }

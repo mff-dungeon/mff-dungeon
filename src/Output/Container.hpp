@@ -37,7 +37,7 @@ namespace Output {
             contents.push_back(ptr_t(o));
             return *this;
         }
-        
+
         Container& insert(ptr_t&& o) {
             contents.push_back(move(o));
             return *this;
@@ -66,7 +66,7 @@ namespace Output {
     {
     public:
         virtual string plainString() const;
-        virtual void xhtml(Tag * parent) const;          
+        virtual void xhtml(Tag * parent) const;
     };
 
     class ListContainer : public Container

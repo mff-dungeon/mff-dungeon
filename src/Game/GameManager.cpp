@@ -218,9 +218,9 @@ namespace Dungeon {
 	}
 
 	void GameManager::clearRelationsOfType(ObjectPointer obj, const string& relation, Relation::Dir master) {
-		if (master) 
+		if (master)
 			DatabaseHandler::getInstance().deleteRelation(Relation(obj.getId(), "0", relation));
-		else 
+		else
 			DatabaseHandler::getInstance().deleteRelation(Relation("0", obj.getId(), relation));
 
 		// Need to load it because of the "others"

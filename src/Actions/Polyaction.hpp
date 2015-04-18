@@ -21,7 +21,7 @@ namespace Dungeon {
 		virtual void merge(MultiTargetAction* second);
 
 	protected:
-		// Note: Actions are "remembered", so they must 
+		// Note: Actions are "remembered", so they must
 		// be forgotten when removing from this map.
 		map<objId, MultiTargetAction*> actionMap;
 	};

@@ -16,7 +16,7 @@ namespace Dungeon {
 		virtual ~Item() { }
 
 		/**
-		 * Approximate size in litres/1000 
+		 * Approximate size in litres/1000
 		 */
 		virtual Item* setSize(int size);
 		virtual int getSize() const;
@@ -26,7 +26,7 @@ namespace Dungeon {
 		 */
 		virtual Item* setWeight(int weight);
 		virtual int getWeight() const;
-	
+
 		bool isPickable() const;
 		Item* setPickable(bool pickable);
 		bool isDropable() const;

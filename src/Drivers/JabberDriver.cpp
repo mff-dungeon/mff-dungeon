@@ -79,14 +79,14 @@ namespace Dungeon {
 		stateMsg.addExtension(new ChatState(ChatStateComposing));
 		client->send(stateMsg);
 
-		// Do the actual thinking                
+		// Do the actual thinking
 		this->process(ad);
 
                 // Reply
-		const Output::Base& message = ad->getReply(); 
+		const Output::Base& message = ad->getReply();
 		Message responseMsg(Message::Chat, ad->from, message.plainString());
 		responseMsg.addExtension(new ChatState(ChatStateActive));
-		
+
 		if (useXHtmlIM) {
 			Tag xhtml ("html");
 			xhtml.setXmlns(gloox::XMLNS_XHTML_IM);

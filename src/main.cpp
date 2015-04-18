@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <signal.h>		
+#include <signal.h>
 #include <execinfo.h>
 #include <unistd.h>
 #include "common.hpp"
@@ -17,8 +17,8 @@
 using namespace Dungeon;
 
 /*
- *	Global variables - global in order to be accessable by all functions 
- *		(mainly because of aqueue by finish() )  
+ *	Global variables - global in order to be accessable by all functions
+ *		(mainly because of aqueue by finish() )
  */
 GameManager *gm;
 Alive* admin;
@@ -33,23 +33,23 @@ ofstream debugFile;
 string getStacktace() {
     void* tracePtrs[100];
     int count = backtrace(tracePtrs, 100);
-    
+
     char** funcNames = backtrace_symbols(tracePtrs, count);
     stringstream ss;
-    
+
     // Print the stack trace
     for (int i = 0; i < count; i++) {
         string line(funcNames[i]);
         ss << endl << '\t' << line;
     }
-    
+
     // Free the string pointers
     free(funcNames);
-    
+
     return ss.str();
 }
 
-/* 
+/*
  *	Sends stop signal to the ActionQueue
  */
 void finish(int signal) {
@@ -57,16 +57,16 @@ void finish(int signal) {
         LOGH("Hard shutdown");
         if (signal == SIGINT) LOG << "Caught another SIGINT, already in shutdown mode." << LOGF;
         else if (signal == SIGTERM) LOG << "Caught another SIGTERM, already in shutdown mode." << LOGF;
-        
+
         LOGS(Fatal) << "Resolving potentially uncontrollable hang by voluntary suicide (SIGABRT)..." << LOGF;
         abort();
         return;
     }
-    
+
 	LOGH("Finish");
 	if (signal == SIGINT) LOGS(Warning) << "Caught SIGINT, terminating..." << LOGF;
 	else if (signal == SIGTERM) LOGS(Warning) << "Caught SIGTERM, terminating..." << LOGF;
-    
+
     finishing = true;
 
 	jabber->stop();
@@ -111,8 +111,8 @@ void start() {
 void printHelp() {
 	cout << "This is the Jabber Dungeon. If you don't know what it is and you are trying to start it anyway, "
 			<< "please read the documentation first. " << endl
-			<< "Usable arguments: " << endl 
-			<< "\t-h|--help\t\tPrints this help" << endl 
+			<< "Usable arguments: " << endl
+			<< "\t-h|--help\t\tPrints this help" << endl
 			<< "\t-f|--config [file]\tSpecifies the path to the config file" << endl
 			<< "\t-v|--verbose\t\tThe game will print detailed information on standard output" << endl
 			<< "\t-d|--debug\t\tTurns on debug logging" << endl
@@ -136,7 +136,7 @@ void dbRestart() {
 }
 
 /*
- * Processes command line arguments. 
+ * Processes command line arguments.
  * If an invalid argument is found, this method returns false so we may end the program.
  */
 bool parseArguments(vector<string>& args) {
@@ -198,13 +198,13 @@ int main(int argc, char** argv) {
 		<< "We are not responsible for any unexpected bugs that may occur to you. "
 		<< "For the best results, use gcc version 4.9 and newer, or clang version 3.2 or newer." << endl;
 	#endif
-	
+
     Logger::initialize();
     vector<string> args(argv, argv+argc);
 	if(!parseArguments(args)) {
 		return 1;
 	}
-	
+
 	/*
 	 *  No config is initialized, load the default one
 	 */
@@ -223,9 +223,9 @@ int main(int argc, char** argv) {
 			return 2;
 		}
 	}
-	
+
 	/*
-	 *	Regular dungeon start 
+	 *	Regular dungeon start
 	 */
 	LOG << "Starting dungeon..." << LOGF;
 	start();

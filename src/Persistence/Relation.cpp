@@ -2,24 +2,24 @@
 #include <sstream>
 
 namespace Dungeon {
-	
+
 	string Relation::getSelectQuery() const {
 		stringstream query;
 		query << "SELECT * FROM relations ";
 		bool result = this->addWhere(query);
-		
+
 		if(!result) return "";
 		else {
 			query << ";";
 			return query.str();
 		}
 	}
-	
+
 	string Relation::getDeleteQuery() const {
 		stringstream query;
 		query << "DELETE FROM relations ";
 		bool result = this->addWhere(query);
-		
+
 		if(!result) return "";
 		else {
 			query << ";";
@@ -44,6 +44,6 @@ namespace Dungeon {
 			else valid = true;
 			query << "relation = '" << relation << "'";
 		}
-		return valid;	
+		return valid;
 	}
 }

@@ -74,7 +74,7 @@ namespace Dungeon {
 		clone->registerProperties(stream);
 		return clone;
 	}
-	
+
 	bool Base::hasRelation(const string& type, ObjectPointer other, Relation::Dir dir) {
 		try {
 		LOGS(Debug) << "Checking relation " << getId() << (dir ? "-->" : "<--") << other.getId() << " type " << type << LOGF;
@@ -87,10 +87,10 @@ namespace Dungeon {
 			return false; // No relation of this type
 		}
 	}
-	
+
 	void Base::addRelation(const string& type, ObjectPointer other, Relation::Dir dir){
 		if (hasRelation(type, other, dir)) return;
-		
+
 		LOGS(Debug) << "Adding relation " << getId() << (dir ? " <-- " : " --> ") << other.getId() << " of type " << type << LOGF;
 		if(dir) {
 			relation_master[type][other.getId()] = other;
@@ -98,7 +98,7 @@ namespace Dungeon {
 		else {
 			relation_slave[type][other.getId()] = other;
 		}
-		
+
 		if (other.isLoaded())
 			other->addRelation(type, this, !dir);
 	}
@@ -106,7 +106,7 @@ namespace Dungeon {
 	const RelationList& Base::getRelations(Relation::Dir dir) const {
 		return dir == Relation::Dir::Master ? relation_master : relation_slave;
 	}
-	
+
 	const ObjectMap& Base::getRelations(Relation::Dir dir, const string& type) const {
 		try {
 			return getRelations(dir).at(type);
@@ -125,7 +125,7 @@ namespace Dungeon {
 			return getRelations(dir).at(type);
 		}
 	}
-	
+
 	ObjectPointer Base::getSingleRelation(const string& type, Relation::Dir dir, const string& errMsg) const {
 		try {
 			const ObjectMap& objects = getRelations(dir, type);
@@ -139,7 +139,7 @@ namespace Dungeon {
 			return ObjectPointer();
 		}
 	}
-	
+
 	ObjectPointer Base::setSingleRelation(const string& type, ObjectPointer other, Relation::Dir dir, const string& errMsg) {
 		if(dir == Relation::Master) {
 			gm->removeRelation(this, getSingleRelation(type, dir, errMsg), type);
@@ -152,10 +152,10 @@ namespace Dungeon {
 		return this;
 	}
 
-	
+
 	void Base::eraseRelation(const string& type, ObjectPointer other, Relation::Dir dir) {
 		if (!other || !hasRelation(type, other, dir)) return;
-		
+
 		LOGS(Debug) << "Erasing relation " << getId() << (dir ? " <-- " : " --> ") << other.getId() << " of type " << type << LOGF;
 		if(dir) {
 			relation_master.at(type).erase(other.getId());
@@ -163,16 +163,16 @@ namespace Dungeon {
 		else {
 			relation_slave.at(type).erase(other.getId());
 		}
-		
+
 		if (other.isLoaded())
 			other->eraseRelation(type, this, !dir);
 	}
 
 	void Base::registerProperties(IPropertyStorage& storage) {
-		// There can also be an object without internal variables, 
+		// There can also be an object without internal variables,
 		// and serves as a base to recursion
 	}
-	
+
 	ObjectPointer Base::save() {
 		gm->saveObject(this);
 		return this;
@@ -181,11 +181,11 @@ namespace Dungeon {
 	GameManager* Base::getGameManager() const {
 		return gm;
 	}
-	
+
 	void Base::setGameManager(GameManager* gm) {
 		this->gm = gm;
 	}
-	
+
 	ObjectPointer Base::triggerTraps(const string& event, ActionDescriptor* ad) {
 		try {
 			LOGS(Debug) << "Triggering event " << event << " on " << id << ":" << LOGF;
@@ -198,27 +198,27 @@ namespace Dungeon {
 		} catch (std::out_of_range& e) {}
 		return this;
 	}
-	
+
 	ObjectPointer Base::attachTrap(ObjectPointer trap, const string& event) {
 		trap.assertType<Trap>("Tried to attach non-trap");
 		gm->createRelation(trap, this, Trap::getRelation(event));
 		return this;
 	}
-	
+
 	ObjectPointer Base::detachTrap(ObjectPointer trap, const string& event) {
 		trap.assertType<Trap>("Tried to detach non-trap");
 		gm->removeRelation(trap, this, Trap::getRelation(event));
 		return this;
 	}
-	
+
 	bool Base::hasTrapAttached(ObjectPointer trap, const string& event) {
 		return trap.assertType<Trap>("Tried to check non-trap attachment.")->hasRelation(Trap::getRelation(event), this);
 	}
-	
+
 	ObjectPointer Base::deepClone() const {
 		return Cloner::deepClone(this);
 	}
-	
+
 	ObjectPointer Base::shallowClone() const {
 		return Cloner::shallowClone(this);
 	}

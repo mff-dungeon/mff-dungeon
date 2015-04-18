@@ -44,7 +44,7 @@ namespace Dungeon {
 		int experience = 0;
 		Human::Stats mainStat = Human::Crafting;
 		void initResources();
-                
+
 		int resources [Resource::Count];
 
 		PERSISTENT_DECLARATION(Recipe, IDescriptable)

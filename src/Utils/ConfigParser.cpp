@@ -23,14 +23,14 @@ namespace Dungeon {
 		}
 		input.close();
 	}
-	
+
 	bool ConfigParser::isEmpty(const string& s) const {
 		for(char c : s) {
 			if(!isspace(c)) return false;
 		}
 		return true;
 	}
-	
+
 	string ConfigParser::getString(const string& key) const {
 		map<string, string>::const_iterator it = loadedValues.find(key);
 		if(it == loadedValues.end()) {
@@ -38,7 +38,7 @@ namespace Dungeon {
 		}
 		return (*it).second;
 	}
-	
+
 	string ConfigParser::getString(const string& key, const function<bool(string)>& predicate, string error) const {
 		map<string, string>::const_iterator it = loadedValues.find(key);
 		if(it == loadedValues.end()) {
@@ -50,7 +50,7 @@ namespace Dungeon {
 		return (*it).second;
 	}
 
-	
+
 	bool ConfigParser::getBool(const string& key) const {
 		map<string, string>::const_iterator it = loadedValues.find(key);
 		if(it == loadedValues.end()) {

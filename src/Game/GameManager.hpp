@@ -49,7 +49,7 @@ namespace Dungeon {
 		/**
 		 * Gets OP for an object.
 		 * @param id
-		 * @return 
+		 * @return
 		 */
 		ObjectPointer getObject(const objId& id);
 
@@ -64,7 +64,7 @@ namespace Dungeon {
 		 * @param master Master
 		 * @param slave Slave
 		 * @param relation Relation Type
-		 * @return 
+		 * @return
 		 */
 		bool hasRelation(ObjectPointer master, ObjectPointer slave, const string& relation);
 
@@ -95,7 +95,7 @@ namespace Dungeon {
 		ActionQueue* getQueue();
 
 		/**
-		 * Insert's figure to the world, gives it basic equipment 
+		 * Insert's figure to the world, gives it basic equipment
 		 * and put it somewhere
 		 */
 		Alive* addNewFigure(Alive *figure);

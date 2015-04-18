@@ -13,7 +13,7 @@
 namespace Dungeon {
 
 	ThorsHammer::ThorsHammer() : Item("special/thorshammer") {
-		// WARNING - Following leaks may be connected to Archiver, as all of them are surrounded by archiver leaks although 
+		// WARNING - Following leaks may be connected to Archiver, as all of them are surrounded by archiver leaks although
 		// all three of them should be done consecutively by the program
 		setName("Thor's Hammer"); // FIXME: Leaks!!! - leaves a trace in valgrind (38B)
 		setLongName("The most horrifying item in the world."); // FIXME: Leaks!!! - leave a trace in valgrind (63B)
@@ -124,7 +124,7 @@ namespace Dungeon {
 						*ad << "You have increased your exp by " << exp << " using your hammer." << eos;
 					}
 				}, false));
-				
+
 				// FIX - add to inv
 		list.addAction(new CallbackAction("th-set-resource", "(TH) th set-resource (str) (int) - set's your resource amount",
 				captureMatcher.matcher("th set-resource (.*) ([0-9]+)"),
@@ -133,12 +133,12 @@ namespace Dungeon {
 					Resource::ResourceType res = typeMatcher.find(captureMatcher.matches[1]);
 					int quantity = stoi(captureMatcher.matches[2]);
 					if(ad->getCaller()->getBackpack().unsafeCast<Inventory>()->setResource(res, quantity)) {
-						LOG << "Admin " << ad->getCaller()->getName() << " set his resource " 
+						LOG << "Admin " << ad->getCaller()->getName() << " set his resource "
 								<< Resource::ResourceName[res] << " to " << quantity << " units using Thors' Hammer." << LOGF;
 						*ad << "You have set your " << Resource::ResourceName[res] << " quantity to " << quantity << " using your hammer." << eos;
 					}
 					else {
-						LOG << "Admin " << ad->getCaller()->getName() << " tried to set his resource " 
+						LOG << "Admin " << ad->getCaller()->getName() << " tried to set his resource "
 								<< Resource::ResourceName[res] << " to " << quantity << " units using, but his inventory can't make it." << LOGF;
 						*ad << "Your backpack protests, because it's not willing to take that much into itself." << eos;
 					}
@@ -160,7 +160,7 @@ namespace Dungeon {
 
 					LOG << "Admin " << ad->getCaller()->getName() << " teleported to " << name << " using Thors' Hammer." << LOGF;
 					ad->getGM()->moveAlive(ad->getCaller(), ad->getGM()->getObject(name));
-					*ad << "You have teleported to " 
+					*ad << "You have teleported to "
 							<< ad->getCaller()->getLocation().safeCast<IDescriptable>()->getName() << "." << eos;
 				}));
 

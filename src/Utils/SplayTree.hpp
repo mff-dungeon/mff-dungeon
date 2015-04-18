@@ -24,9 +24,9 @@ namespace Dungeon {
         void rotateLeft(Node* n);
         void rotateRight(Node* n);
         void splay(Node* n);
-        void replace(Node* u, Node* v);		
+        void replace(Node* u, Node* v);
         Node* findMinimum(Node *root);
-		
+
         void printDotNull(objId key, int nullcount, std::ofstream& stream);
         void printDotVertex(Node* node, std::ofstream& stream);
     public:

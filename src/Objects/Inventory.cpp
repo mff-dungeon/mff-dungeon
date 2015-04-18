@@ -107,7 +107,7 @@ namespace Dungeon {
 		save();
 		return itemPtr;
 	}
-	
+
 	int Inventory::getResourceQuantity(Resource::ResourceType type) {
 		ObjectPointer resource = getSingleRelation(R_RESOURCE(type), Relation::Master);
 		if (!!resource) {
@@ -122,7 +122,7 @@ namespace Dungeon {
 		else if(deltaQuantity < 0) return removeResource(type, -deltaQuantity);
 		else return true;
 	}
-	
+
 	bool Inventory::addResource(Resource::ResourceType type, int added) {
 		if(added <= 0) return false;
 		ObjectPointer templ = getGameManager()->getObject(string("template/resource/") + Resource::ResourceIdentifier[type] + "/1");
@@ -135,7 +135,7 @@ namespace Dungeon {
 		addItem(res);
 		return true;
 	}
-	
+
 	bool Inventory::removeResource(Resource::ResourceType type, int removed) {
 		if(removed <= 0) return false;
 		ObjectPointer current = getSingleRelation(R_RESOURCE(type), Relation::Master);
@@ -148,7 +148,7 @@ namespace Dungeon {
 			return true;
 		}
 	}
-	
+
 	bool Inventory::setResource(Resource::ResourceType type, int newAmount) {
 		return changeResourceQuantity(type, newAmount - getResourceQuantity(type));
 	}
@@ -157,7 +157,7 @@ namespace Dungeon {
 		itemPtr.assertType<Item>("You can only have items in your backpack.");
 		if(itemPtr->instanceOf(Resource)) {
 			Resource* r = itemPtr.unsafeCast<Resource>();
-			LOGS(Debug) << "Removing " << amount << " " << r->getName() << " from inventory " << getName() << "." << LOGF; 
+			LOGS(Debug) << "Removing " << amount << " " << r->getName() << " from inventory " << getName() << "." << LOGF;
 			ObjectPointer current = getSingleRelation(R_RESOURCE(r->getType()), Relation::Master);
 			if(current != itemPtr) throw GameStateInvalid("Trying to remove a resource from inventory, which is not there");
 			if(amount >= r->getQuantity()) {
@@ -178,7 +178,7 @@ namespace Dungeon {
 			}
 		}
 		Item* item = itemPtr.unsafeCast<Item>();
-		LOGS(Debug) << "Removing " << item->getName() << " from inventory " << getName() << "." << LOGF; 
+		LOGS(Debug) << "Removing " << item->getName() << " from inventory " << getName() << "." << LOGF;
 		this->usedWeight -= item->getWeight();
 		this->usedSpace -= item->getSize();
 		this->getGameManager()->removeRelation(this, item, R_INVENTORY);
@@ -271,7 +271,7 @@ namespace Dungeon {
 			*ad << "You cannot drop this item.\n" << eos;
 			return;
 		}
-		
+
 		if(target->instanceOf(Resource)) {
 			Resource* res = target.unsafeCast<Resource>();
 			if(amount <= 0 || amount > res->getQuantity()) amount = res->getQuantity();

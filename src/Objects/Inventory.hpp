@@ -36,7 +36,7 @@ namespace Dungeon {
 		bool canAdd(ObjectPointer itemPtr);
 		ObjectPointer removeItem(ObjectPointer itemPtr, int amount = 1);
 		bool contains(ObjectPointer itemPtr);
-		
+
 		/*
 		 * The following methods return true, if the resource was added,
 		 * false if it couldn't be added/removed due to inventory size/weight limits
@@ -49,7 +49,7 @@ namespace Dungeon {
 
 		/**
 		 * Makes a string describing what is inside
-		 * 
+		 *
 		 * @return a string for AD
 		 */
 		virtual string getContainingSentence();
@@ -78,7 +78,7 @@ namespace Dungeon {
 		virtual void explain(ActionDescriptor* ad);
 		virtual bool match(const string& command, ActionDescriptor* ad);
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
-		
+
 	private:
 		int amount = 0;
 		CaptureMatcher captureMatcher;

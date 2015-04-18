@@ -22,7 +22,7 @@ namespace Dungeon {
 		cloned->registerProperties(*this);
 		cloned->afterLoad(*this);
 		cloned->save();
-		
+
 		LOGS(Debug) << "Created a copy with id " << newId << "." << LOGF;
 
 		return cloned;

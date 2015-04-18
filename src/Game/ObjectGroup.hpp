@@ -24,10 +24,10 @@ namespace Dungeon {
 
 	/**
 	 * Helper class for grouping objects of the same type.
-	 * 
+	 *
 	 * Implements exploring, and will implement searching for object
 	 * best corresponding to given string.
-         * 
+         *
          * FIXME: Just fix me.
 	 */
 	class ObjectGroup : public ObjectGroupMap {
@@ -41,7 +41,7 @@ namespace Dungeon {
 
                 // FIXME: remove the ignore flag and beholder
 		void explore(ActionDescriptor *ad, bool ignoreOfflineUsers = true, Human* beholder = nullptr);
-		
+
 		ObjectPointer match(string name) {
 			FuzzyStringMatcher<ObjectPointer> matcher;
 			ObjectGroup::iterator it;

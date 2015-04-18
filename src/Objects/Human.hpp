@@ -9,8 +9,8 @@ namespace Dungeon {
 
 	/**
 	 * A player's representation in Dung world.
-	 * 
-	 * Can be overriden with another "human", this one 
+	 *
+	 * Can be overriden with another "human", this one
 	 * is to be driven by jabber.
 	 */
 	class Human : public Alive {
@@ -87,7 +87,7 @@ namespace Dungeon {
 		const string& getContact() const;
 		Human* setUsername(const string& username);
 		const string& getUsername() const;
-		
+
 		ObjectPointer popGoBackStack();
 		void pushGoBackStack(ObjectPointer op);
 
@@ -104,7 +104,7 @@ namespace Dungeon {
 		virtual string getWeaponName() const;
 
                 Human* see(ObjectPointer& object);
-                
+
                 bool haveSeen(const ObjectPointer& object);
 
 	private:
@@ -121,7 +121,7 @@ namespace Dungeon {
 		// Free points to be distributed to stats
 		int freepoints = 0;
 		int stats [Stats::End];
-		
+
 		int gobackCurrent = 0;
 		int gobackBase = 0;
 

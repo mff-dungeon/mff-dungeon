@@ -31,10 +31,10 @@ namespace Dungeon {
 
 	void Alive::getActions(ActionDescriptor* ad) {
 		if (getState() == State::Dead) {
-			LOGS(Debug) << this->getId() << " is dead." << LOGF; 
+			LOGS(Debug) << this->getId() << " is dead." << LOGF;
 			return;
 		}
-		
+
 		if (this == ad->getCaller()) { // Remove this condition to allow stealing ;)
 			LOGS(Debug) << "Getting actions on inventory of " << this->getId() << "." << LOGF;
 			delegateGetActions(ad, { R_INVENTORY, "special-th" });
@@ -192,7 +192,7 @@ namespace Dungeon {
 				else {
 					if (attacker->getWeaponName() != "")
 						*ad << "Your enemy's " << Utils::decapitalize(attacker->getWeaponName()) << " doesn't even scratch you." << eos;
-					else 
+					else
 						*ad << "Your evemy is too weak to damage you." << eos;
 				}
 			} else {
@@ -208,7 +208,7 @@ namespace Dungeon {
 				else {
 					if(weapon != "")
 						*ad << "Your " << Utils::decapitalize(move(weapon)) << " can't even touch " << getName() << "." << eos;
-					else 
+					else
 						*ad << "You are too weak to damage " << getName() << "." << eos;
 				}
 			}
@@ -273,7 +273,7 @@ namespace Dungeon {
 		this->currentState = newState;
 		return this;
 	}
-	
+
 	Alive* Alive::regenerate(int rate) {
 		LOGS(Debug) << "Attached healing trap to " << getId() << " healing at rate " << rate << "." << LOGF;
 		Healing* heal = new Healing("trap/healing/" + getId());

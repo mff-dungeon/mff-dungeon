@@ -12,6 +12,6 @@ namespace Dungeon {
 		*ad << "You have cast " << this->getName() << "." << eos;
 		caster->changeHp(getEffect(casterPtr), ad);
 	}
-	
+
 	PERSISTENT_IMPLEMENTATION(HealingSpell)
 }

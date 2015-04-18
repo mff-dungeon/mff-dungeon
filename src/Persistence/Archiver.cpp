@@ -5,7 +5,7 @@
 using namespace std;
 
 namespace Dungeon {
-	
+
 	Archiver::Archiver(stringstream& stream, bool isStoring) : storing(isStoring), stream(stream) { }
 
 	Archiver::~Archiver() {

@@ -61,7 +61,7 @@ namespace Dungeon {
 			sentencedMessage.insert(ps);
 		}
 	}
-	
+
 	ActionDescriptor& ActionDescriptor::operator<<(const string& msg) {
 		currentSentence << msg;
 		return *this;
@@ -76,22 +76,22 @@ namespace Dungeon {
 		currentSentence << msg;
 		return *this;
 	}
-	
+
 	ActionDescriptor& ActionDescriptor::operator<<(ActionDescriptor::EndOfSentence*(*endofsentence)()) {
 		this->addSentence(currentSentence.str());
 		currentSentence.str("");
 		return *this;
 	}
-	
+
 	ActionDescriptor& ActionDescriptor::operator<<(Output::Base* o) {
 		message.insert(o);
 		return *this;
-	}	
-	
+	}
+
 	ActionDescriptor& ActionDescriptor::operator<<(Output::Container::ptr_t&& o) {
 		message.insert(move(o));
 		return *this;
-	}	
+	}
 
 	ActionDescriptor::EndOfSentence *eos() {
 		LOGS(Error) << "Tried to call invalid method eos." << LOGF;
@@ -104,7 +104,7 @@ namespace Dungeon {
 		replyFormat = format;
 		return this;
 	}
-	
+
 	ActionDescriptor& ActionDescriptor::operator=(const ActionDescriptor& right) {
 		if (this == &right)
 			return *this;
@@ -122,7 +122,7 @@ namespace Dungeon {
 		flushContainers();
 		message.clear();
 	}
-	
+
 	string ActionDescriptor::formatMessage(string msg)
 	{
 		LOGS(Verbose) << "Input: " << msg << LOGF;

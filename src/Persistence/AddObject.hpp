@@ -6,12 +6,12 @@
 
 namespace Dungeon {
 
-	/* 
+	/*
 	 * @magic
-	 * This class is a simple class 
+	 * This class is a simple class
 	 * for static registration of objects into ObjectList
 	 */
-	
+
     class Base;
 
 	class AddObject {

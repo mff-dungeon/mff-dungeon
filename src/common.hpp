@@ -26,7 +26,7 @@
  *	-	Creature - getActions
  *	-	HardcoreTrap - hardcore mode
  *	-	EquipAction::itemPhaseTwo 2x - checking the game state
- *	-	HealingTrap - the timestamp should be always updated 
+ *	-	HealingTrap - the timestamp should be always updated
  *					- atm, the user gets insta-healed after coming to healing location
  ***********************************/
 
@@ -38,16 +38,16 @@
 #include "Utils/Utils.hpp"
 #include "Utils/Config.hpp"
 
-namespace Dungeon {    
+namespace Dungeon {
 
     struct ObjectPointer;
-    
+
     typedef string objId;
     typedef map<objId, ObjectPointer> ObjectMap;
     typedef map<string, ObjectMap> RelationList;
-    
+
 }
-    
+
 #include "exceptions.hpp"
 #include "Objects/Virtual/Base.hpp"
 #include "Game/ObjectPointer.hpp"

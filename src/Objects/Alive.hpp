@@ -29,10 +29,10 @@ namespace Dungeon {
 			Dying = 2,
 			Dead = 3
 		};
-		
+
 		Alive() { } // Constructor allowing to load class later
 		Alive(const objId& id) : IDescriptable(id) { }
-		
+
 		void getAllActions(ActionDescriptor* list);
 		virtual void getActions(ActionDescriptor* list);
 
@@ -98,7 +98,7 @@ namespace Dungeon {
 
 		/**
 		 * @return Equipped backpack or nullptr
-		 * 
+		 *
 		 * When there will be more than one backpack, one could implement "IterableObjectPointer",
 		 * which utilizes operator++
 		 */
@@ -116,7 +116,7 @@ namespace Dungeon {
 		virtual void onAfterAction(ActionDescriptor* ad) {
 			getLocation()->triggerTraps("inside", ad);
 		}
-		
+
 		virtual string getWeaponName() const {
 			return weaponName;
 		}

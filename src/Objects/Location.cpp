@@ -18,11 +18,11 @@ namespace Dungeon {
 	bool Location::contains(ObjectPointer object) {
 		return hasRelation(R_INSIDE, object, Relation::Master);
 	}
-	
+
 	ObjectPointer Location::addItem(ObjectPointer object) {
 		object.assertType<Item>();
-		LOGS(Debug) << "Adding item " 
-				<< (object->instanceOf(IDescriptable) ? object.unsafeCast<IDescriptable>()->getName() : object.getId()) 
+		LOGS(Debug) << "Adding item "
+				<< (object->instanceOf(IDescriptable) ? object.unsafeCast<IDescriptable>()->getName() : object.getId())
 				<< " to " << getName() << "." << LOGF;
 		if(object->instanceOf(Resource)) {
 			Resource* old = object.unsafeCast<Resource>();
@@ -172,11 +172,11 @@ namespace Dungeon {
 		Inventory* inventory = backpack
 				.assertType<Inventory>(GameStateInvalid::BackpackNotInventory)
 				.unsafeCast<Inventory>();
-		
+
 
 		ObjectPointer current = item->getSingleRelation(R_INSIDE, Relation::Slave, "The item is located in more than one location.")
 				.assertType<Location>("Where the fuck is the item?");
-		
+
 		ObjectPointer orig = target;
 		bool split = false;
 		if (item->instanceOf(Resource)) {
@@ -191,7 +191,7 @@ namespace Dungeon {
 				return;
 			}
 		}
-		
+
 		if (inventory->getFreeWeight() < item->getWeight()) {
 			*ad << "Content of " << inventory->getName() << " would be too heavy with " << item->getName() << "." << eos;
 			*ad << item->getName() << " weights " << Utils::weightStr(item->getWeight())

@@ -9,7 +9,7 @@ using namespace std;
 namespace Dungeon {
 
 	/**
-	 * Load & store objects to some storage. 
+	 * Load & store objects to some storage.
 	 * Implemented using a SQLite database, can be inherited.
 	 */
 	class ObjectLoader {

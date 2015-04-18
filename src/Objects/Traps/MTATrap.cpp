@@ -15,17 +15,17 @@ namespace Dungeon {
 			ObjectGroup grp(objects);
 			ObjectPointer target;
 			string lower = Utils::decapitalize(str);
-			
+
 			smatch matches;
 			if (regex_match(lower, matches, regex("any\\s+(.*)"))) {
-				if (matches[1].length() > 0) 
+				if (matches[1].length() > 0)
 					target = grp.match(matches[1]);
 				else
 					target = grp.begin()->second;
 			} else {
 				target = grp.match(str);
 			}
-			
+
 			IDescriptable* obj = target.safeCast<IDescriptable>();
 			if (obj) {
 				if(any) {
@@ -77,8 +77,8 @@ namespace Dungeon {
 		switch (phase) {
 			case Selecting:
 				ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
-					if(Utils::decapitalize(reply) == "none" 
-							|| Utils::decapitalize(reply) == "nothing") { 
+					if(Utils::decapitalize(reply) == "none"
+							|| Utils::decapitalize(reply) == "nothing") {
 						*ad << "Okay, I won't do anything." << eos;
 						phase = Cancel;
 						throw TrapException(this);

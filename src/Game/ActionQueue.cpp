@@ -38,13 +38,13 @@ namespace Dungeon {
 			LOGS(Error) << "Game exception occured and Driver missed it. " << ge.what() << LOGF;
 		}
 		catch (char const * e) {
-			LOGS(Error) << e << LOGF;			
+			LOGS(Error) << e << LOGF;
 		}
 		catch (int e) {
-			LOGS(Error) << "Exception number " << e << " has been thrown while processing." << LOGF;	
+			LOGS(Error) << "Exception number " << e << " has been thrown while processing." << LOGF;
 		}
 		catch (...) {
-			LOGS(Error) << "Unknown error has occured while processing." << LOGF;	
+			LOGS(Error) << "Unknown error has occured while processing." << LOGF;
 		}
 
 		gm->roundEnd(flawless);

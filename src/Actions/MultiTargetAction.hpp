@@ -7,8 +7,8 @@
 namespace Dungeon {
 
 	/**
-	 * Action that applies to more elements, merges 
-	 * with another actions of the same type 
+	 * Action that applies to more elements, merges
+	 * with another actions of the same type
 	 * and helps select matching target
 	 */
 	class MultiTargetAction : public Action {

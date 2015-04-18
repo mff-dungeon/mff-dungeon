@@ -101,7 +101,7 @@ namespace Dungeon {
 	}
 
 	/*******************************************************************
-					Actions - stage methods 
+					Actions - stage methods
 	 *******************************************************************/
 	bool Wearable::unequip(ActionDescriptor* ad, ObjectPointer itemPtr, DesiredAction action) {
 		itemPtr.assertType<Wearable>(GameStateInvalid::EquippedNonWearable);

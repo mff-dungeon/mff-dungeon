@@ -1,7 +1,7 @@
 #include "FuzzyStringMatcher.hpp"
 
 namespace Dungeon {
-	
+
     vector<string> StringMatcher::tokenize(const string& instr) {
 		if (instr.length() == 0) {
 			LOGS(Error) << "Tried to tokenize empty string." << LOGF;

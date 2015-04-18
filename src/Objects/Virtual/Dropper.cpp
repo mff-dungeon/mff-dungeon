@@ -83,7 +83,7 @@ namespace Dungeon {
 		storage.have(chance, "dropper-chance", "Chance of the drop")
 				.have(min, "dropper-min", "Minimum amount of dropped items")
 				.have(max, "dropper-max", "Maximum amount of dropped items");
-		
+
 		Base::registerProperties(storage);
 	}
 

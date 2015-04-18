@@ -2,7 +2,7 @@
 #include <fstream>
 
 namespace Dungeon {
-	
+
 	/*
 	 * Initialize tree, root is empty pointer
 	 */
@@ -42,7 +42,7 @@ namespace Dungeon {
 		n->parent = t;
 	};
 
-	/* 
+	/*
 	 * Splay the tree - move the Node n to the root of the tree
 	 */
 	void SplayTree::splay(Node* n) {
@@ -73,7 +73,7 @@ namespace Dungeon {
 		}
 	};
 
-	/* 
+	/*
 	 * Replaces Node u with Node v and preserves the pointers
 	 *	so Node u can be deleted
 	 */
@@ -84,8 +84,8 @@ namespace Dungeon {
 		if(v != nullptr) v->parent = u->parent;
 	};
 
-	/* 
-	 * Finds the minimal Node in a subtree with Node root 
+	/*
+	 * Finds the minimal Node in a subtree with Node root
 	 */
 	SplayTree::Node* SplayTree::findMinimum(Node* root) {
 		while(root->left != nullptr)
@@ -93,7 +93,7 @@ namespace Dungeon {
 		return root;
 	}
 
-	/* 
+	/*
 	 * Insert IObject obj into the tree
 	 */
 	void SplayTree::insert(ptr_t obj) {
@@ -120,7 +120,7 @@ namespace Dungeon {
 		f->left = 0;
 		f->right = 0;
 		f->value = obj;
-		f->parent = p;	
+		f->parent = p;
 		if(p == nullptr)
 			mroot = f;
 		else if(f->value->getId() < p->value->getId())
@@ -132,13 +132,13 @@ namespace Dungeon {
 		splay(f);
 	};
 
-	/* 
+	/*
 	 * Finds and returns the object in the tree with id = objId id
 	 */
 	SplayTree::ptr_t SplayTree::find(const objId& id) {
 		Node* f = mroot;
 		while(f != nullptr) {
-			if(f->value->getId() == id) 
+			if(f->value->getId() == id)
 			{
 				splay(f);
 				return f->value;
@@ -151,7 +151,7 @@ namespace Dungeon {
 		return 0;
 	};
 
-	/* 
+	/*
 	 * Removes node with IObject having id = objId id
 	 */
 	void SplayTree::remove(const objId& id) {
@@ -162,7 +162,7 @@ namespace Dungeon {
 			else
 				f = f->left;
 		}
-		
+
 		if(f == nullptr) {
 			LOGS(Debug) << "Requested removing node with id " << id << ", but it wasn't found." << LOGF;
 			return;
@@ -182,21 +182,21 @@ namespace Dungeon {
 			replace(f, t);
 			t->left = f->left;
 			t->left->parent = t;
-		}	
+		}
 		if (!f->value.unique())
 			throw GameException("The object is strongly held somewhere else.");
-		
+
 		delete f;
 		LOGS(Debug) << "Node with id " << id << " removed from the tree." << LOGF;
 	};
-	
+
 	void SplayTree::clearTree() {
 		LOG << "Clearing whole game tree." << LOGF;
 		Node *f = mroot;
 		while(f != nullptr) {
 			if(f->left != nullptr) {
 				f = f->left;
-			} 
+			}
 			else if (f->right != nullptr) {
 				f = f->right;
 			}
@@ -205,9 +205,9 @@ namespace Dungeon {
 				if (!f->value.unique())
 					throw GameException("The object is strongly held somewhere else.");
 				if (p) {
-					if (p->left == f) 
+					if (p->left == f)
 						p->left = nullptr;
-					else 
+					else
 						p->right = nullptr;
 				}
 				delete f;
@@ -216,7 +216,7 @@ namespace Dungeon {
 		}
 		mroot = nullptr;
 	}
-        
+
 	/*
 	 * Print blank Vertex
 	 */
@@ -225,36 +225,36 @@ namespace Dungeon {
 		stream << "    " << key << " -> null" << nullcount << ";" << std::endl;
 	};
 
-	/* 
-	 * Print Vertex 
-	 */ 
+	/*
+	 * Print Vertex
+	 */
 	void SplayTree::printDotVertex(Node* node, std::ofstream& stream) {
 		static int nullcount = 0;
-		
-		if(node->left) 
+
+		if(node->left)
 		{
 			stream << "    " << node->value->getId() << " -> " << node->left->value->getId() << ";" << std::endl;
 			printDotVertex(node->left, stream);
 		}
-		else 
+		else
 			printDotNull(node->value->getId(), nullcount++, stream);
-		
-		if(node->right) 
+
+		if(node->right)
 		{
 			stream << "    " << node->value->getId() << " -> " << node->right->value->getId() << ";" << std::endl;
 			printDotVertex(node->right, stream);
 		}
-		else 
+		else
 			printDotNull(node->value->getId(), nullcount++, stream);
 	};
 
 	/*
 	 * Serializes the Splay Tree into DOT notation
-	 */ 
+	 */
 	void SplayTree::printDotFile(std::ofstream& stream) {
 		stream << "digraph BST {" << std::endl;
 		stream << "    node [fontname=\"Arial\"];\n";
-		
+
 		if (!mroot)
 			stream << std::endl;
 		else if (!mroot->right && !mroot->left)

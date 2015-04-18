@@ -40,7 +40,7 @@ namespace Dungeon {
 		switch (severity) {
 			case Severity::Debug:
 				return "debug";
-				
+
 			case Severity::Verbose:
 				return "verbose";
 
@@ -141,12 +141,12 @@ namespace Dungeon {
 
 		return c;
 	}
-        
+
         void Logger::writeMessage(const string source, const Severity severity, const ostream& data) {
             // atomic operation
             mutex_lock.lock();
             this->flush();
-            
+
             buffer.currentSeverity = severity;
 
             // print timestamp
@@ -174,10 +174,10 @@ namespace Dungeon {
             if (source != "") {
                     *this << source << ": ";
             }
-            
+
             // print the actual message
             *this << data.rdbuf();
-            
+
             // print new line and flush
             *this << endl;
 

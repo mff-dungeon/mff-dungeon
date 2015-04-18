@@ -2,7 +2,7 @@
 
 namespace Dungeon {
 namespace Output {
- 
+
 	// Works perfectly for monospaced font and tabs of size 8.
 	string Table::plainString() const {
 		vector<size_t> colLengths(table[0].size());
@@ -25,7 +25,7 @@ namespace Output {
 				if (rlen > 0) {
 					rlen++;
 					str << r[i] << " ";
-				}	
+				}
 				size_t tablen = colLengths[i] - rlen / 8;
 				str << string(tablen, '\t');
 			}
@@ -33,7 +33,7 @@ namespace Output {
 		}
 		return str.str();
 	}
-	
+
 	void Table::xhtml(Tag * parent) const {
 		Tag * ta = new Tag(parent, "table");
 		for (auto& r : table) {

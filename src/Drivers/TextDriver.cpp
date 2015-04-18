@@ -28,11 +28,11 @@ namespace Dungeon {
 				LOGS(Debug) << "Trap thrown." << LOGF;
 				ad->state = ActionDescriptor::Trapped;
 				te.getTrap().unsafeCast<Trap>()->exceptionTrigger(ad);
-				
+
 				// After trap we want to restart the process,
 				// unless reply is awaited.
 				if (ad->state != ActionDescriptor::Waiting)
-					return process(ad); 
+					return process(ad);
 			}
 		} catch (GameException& gameException) {
 			resetPatience(ad->getCaller()->getId());
@@ -84,7 +84,7 @@ namespace Dungeon {
 		debugfile << "??????" << endl;
 		incrementPatience(ad->getCaller()->getId());
 	}
-	
+
 
 	void TextDriver::processRun(TextActionDescriptor *ad) {
 		LOGS(Debug) << "Running action " << ad->getAction()->type << LOGF;
@@ -135,7 +135,7 @@ namespace Dungeon {
                     << "Don't test my patience." << endr
                     << "You just lost the game." << endr;
     }
-    
+
     Action* TextDriver::getCreateAction() {
         return new CallbackAction("create-user", "",
 				RegexMatcher::matcher(".+"),
@@ -151,7 +151,7 @@ namespace Dungeon {
 						*ad << "Welcome, " << ad->getCaller()->getName() << "!" << eos; // A common mistake
 						*ad << "You may begin your quest. Ask me and I shall answer you." << eos;
 					});
-					
+
 					// TODO: add other first time questions
 				}, false);
     }

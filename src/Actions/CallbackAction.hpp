@@ -1,8 +1,8 @@
-/** 
+/**
  * This should be an easy way to create use-once actions.
  * Just kinda magic. Desired usage:
- * 
- *  new CallbackAction("action-type", "Explanation", 
+ *
+ *  new CallbackAction("action-type", "Explanation",
  *      RegexMatcher::matcher("^reg(ular)?ex(pression)?"),
  *      [] (ActionDescriptor* ad) { ... });
  */
@@ -25,8 +25,8 @@ namespace Dungeon {
                 function<void (ActionDescriptor*)> commitCallback,
                 bool visible = true)
             : Action(type, visible),
-                explanation(explanation), 
-                matchCallback(matchCallback), 
+                explanation(explanation),
+                matchCallback(matchCallback),
                 commitCallback(commitCallback) {};
 
         virtual void explain(ActionDescriptor* ad);

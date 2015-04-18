@@ -34,7 +34,7 @@ namespace Dungeon {
 			pair.second->forget();
 		}
 	}
-	
+
 	Polyaction& Polyaction::operator=(const Polyaction& right) {
 		if (this == &right)
 			return *this;
@@ -43,29 +43,29 @@ namespace Dungeon {
 			pair.second->forget();
 		}
 		actionMap.clear();
-		
+
 		for (auto& pair : right.actionMap) {
 			pair.second->remember();
 			actionMap.insert(pair);
 		}
-		
+
 		return *this;
 	}
-	
+
 	Polyaction& Polyaction::operator=(Polyaction&& right) {
 		if (this == &right)
 			return *this;
-		
+
 		for (auto& pair : actionMap) {
 			pair.second->forget();
 		}
 		actionMap.clear();
-		
+
 		for (auto& pair : right.actionMap) {
 			actionMap.insert(pair);
 		}
 		right.actionMap.clear();
-		
+
 		return *this;
 	}
 

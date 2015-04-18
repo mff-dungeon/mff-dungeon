@@ -11,7 +11,7 @@ namespace Dungeon {
 
 	const char* Resource::ResourceIdentifier[] = {"gold", "wood", "iron", "dragon-skin",
 		"leather", "sand", "white-powder", "red-powder", "magical-stone", "mana-shards"};
-	
+
 	objId Resource::getResourceTypeId(ResourceType type) const {
 		return "resource/" + (string) ResourceIdentifier[(int) type] + "/" + RANDID;
 	}
@@ -40,14 +40,14 @@ namespace Dungeon {
 		ObjectPointer newResPtr = Cloner::shallowClone(this);
 		this->setQuantity(getQuantity() - secondAmount);
 		newResPtr.unsafeCast<Resource>()->setQuantity(secondAmount);
-		LOGS(Debug) << "Split " << Resource::ResourceName[getType()] 
+		LOGS(Debug) << "Split " << Resource::ResourceName[getType()]
 				<< " into 2 parts (" << getQuantity() << ", " << secondAmount << ")." << LOGF;
 		return newResPtr;
 	}
-	
+
 	ObjectPointer Resource::join(ObjectPointer other) {
 		other.assertType<Resource>();
-		LOGS(Debug) << "Joining " << Resource::ResourceName[getType()] 
+		LOGS(Debug) << "Joining " << Resource::ResourceName[getType()]
 				<< " (" << getQuantity() << ", " << other.unsafeCast<Resource>()->getQuantity() << ")." << LOGF;
 		setQuantity(getQuantity() + other.unsafeCast<Resource>()->getQuantity());
 		getGameManager()->deleteObject(other);
@@ -111,12 +111,12 @@ namespace Dungeon {
 		storage.have(quantity, "resource-quantity", "Quantity of the resource");
 		Item::registerProperties(storage);
 	}
-	
+
 	ObjectPointer Resource::onPick(ActionDescriptor* ad) {
 		Item::onPick(ad);
 		return this;
 	}
-	
+
 	ObjectPointer Resource::onDrop(ActionDescriptor* ad) {
 		Item::onDrop(ad);
 		return this;

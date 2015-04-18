@@ -8,20 +8,20 @@ namespace Dungeon {
 
     /**
      * Class that returns random string from a set.
-     * 
+     *
      * Usage:
      *      RandomString rnd;
      *      rnd << "String 1" << endr
      *      rnd << "String 2" << endr;
-     *   
+     *
      *      rnd.getRandom();
-     * 
+     *
      * However, more interesting usage is with shortcuts:
      *      return RandomString::get()
      *          << "String 1" << endr
      *          << "String 2" << endr;
-     * 
-     * RS can be type casted into string. Type casting the singleton instance 
+     *
+     * RS can be type casted into string. Type casting the singleton instance
      * clears the list, otherwise it can be used multiple times.
      */
     class RandomString {
@@ -68,7 +68,7 @@ namespace Dungeon {
 
         /**
          * Get singleton instance. It will be cleared after string typecast.
-         * Provided only for convenience, this class can be instatiated and 
+         * Provided only for convenience, this class can be instatiated and
          * used more than once.
          */
         static RandomString& get();

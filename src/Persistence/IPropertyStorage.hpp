@@ -7,9 +7,9 @@ namespace Dungeon {
 
 	using namespace std;
 	/**
-	 * Class should implement this interface when 
+	 * Class should implement this interface when
 	 * it's able to load & store properties.
-	 * 
+	 *
 	 * Base for Archiver and Configurator.
 	 */
 	class IPropertyStorage {

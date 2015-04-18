@@ -7,7 +7,7 @@
 
 namespace Dungeon {
 
-	DatabaseHandler& DatabaseHandler::getInstance() {	
+	DatabaseHandler& DatabaseHandler::getInstance() {
 		// get Singleton Instance
 		static DatabaseHandler instance;
 		return instance;
@@ -97,7 +97,7 @@ namespace Dungeon {
 			int size = sqlite3_column_bytes(dbStatement, 2);
 			unsigned char* datac = new unsigned char[size];
 			const void *dataptr = sqlite3_column_blob(dbStatement, 2);
-			/* 
+			/*
 			 * Trick - using std::string(datac) results in a failure because of
 			 * null bytes (e.g. int i = 1 === 0x00000001, which fails to copy
 			 * to string, therefore copying the field byte after byte.
