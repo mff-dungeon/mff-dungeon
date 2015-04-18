@@ -575,6 +575,17 @@ namespace Dungeon {
 		} else
 			return to_string(seconds / 3600) + " hours";
 	}
+	
+	bool Human::haveSeen(const ObjectPointer& object) {
+		return hasRelation(R_SEEN, object);
+	}
+	
+	Human* Human::see(ObjectPointer& object) {
+		if (!haveSeen(object))
+			getGameManager()->createRelation(this, object, R_SEEN);
+		return this;
+	}
+
 
 	PERSISTENT_IMPLEMENTATION(Human)
 }

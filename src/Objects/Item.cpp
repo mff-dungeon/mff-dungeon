@@ -102,16 +102,17 @@ namespace Dungeon {
 	}
 
 	string Item::getDescription() const {
-		stringstream ss;
+		SentenceJoiner ss;
+		ss.setConjunction(" ", " ");
 		ss << IDescriptable::getDescription();
 		if (getWeight())
-			ss << "It weights " << Utils::weightStr(getWeight()) << ".";
+			ss << "It weights " + Utils::weightStr(getWeight()) + ".";
 		else ss << "It weights almost nothing.";
 		if (!isPickable())
 			ss << "It cannot be taken.";
 		if (!isDropable())
 			ss << "Once taken, it cannot be dropped.";
-		return ss.str();
+		return ss.getSentence();
 	}
 
 	string Item::getDescriptionSentence() {

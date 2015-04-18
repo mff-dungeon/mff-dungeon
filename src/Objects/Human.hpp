@@ -103,6 +103,9 @@ namespace Dungeon {
 
 		virtual string getWeaponName() const;
 
+                Human* see(ObjectPointer& object);
+                
+                bool haveSeen(const ObjectPointer& object);
 
 	private:
 		string username, contact;

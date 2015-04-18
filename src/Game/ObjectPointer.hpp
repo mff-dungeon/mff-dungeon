@@ -24,13 +24,35 @@ namespace Dungeon {
         typedef std::weak_ptr<Base> weak_ptr_t;
 
         ObjectPointer() : gm(nullptr), id("") {} // "Null OP"
-        ObjectPointer(const nullptr_t n) :  ObjectPointer() {} // "Null OP"
-        ObjectPointer(const Base* ptr) : ObjectPointer(ptr->gm, ptr->id) {}
+        ObjectPointer(const nullptr_t n) : ObjectPointer() {} // "Null OP"
+        
+        ObjectPointer(const Base* ptr) : ObjectPointer(ptr->gm, ptr->id) {
+            LOGS(Debug) << "Ptr const" << LOGF;
+        }
+        
+        ObjectPointer(const ObjectPointer& other) : gm(other.gm), id(other.id), weak_obj(other.weak_obj) {
+            LOGS(Debug) << "Copy const" << LOGF;
+        }
+        
+        ObjectPointer(ObjectPointer&& other) : gm(other.gm), id(move(other.id)), weak_obj(other.weak_obj) {
+            LOGS(Debug) << "Move const" << LOGF;
+        }
 
-        ObjectPointer(const ObjectPointer& other) = default;
-        ObjectPointer& operator=(const ObjectPointer& other) = default;
-        ObjectPointer(ObjectPointer&& old) = default;
-        ObjectPointer& operator=(ObjectPointer&& old) = default;
+        ObjectPointer& operator=(const ObjectPointer& other) {
+            gm = other.gm;
+            weak_obj = other.weak_obj;
+            strong_obj.reset();
+            id = other.id;
+            return *this;
+        }
+
+        ObjectPointer& operator=(ObjectPointer&& other) {
+            gm = other.gm;
+            weak_obj = other.weak_obj;
+            strong_obj.reset();
+            id = move(other.id);
+            return *this;
+        }
         
         ObjectPointer(const weak_ptr_t ptr) : gm(nullptr), id(""), weak_obj(ptr) {
             ptr_t lptr = weak_obj.lock();
@@ -186,9 +208,8 @@ namespace Dungeon {
     private:
         GameManager *gm;
         objId id;
-	weak_ptr_t weak_obj;
-	ptr_t strong_obj;
-        bool locked = false;
+		weak_ptr_t weak_obj;
+		ptr_t strong_obj;
     };
 }
 

@@ -27,6 +27,8 @@ namespace Dungeon {
 	 * 
 	 * Implements exploring, and will implement searching for object
 	 * best corresponding to given string.
+         * 
+         * FIXME: Just fix me.
 	 */
 	class ObjectGroup : public ObjectGroupMap {
 	public:
@@ -35,14 +37,9 @@ namespace Dungeon {
 		ObjectGroup(const vector<ObjectPointer>& pointers);
 		ObjectGroup(ObjectMap map);
 
-		/** @deprecated */
-		ObjectGroup(Base *obj);
-
-		/** @deprecated */
-		ObjectGroup(const vector<Base *>& objects);
-
 		ObjectGroupMap::iterator insertObject(ObjectPointer ptr);
 
+                // FIXME: remove the ignore flag and beholder
 		void explore(ActionDescriptor *ad, bool ignoreOfflineUsers = true, Human* beholder = nullptr);
 		
 		ObjectPointer match(string name) {

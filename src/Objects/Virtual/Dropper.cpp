@@ -48,7 +48,8 @@ namespace Dungeon {
 		return this;
 	}
 
-	bool Dropper::tryDrop(ObjectPointer loc, SentenceJoiner& info) {
+	ObjectGroup Dropper::tryDrop(ObjectPointer loc, SentenceJoiner& info) {
+		ObjectGroup drop;
 		loc.assertExists("You cannot drop item nowhere.").assertType<Location>("You must drop items in the room.");
 		Location* l = loc.unsafeCast<Location>();
 		LOGS(Debug) << "Using " << getId() << " to calculate drop." << LOGF;
@@ -61,20 +62,21 @@ namespace Dungeon {
 				getGameManager()->clearRelationsOfType(item, "dropper-item", Relation::Slave);
 				itemName = Resource::ResourceName[getItem().unsafeCast<Resource>()->getType()];
 				item.safeCast<Resource>()->setQuantity(amount);
+				drop.insertObject(item);
 				l->addItem(item);
 			} else {
 				for (int i = 1; i <= amount; i++) {
 					ObjectPointer item = Cloner::deepClone(getItem());
 					getGameManager()->clearRelationsOfType(item, "dropper-item", Relation::Slave);
+					drop.insertObject(item);
 					l->addItem(item);
 				}
 				itemName = getItem().safeCast<IDescriptable>()->getName();
 			}
 			info << (amount > 1 ? to_string(amount) + " " + itemName : itemName);
 			LOGS(Debug) << "Dropped " << amount << " items of type " << itemName << "." << LOGF;
-			return true;
 		}
-		return false;
+		return drop;
 	}
 
 	void Dropper::registerProperties(IPropertyStorage& storage) {

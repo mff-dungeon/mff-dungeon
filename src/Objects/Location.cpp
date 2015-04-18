@@ -71,7 +71,7 @@ namespace Dungeon {
 		try {
 			const ObjectMap& itemsIn = getRelations(Relation::Master, R_INSIDE);
 			for (auto& itemObj : itemsIn) {
-				if (itemObj.second->instanceOf(Item)) {
+				if (ad->getCaller()->hasRelation(R_SEEN, itemObj.second) && itemObj.second->instanceOf(Item)) {
 					pickAction->addTarget(itemObj.second);
 				}
 			}
@@ -173,6 +173,7 @@ namespace Dungeon {
 				.assertType<Inventory>(GameStateInvalid::BackpackNotInventory)
 				.unsafeCast<Inventory>();
 		
+
 		ObjectPointer current = item->getSingleRelation(R_INSIDE, Relation::Slave, "The item is located in more than one location.")
 				.assertType<Location>("Where the fuck is the item?");
 		
@@ -180,10 +181,14 @@ namespace Dungeon {
 		bool split = false;
 		if (item->instanceOf(Resource)) {
 			Resource* r = (Resource*) item;
-			if(r->getQuantity() > amount && amount >= 0) {
+			if(r->getQuantity() > amount && amount > 0) {
 				target = r->split(amount);
+				target.assertExists("The splitting has failed.");
 				item = target.unsafeCast<Item>();
 				split = true;
+			} else if (amount != 0) {
+				*ad << "There's just " << r->getName() << " to pick." << eos;
+				return;
 			}
 		}
 		

@@ -155,7 +155,7 @@ namespace Dungeon {
 	void UnequipAction::commitOnTarget(ActionDescriptor* ad, ObjectPointer target) {
 		Wearable* item = target.safeCast<Wearable>();
 		// How can we put something in backpack if we won't have it anymore?
-		if (item->isInstanceOf(Inventory::InventoryClassName)) {
+		if (item->instanceOf(Inventory)) {
 			if (!Wearable::unequip(ad, item, Wearable::DesiredAction::Drop)) {
 				*ad << item->getName() + " couldn't be unequiped." << eos;
 			} else {
@@ -351,7 +351,7 @@ namespace Dungeon {
 			try {
 				const ObjectMap& inventory = currentPack->getRelations(Relation::Master, R_INVENTORY);
 				for (auto& i : inventory) {
-					if (!i.second->isInstanceOf(Item::ItemClassName)) continue;
+					if (!i.second->instanceOf(Item)) continue;
 					Item* it = i.second.unsafeCast<Item>();
 					if (it != newPack) {
 						currentPack->removeItem(it);

@@ -14,6 +14,7 @@ namespace Dungeon {
 
 	Creature* Creature::calculateDrops(ActionDescriptor* ad) {
 		SentenceJoiner dropInfo;
+		ObjectGroup droppedItems;
 		try {
 			const ObjectMap& drops = getRelations(Relation::Master, R_DROP);
 			if (!drops.empty()) {
@@ -22,7 +23,8 @@ namespace Dungeon {
 							.assertExists("Creature has a non-existing drop")
 							.assertType<Dropper>("Create has an invalid drop");
 					Dropper* drop = dropPtr.unsafeCast<Dropper>();
-					drop->tryDrop(this->getLocation(), dropInfo);
+					ObjectGroup droppedItem = drop->tryDrop(this->getLocation(), dropInfo);
+					droppedItems.insert(droppedItem.begin(), droppedItem.end());
 				}
 			}
 		} catch (const std::out_of_range& e) {
@@ -32,6 +34,9 @@ namespace Dungeon {
 		if (ad != nullptr) {
 			*ad << dropInfo.getSentence("It has dropped nothing.", 
 					"It has dropped %.") << eos;
+			for (auto& item : droppedItems) {
+				ad->getCaller()->see(item.second);
+			}
 		}
 		return this;
 	}
@@ -56,6 +61,7 @@ namespace Dungeon {
 		ad->getCaller()->addExperience(getExpReward(), ad);
 		if (this->getRespawnInterval() == -1) { // Remove
 			// FIXME: Workout a way to tell GM, to delete this after this action
+			// OH: Perhaps just remove it now? OP will handle it.
 			this->setState(State::Invalid);
 			return 0;
 		} else {

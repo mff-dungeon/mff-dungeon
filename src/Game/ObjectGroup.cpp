@@ -7,18 +7,8 @@ namespace Dungeon {
 
 	ObjectGroup::ObjectGroup() : ObjectGroupMap() { }
 
-	ObjectGroup::ObjectGroup(Base *obj) : ObjectGroup() {
-		this->insert(getPair(obj));
-	}
-
 	ObjectGroup::ObjectGroup(ObjectPointer ptr) : ObjectGroup() {
 		this->insert(getPair(ptr));
-	}
-
-	ObjectGroup::ObjectGroup(const vector<Base *>& objects) : ObjectGroup() {
-		for (Base *obj : objects) {
-			this->insert(getPair(obj));
-		}
 	}
 
 	ObjectGroup::ObjectGroup(const vector<ObjectPointer>& pointers) : ObjectGroup() {
@@ -65,11 +55,8 @@ namespace Dungeon {
 			}
 
 			if (beholder) {
-				GameManager* gm = ad->getGM();
 				for (auto ptr = sameTypeObjects.begin(); ptr != sameTypeObjects.end(); ptr++) {
-					if (!gm->hasRelation(beholder, *ptr, R_SEEN)) {
-						gm->createRelation(beholder, *ptr, R_SEEN);
-					}
+					beholder->see(*ptr);
 				}
 			}
 

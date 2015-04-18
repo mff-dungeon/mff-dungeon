@@ -5,6 +5,7 @@
 #include "Base.hpp"
 #include "../../Game/ObjectPointer.hpp"
 #include "../../Utils/SentenceJoiner.hpp"
+#include "../../Game/ObjectGroup.hpp"
 
 namespace Dungeon {
 
@@ -44,8 +45,10 @@ namespace Dungeon {
 		 * Calculates a drop and creates that item, if it succeeds
 		 * @param loc Location to put the drop to
 		 * @return true, if it dropped something, false otherwise
+                 * 
+                 * FIXME: Remove info, use the group returned, or just make it better :)
 		 */
-		bool tryDrop(ObjectPointer loc, SentenceJoiner& info);
+		ObjectGroup tryDrop(ObjectPointer loc, SentenceJoiner& info);
 
 		virtual void registerProperties(IPropertyStorage& storage);
 

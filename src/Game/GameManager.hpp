@@ -74,7 +74,7 @@ namespace Dungeon {
 		 * @param slave Slave
 		 * @param relation Relation type
 		 */
-		void createRelation(ObjectPointer master, ObjectPointer slave, const string& relation);
+		void createRelation(const ObjectPointer& master, const ObjectPointer& slave, const string& relation);
 
 		/**
 		 * Removes all the relations of given type.

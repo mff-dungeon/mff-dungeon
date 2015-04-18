@@ -208,7 +208,7 @@ namespace Dungeon {
 		return figure;
 	}
 
-	void GameManager::createRelation(ObjectPointer master, ObjectPointer slave, const string& relation) {
+	void GameManager::createRelation(const ObjectPointer& master, const ObjectPointer& slave, const string& relation) {
 		Relation rel(master.getId(), slave.getId(), relation);
 		this->addRelation(rel);
 		if (master.isLoaded())
@@ -224,7 +224,9 @@ namespace Dungeon {
 			DatabaseHandler::getInstance().deleteRelation(Relation("0", obj.getId(), relation));
 
 		// Need to load it because of the "others"
-		for (const RelationList::value_type& rel : obj->getRelations(master)) {
+		// Want to copy because of in-place deleting
+		// TODO do it with reference, but correctly
+		for (const RelationList::value_type rel : obj->getRelations(master)) {
 			for (const ObjectMap::value_type& pair : rel.second) {
 				obj->eraseRelation(relation, pair.second, master);
 			}
