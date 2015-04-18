@@ -3,6 +3,7 @@
 
 #include "../common.hpp"
 #include <gloox/tag.h>
+#include <memory>
 
 namespace Dungeon {
 namespace Output {
@@ -20,8 +21,19 @@ namespace Output {
     class Base
     {
     public:
-        Base() {}
-
+        
+        /**
+         * In string, block elements should end with a newline.
+         * In XHtml, they should be made from block element.
+         * 
+         * Container will put newline before every first block element
+         * in a row, making it look similar to XHtml.
+         */
+        enum DisplayMode {
+            Line,
+            Block
+        } displayMode = Line;
+        
         /**
          * Currently supported output methods.
          */
@@ -32,8 +44,14 @@ namespace Output {
          */
         virtual void xhtml(Tag * parent) const = 0;
 
+        template <typename T, typename... Args>
+        static unique_ptr<T> create(Args&&... vals) {
+            return unique_ptr<T>(new T(forward<Args>(vals)...));
+        }
+        
     protected:
     };
+    
 
     /**
      * Just a string.
@@ -43,10 +61,20 @@ namespace Output {
     public:
         PlainString() {}
         PlainString(const string& str) : str(str) {}
+        PlainString(string&& str) : str(str) {}
 
         virtual string plainString() const;
 
         virtual void xhtml(Tag * parent) const;
+        
+        static unique_ptr<PlainString> create(const string& str) {
+            return Base::create<PlainString>(str);
+        }
+        
+        static unique_ptr<PlainString> create(string&& str) {
+            return Base::create<PlainString>(move(str));
+        }
+        
     protected:
         string str;
     };
@@ -62,6 +90,10 @@ namespace Output {
 
         virtual void xhtml(Tag * parent) const;
 
+        static unique_ptr<FormattedString> create(const string& tag, const string& str) {
+            return Base::create<FormattedString>(tag, str);
+        }
+        
     protected:
         string tag;
     };
@@ -76,6 +108,10 @@ namespace Output {
         virtual string plainString() const;
 
         virtual void xhtml(Tag * parent) const;
+        
+        static unique_ptr<Newline> create() {
+            return Base::create<Newline>();
+        }
     };
 }
 }

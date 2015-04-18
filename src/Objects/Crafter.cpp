@@ -5,6 +5,7 @@
 #include "../Game/GameManager.hpp"
 #include "Virtual/Recipe.hpp"
 #include "Human.hpp"
+#include "Inventory.hpp"
 #include "../Output/Table.hpp"
 
 namespace Dungeon {
@@ -69,24 +70,35 @@ namespace Dungeon {
 			const ObjectMap& recipes = target.unsafeCast<Crafter>()->getRelations(Relation::Master, R_RECIPE);
 			if (recipes.empty()) return;
 			int found = 0;
-			Output::Table table;
+			auto table = Output::Table::create();
 			for (auto& recipe : recipes) {
 				recipe.second.assertExists("Recipe has disappeared.").assertType<Recipe>("There is a non-recipe registered.");
 				Recipe* r = recipe.second.unsafeCast<Recipe>();
-				if (r->checkStatReqs(ad->getCaller())) {
-					table << r->getName();
-					for (int i = Resource::ResourceType::BEGIN; i != Resource::ResourceType::END; i++) {
-						if (r->getResource(i) > 0) {
-							table << to_string(r->getResource(i)) + " " + Resource::ResourceName[i];
-						} else table << "";
+				Human* human = ad->getCaller();
+				Inventory* backpack = human->getBackpack().safeCast<Inventory>();
+				if (r->checkStatReqs(human)) {
+					if (r->hasEnoughMaterial(human)) {
+						*table << Output::FormattedString::create("b", r->getName());
+					} else {
+						*table << r->getName();
 					}
-					table.finishRow();
+					for (int i = Resource::ResourceType::BEGIN; i != Resource::ResourceType::END; i++) {
+						if (r->getResource(i) > 0)
+							if (backpack->getResourceQuantity((Resource::ResourceType) i) >= r->getResource(i))
+								*table << Output::FormattedString::create("b", to_string(r->getResource(i)) + " " + Resource::ResourceName[i]);
+							else
+								*table << to_string(r->getResource(i)) + " " + Resource::ResourceName[i];
+						else 
+							*table << "";
+					}
+					table->finishRow();
 					found++;
 				}
 			}
-			if (found) {
-				ad->getOutputContainer().emplace<Output::PlainString>("You can create following items using these resources:");
-				ad->getOutputContainer().consume<Output::Table>(move(table));
+			if (found) { 
+				auto& out = ad->getOutputContainer();
+				out << "You can create following items using these resources:";
+				out << move(table);
 			} else {
 				*ad << "You cannot craft anything here yet. Try to raise your stats." << eos;
 			}

@@ -3,36 +3,42 @@
 
 #include "../common.hpp"
 #include "Output.hpp"
+#include "Container.hpp"
 #include <vector>
 
 namespace Dungeon {
 namespace Output {
+
     /**
      * Formatting helper to produce nice table.
      * More fancy features can be added later.
-     *
-     * TODO Now works on string, should work as Output container
      */
-    class Table : public Base
+    class Table : public Container
     {
     public:
-        Table& operator<<(const string& text) {
-            row.emplace_back(text);
-            return *this;
+        Table() {
+            displayMode = Block;
         }
-
+        
+        Table(Table&& move) = default;
+        Table& operator=(Table&& move) = default;
+        virtual ~Table() {}
+        
         void finishRow() {
-            vector<string> newRow;
-            newRow.swap(row);
-            table.push_back(move(newRow));
+            table.emplace_back();
+            contents.swap(table.back());
         }
 
         virtual string plainString() const;
         virtual void xhtml(Tag * parent) const;
+        
+        
+        static unique_ptr<Table> create() {
+            return Base::create<Table>();
+        }
 
     private:
-        vector<string> row;
-        vector<vector<string>> table;
+        vector<cont_t> table;
     };
 
 }

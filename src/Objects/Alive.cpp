@@ -68,7 +68,7 @@ namespace Dungeon {
 		return RandomString::get()
 				<< alives.getSentence("", "You recognize %'s figure.", "You recognize %.", false) << endr
 				<< alives.getSentence("", "% is there with you.", "% are there with you.", false) << endr
-				<< alives.getSentence("", "You smell the presence of %.", "You smell the presence of %.", false) << endr
+				<< alives.getSentence("", "You feel the presence of %.", "You feel the presence of %.", false) << endr
 				<< alives.getSentence("", "% is nearby.", "% are nearby.", false) << endr;
 	}
 

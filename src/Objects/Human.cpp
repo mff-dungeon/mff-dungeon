@@ -333,7 +333,7 @@ namespace Dungeon {
 					}));
 
 			list.addAction(new CallbackAction("go back", "returns to previous location",
-					RegexMatcher::matcher("go back|return"),
+					RegexMatcher::matcher("go back|return|cd \\.\\."),
 					[this] (ActionDescriptor* ad) {
 						ObjectPointer backLocation = popGoBackStack();
 						if(!backLocation) {

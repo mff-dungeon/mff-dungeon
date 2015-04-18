@@ -6,8 +6,12 @@ namespace Output {
 
 	string Container::plainString() const {
 		stringstream ss;
+		DisplayMode mode = Block;
 		for (auto& ptr : contents) {
+			if (mode == Line && ptr->displayMode == Block)
+				ss << "\n";
 			ss << ptr->plainString();
+			mode = ptr->displayMode;
 		}
 		return ss.str();
 	}

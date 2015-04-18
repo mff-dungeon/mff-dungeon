@@ -18,6 +18,9 @@ namespace Output {
 
         // TODO implement std container behavior if its worth it
 
+        /**
+         * Container should put newline before each first block element in a row.
+         */
         virtual string plainString() const;
         virtual void xhtml(Tag * parent) const;
 
@@ -47,6 +50,18 @@ namespace Output {
             return insert(o);
         }
 
+        Container& operator<<(ptr_t&& ptr) {
+            return insert(move(ptr));
+        }
+
+        Container& operator<<(const string& str) {
+            return insert(PlainString::create(str));
+        }
+        
+        Container& operator<<(string&& str) {
+            return insert(PlainString::create(move(str)));
+        }
+
         size_t size() const { return contents.size(); }
         bool empty() const { return contents.empty(); }
 
@@ -58,6 +73,9 @@ namespace Output {
             contents.swap(other.contents);
         }
 
+        static unique_ptr<Container> create() {
+            return Base::create<Container>();
+        }
     protected:
         cont_t contents;
     };
@@ -65,15 +83,39 @@ namespace Output {
     class SentenceContainer : public Container
     {
     public:
+        SentenceContainer() {
+            displayMode = Block;
+        }
+        
+        SentenceContainer(SentenceContainer&& move) = default;
+        SentenceContainer& operator=(SentenceContainer&& move) = default;
+        virtual ~SentenceContainer() {}
+        
         virtual string plainString() const;
         virtual void xhtml(Tag * parent) const;
+        
+        static unique_ptr<SentenceContainer> create() {
+            return Base::create<SentenceContainer>();
+        }
     };
 
     class ListContainer : public Container
     {
     public:
+        ListContainer() {
+            displayMode = Block;
+        }
+        
+        ListContainer(ListContainer&& move) = default;
+        ListContainer& operator=(ListContainer&& move) = default;
+        virtual ~ListContainer() {}
+        
         virtual string plainString() const;
         virtual void xhtml(Tag * parent) const;
+        
+        static unique_ptr<ListContainer> create() {
+            return Base::create<ListContainer>();
+        }
     };
 }
 }

@@ -123,6 +123,15 @@ namespace Dungeon {
 		}
 		return true;
 	}
+	
+	bool Recipe::hasEnoughMaterial(ObjectPointer human) {
+		Inventory* backpack = human.safeCast<Human>()->getBackpack().unsafeCast<Inventory>();
+		for (int i = Resource::ManaShard; i >= 0; i--) {
+			if (backpack->getResourceQuantity((Resource::ResourceType) i) < getResource(i))
+				return false;
+		}
+		return true;
+	}
 
 	void Recipe::tryCraft(ActionDescriptor* ad) {
 		LOGS(Debug) << "Requested crafting item" << LOGF;

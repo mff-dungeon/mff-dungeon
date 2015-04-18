@@ -34,6 +34,8 @@ namespace Dungeon {
 		Recipe* addStatReq(ObjectPointer reqPtr);
 		bool checkStatReqs(ObjectPointer userPtr, ActionDescriptor* ad = 0);
 
+                bool hasEnoughMaterial(ObjectPointer human);
+                
 		void tryCraft(ActionDescriptor* ad);
 		virtual void getActions(ActionDescriptor* ad) { };
 

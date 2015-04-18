@@ -26,17 +26,11 @@ namespace Dungeon {
         ObjectPointer() : gm(nullptr), id("") {} // "Null OP"
         ObjectPointer(const nullptr_t n) : ObjectPointer() {} // "Null OP"
 
-        ObjectPointer(const Base* ptr) : ObjectPointer(ptr->gm, ptr->id) {
-            LOGS(Debug) << "Ptr const" << LOGF;
-        }
+        ObjectPointer(const Base* ptr) : ObjectPointer(ptr->gm, ptr->id) {}
 
-        ObjectPointer(const ObjectPointer& other) : gm(other.gm), id(other.id), weak_obj(other.weak_obj) {
-            LOGS(Debug) << "Copy const" << LOGF;
-        }
+        ObjectPointer(const ObjectPointer& other) : gm(other.gm), id(other.id), weak_obj(other.weak_obj) {}
 
-        ObjectPointer(ObjectPointer&& other) : gm(other.gm), id(move(other.id)), weak_obj(other.weak_obj) {
-            LOGS(Debug) << "Move const" << LOGF;
-        }
+        ObjectPointer(ObjectPointer&& other) : gm(other.gm), id(move(other.id)), weak_obj(other.weak_obj) {}
 
         ObjectPointer& operator=(const ObjectPointer& other) {
             gm = other.gm;
