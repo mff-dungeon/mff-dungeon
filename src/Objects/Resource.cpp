@@ -9,8 +9,8 @@ namespace Dungeon {
 	const char* Resource::ResourceName[] = {"gold", "wood", "iron", "dragon skin",
 		"leather", "sand", "white powder", "red powder", "magical stone", "mana shards"};
 
-	const char* Resource::ResourceIdentifier[] = {"gold", "wood", "iron", "dragon-skin",
-		"leather", "sand", "white-powder", "red-powder", "magical-stone", "mana-shards"};
+	const char* Resource::ResourceIdentifier[] = {"gold", "wood", "iron", "dragonskin",
+		"leather", "sand", "whitepowder", "redpowder", "magicalstone", "manashards"};
 
 	objId Resource::getResourceTypeId(ResourceType type) const {
 		return "resource/" + (string) ResourceIdentifier[(int) type] + "/" + RANDID;

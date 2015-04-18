@@ -422,6 +422,7 @@ namespace Dungeon {
 						*ad << "To print combat related information, use 'combat stats'." << eos;
 						*ad << "To print characted related information, use 'character stats'." << eos;
 						*ad << "To print resource related information, use 'resource stats'." << eos;
+						*ad << "To print the spells you can cast, use 'spells info'." << eos;
 						ad->setReplyFormat(ActionDescriptor::Paragraph);
 					}, true));
 
@@ -459,6 +460,29 @@ namespace Dungeon {
 					}, false));
 
 			list.addAction(new RaiseStatAction);
+			
+			list.addAction(new CallbackAction("spells info", "Prints all your spells and their info",
+					RegexMatcher::matcher("spell(s)? (info|details)"),
+					[this] (ActionDescriptor* ad) {
+						bool first = false;
+						try {
+							for(auto& spell : getRelations(Relation::Master, "spell")) {
+								if(!first) {
+									*ad << "Here are your learned spells:" << eos;
+									ad->setReplyFormat(ActionDescriptor::ReplyFormat::List);
+									first = true;
+								}
+								Spell* s = spell.second.safeCast<Spell>();
+								if(!s) {
+									throw GameStateInvalid("You have somehow learned to cast something, that isn't a spell. How?!");
+								}
+								*ad << s->getName() << " (" << s->getManaCost(this) << " shards) - " << s->getDescription() << eos;
+							}
+						}
+						catch(out_of_range& e) {}
+						if(!first)
+							*ad << "You are no magician. Get some scrolls!" << eos;
+					}, false));
 
 			list.addAction(new CallbackAction("resource stats", "Prints all your resource stats",
 					RegexMatcher::matcher(".*res(ource)? stats|.*resources"),

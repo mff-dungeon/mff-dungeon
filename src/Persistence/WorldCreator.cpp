@@ -39,6 +39,12 @@ namespace Dungeon {
 		 * The quantity 1 is  required for correct weight calculation
 		 **********************************************************************/
 
+		templates["resource/gold"] = createObject<Resource>("template/resource/gold/1", templateRoom)
+				->setType(Resource::ResourceType::Gold)
+				->setQuantity(1)
+				->setWeight(2)
+				->setSize(1)
+				->save();
 		templates["resource/wood"] = createObject<Resource>("template/resource/wood/1", templateRoom)
 				->setType(Resource::ResourceType::Wood)
 				->setQuantity(1)
@@ -87,8 +93,14 @@ namespace Dungeon {
 				->setWeight(3)
 				->setSize(10)
 				->save();
+		templates["resource/manashards"] = createObject<Resource>("template/resource/manashards/1", templateRoom)
+				->setType(Resource::ResourceType::ManaShard)
+				->setQuantity(1)
+				->setWeight(1)
+				->setSize(1)
+				->save();
 		LOG << "Resource templates created. " << LOGF;
-
+		
 		/**********************************************************************
 		 *			Weapons (weak and strong forms)
          **********************************************************************/
@@ -1987,6 +1999,7 @@ namespace Dungeon {
 				->setDestination(rooms["landcastle"])
 				->setBaseInt(5)
 				->setBaseWis(5)
+				->setBaseManaCost(20)
 				->setName("Teleport to Landcastle")
 				->setLongName("teleport to landcastle")
 				->setDescription("Teleports the caster to Landcastle.")
