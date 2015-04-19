@@ -134,6 +134,17 @@ namespace Dungeon {
 
                 return std::string(mbstr);
         }
+        
+        template<char placeholder = '%', typename T, typename... Args>
+        static std::string formatMessage(const string& format, T&& val, Args&&... values) {
+            string copy = formatMessage<placeholder>(format, forward<Args>(values)...);
+            return copy.replace(copy.find(placeholder), 1, val);
+        }
+        
+        template<char placeholder = '%'>
+        static std::string formatMessage(const string& format) {
+            return format; // Copying for recursive purposes
+        }
     };
 }
 

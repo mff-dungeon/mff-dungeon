@@ -3,7 +3,6 @@
 
 #include "../../common.hpp"
 #include "../../Utils/RegexMatcher.hpp"
-#include "../../Actions/MultiTargetAction.hpp"
 #include "../../Output/Output.hpp"
 #include "Base.hpp"
 
@@ -61,14 +60,6 @@ namespace Dungeon {
 		string description = "";
 	};
 
-	class ExamineEction : public MultiTargetAction {
-	public:
-		ExamineEction() : MultiTargetAction("examine") { }
-
-		virtual bool match(const string& command, ActionDescriptor* ad);
-		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target);
-		virtual void explain(ActionDescriptor* ad);
-	};
 
     namespace Output {
         class ObjectName : public PlainString

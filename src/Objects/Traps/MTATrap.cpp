@@ -1,24 +1,20 @@
 #include <memory>
-
 #include "MTATrap.hpp"
-#include "../../Utils/SentenceJoiner.hpp"
-#include "../../Actions/MultiTargetAction.hpp"
-#include "../../Game/ObjectGroup.hpp"
 #include "../../Game/ActionDescriptor.hpp"
-#include <regex>
+#include "../../Actions/MultiTargetAction.hpp"
 
 namespace Dungeon {
 
 	ObjectPointer MTATrap::wrapFind(ObjectMap objects, MultiTargetAction* action, const string& str, ActionDescriptor* ad) {
+		using Messages = MultiTargetAction::DefaultMessages;
 		bool any = false;
-		ad->matched(action); // Because of thrown exception, this will be skipped
+		string lower = Utils::decapitalize(str);
+		smatch matches;
 		
 		try {
 			ObjectGroup grp(objects);
 			ObjectPointer target;
-			string lower = Utils::decapitalize(str);
 
-			smatch matches;
 			if (str.length() == 0 && grp.size() > 1) {
 				this->phase = Selecting;
 				SentenceJoiner targets;
@@ -26,14 +22,9 @@ namespace Dungeon {
 				for (auto& pair : objects)
 					targets << pair.second;
 				this->objects = move(objects);
-				*ad << "And which one - " << targets << "?" << eos;
+				*ad << targets.getSentence(Messages::unspecifiedMore) << eos;
 				throw TrapException(this);
-			} else if (objects.size() == 1) {
-				if (!regex_match(lower, matches, regex("it|there"))) {
-					*ad << "You should specify what next time. " << eos;
-				}
-				target = objects.begin()->second;
-			}  else if (regex_match(lower, matches, regex("any\\s+(.*)"))) {
+			} else if (regex_match(lower, matches, regex("any\\s+(.*)"))) {
 				if (matches[1].length() > 0)
 					target = grp.match(matches[1]);
 				else
@@ -42,12 +33,11 @@ namespace Dungeon {
 				target = grp.match(str);
 			}
 
-			IDescriptable* obj = target.safeCast<IDescriptable>();
-			if (obj) {
+			if (!!target) {
 				if(any) {
-					*ad << "I've chosen " << obj->getName() << " for you." << eos;
+					*ad << Utils::formatMessage(Messages::chosenForYou, target) << eos;
 				}
-				LOGS(Debug) << "Selected " << obj->getLongName() << LOGF;
+				LOGS(Debug) << "Selected " << target << LOGF;
 			}
 			return target;
 		} catch (const StringMatcher::Uncertain<ObjectPointer>& e) {
@@ -56,8 +46,8 @@ namespace Dungeon {
 			if (any) { // Starts with any, user doesn't care, return the first one
 				if(e.possibleTargets.size() > 0) {
 					// Unsafe cast is possible, in OG::match there are only IDescriptables added
-					IDescriptable* obj = e.possibleTargets.at(0).unsafeCast<IDescriptable>();
-					*ad << "If you don't care, I'll just take " << obj->getName() << "." << eos;
+					ObjectPointer obj = e.possibleTargets.at(0);
+					*ad << Utils::formatMessage(Messages::dontCare, obj) << eos;
 					return e.possibleTargets.at(0);
 				}
 			}
@@ -75,19 +65,29 @@ namespace Dungeon {
 				for (auto& pair : this->objects)
 					targets << pair.second;
 
-				*ad << "Sorry, did you mean " << targets << "?" << eos;
+				*ad << targets.getSentence(Messages::uncertain) << eos;
 			} else {
-				*ad << "Sorry, I don't know what you mean. Please try to explain it better." << eos;
+				*ad << Messages::totallyUncertain << eos;
 			}
 
 			throw TrapException(this);
 		} catch (const StringMatcher::NoCandidate& e) {
-			*ad << "No such thing found. Really." << eos;
+			if (objects.size() == 1) {
+				bool itMatched = regex_match(lower, matches, regex("it|that"));
+				if (itMatched || lower.length() == 0) {
+					if (!itMatched) {
+							*ad << Messages::nextTime << eos;
+					}
+					LOGS(Debug) << "Selected " << objects.begin()->first << " as the only candidate." << LOGF;
+					return objects.begin()->second;
+				}
+			}
+			*ad << Messages::noCandidate << eos;
 			phase = Cancel;
 			throw TrapException(this);
 		}
 	}
-
+	
 	void MTATrap::exceptionTrigger(ActionDescriptor* ad) {
 		switch (phase) {
 			case Selecting:

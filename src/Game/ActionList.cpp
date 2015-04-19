@@ -1,4 +1,5 @@
 #include "ActionList.hpp"
+#include "../Actions/MultiTargetAction.hpp"
 
 namespace Dungeon {
 

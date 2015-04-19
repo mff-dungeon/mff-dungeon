@@ -2,6 +2,7 @@
 #include "../Persistence/WorldCreator.hpp"
 #include "ActionQueue.hpp"
 #include "../Objects/Human.hpp"
+#include "../Objects/Alive.hpp"
 #include <stdexcept>
 
 namespace Dungeon {

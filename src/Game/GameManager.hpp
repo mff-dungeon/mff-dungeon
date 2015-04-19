@@ -4,13 +4,14 @@
 
 #include "../common.hpp"
 #include "../Utils/SplayTree.hpp"
-#include "../Objects/Alive.hpp"
 #include "../Persistence/ObjectLoader.hpp"
 #include "ObjectPointer.hpp"
 #include "ActionQueue.hpp"
 
 namespace Dungeon {
 
+        class Alive;
+        
 	class GameManager {
 		friend struct ObjectPointer;
 

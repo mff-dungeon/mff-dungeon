@@ -35,7 +35,7 @@ namespace Dungeon {
 	bool BehaviorAction::match(const string& command, ActionDescriptor* ad) {
 		auto b = behavior.unsafeCast<Behavior>();
 		smatch matches;
-		if (RegexMatcher::match(b->getVerb() + " +(.+)", command, matches)) {
+		if (RegexMatcher::match(b->getVerb() + "( +(.+))?", command, matches)) {
 			selectBestTarget(matches[matches.size() - 1], ad);
 			return true;
 		}

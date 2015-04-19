@@ -8,6 +8,7 @@
 #include "../Game/GameManager.hpp"
 #include "Traps/DoorLock.hpp"
 #include "Location.hpp"
+#include "Human.hpp"
 
 namespace Dungeon {
 
@@ -94,8 +95,11 @@ namespace Dungeon {
 
 	bool DoorwalkAction::match(const string& command, ActionDescriptor* ad) {
 		RegexMatcher::matches matches;
-		if (RegexMatcher::match("(go( to)?|cd|walk through|enter)( (.+))?", command, matches)) {
-			selectBestTarget(matches[4], ad);
+		if (RegexMatcher::match("(go( to| back)?|cd( \\.\\.)?|walk through|enter)( (.+))?", command, matches)) {
+			// FIXME Remove this hack after partially ordering actions
+			if (matches[2].compare(" back") == 0 || matches[3].compare(" ..") == 0)
+				return false; // Go back action
+			selectBestTarget(matches[5], ad);
 			return true;
 		}
 		return false;

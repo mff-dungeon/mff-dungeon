@@ -8,12 +8,12 @@
 #include "../common.hpp"
 #include "../Game/ActionList.hpp"
 #include "../Drivers/Driver.hpp"
-#include "../Objects/Human.hpp"
 #include "../Output/Container.hpp"
 
 namespace Dungeon {
 
 class ActionQueue;
+class Human;
 
 /*
  * Contains information about commiting an action.

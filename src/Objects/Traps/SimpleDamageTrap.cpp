@@ -1,6 +1,7 @@
 #include "SimpleDamageTrap.hpp"
 #include "../../Game/ActionDescriptor.hpp"
 #include "../../Game/GameManager.hpp"
+#include "../Human.hpp"
 
 namespace Dungeon {
 

@@ -114,7 +114,7 @@ namespace Dungeon {
 
 	bool CreateAction::match(const string& command, ActionDescriptor* ad) {
 		RegexMatcher::matches matches;
-		if (RegexMatcher::match("create( .+)?", command)) {
+		if (RegexMatcher::match("create( .+)?", command, matches)) {
 			selectBestTarget(matches[1], ad);
 			return true;
 		}

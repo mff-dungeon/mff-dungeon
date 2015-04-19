@@ -609,7 +609,7 @@ namespace Dungeon {
 		////////////////////////////////////////////////////////////////////////
 		templates["wearable/crudewoodshield"] = createObject<Wearable>("template/wearable/crudewoodshield/1", templateRoom)
 				->setSlot(Wearable::Slot::Shield)
-				->setDefenseBonus(18)
+				->setDefenseBonus(10)
 				->setSize(5000)
 				->setWeight(6000)
 				->setName("Crude wooden shield")
@@ -618,7 +618,7 @@ namespace Dungeon {
 				->save();
 		templates["wearable/crudewoodshield2"] = createObject<Wearable>("template/wearable/crudewoodshield2/1", templateRoom)
 				->setSlot(Wearable::Slot::Shield)
-				->setDefenseBonus(10)
+				->setDefenseBonus(7)
 				->setSize(5000)
 				->setWeight(5000)
 				->setName("Crude cracked wooden shield")
@@ -628,7 +628,7 @@ namespace Dungeon {
 		// Weak version is crude wooden shield
 		templates["wearable/woodshield"] = createObject<Wearable>("template/wearable/woodshield/1", templateRoom)
 				->setSlot(Wearable::Slot::Shield)
-				->setDefenseBonus(34)
+				->setDefenseBonus(15)
 				->setSize(5000)
 				->setWeight(8000)
 				->setName("Strong wooden shield")
@@ -637,7 +637,7 @@ namespace Dungeon {
 				->save();
 		templates["wearable/ironshield"] = createObject<Wearable>("template/wearable/ironshield/1", templateRoom)
 				->setSlot(Wearable::Slot::Shield)
-				->setDefenseBonus(64)
+				->setDefenseBonus(20)
 				->setSize(6000)
 				->setWeight(20000)
 				->setName("Iron shield")
@@ -646,7 +646,7 @@ namespace Dungeon {
 				->save();
 		templates["wearable/ironshield2"] = createObject<Wearable>("template/wearable/ironshield2/1", templateRoom)
 				->setSlot(Wearable::Slot::Shield)
-				->setDefenseBonus(37)
+				->setDefenseBonus(18)
 				->setSize(6000)
 				->setWeight(17000)
 				->setName("Cracked iron shield")
@@ -656,7 +656,7 @@ namespace Dungeon {
 		// Weak version is iron shield
 		templates["wearable/steelshield"] = createObject<Wearable>("template/wearable/steelshield/1", templateRoom)
 				->setSlot(Wearable::Slot::Shield)
-				->setDefenseBonus(102)
+				->setDefenseBonus(30)
 				->setSize(7000)
 				->setWeight(25000)
 				->setName("Steel shield")
@@ -666,7 +666,7 @@ namespace Dungeon {
 		// Weak version is steel shield
 		templates["wearable/ensteelshield"] = createObject<Wearable>("template/wearable/ensteelshield/1", templateRoom)
 				->setSlot(Wearable::Slot::Shield)
-				->setDefenseBonus(152)
+				->setDefenseBonus(50)
 				->setSize(7000)
 				->setWeight(20000)
 				->setName("Enhanced steel shield")
@@ -1557,7 +1557,7 @@ namespace Dungeon {
 				->drops(shallowCloneTemplate(templates["resource/leather"]), 66 * Dropper::Percent, 6 * Config::EnemyMatsDrop(), 14 * Config::EnemyMatsDrop())
 				->drops(shallowCloneTemplate(templates["potion/tinyred"]), 12 * Dropper::Percent)
 				->setAttack(19)
-				->setDefense(16)
+				->setDefense(13)
 				->setMaxHp(11 * Config::EnemyHp())
 				->setCurrentHp(11 * Config::EnemyHp())
 				->setRespawnInterval(12 * Config::EnemyRespawn())

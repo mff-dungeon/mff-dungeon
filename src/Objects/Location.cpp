@@ -207,7 +207,7 @@ namespace Dungeon {
 		}
 		// Everything is alright, let's add it
 		ad->getGM()->removeRelation(current, item, R_INSIDE);
-		*ad << "You've picked up " + item->getName() + "." << eos;
+		*ad << "You've picked " + item->getName() + " up." << eos;
 		inventory->addItem(item).unsafeCast<Item>()->onPick(ad);
 	}
 }

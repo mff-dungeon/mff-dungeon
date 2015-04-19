@@ -3,6 +3,7 @@
 
 #include "../common.hpp"
 #include "Item.hpp"
+#include "../Actions/MultiTargetAction.hpp"
 
 namespace Dungeon {
 

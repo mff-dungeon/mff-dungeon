@@ -11,7 +11,7 @@ namespace Dungeon {
 
 	bool RaiseStatAction::match(const string& command, ActionDescriptor* ad) {
 		RegexMatcher::matches matches;
-		if (RegexMatcher::match("raise (.+)", command)) {
+		if (RegexMatcher::match("raise (.+)", command, matches)) {
 			selectStat(matches[1], ad);
 			return true;
 		}

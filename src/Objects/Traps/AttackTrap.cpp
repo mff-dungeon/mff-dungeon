@@ -2,6 +2,7 @@
 #include "../../Utils/RandomString.hpp"
 #include "../../Game/ActionDescriptor.hpp"
 #include "../Creature.hpp"
+#include "../Human.hpp"
 
 namespace Dungeon {
 

@@ -2,6 +2,7 @@
 
 #include "ActionDescriptor.hpp"
 #include "../Output/Output.hpp"
+#include "../Objects/Human.hpp"
 
 namespace Dungeon {
 

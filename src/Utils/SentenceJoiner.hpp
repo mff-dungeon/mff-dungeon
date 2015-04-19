@@ -2,7 +2,6 @@
 #define	SENTENCEJOINER_HPP
 
 #include "../common.hpp"
-#include "../Objects/Virtual/IDescriptable.hpp"
 #include <ios>
 
 namespace Dungeon {
@@ -19,7 +18,7 @@ namespace Dungeon {
      */
     class SentenceJoiner {
     public:
-        SentenceJoiner() { }
+        SentenceJoiner() {}
         virtual ~SentenceJoiner() { }
 
         /**
@@ -34,15 +33,24 @@ namespace Dungeon {
          *  Use % to indicate place where to put the parts (or, fifth parameter)
          * @return formatted sentence
          */
-        string getSentence(string zero, string one, string more = "", bool decapitalize = true, char placeholder = '%')
+        string getSentence(const string& zero, const string& one, const string& more = "", bool decapitalize = true, char placeholder = '%')
         {
             if (count == 0)
                 return zero;
 
             string sentence = decapitalize ? Utils::decapitalize(getSentence()) : getSentence();
             if (count == 1 || more == "")
-                return one.replace(one.find(placeholder), 1, sentence);
-            return more.replace(more.find(placeholder), 1, sentence);
+                return string(one).replace(one.find(placeholder), 1, sentence);
+            return string(more).replace(more.find(placeholder), 1, sentence);
+        }
+        
+        /**
+         *  Use % to indicate place where to put the parts (or, fifth parameter)
+         * @return formatted sentence
+         */
+        string getSentence(const string& format, bool decapitalize = true, char placeholder = '%')
+        {
+            return getSentence(format, format, format, decapitalize, placeholder);
         }
 
         /**
@@ -68,13 +76,7 @@ namespace Dungeon {
         /**
          * Because name of object is the most used part
          */
-        SentenceJoiner& operator<<(ObjectPointer value)
-        {
-            if (value->instanceOf(IDescriptable))
-                return *this << value.unsafeCast<IDescriptable>()->getName();
-            else
-                return *this  << value.getId();
-        }
+        SentenceJoiner& operator<<(ObjectPointer value);
 
         SentenceJoiner& setConjunction(const string& all, const string& last) {
             conjunction = all;

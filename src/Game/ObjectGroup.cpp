@@ -70,4 +70,19 @@ namespace Dungeon {
 			sameTypeObjects.clear();
 		}
 	}
+	
+	ObjectPointer ObjectGroup::match(string name) {
+		FuzzyStringMatcher<ObjectPointer> matcher;
+		ObjectGroup::iterator it;
+		for (it = this->begin(); it != this->end(); it++) {
+			IDescriptable* obj = it->second.safeCast<IDescriptable>();
+			if (obj) {
+				matcher.add(obj->getLongName(), it->second);
+				matcher.add(obj->getName(), it->second);
+			}
+		}
+
+		return matcher.find(name);
+	}
+	
 }

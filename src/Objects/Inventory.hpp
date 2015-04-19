@@ -5,6 +5,8 @@
 #include "../Game/ActionDescriptor.hpp"
 #include "../Actions/MultiTargetAction.hpp"
 #include "Wearable.hpp"
+#include "Resource.hpp"
+#include "Human.hpp"
 
 namespace Dungeon {
 

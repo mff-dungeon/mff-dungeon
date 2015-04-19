@@ -2,6 +2,7 @@
 #define	MULTITARGETACTION_HPP
 
 #include "../common.hpp"
+#include "../Objects/Traps/MTATrap.hpp"
 #include "Action.hpp"
 
 namespace Dungeon {
@@ -13,6 +14,15 @@ namespace Dungeon {
 	 */
 	class MultiTargetAction : public Action {
 	public:
+                /**
+                 * Messages used by MTATrap in dialog. Copy and declare to suit your needs.
+                 */
+                struct DefaultMessages {
+                    static const char *unspecifiedMore, *unspecifiedOne,
+                        *chosenForYou, *dontCare, *uncertain, *nextTime,
+                        *totallyUncertain, *noCandidate, *commonRegex;
+                };
+                
 		MultiTargetAction(const string& type) : Action(type) { }
 
 		/**
@@ -40,7 +50,11 @@ namespace Dungeon {
 		/**
 		 * Does generic object matching to set best target
 		 */
+                template <typename Messages = DefaultMessages>
+		void selectBestTarget(const string& str, ActionDescriptor* ad);
+                
 		virtual void selectBestTarget(const string& str, ActionDescriptor* ad);
+                
 		ObjectPointer getTarget() const {
 			return selectedTarget;
 		}
