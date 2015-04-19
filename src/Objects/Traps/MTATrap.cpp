@@ -5,101 +5,125 @@
 
 namespace Dungeon {
 
-	ObjectPointer MTATrap::wrapFind(ObjectMap objects, MultiTargetAction* action, const string& str, ActionDescriptor* ad) {
-		using Messages = MultiTargetAction::DefaultMessages;
+	ObjectPointer MTATrap::wrapFind(ObjectMap objects, ActionDescriptor* ad, const string& str) {
+		if (!ad)
+			throw GameException("MTATrap::wrapFind was called without AD.");
+		MultiTargetAction* action = dynamic_cast<MultiTargetAction*>(ad->getAction());
+		if (!action)
+			throw GameException("MTATrap::wrapFind was called when there was non-MTA action.");
+		if (objects.size() == 0)
+			return ObjectPointer();
+		
+		Info& info = action->mtatrap_info;
+		Messages& msgs = action->messages;
 		bool any = false;
-		string lower = Utils::decapitalize(str);
 		smatch matches;
+		string lower = Utils::decapitalize(str);
+		ObjectGroup grp(objects);
+		SentenceJoiner targets;
+		targets.setConjunction(", ", " or ");
+		
+		/* There are many objects, and the search string is empty.
+		 * Ask user to choose one.
+		 */
+		if (str.length() == 0 && grp.size() > 1) {
+			LOGS(Debug) << "No information provided - case 1." << LOGF;
+			for (auto& pair : objects)
+				targets << pair.second;
+			*ad << targets.getSentence("", msgs.unspecifiedMore) << eos;
+			info.objects = move(objects);
+			info.phase = Selecting;
+			throw TrapException(this);
+		}
+		
+		/* The search string starts with any. Focus on what follows.
+		 */
+		if (regex_match(lower, matches, regex(msgs.anyRegex))) {
+			LOGS(Debug) << "Entering 'any' mode." << LOGF;
+			any = true;
+			lower = matches[3];
+		}
 		
 		try {
-			ObjectGroup grp(objects);
-			ObjectPointer target;
-
-			if (str.length() == 0 && grp.size() > 1) {
-				this->phase = Selecting;
-				SentenceJoiner targets;
-				targets.setConjunction(", ", " or ");
-				for (auto& pair : objects)
-					targets << pair.second;
-				this->objects = move(objects);
-				*ad << targets.getSentence(Messages::unspecifiedMore) << eos;
-				throw TrapException(this);
-			} else if (regex_match(lower, matches, regex("any\\s+(.*)"))) {
-				if (matches[1].length() > 0)
-					target = grp.match(matches[1]);
-				else
-					target = grp.begin()->second;
-			} else {
-				target = grp.match(str);
-			}
-
-			if (!!target) {
-				if(any) {
-					*ad << Utils::formatMessage(Messages::chosenForYou, target) << eos;
-				}
-				LOGS(Debug) << "Selected " << target << LOGF;
-			}
-			return target;
+			LOGS(Debug) << "Regularly matching." << LOGF;
+			return grp.match(str);
 		} catch (const StringMatcher::Uncertain<ObjectPointer>& e) {
-			if (!ad)
-				return ObjectPointer(); // Sorry, no chance
-			if (any) { // Starts with any, user doesn't care, return the first one
-				if(e.possibleTargets.size() > 0) {
-					// Unsafe cast is possible, in OG::match there are only IDescriptables added
-					ObjectPointer obj = e.possibleTargets.at(0);
-					*ad << Utils::formatMessage(Messages::dontCare, obj) << eos;
-					return e.possibleTargets.at(0);
-				}
+			LOGS(Debug) << "Uncertain exception." << LOGF;
+			
+			/* Search string started with any, but something matched better.
+			 * Just choose any of remaining targets.
+			 */
+			if (any) {
+				LOGS(Debug) << "Uncertain but any - case 2." << LOGF;
+				ObjectPointer obj = e.possibleTargets.front();
+				*ad << Utils::formatMessage(msgs.dontCare, obj) << eos;
+				return obj;
 			}
 
-			this->phase = Selecting;
+			info.objects.clear();
+			for (ObjectPointer obj : e.possibleTargets)
+				info.objects.insert(pair<objId, ObjectPointer>(obj.getId(),move(obj)));
 
-			if (e.possibleTargets.size() > 0) {
-				SentenceJoiner targets;
-				targets.setConjunction(", ", " or ");
-				this->objects.clear();
-				for (ObjectPointer obj : e.possibleTargets)
-					this->objects.insert(pair<objId, ObjectPointer>(obj.getId(),obj));
+			for (auto& pair : info.objects)
+				targets << pair.second;
 
-				// This time there will be each object only once
-				for (auto& pair : this->objects)
-					targets << pair.second;
-
-				*ad << targets.getSentence(Messages::uncertain) << eos;
-			} else {
-				*ad << Messages::totallyUncertain << eos;
-			}
-
+			info.phase = Selecting;
+			*ad << targets.getSentence("", msgs.uncertain) << eos;
 			throw TrapException(this);
 		} catch (const StringMatcher::NoCandidate& e) {
-			if (objects.size() == 1) {
-				bool itMatched = regex_match(lower, matches, regex("it|that"));
+			LOGS(Debug) << "No candidate exception." << LOGF;
+			
+			/* Search string started with any, but nothing matched.
+			 * Just choose any target.
+			 */
+			if (any) {
+				LOGS(Debug) << "No candidate in 'any' mode - case 3." << LOGF;
+				ObjectPointer obj = objects.begin()->second;
+				*ad << Utils::formatMessage(msgs.dontCare, obj) << eos;
+				return obj;
+			}
+			
+			/* There was only one choice, and didn't match.
+			 * Check searchstring to be something like "it" or "that", 
+			 * or to be empty (in that case warn user to be more specific),
+			 * and select that one target.
+			 */
+			if (grp.size() == 1) {
+				bool itMatched = regex_match(lower, matches, regex(msgs.itRegex));
 				if (itMatched || lower.length() == 0) {
+					LOGS(Debug) << "One (insufficient) candidate but 'it' mode - case 4." << LOGF;
 					if (!itMatched) {
-							*ad << Messages::nextTime << eos;
+							*ad << msgs.nextTime << eos;
 					}
 					LOGS(Debug) << "Selected " << objects.begin()->first << " as the only candidate." << LOGF;
 					return objects.begin()->second;
 				}
 			}
-			*ad << Messages::noCandidate << eos;
-			phase = Cancel;
+			
+			LOGS(Debug) << "Giving up - case 5." << LOGF;
+			/* Search string is not empty, not "any", nothing matched.
+			 * Give up, we can't read minds.
+			 */
+			*ad << msgs.noCandidate << eos;
+			info.phase = Cancel;
 			throw TrapException(this);
 		}
 	}
 	
 	void MTATrap::exceptionTrigger(ActionDescriptor* ad) {
-		switch (phase) {
+		MultiTargetAction* mta = static_cast<MultiTargetAction*>(ad->getAction());
+		Info& info = mta->mtatrap_info;
+		switch (info.phase) {
 			case Selecting:
-				ad->waitForReply([this] (ActionDescriptor* ad, string reply) {
+				ad->waitForReply([&info, this] (ActionDescriptor* ad, string reply) {
 					if(Utils::decapitalize(reply) == "none"
 							|| Utils::decapitalize(reply) == "nothing") {
 						*ad << "Okay, I won't do anything." << eos;
-						phase = Cancel;
+						info.phase = Cancel;
 						throw TrapException(this);
 					}
-					target = wrapFind(this->objects, (MultiTargetAction*) ad->getAction(), reply, ad);
-					phase = Return;
+					info.target = wrapFind(info.objects, ad, reply);
+					info.phase = Return;
 					throw TrapException(this);
 				});
 				ad->state = ActionDescriptor::Waiting;
@@ -108,8 +132,7 @@ namespace Dungeon {
 				ad->state = ActionDescriptor::Finished;
 				break;
 			case Return:
-				MultiTargetAction* mta = (MultiTargetAction*) (ad->getAction());
-				mta->setTarget(target);
+				mta->setTarget(info.target);
 				ad->state = ActionDescriptor::ActionReady;
 				break;
 		}

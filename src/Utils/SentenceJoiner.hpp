@@ -2,7 +2,6 @@
 #define	SENTENCEJOINER_HPP
 
 #include "../common.hpp"
-#include <ios>
 
 namespace Dungeon {
 
@@ -33,7 +32,7 @@ namespace Dungeon {
          *  Use % to indicate place where to put the parts (or, fifth parameter)
          * @return formatted sentence
          */
-        string getSentence(const string& zero, const string& one, const string& more = "", bool decapitalize = true, char placeholder = '%')
+        string getSentence(const string& zero, const string& one = "", const string& more = "", bool decapitalize = true, char placeholder = '%')
         {
             if (count == 0)
                 return zero;
@@ -44,15 +43,6 @@ namespace Dungeon {
             return string(more).replace(more.find(placeholder), 1, sentence);
         }
         
-        /**
-         *  Use % to indicate place where to put the parts (or, fifth parameter)
-         * @return formatted sentence
-         */
-        string getSentence(const string& format, bool decapitalize = true, char placeholder = '%')
-        {
-            return getSentence(format, format, format, decapitalize, placeholder);
-        }
-
         /**
          * @return formatted sentence
          */

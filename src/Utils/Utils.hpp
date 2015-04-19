@@ -18,6 +18,7 @@
 #define objId_getIdentifier(id) ( id.substr(id.rfind("/") + 1) )
 
 #include "../common.hpp"
+#include <stdexcept>
 
 namespace Dungeon {
 
@@ -138,7 +139,10 @@ namespace Dungeon {
         template<char placeholder = '%', typename T, typename... Args>
         static std::string formatMessage(const string& format, T&& val, Args&&... values) {
             string copy = formatMessage<placeholder>(format, forward<Args>(values)...);
-            return copy.replace(copy.find(placeholder), 1, val);
+            size_t pos = copy.find(placeholder);
+            if (pos == string::npos)
+                throw std::invalid_argument("Not enough placeholders in '" + format + "'");
+            return copy.replace(pos, 1, val);
         }
         
         template<char placeholder = '%'>

@@ -144,9 +144,9 @@ namespace Dungeon {
 	}
 
 	bool UnequipAction::match(const string& command, ActionDescriptor* ad) {
-		smatch matches;
-		if (RegexMatcher::match("(take off|unequip) (.+)", command, matches)) {
-			selectBestTarget(matches[2], ad);
+		RegexMatcher::matches matches;
+		if (RegexMatcher::match("(take off|unequip)( (.+))?", command, matches)) {
+			selectBestTarget(matches[3], ad);
 			return true;
 		}
 		return false;
@@ -188,9 +188,9 @@ namespace Dungeon {
 	}
 
 	bool EquipAction::match(const string& command, ActionDescriptor* ad) {
-		smatch matches;
-		if (RegexMatcher::match("(wear|equip) (.+)", command, matches)) {
-			selectBestTarget(matches[2], ad);
+		RegexMatcher::matches matches;
+		if (RegexMatcher::match("(wear|equip)( (.+))?", command, matches)) {
+			selectBestTarget(matches[3], ad);
 			return true;
 		}
 		return false;

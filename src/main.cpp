@@ -91,7 +91,6 @@ void start() {
 	LOG << "This is Jabber Dungeon starting." << LOGF;
 	gm = new GameManager(initWorld);
 
-	//dungeon@eideo.cz, somemagicshit - release user/passwd
 	jabber = new JabberDriver(gm, Config::JabberName(), Config::JabberPasswd());
 	jabber->useXHtmlIM = Config::FeatureXHtmlIM();
 	jabber->run();
