@@ -33,13 +33,10 @@ namespace Dungeon {
         };
         
         struct Messages {
-            const char *unspecifiedMore = "And which one - %?";
-            const char *unspecifiedOne = "You should specify what next time.";
-            const char *chosenForYou = "I have chosen % for you.";
+            const char *unspecified = "And which one - %?";
             const char *dontCare = "If you don't care, I'll just take %.";
             const char *uncertain = "Sorry, did you mean %?";
-            const char *totallyUncertain = "Sorry, I don't know what you mean. Please try to explain it better.";
-            const char *noCandidate = "No such thing found. Really.";
+            const char *noCandidate = "Sorry, I don't know what you mean. Please try to explain it better.";
             const char *nextTime = "You should specify what next time.";
             const char *itRegex = "it|that";
             const char *anyRegex = "(any|some)(\\s+(.*))?;";

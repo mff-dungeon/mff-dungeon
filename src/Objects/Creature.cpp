@@ -260,6 +260,11 @@ namespace Dungeon {
 		}
 
 		Creature* creature = creaturePtr.unsafeCast<Creature>();
+		// FIXME: You can't start combat asking what to do!
+		// Try: attack
+		//   D: What to attack?
+		// You: rat
+		//   D: ... You have managed to *R*un from combat.
 		CombatAction::CombatMatch action = matchAnswer(reply);
 		if (action == CombatAction::CombatMatch::Invalid) {
 			*ad << "What was that supposed to be?" << eos;

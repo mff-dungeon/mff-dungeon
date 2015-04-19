@@ -48,7 +48,16 @@ namespace Dungeon {
 	 */
 	class DoorwalkAction : public MultiTargetAction {
 	public:
-		DoorwalkAction(const string& type = "door-walk") : MultiTargetAction(type) { }
+		DoorwalkAction(const string& type = "door-walk") : MultiTargetAction(type) {
+                    messages.unspecified = "Where to go? Either %.";
+                    messages.nextTime = "There was just one option, but you should specify where to go next time.";
+                    messages.dontCare = "If you don't care, I'll just follow %.";
+                    messages.uncertain = "Sorry, did you want to follow %?";
+                    messages.noCandidate = "Sorry, I don't understand where to go. Please try to explain it better.";
+                    messages.itRegex = "it|there";
+                    messages.anyRegex = "(any|some|wherever)(\\s+(.*))?;";
+                    messages.anyRegexMatchIndex = 3;
+                }
 
 		virtual void explain(ActionDescriptor* ad);
 		virtual bool match(const string& command, ActionDescriptor* ad);

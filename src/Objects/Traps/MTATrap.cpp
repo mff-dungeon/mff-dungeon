@@ -30,7 +30,7 @@ namespace Dungeon {
 			LOGS(Debug) << "No information provided - case 1." << LOGF;
 			for (auto& pair : objects)
 				targets << pair.second;
-			*ad << targets.getSentence("", msgs.unspecifiedMore) << eos;
+			*ad << targets.getSentence("", msgs.unspecified) << eos;
 			info.objects = move(objects);
 			info.phase = Selecting;
 			throw TrapException(this);

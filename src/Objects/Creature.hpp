@@ -57,7 +57,17 @@ namespace Dungeon {
 			Check = 2,
 			Run = 3
 		};
-		CombatAction(const string& type = "creature-combat") : MultiTargetAction(type) { }
+                
+		CombatAction(const string& type = "creature-combat") : MultiTargetAction(type) {
+                    messages.unspecified = "You can attack either %. Which one first?";
+                    messages.nextTime = "You should tell me what do you want to attack. But this time it was pretty obvious.";
+                    messages.dontCare = "If you don't care, I'll just attack %.";
+                    messages.uncertain = "Do you want to strike %?";
+                    messages.noCandidate = "There's no enemy of that name. Please look around and try it again.";
+                    messages.itRegex = "it|there";
+                    messages.anyRegex = "(any|some|anything)(\\s+(.*))?;";
+                    messages.anyRegexMatchIndex = 3;
+                }
 		virtual ~CombatAction() { }
 
 		virtual void explain(ActionDescriptor* ad);
@@ -72,6 +82,9 @@ namespace Dungeon {
 		const string text = "\nType 'attack' (a) to attack the enemy, 'check' (c) to check its status or 'run' (r) to run from the fight.";
 	};
 
+        /**
+         * @deprecated
+         */
 	class KillAction : public MultiTargetAction {
 	public:
 		KillAction(const string& type = "creature-kill") : MultiTargetAction(type) { }

@@ -17,6 +17,7 @@ namespace Dungeon {
 		client = new Client(jid, jabberPassword);
 		gethostname(hostname, 1024);
 		client->setResource(hostname);
+		client->setTls(TLSPolicy::TLSDisabled);
 
 		client->disco()->setVersion("Dungeon", "1.0");
 		client->disco()->setIdentity("client", "bot", "Dungeon");
