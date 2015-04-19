@@ -2,21 +2,20 @@ CC := g++
 #CC := clang
 SRCDIR := src
 BUILDDIR := build
-TARGET := bin/dungeon
 
 SRCEXT := cpp
 HEADEREXT := hpp
-SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT) -not -name "main.cpp")
+SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 DYNAMICS := $(shell find $(SRCDIR)/Objects/ -type f -iname "*.$(HEADEREXT)")
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -std=c++11 -g -Wall -I/usr/local/include
+CFLAGS := -std=c++11 -g -Wall -I/usr/local/include -MD
 LDFLAGS := -lstdc++ -lpthread -lsqlite3 -L/usr/local/lib -lgloox -lm
 LOGFLAGS :=
 
-$(TARGET): $(OBJECTS) build/main.o
+bin/dungeon: $(OBJECTS)
 	@mkdir -p $(shell dirname $@)
-	@echo "[ LD ] " $(TARGET)
-	@$(CC) $^ -o $(TARGET) $(LDFLAGS)
+	@echo "[ LD ] " $@
+	@$(CC) $^ -o $@ $(LDFLAGS)
 
 src/dynamic.hpp: $(DYNAMICS)
 	@printf "#ifndef DYNAMIC_HPP\n#define	DYNAMIC_HPP\n\n" > $@
@@ -24,7 +23,7 @@ src/dynamic.hpp: $(DYNAMICS)
 	@printf "#endif\n" >> $@
 	@echo "[ .. ] Dynamic header file generated."
 
-build/main.o: src/main.cpp src/dynamic.hpp
+build/main.o: src/main.cpp
 	@mkdir -p $(shell dirname $@)
 	@echo "[ CC ] " $@
 	@$(CC) $(CFLAGS) $(LOGFLAGS) -D_LOGUNIT=\"$(notdir $<)\" -c -o $@ $<
@@ -43,15 +42,11 @@ clean:
 	$(RM) -r $(BUILDDIR) $(TARGET)
 	$(RM) *.log dumps/*.dot
 
-# rather fix your sed ;)
-#sedfix:
-#	@git checkout src/dynamic.hpp
-
 tester: test/tester.cpp $(OBJECTS)
 	@echo "[ CC ]  test/tester.cpp --> bin/tester"
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o bin/tester $<
 
-all: $(TARGET) doc
+all: bin/dungeon bin/create  doc
 
 debug: LOGFLAGS := -D_LOGMORE
 debug: clean all
@@ -64,5 +59,7 @@ worldgraph: dumps/world-last.dot
 	@echo "[ DOT ]  dumps/world-last.dot --> dumps/world.png"
 	@dot -Tpng <dumps/world-last.dot >dumps/world.png
 
+
+-include $(OBJECTS:.o=.d)
 
 .PHONY: clean all doc debug worldgraph
