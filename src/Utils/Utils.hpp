@@ -56,15 +56,6 @@ namespace Dungeon {
             return string(buf);
         }
 
-        static inline string progressBar(const int val, const int max, const int length)
-        {
-            int l = val * length / max;
-            char buf [length];
-            for (int i = 0; i < length; i++)
-                buf[i] = (i <= l ? '#' : '-');
-            return string(buf, length);
-        }
-
         // courtesy of http://stackoverflow.com/questions/1798112/removing-leading-and-trailing-spaces-from-a-string
 
         static inline std::string ltrim(std::string s, const char* t = " \t\n\r\f")

@@ -5,6 +5,7 @@
 #include "../Utils/RegexMatcher.hpp"
 #include "../Game/ActionDescriptor.hpp"
 #include "../Game/GameManager.hpp"
+#include "../Output/ProgressBar.hpp"
 #include "Virtual/Dropper.hpp"
 #include "Virtual/Dropper.hpp"
 #include <time.h>
@@ -292,11 +293,16 @@ namespace Dungeon {
 			if (ad->getCaller()->getState() != Alive::State::Living) return;
 			// Should be able to use potion, or so (later)
 			ad->flushContainers();
-			*ad << text;
-			// TODO - nicer progressbars
-			*ad << new Output::Newline();
-			*ad << creature->getName() << ": [" << Utils::progressBar(creature->getCurrentHp(), creature->getMaxHp(), 10) << "]"
-					<< "     You: [" << Utils::progressBar(ad->getCaller()->getCurrentHp(), ad->getCaller()->getMaxHp(), 10) << "]" << eos;
+			*ad << text << eos;
+			ad->flushContainers();
+			Output::Container& out = ad->getOutputContainer();
+			out.emplace<Output::FormattedString>("b", creature->getName());
+			out << ": ";
+			out.emplace<Output::ProgressBar>(creature->getCurrentHp(), creature->getMaxHp(), 10, "#FF0000");
+			out << "     ";
+			out.emplace<Output::FormattedString>("b", ad->getCaller()->getName());
+			out << ": ";
+			out.emplace<Output::ProgressBar>(ad->getCaller()->getCurrentHp(), ad->getCaller()->getMaxHp(), 10, "#00FF00");
 			ad->waitForReply(this, &CombatAction::combatLoop);
 		}
 	}
