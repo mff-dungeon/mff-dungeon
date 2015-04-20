@@ -171,7 +171,7 @@ namespace Dungeon {
 				if (cost < tol) {
 					sum += WordMatch - cost;
 					lastmatch = i + 1;
-                                        matched++;
+					matched++;
 					break; // next word from needle
 				}
 			}
@@ -183,7 +183,7 @@ namespace Dungeon {
 	template<typename value_type>
 	value_type FuzzyStringMatcher<value_type>::find(const string& needle) {
 		LOGS(Debug) << "Looking for '" << needle << "'" << LOGF;
-		int max;
+		int max = 0;
 		value_type maxMatch;
 		bool uncertain = false;
 		vector<value_type> possibleMatches;

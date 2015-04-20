@@ -182,8 +182,8 @@ namespace Dungeon {
 
 	bool KillAction::match(const string& command, ActionDescriptor* ad) {
 		smatch matches;
-		if (RegexMatcher::match("(kill|finish) (.+)", command, matches)) {
-			selectBestTarget(matches[2], ad);
+		if (RegexMatcher::match("(kill|finish)( (.+))?", command, matches)) {
+			selectBestTarget(matches[3], ad);
 			return true;
 		}
 		return false;
@@ -260,11 +260,6 @@ namespace Dungeon {
 		}
 
 		Creature* creature = creaturePtr.unsafeCast<Creature>();
-		// FIXME: You can't start combat asking what to do!
-		// Try: attack
-		//   D: What to attack?
-		// You: rat
-		//   D: ... You have managed to *R*un from combat.
 		CombatAction::CombatMatch action = matchAnswer(reply);
 		if (action == CombatAction::CombatMatch::Invalid) {
 			*ad << "What was that supposed to be?" << eos;

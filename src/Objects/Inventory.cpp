@@ -244,11 +244,12 @@ namespace Dungeon {
 	}
 
 	bool DropAction::match(const string& command, ActionDescriptor* ad) {
-		if(captureMatcher.match("drop ([0-9]+ )?(.*)", command)) {
+		if(captureMatcher.match("drop( ([0-9]+ )?(.*))?", command)) {
 			try {
-				amount = stoi(captureMatcher.matches[1]);
+				amount = stoi(captureMatcher.matches[2]);
 			} catch (invalid_argument& e) {}
-			selectBestTarget(captureMatcher.matches[2], ad);
+			// TODO: Use mechanism like a MTATrap to explicitly ask for amount if not provided
+			selectBestTarget(captureMatcher.matches[3], ad);
 			return true;
 		}
 		return false;
