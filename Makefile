@@ -1,16 +1,16 @@
-CC := g++
-#CC := clang
-SRCDIR := src
-BUILDDIR := build
+#CXX := g++
+#CXX := clang
+SRCDIR = src
+BUILDDIR = build
 
-SRCEXT := cpp
-HEADEREXT := hpp
-SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
-DYNAMICS := $(shell find $(SRCDIR)/Objects/ -type f -iname "*.$(HEADEREXT)")
-OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -std=c++11 -g -Wall -I/usr/local/include -MD
-LDFLAGS := -lstdc++ -lpthread -lsqlite3 -L/usr/local/lib -lgloox -lm
-LOGFLAGS :=
+SRCEXT = cpp
+HEADEREXT = hpp
+SOURCES = $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
+DYNAMICS = $(shell find $(SRCDIR)/Objects/ -type f -iname "*.$(HEADEREXT)")
+OBJECTS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
+CPPFLAGS = -std=gnu++11 -g -Wall -I/usr/local/include -MD
+LDFLAGS = -lstdc++ -lpthread -lsqlite3 -L/usr/local/lib -lgloox -lm
+LOGFLAGS =
 
 bin/dungeon: $(OBJECTS)
 	@mkdir -p $(shell dirname $@)
@@ -26,12 +26,12 @@ src/dynamic.hpp: $(DYNAMICS)
 build/main.o: src/main.cpp
 	@mkdir -p $(shell dirname $@)
 	@echo "[ CC ] " $@
-	@$(CC) $(CFLAGS) $(LOGFLAGS) -D_LOGUNIT=\"$(notdir $<)\" -c -o $@ $<
+	@$(CXX) $(CPPFLAGS) $(LOGFLAGS) -D_LOGUNIT=\"$(notdir $<)\" -c -o $@ $<
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) $(SRCDIR)/%.$(HEADEREXT)
 	@mkdir -p $(shell dirname $@)
 	@echo "[ CC ] " $@
-	@$(CC) $(CFLAGS) $(LOGFLAGS) -D_LOGUNIT=\"$(notdir $<)\" -c -o $@ $<
+	@$(CXX) $(CPPFLAGS) $(LOGFLAGS) -D_LOGUNIT=\"$(notdir $<)\" -c -o $@ $<
 
 doc/Documentation.pdf: $(shell find doc/ -type f -not -iname "Documentation.pdf")
 	@echo [ TeX ] Generating documentation...
@@ -44,7 +44,7 @@ clean:
 
 tester: test/tester.cpp $(OBJECTS)
 	@echo "[ CC ]  test/tester.cpp --> bin/tester"
-	@$(CC) $(CFLAGS) $(LDFLAGS) $(OBJECTS) -o bin/tester $<
+	@$(CXX) $(CPPFLAGS) $(LDFLAGS) $(OBJECTS) -o bin/tester $<
 
 all: bin/dungeon bin/create  doc
 
