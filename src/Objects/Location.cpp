@@ -122,7 +122,7 @@ namespace Dungeon {
 			}
 		}
 
-		groupedObjects.explore(ad, true, alive.safeCast<Human>());
+		groupedObjects.explore(ad, true);
 		*ad << nested.getSentence("", "You may want to look into %.") << eos;
 
 		if (nested.size() + groupedObjects.size() == 0)
@@ -209,5 +209,17 @@ namespace Dungeon {
 		ad->getGM()->removeRelation(current, item, R_INSIDE);
 		*ad << "You've picked " + item->getName() + " up." << eos;
 		inventory->addItem(item).unsafeCast<Item>()->onPick(ad);
+		
+		// Show the remaining items
+		ObjectGroup remaining;
+		for (auto& obj : current->getRelations(Relation::Master, R_INSIDE))
+			if (obj.second->instanceOf(Item))
+				remaining.insertObject(obj.second);
+		if (remaining.size() > 0) {
+			*ad << (RandomString::get()
+					<< "There are some items left." << endr
+					<< "You can pick even more." << endr) << eos;
+			remaining.explore(ad, true);
+		}
 	}
 }

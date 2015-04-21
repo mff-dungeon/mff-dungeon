@@ -31,8 +31,9 @@ namespace Dungeon {
 		return ObjectGroupMap::value_type(ptr.getId(), ptr);
 	}
 
-	void ObjectGroup::explore(ActionDescriptor *ad, bool ignoreOfflineUsers, Human* beholder) {
+	void ObjectGroup::explore(ActionDescriptor *ad, bool ignoreOfflineUsers) {
 		if (this->size() == 0) return;
+		Human* beholder = ad ? ad->getCaller() : nullptr;
 		ObjectGroup::iterator it;
 		string objectType = objId_getType(this->begin()->first);
 		vector<ObjectPointer> sameTypeObjects;
