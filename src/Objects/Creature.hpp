@@ -55,7 +55,8 @@ namespace Dungeon {
 			Invalid = 0,
 			Attack = 1,
 			Check = 2,
-			Run = 3
+			Run = 3,
+			Help = 4
 		};
                 
 		CombatAction(const string& type = "creature-combat") : MultiTargetAction(type) {
@@ -79,7 +80,8 @@ namespace Dungeon {
 		CombatMatch matchAnswer(const string& reply);
 	private:
 		ObjectPointer creaturePtr;
-		const string text = "\nType 'attack' (a) to attack the enemy, 'check' (c) to check its status or 'run' (r) to run from the fight.";
+		bool combatModeInformed = false;
+
 	};
 
         /**

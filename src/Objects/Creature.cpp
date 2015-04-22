@@ -240,18 +240,22 @@ namespace Dungeon {
 	CombatAction::CombatMatch CombatAction::matchAnswer(const string& reply) {
 		static FuzzyStringMatcher<CombatAction::CombatMatch> matcher;
 		if (matcher.empty()) {
-			matcher.add("attack", CombatAction::CombatMatch::Attack);
 			matcher.add("a", CombatAction::CombatMatch::Attack);
-			matcher.add("check", CombatAction::CombatMatch::Check);
+			matcher.add("s", CombatAction::CombatMatch::Attack);
 			matcher.add("c", CombatAction::CombatMatch::Check);
+			matcher.add("r", CombatAction::CombatMatch::Run);
+			matcher.add("h", CombatAction::CombatMatch::Help);
+			matcher.add("attack", CombatAction::CombatMatch::Attack);
+			matcher.add("strike", CombatAction::CombatMatch::Attack);
+			matcher.add("check", CombatAction::CombatMatch::Check);
 			matcher.add("status", CombatAction::CombatMatch::Check);
 			matcher.add("run", CombatAction::CombatMatch::Run);
-			matcher.add("r", CombatAction::CombatMatch::Run);
+			matcher.add("help", CombatAction::CombatMatch::Help);
 		}
 		try {
 			return matcher.find(reply);
 		} catch (GameException& ge) {
-			return CombatAction::CombatMatch::Invalid;
+			return CombatAction::CombatMatch::Help;
 		}
 	}
 
@@ -262,10 +266,8 @@ namespace Dungeon {
 
 		Creature* creature = creaturePtr.unsafeCast<Creature>();
 		CombatAction::CombatMatch action = matchAnswer(reply);
-		if (action == CombatAction::CombatMatch::Invalid) {
-			*ad << "What was that supposed to be?" << eos;
-			ad->waitForReply(this, &CombatAction::combatLoop);
-		} else if (action == CombatAction::CombatMatch::Check) {
+		// TODO: Add some actually useful info :) What about calculating chances to win?
+		if (action == CombatAction::CombatMatch::Check) {
 			if (creature->getPercentageHp() > 0.75) {
 				*ad << creature->getName() << " looks very vital." << eos;
 			} else if (creature->getPercentageHp() > 0.50) {
@@ -275,36 +277,44 @@ namespace Dungeon {
 			} else {
 				*ad << creature->getName() << " is seriously wounded, finish it while you can!" << eos;
 			}
-			*ad << text;
-			ad->waitForReply(this, &CombatAction::combatLoop);
-		} else if (action == CombatAction::CombatMatch::Run) {
-			ad->getCaller()->damageAlive(creaturePtr, ad->getCaller()->calculateDamage(creaturePtr, creature->getAttack()), ad);
-			if (ad->getCaller()->getState() == Alive::State::Living) {
-				*ad << "You have managed to run from " << creature->getName()
-						<< ". Be warned though, as any other action than leaving this room would reinitiate attack." << eos;
-			}
-		} else {
+		}
+
+		// User strikes
+		if (action == CombatAction::CombatMatch::Attack) {
 			creature->damageAlive(ad->getCaller(), creature->calculateDamage(ad->getCaller(), ad->getCaller()->getAttack()), ad);
 			if (creature->getState() == Alive::State::Dying) {
 				creature->die(ad);
 				return;
 			}
-			ad->getCaller()->damageAlive(creaturePtr, ad->getCaller()->calculateDamage(creaturePtr, creature->getAttack()), ad);
-			if (ad->getCaller()->getState() != Alive::State::Living) return;
-			// Should be able to use potion, or so (later)
-			ad->flushContainers();
-			*ad << text << eos;
-			ad->flushContainers();
-			Output::Container& out = ad->getOutputContainer();
-			out.emplace<Output::FormattedString>("b", creature->getName());
-			out << ": ";
-			out.emplace<Output::ProgressBar>(creature->getCurrentHp(), creature->getMaxHp(), 10, "#FF0000");
-			out << "     ";
-			out.emplace<Output::FormattedString>("b", ad->getCaller()->getName());
-			out << ": ";
-			out.emplace<Output::ProgressBar>(ad->getCaller()->getCurrentHp(), ad->getCaller()->getMaxHp(), 10, "#00FF00");
-			ad->waitForReply(this, &CombatAction::combatLoop);
 		}
+
+		// Creature strikes
+		if (action != CombatAction::CombatMatch::Check)
+			ad->getCaller()->damageAlive(creaturePtr, ad->getCaller()->calculateDamage(creaturePtr, creature->getAttack()), ad);
+		if (ad->getCaller()->getState() != Alive::State::Living) return;
+
+		if (action == CombatAction::CombatMatch::Run) {
+			// TODO: Some dexterity-based randomness?
+			*ad << "You have managed to run from " << creature->getName() << "." << eos;
+			return;
+		}
+
+		if (!combatModeInformed || action == CombatAction::Help) {
+			ad->flushContainers();
+			*ad << "\nYou are in fight, you have to act fast. To strike the enemy, write 's'. To run from the fight, type 'r'. To get this information again, type 'h'. Currently, you can't use your special skills and equipment during a fight." << eos;
+			combatModeInformed = true;
+		}
+
+		ad->flushContainers();
+		Output::Container& out = ad->getOutputContainer();
+		out.emplace<Output::FormattedString>("b", creature->getName());
+		out << ": ";
+		out.emplace<Output::ProgressBar>(creature->getCurrentHp(), creature->getMaxHp(), 10, "#FF0000");
+		out << "     ";
+		out.emplace<Output::FormattedString>("b", ad->getCaller()->getName());
+		out << ": ";
+		out.emplace<Output::ProgressBar>(ad->getCaller()->getCurrentHp(), ad->getCaller()->getMaxHp(), 10, "#00FF00");
+		ad->waitForReply(this, &CombatAction::combatLoop);
 	}
 
 	Creature* Creature::drops(ObjectPointer item, int chance, int min, int max) {

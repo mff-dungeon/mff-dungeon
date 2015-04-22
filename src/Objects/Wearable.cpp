@@ -226,9 +226,9 @@ namespace Dungeon {
 	}
 
 	void EquipAction::itemPhaseOne(ActionDescriptor* ad) {
-		*ad << "Do you want to drop "
-				<< equipedItemPtr.safeCast<IDescriptable>()->getName()
-				<< ", or do you want to put it into your backpack?" << eos;
+		Wearable* curUsed = equipedItemPtr.safeCast<Wearable>();
+		*ad << "You are currently using " << curUsed->getLongName() << "." << eos;
+		*ad << "Do you want to drop " << curUsed->getName() << ", or do you want to put it into your backpack?" << eos;
 		ad->waitForReply([this] (ActionDescriptor *ad, string reply) {
 			FuzzyStringMatcher<Wearable::DesiredAction> matcher;
 			matcher.add("drop", Wearable::DesiredAction::Drop)
