@@ -1,5 +1,7 @@
 #include "WorldDumper.hpp"
-#include "../dynamic.hpp" // Many instanceof checks
+#include "../Objects/Human.hpp"
+#include "../Objects/Location.hpp"
+#include "../Objects/Door.hpp"
 #include <sstream>
 #include <unistd.h>
 
