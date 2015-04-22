@@ -95,7 +95,7 @@ namespace Dungeon {
 
 	bool DoorwalkAction::match(const string& command, ActionDescriptor* ad) {
 		RegexMatcher::matches matches;
-		if (RegexMatcher::match("(go( to| back)?|cd( \\.\\.)?|walk through|enter)( (.+))?", command, matches)) {
+		if (RegexMatcher::match("(go( to| back)?|cd( \\.\\.)?|cross|walk through|enter)(?: the)?( (.+))?", command, matches)) {
 			// FIXME Remove this hack after partially ordering actions
 			if (matches[2].compare(" back") == 0 || matches[3].compare(" ..") == 0)
 				return false; // Go back action
