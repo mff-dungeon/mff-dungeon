@@ -231,7 +231,6 @@ private:
 
     queue<dialogReply> dialogReplies;
 
-    int sentences = 0;
     stringstream currentSentence;
 };
 

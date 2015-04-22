@@ -39,8 +39,8 @@ namespace Dungeon {
 
 		ObjectGroupMap::iterator insertObject(ObjectPointer ptr);
 
-                // FIXME: remove the ignore flag and beholder
-		void explore(ActionDescriptor *ad, bool ignoreOfflineUsers = true, Human* beholder = nullptr);
+                // FIXME: remove the ignore flag
+		void explore(ActionDescriptor *ad, bool ignoreOfflineUsers = true);
 
 		ObjectPointer match(string name);
 	private:

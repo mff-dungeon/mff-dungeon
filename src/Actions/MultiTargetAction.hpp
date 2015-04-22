@@ -13,15 +13,8 @@ namespace Dungeon {
 	 * and helps select matching target
 	 */
 	class MultiTargetAction : public Action {
+    friend class MTATrap;
 	public:
-                /**
-                 * Messages used by MTATrap in dialog. Copy and declare to suit your needs.
-                 */
-                struct DefaultMessages {
-                    static const char *unspecifiedMore, *unspecifiedOne,
-                        *chosenForYou, *dontCare, *uncertain, *nextTime,
-                        *totallyUncertain, *noCandidate, *commonRegex;
-                };
                 
 		MultiTargetAction(const string& type) : Action(type) { }
 
@@ -46,12 +39,6 @@ namespace Dungeon {
 		 * @param target Selected target
 		 */
 		virtual void commitOnTarget(ActionDescriptor* ad, ObjectPointer target) = 0;
-
-		/**
-		 * Does generic object matching to set best target
-		 */
-                template <typename Messages = DefaultMessages>
-		void selectBestTarget(const string& str, ActionDescriptor* ad);
                 
 		virtual void selectBestTarget(const string& str, ActionDescriptor* ad);
                 
@@ -73,6 +60,12 @@ namespace Dungeon {
 	protected:
 		ObjectMap targets;
 		ObjectPointer selectedTarget;
+                
+		/**
+		 * Messages used by MTATrap in dialog. Overwrite in ctor to suit your needs.
+		 */
+		MTATrap::Messages messages;
+        MTATrap::Info mtatrap_info;
 	};
 }
 

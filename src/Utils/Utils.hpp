@@ -18,6 +18,7 @@
 #define objId_getIdentifier(id) ( id.substr(id.rfind("/") + 1) )
 
 #include "../common.hpp"
+#include <stdexcept>
 
 namespace Dungeon {
 
@@ -53,15 +54,6 @@ namespace Dungeon {
             else
                 sprintf(buf, "%.2f oz", weight / 28.349523125);
             return string(buf);
-        }
-
-        static inline string progressBar(const int val, const int max, const int length)
-        {
-            int l = val * length / max;
-            char buf [length];
-            for (int i = 0; i < length; i++)
-                buf[i] = (i <= l ? '#' : '-');
-            return string(buf, length);
         }
 
         // courtesy of http://stackoverflow.com/questions/1798112/removing-leading-and-trailing-spaces-from-a-string
@@ -138,7 +130,10 @@ namespace Dungeon {
         template<char placeholder = '%', typename T, typename... Args>
         static std::string formatMessage(const string& format, T&& val, Args&&... values) {
             string copy = formatMessage<placeholder>(format, forward<Args>(values)...);
-            return copy.replace(copy.find(placeholder), 1, val);
+            size_t pos = copy.find(placeholder);
+            if (pos == string::npos)
+                throw std::invalid_argument("Not enough placeholders in '" + format + "'");
+            return copy.replace(pos, 1, val);
         }
         
         template<char placeholder = '%'>

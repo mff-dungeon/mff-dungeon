@@ -37,6 +37,9 @@ namespace Dungeon {
 		} catch (GameException& ge) {
 			LOGS(Error) << "Game exception occured and Driver missed it. " << ge.what() << LOGF;
 		}
+		catch (const std::exception& e) {
+			LOGS(Error) << e.what() << LOGF;
+		}
 		catch (char const * e) {
 			LOGS(Error) << e << LOGF;
 		}

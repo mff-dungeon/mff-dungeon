@@ -119,10 +119,6 @@ namespace Dungeon {
 			return *this;
 		}
 		strMap.insert(pair<string, value_type>(searchstring,value));
-		if (strMap.size() == 2) {
-			strMap.insert(pair<string, value_type>(string("any"),value));
-			strMap.insert(pair<string, value_type>(string("anything"),value));
-		}
 		return *this;
 	}
 
@@ -175,7 +171,7 @@ namespace Dungeon {
 				if (cost < tol) {
 					sum += WordMatch - cost;
 					lastmatch = i + 1;
-                                        matched++;
+					matched++;
 					break; // next word from needle
 				}
 			}
@@ -188,8 +184,8 @@ namespace Dungeon {
 	value_type FuzzyStringMatcher<value_type>::find(const string& needle) {
 		LOGS(Debug) << "Looking for '" << needle << "'" << LOGF;
 		int max = 0;
-		auto maxMatch = strMap.begin();
-		bool uncertain = true;
+		value_type maxMatch;
+		bool uncertain = false;
 		vector<value_type> possibleMatches;
 		vector<string> nTok = StringMatcher::tokenize(needle);
 
@@ -199,12 +195,12 @@ namespace Dungeon {
 			LOGS(Debug) << " in " << pair->first << " -> " << d << " equalness" << LOGF;
 			if (d > max) {
 				max = d;
-				maxMatch = pair;
+				maxMatch = pair->second;
 				uncertain = false;
 				possibleMatches.clear();
 				possibleMatches.push_back(pair->second);
 			} else if (d == max) {
-				uncertain = uncertain || maxMatch->second != pair->second; // The same object with different names
+				uncertain = uncertain || maxMatch != pair->second; // The same object with different names
 				possibleMatches.push_back(pair->second);
 			}
 		}
@@ -214,7 +210,7 @@ namespace Dungeon {
 		if (uncertain)
 			throw StringMatcher::Uncertain<value_type>(possibleMatches);
 
-		return maxMatch->second;
+		return maxMatch;
 	}
 
 	template<typename value_type>

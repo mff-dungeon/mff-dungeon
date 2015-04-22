@@ -42,7 +42,12 @@ namespace Dungeon {
 
 	class PickupAction : public MultiTargetAction {
 	public:
-		PickupAction(const string& type = "location-pickup") : MultiTargetAction(type) { }
+		PickupAction(const string& type = "location-pickup") : MultiTargetAction(type) {
+                    messages.unspecified = "Do you want to pick %?";
+                    messages.nextTime = "There was just one option, but you should specify what to pick up next time.";
+                    messages.uncertain = "Sorry, did you want to pick %?";
+                    messages.noCandidate = "Sorry, I don't understand what to pick. Please try to explain it better.";
+                }
 
 		virtual void explain(ActionDescriptor* ad);
 		virtual bool match(const string& command, ActionDescriptor* ad);

@@ -59,15 +59,17 @@ Stručně pár dalších důležitých tříd v návrhu:
 
 \paragraph{Driver} Implementovány jsou aktuálně \class{TextDriver}, obsluhující zprávy textového charakteru, a jeho potomci \class{ConsoleDriver} a \class{JabberDriver}. Jeden umožňuje ovládat postavu ze standartního vstupu a zprávy vypisovat na standartní výstup, druhý se přihlašuje jako jabber klient s adresou \jid a komunikuje pomocí XMPP.
 
-\paragraph{Action} Její potomci reprezentují proveditelnou akci. Obsahuje zejména metodu \texttt{commit}, která spustí provedení akce.
+\paragraph{Action} Její potomci reprezentují proveditelnou akci. Obsahuje zejména metodu \texttt{match}, která porovnává vstup od uživatele s očekávaným vzorem (regulárním výrazem) a metodu \texttt{commit}, která spustí provedení akce.
 
-\paragraph{IObject} Každý objekt ve hře implementuje toto rozhraní. Obsahuje metody pro zjišťování informací o objektu, persistenci vlastností a udržování relací.
+\paragraph{ActionDescriptor} Třída reprezentující komunikaci s jedním konkrétním uživatelem a provedení jedné, nebo i více akcí. Pamatuje si přijatou zprávu od uživatele a uživatele, který ji odeslal a ukládá si všechny odpovědi, které se mají odeslat zpět k uživateli.
 
-\paragraph{ThorsHammer} Speciální herní objekt. Kdo jej vlastní, má přístup k administrátorským funkcím hry.
+\paragraph{Output} Dodat...
+
+\paragraph{Base} Každý objekt ve hře implementuje toto rozhraní. Obsahuje metody pro zjišťování informací o objektu, persistenci vlastností a udržování relací.
 
 \section{Reprezentace herního světa}
 
-Každý objekt ve hře má svůj unikátní textový identifikátor a je instancí třídy implementující rozhraní IObject. Téměř každý objekt také implementuje rozhraní \class{IDescriptable}, které poskytuje objektu název a rozsáhlejší popis. 
+Každý objekt ve hře má svůj unikátní textový identifikátor a je instancí třídy implementující rozhraní Base. Téměř každý objekt také implementuje rozhraní \class{IDescriptable}, které poskytuje objektu název a rozsáhlejší popis. 
 
 Objekty mezi sebou uchovávají relace, což jsou orientované hrany s daným typem. Mezi dvěma objekty může existovat pouze jedna relace od každého typu a směru.
 
@@ -87,7 +89,7 @@ Z databáze načítá objekty \class{ObjectLoader}, ke čtení vlastností se vy
 
 \section{Herní objekty a akce}
 
-Jak už bylo řečeno, všechny objekty dědí IObject a zpravidla také IDescriptable. Základní vlastností herního objektu je schopnost zjistit akce dostupné na tomto objektu. Tak je dosaženo maximální flexibility světa. Není třeba mít na jednom místě seznam všeho co lze kdykoli provést, a v různém kontextu se mohou stejné zprávy vyhodnotit různě. 
+Jak už bylo řečeno, všechny objekty dědí Base a zpravidla také IDescriptable. Základní vlastností herního objektu je schopnost zjistit akce dostupné na tomto objektu. Tak je dosaženo maximální flexibility světa. Není třeba mít na jednom místě seznam všeho co lze kdykoli provést, a v různém kontextu se mohou stejné zprávy vyhodnotit různě. 
 
 Při zpracovávání akce se v jednu chvíli zjistí akce na všech objektech v okolí uživatele, a postupně se na nich spouští metoda \texttt{match}. Jakmile se první akce k příkazu přihlásí, je provedena a na ostatní se již nedostane.
 
@@ -99,17 +101,23 @@ Dalšími obecnými typy objektů jsou:
 
 \paragraph{Item} Cokoli, co jde uchopit. Objekt samotný nemá akce, ale má vlastnosti \texttt{size} a \texttt{weight}, udávající velikost a váhu objektu.
 
-\paragraph{Wearable} Cokoli, co jde použít jako část oděvu. Tento objekt používají zbraně a různé typy brnění. Umožňuje objektům měnit bojové vlastnosti postav.
+\paragraph{Wearable} Potomek třídy \class{Item}, co jde použít jako část oděvu. Tento objekt používají zbraně a různé typy brnění. Umožňuje objektům měnit bojové vlastnosti postav.
 
-\paragraph{Inventory} Potomek Wearable, přidává navíc akci drop a umožňuje v sobě ukládat předměty.
+\paragraph{Inventory} Potomek \class{Wearable}, přidává navíc akci drop a umožňuje v sobě ukládat předměty.
 
-\paragraph{Location} Reprezentuje lokaci, ve které se ostatní objekty nacházejí. Tyto lokace jsou buď místnosti, které jsou s ostatními místnostmi spojeny dveřmi, nebo truhly, které obsahují předměty. Akce na lokaci jsou zejména průzkumné. 
+\paragraph{Location} Reprezentuje lokaci, ve které se ostatní objekty nacházejí. Tyto lokace jsou buď místnosti, které jsou s ostatními místnostmi spojeny dveřmi, nebo truhly, které obsahují předměty. Akce na lokaci jsou zejména průzkum a sebrat věc ležící v lokaci.
 
-\paragraph{Door} Jedno nebo obousměrný teleportační tunel mezi dvěma lokacemi. Akcí na tomto objektu je průchod skrz.
+\paragraph{Door} Jedno nebo obousměrný teleportační tunel mezi dvěma lokacemi. Akcí na tomto objektu je průchod skrz. Může mít také speciální zámek, který lze odemknout pouze přiřazeným klíčem.
 
 \paragraph{Crafter} Speciální objekt, který je používán pro tvorbu věcí. Udržuje v sobě objekty \class{Recipe}, které říkají, jaké věci umí \class{Crafter} vyrobit. Ve hře se vyskytuje například jako kovadlina.
 
-\paragraph{Resource} Potomek třídy \class{Item}, reprezentuje věci, které se seskupují, tedy například peníze, nebo materiály pro \class{Crafter}.
+\paragraph{Resource} Potomek třídy \class{Item}, reprezentuje věci, které se seskupují, tedy například peníze, nebo materiály pro \class{Crafter}. Má na sobě metody \texttt{split} a \texttt{join}, které umožňují objektům vyjadřující stejnou \class{Resource} se buď rozdělit na dva podobjekty, nebo spojit do jednoho objektu.
+
+\paragraph{Interactive} Jednoduchá obálka pro vytváření herních objektů, jako jsou cedule, nebo někdo, s kým si může hráč promluvit. Přidává pouze k zkratky k zajištění tohoto chování, více viz sekce \texttt{Behavior}
+
+\paragraph{Spell} Umožňuje používat kouzla. Každý hráč se kouzlo naučí přečtením speciálního svitku. Mezi kouzla se dají například zařadit léčivá, nebo teleportovací kouzla.
+
+\paragraph{ThorsHammer} Speciální objekt, který vlastní administrátoři. Pomocí tohoto objektu se dá zasahovat do herního světa nebo i běhu programu. Administrátorovi umožňuje měnit objekty pomocí vnořené třídy \class{PropertyEditor}, upravovat si počet surovin, nebo například vyžádat ukončení serveru.
 
 \subsection{Parametrizované akce}
 
@@ -117,7 +125,9 @@ Velmi častým požadavkem je, aby akce měla nějaký parametr. Například kdy
 
 Zároveň, pokud je v místnosti pouze jeden lektvar, pak spuštění akce vypije právě ten jeden lektvar i bez bližšího určení.
 
-Při výběru objektů se porovnává editační vzdálenost (Damerau-Levenshteinova) slov z názvu objektu od slov ze zadaného textu. Při počítání vzdálenosti je změna znaku pocítána jako větší úprava, než přidání či odebrání. Počítají se pouze dostatečně podobná slova ve správnm pořadí. Proto přidání neurčujících slov (členů, zájmen) neovlivní volbu, a naopak nespecifikování částí názvu (bližší popisy) nemusí nutně znamenat chybu ve výběru. Pokud se nedokáže mechanismus rozhodnout, který objekt vybrat, dá uživateli na výběr.
+Při výběru objektů se porovnává editační vzdálenost (Damerau-Levenshteinova) slov z názvu objektu od slov ze zadaného textu. Při počítání vzdálenosti je změna znaku pocítána jako větší úprava, než přidání či odebrání. Počítají se pouze dostatečně podobná slova ve správném pořadí. Proto přidání neurčujících slov (členů, zájmen) neovlivní volbu, a naopak nespecifikování částí názvu (bližší popisy) nemusí nutně znamenat chybu ve výběru. Pokud se nedokáže mechanismus rozhodnout, který objekt vybrat, dá uživateli na výběr.
+
+Tento mechanismus je silně spojen s objektem \class{MTATrap}, který zajišťuje přerušení akce a umožňuje dát uživateli na výběr, co se má provést bez toho, aby byly ztraceny informace o pasti. Tento objekt navíc umí rozpoznat speciální klíčová slova, jako jsou například \textit{it}, \textit{any}, \textit{none} apod.
 
 \section{Další (nejen) herní mechanismy}
 
@@ -146,7 +156,7 @@ you change your name?
 
 \subsection{Boj}
 \label{combat}
-Systém boje vznikl krátce po vzniku dialogů a hojně jich využívá. Každá instance třídy \class{Creature} přidá akci \texttt{attack}, která inicializuje boj. Po zavolání akce \texttt{attack} se pustí obslužná metoda, která vždy provede požadovanou akci a v dialogu se zeptá uživatele, co dělat dále. Pokud hráč dosáhne 0 životů, zemře, pokud dosáhne 0 životů \class{Creature}, dostane se do stavu \texttt{Dying}. V tomto stavu je přidána akce kill, která dorazí příšeru.
+Systém boje vznikl krátce po vzniku dialogů a hojně jich využívá. Každá instance třídy \class{Creature} přidá akci \texttt{attack}, která inicializuje boj. Po zavolání akce \texttt{attack} se pustí obslužná metoda, která vždy provede požadovanou akci a v dialogu se zeptá uživatele, co dělat dále. Pokud hráč dosáhne 0 životů, zemře, pokud dosáhne 0 životů \class{Creature}, nastane smrt příšery.
 
 \subsection{Smrt}
 
@@ -161,6 +171,10 @@ Pasti jsou velmi důležitá součást naší hry. Umožňují nám měnit svět
 \end{itemize}
 V současné době máme ve hře několik pastí, například \class{HealingTrap} (past, která léčí jednoho uživatele, nebo všechny v místnosti), \class{AttackTrap} (nechá něco zaútočit na uživatele), \class{DoorLock} (past, která se chová jako zámek na dveřích), nebo \class{ItemRespawner} (past, která umožňuje věcem se znovu objevit po určitém intervalu.)
 
+\subsection{Behavior}
+
+Potomci třídy \class{Behavior} přidávají jednoduchý způsob, jak zajistit modulární chování herních objektů. Přidáním speciální relace na původním objektu se objekt spáruje s objektem chování, který přidává novou akci na objektu. Tímto můžeme pouze přidáním jednoduché relace například přidat objektu nápis, který lze přečíst bez toho, abychom museli mít vytvořený speciálního potomka objektu, který by přidával akci čtení.
+
 \section{Programová část}
 
 V této kapitole bychom chtěli vypíchnout některé části kódu, které se nám líbí, jsou zajímavé, nebo se k nim váže nějaká příhoda.
@@ -170,10 +184,10 @@ V této kapitole bychom chtěli vypíchnout některé části kódu, které se n
 Podstatnou částí systému, na kterou jsme patřičně hrdí, je logovací mechanismus. Jeho srdcem je třída \class{Logger}, se kterou aplikace komunikuje během hry v singletonovém režimu použitím několika šikovných maker.
 
 \begin{lstlisting}
-	LOGS("Loader", Fatal) << "Error saving object "
+	LOGS(Fatal) << "Error saving object "
 	                      << id << ", error code " << err << LOGF;
 	                      
-    LOG("Loader") << ... // default is Severity::Info
+    LOG << ... // default is Severity::Info
     
     LOGH("Database cleanup") // creates headline for the next section
 \end{lstlisting} 
@@ -184,17 +198,18 @@ Díky přetížení operátoru \texttt{<<} můžeme logovat téměř jakýkoliv 
 Všechny záznamy z logu jsou přesměrovány skrz buffery do výstupů – podtříd \texttt{std::ostream}. Tento objektový přístup je velmi praktický, protože nám umožňuje postavit výstupní soubory na stejnou úroveň jako standardní výstup aplikace. Navíc můžeme pro každý výstup nastavit minimální důležitost, od které události zaznamenává. V současném stavu se log ukládá takto:
 
 \begin{itemize}
-\item na \texttt{stdout} proudí zprávy s důležitostí $>=$ \texttt{Severity::Info}
+\item na \texttt{stdout} proudí zprávy s důležitostí $>=$ \texttt{Severity::Info}.
 \item do souboru \texttt{YYYY-MM-DD-stdout.log} se kopíruje \texttt{stdout}
 \item do souboru \texttt{YYYY-MM-DD-verbose.log} proudí úplně všechny zprávy
 \item do souboru \texttt{YYYY-MM-DD-warnings.log} proudí zprávy s důležitostí $>=$ \texttt{Severity::Warning}
+\item do souboru \texttt{YYYY-MM-DD-debug.log} proudí debugovací zprávy. Z důvodu velkého množství takových zpráv je tento výpis vypnutý a je možné ho zapnout pomocí parametru \texttt{-d}
 \end{itemize}
 
 \noindent
 \textit{(soubory jsou opatřeny datem zapnutí aplikace a zapisuje se do nich režimem append)}
 
 \noindent
-V případě potřeby můžeme kdykoliv toto nastavení změnit i za běhu aplikace. Typickým příkladem této operace je parametr \texttt{--verbose}, se kterým se na obrazovku vypisují úplně všechny záznamy. Této změny dosáhneme jedním řádkem kódu:
+V případě potřeby můžeme kdykoliv toto nastavení změnit i za běhu aplikace. Typickým příkladem této operace je parametr \texttt{-v}, se kterým se na obrazovku vypisují také záznamy úrovně \texttt{Severity::Verbose}. Této změny dosáhneme jedním řádkem kódu:
 
 \begin{lstlisting}
     Logger::getInstance().setMinSeverity(cout, Logger::Severity::Verbose);
@@ -229,9 +244,15 @@ this day.
 
 \noindent Třída využívá přetížení operátoru \texttt{<<} a přetypovaní na string.
 
+\subsection{Spojování částí vět}
+
+Protože hra s uživatelem komunikuje textově, brzy jsme přišli na to, že potřebujeme elegantní způsob, jak skládat jednoduše části vět dohromady. K tomu jsme vytvořili třídu \class{SentenceJoiner}. Instanci této třídy předáme jednotlivé části vět (slova, nebo slovní spojení) a šablonu výstupní věty. \class{SentenceJoiner} za nás poté spojí části dohromady pomocí správných spojek a vrátí nám správně zformátovanou větu.
+
+\noindent Největší sílu má tento mechanismus v kombinaci s náhodným vybíráním zpráv.
+
 \subsection{InstanceOf}
 
-Potřeba použití nečeho takového signalizuje chybu v návrhu, ale pokud chceme mít obecný mechanismus práce s objekty, je občas potřeba o obecném \texttt{IObject*} zjistit něco více. Proto se hodí tento operátor. Použití:
+Potřeba použití nečeho takového signalizuje chybu v návrhu, ale pokud chceme mít obecný mechanismus práce s objekty, je občas potřeba o obecném \texttt{Base*} zjistit něco více. Proto se hodí tento operátor. Použití:
 
 \begin{lstlisting}
 	Alive* A;
@@ -249,7 +270,7 @@ Potřeba použití nečeho takového signalizuje chybu v návrhu, ale pokud chce
 \begin{lstlisting}
 	Alive::AliveClassName == Backpack::BackpackClassName 
 		|| IDescriptable::IDescriptableClassName == Backpack::BackpackClassName 
-		|| IObject::IObjectClassName == Backpack::BackpackClassName;
+		|| Base::BaseClassName == Backpack::BackpackClassName;
 \end{lstlisting}
 
 \noindent Celý operátor tedy pouze projde hiearchii volané třídy a porovná ukazatele na tento konstantní řetězec.
@@ -287,6 +308,14 @@ Nakonec jsme přišli s třídou \class{Cloner}, která využívá vlastnosti ob
 \class{Cloner} umí vytvořit ještě \texttt{deepCopy}, která navíc zkopíruje všechny relace objektu.
 
 Tuto třídu hojně využíváme při vytváření světa ve třídě \class{WorldCreator}, kde nejprve vytvoříme vzory všech objektů a poté už je jenom rozkopírujeme, kde je potřeba.
+
+\subsection{Konfigurace světa}
+
+Původně jsme měli přímo v kódu některé konstanty, kterými jsme například nastavovali název databáze, nebo dobu oživení hráče. S přibývajícím počtem těchto konstant jsme ale zjistili, že ukládat konstanty přímo do kódu je nepraktické a tak vznikly třídy \class{Config} a \class{ConfigParser}. 
+
+Třída \class{Config} má statické metody k zjišťování nastavení, které čtou privátní proměnné jediné instance této třídy. Tím je zajištěno, že není možné hodnotu této proměnné změnit někde v kódu. 
+
+Třída \class{ConfigParser} poté zabaluje čtení konfiguračního souboru. Při předložení souboru instanci této třídy si ho instance načte do mapy v paměti, na kterou se poté ptá \class{Config}. Některé metody této třídy nabízejí možnost předat i lambda funkci, která může dále kontrolovat přečtené hodnoty (například na rozsah, nebo nějaký výčet hodnot).
 
 \section{Ukázky}
 

@@ -30,7 +30,7 @@ namespace Output {
 		for (auto& ptr : contents) {
 			sj << ptr->plainString();
 		}
-		return sj;
+		return sj.getSentence() + "\n";
 	}
 
 	void Container::xhtml(Tag * parent) const {
