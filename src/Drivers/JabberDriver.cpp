@@ -80,7 +80,16 @@ namespace Dungeon {
 		client->send(stateMsg);
 
 		// Do the actual thinking
-		this->process(ad);
+                try {
+                    this->process(ad);
+                } catch(...) {
+                    Message stateMsg2(Message::Chat, ad->from);
+                    stateMsg2.addExtension(new ChatState(ChatStatePaused));
+                    client->send(stateMsg2);
+                    
+                    throw;
+                }
+		
 
                 // Reply
 		const Output::Base& message = ad->getReply();
@@ -128,8 +137,10 @@ namespace Dungeon {
 
 			TextActionDescriptor* ad;
 			if (isInDialog(figureId)) {
+                                LOGS(Verbose) << "Responding in dialog mode." << LOGF;
 				ad = dialogs[figureId];
 			} else {
+                                LOGS(Verbose) << "Creating new dialog." << LOGF;
 				ad = new TextActionDescriptor(this);
 				dialogs[figureId] = ad;
 				ad->from.assign(sender);
@@ -190,7 +201,7 @@ namespace Dungeon {
 	}
 
 	bool JabberDriver::onTLSConnect(const CertInfo& info) {
-		LOG << "TLS connected." << LOGF;
+		LOGS(Verbose) << "TLS connected. [ Valid: " << info.chain << ", Server: '" << info.server << "', Issuer: '" << info.issuer << "' ]" << LOGF;
 		return true;
 	}
 
