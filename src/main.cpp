@@ -53,6 +53,8 @@ string getStacktace() {
  *	Sends stop signal to the ActionQueue
  */
 void finish(int signal) {
+    cout << endl << flush;
+    
     if (finishing) {
         LOGH("Hard shutdown");
         if (signal == SIGINT) LOG << "Caught another SIGINT, already in shutdown mode." << LOGF;
