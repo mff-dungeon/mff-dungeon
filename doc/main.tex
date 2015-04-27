@@ -63,7 +63,7 @@ Stručně pár dalších důležitých tříd v návrhu:
 
 \paragraph{ActionDescriptor} Třída reprezentující komunikaci s jedním konkrétním uživatelem a provedení jedné, nebo i více akcí. Pamatuje si přijatou zprávu od uživatele a uživatele, který ji odeslal a ukládá si všechny odpovědi, které se mají odeslat zpět k uživateli.
 
-\paragraph{Output} Dodat...
+\paragraph{Output} Je celý namespace jednoduchých objektů. Protože chceme využívat rozšíření XMPP XEP-0071, XHTML-IM, je potřeba umět generovat zprávy v XHTML. Protože ale zároveň není podpora úplně dokonalá, každý klient umí nějakou jinou podmnožinu, pokud vůbec, chceme umět generovat i zprávy v čistm textu. Output moduly abstrahují podobu výstupu od semantiky.
 
 \paragraph{Base} Každý objekt ve hře implementuje toto rozhraní. Obsahuje metody pro zjišťování informací o objektu, persistenci vlastností a udržování relací.
 
@@ -248,6 +248,19 @@ this day.
 
 Protože hra s uživatelem komunikuje textově, brzy jsme přišli na to, že potřebujeme elegantní způsob, jak skládat jednoduše části vět dohromady. K tomu jsme vytvořili třídu \class{SentenceJoiner}. Instanci této třídy předáme jednotlivé části vět (slova, nebo slovní spojení) a šablonu výstupní věty. \class{SentenceJoiner} za nás poté spojí části dohromady pomocí správných spojek a vrátí nám správně zformátovanou větu.
 
+\class{SentenceJoiner} usnadňuje velmi častý úkol -- vezmi $n$ řetězců, $n-1$ spoj čárkami, poslední přilep spojkou \uv{and} a za poslední nedávej nic. Potom podle $n$ zvol gramaticky správnou variantu věty:
+\begin{lstlisting}
+	SentenceJoiner sj;
+	sj.setConjunction(", ", " and ");
+	
+	for (auto& obj : objects) sj << obj;
+	
+	return sj.getSentence("There is nothing.", 
+		"There is just %.", 
+		"There are %.");
+\end{lstlisting}
+
+
 \noindent Největší sílu má tento mechanismus v kombinaci s náhodným vybíráním zpráv.
 
 \subsection{InstanceOf}
@@ -293,9 +306,9 @@ O tom jak vypadají dialogy v praxi bylo již psáno v části \ref{dialogs}. Ja
 	});
 \end{lstlisting}
 
-\noindent ActionDescriptor umožňuje zařadit do své vnitřní fronty lambda funkci, která bude reagovat na odpověď uživatele. Pokud AD nemá frontu prázdnou, musí si jej Driver někde zapamatovat a vrátit se k němu při přijetí další zprávy.
+\noindent ActionDescriptor umožňuje zařadit do své vnitřní fronty funkci, která bude reagovat na odpověď uživatele. Pokud AD nemá frontu prázdnou, musí si jej Driver někde zapamatovat a vrátit se k němu při přijetí další zprávy.
 
-Všechny lambda funkce nemusí být vytvořeny hned, dají se vytvářet postupně. Tento zápis je však přehledný, a z kódu je hned vidět jak dialog probíhá. Zároveň je ale možno udělat dialog, který není lineární, nebo třeba není předem známý - například boj.
+Všechny funkce nemusí být zařazeny hned, dají se vytvářet postupně. Tento zápis je však přehledný, a z kódu je hned vidět jak dialog probíhá. Zároveň je ale možno udělat dialog, který není lineární, nebo třeba není předem známý - například boj.
 
 Dialog ale může rozbít atomicitu operací, jelikož při čekání na odpověď od uživatele mohou probíhat jiné akce, je tedy potřeba po získání odpovědi zkontrolovat stav herního světa, aby nedošlo k ilegální úpravě světa.
 
@@ -347,20 +360,25 @@ ground. You have a Leather backpack with you. There is Red potion.
 \end{example}
 \subsection{Systém boje}
 \begin{example}
-\user explore
-\dung You are in Landcastle. A nice stone castle, having a magical aura surrounding it. You feel the aura and feel much better here. If you are confused what to do, try typing 'help'. Around you are Bridge and Climb. You smell the presence of Aearsis and CiTrus.
-\user go to bridge
-\dung You walk over the bridge. Seems like you are in Faygrass. A vast grass field. You see Rat and Rat wandering around. You see Small spider wandering around. Around you are Muddy walkway, Bridge and Stairs.
+\dung You are in Faygrass. You see small spider wandering around. Around you is muddy walkway, bridge and stairs. 
 \user attack spider
-\dung You have dealt 7 damage to Small spider by your Wooden axe. Small spider caused you 10 damage by its poisoned bite. Your current hitpoints have changed to 290. Type 'attack' (a) to attack the enemy, 'check' (c) to check its status or 'run' (r) to run from the fight. 
-Small spider: [*******---]     You: [**********]
-\user attack
-\dung Your Wooden axe have caused 7 damage to Small spider. Small spider caused you 10 damage by its poisoned bite. Your current hitpoints have changed to 280. Type 'attack' (a) to attack the enemy, 'check' (c) to check its status or 'run' (r) to run from the fight. 
-Small spider: [****------]     You: [**********]
-\user a
-\dung Your Wooden axe have caused 6 damage to Small spider. Small spider is mortally wounded. Use 'kill ...' to finish it.
-\user kill spider
-\dung Small spider has dropped nothing. You have killed Small spider.
+\dung You have dealt 9 damage to Small spider with your wooden axe. Small spider caused you 11 damage with its poisoned bite. Your current hitpoints have changed to 289.
+ 
+You are in fight, you have to act fast. To strike the enemy, write 's'. To run from the fight, type 'r'. To get this information again, type 'h'.
+
+Small spider: \#\#\#\#\#\#\#--- Aearsis: \#\#\#\#\#\#\#\#\#- 
+\user s
+\dung You have dealt 8 damage to Small spider with your wooden axe. Small spider caused you 9 damage with its poisoned bite. Your current hitpoints have changed to 280. 
+
+Small spider: \#\#\#\#\#----- Aearsis: \#\#\#\#\#\#\#\#\#- 
+\user s
+\dung You have dealt 9 damage to Small spider with your wooden axe. You have received 10 damage from Small spider's poisoned bite. Your current hitpoints have changed to 270. 
+Small spider: \#\#\#------- Aearsis: \#\#\#\#\#\#\#\#\#- 
+\user s
+\dung You have dealt 9 damage to Small spider with your wooden axe. You have received 10 damage from Small spider's poisoned bite. Your current hitpoints have changed to 260. 
+Small spider: \#--------- Aearsis: \#\#\#\#\#\#\#\#-- 
+\user s
+\dung You have dealt 9 damage to Small spider with your wooden axe. You have killed Small spider. It has dropped tiny red potion. 
 \end{example}
 \subsection{Resources}
 \begin{example}
@@ -379,34 +397,35 @@ Small spider: [****------]     You: [**********]
 \subsection{Výroba věcí}
 \begin{example}
 \user craft table
-\dung Small red potion: 12 white powder and 20 sand. Tiny red potion: 4 white powder and 8 sand.
+\dung You can create following items using these resources:
+Small red potion, 12 white powder, 20 sand.
+Tiny red potion, 4 white powder, 8 sand.
 \user create small red potion
 \dung You have tried to craft Small red potion but you succeeded just barely. You have acquired a Tiny red potion and put it in your backpack.
 \end{example}
 \subsection{Past}
 \begin{example}
-\user explore chest
+\user look into chest
 \dung You have cut yourself accidentaly with an icicle. You have received 37 damage. There is also some Small red potion.
 \user pick potion
 \dung You've picked up Small red potion.
 \end{example}
 \subsection{String matching}
 \begin{example}
-\dung Seems like you are in Shadowcliff. Dark dangerous cliffs. You shouldn't leave the path you are currently on. You see Rat wandering around. There lie corpses of Small spider and Small spider. There are Pathway and Climb. There lies 75 sand. There are 31 wood and 30 wood.
-\user pick wood
-\dung Sorry, did you mean 31 wood or 30 wood?
-\user 31
-\dung You've picked up 31 wood.
+\user create boots
+\dung Sorry, did you mean hard leather boots, iron boots or leather boots? 
+\user leather boots
+\dung You have managed to craft Leather boots! You have acquired a Leather boots and put it in your backpack. 
 \end{example}
 
 \subsection{Sdružující akce}
 \begin{example}
 \user use the wooden thing
-\dung Sorry, did you mean wooden door, Wooden axe or Wooden club?
+\dung Sorry, did you mean wooden door, wooden axe or wooden club?
 \user axe
 \dung You have successfully equipped Wooden axe.
 \user use the wooden thing
-\dung Sorry, did you mean wooden door or Wooden club?
+\dung Sorry, did you mean wooden door or wooden club?
 \user door
 \dung You've gone through that door...
 \end{example}
