@@ -238,24 +238,35 @@ namespace Dungeon {
 	}
 
 	CombatAction::CombatMatch CombatAction::matchAnswer(const string& reply) {
-		static FuzzyStringMatcher<CombatAction::CombatMatch> matcher;
-		if (matcher.empty()) {
-			matcher.add("a", CombatAction::CombatMatch::Attack);
-			matcher.add("s", CombatAction::CombatMatch::Attack);
-			matcher.add("c", CombatAction::CombatMatch::Check);
-			matcher.add("r", CombatAction::CombatMatch::Run);
-			matcher.add("h", CombatAction::CombatMatch::Help);
-			matcher.add("attack", CombatAction::CombatMatch::Attack);
-			matcher.add("strike", CombatAction::CombatMatch::Attack);
-			matcher.add("check", CombatAction::CombatMatch::Check);
-			matcher.add("status", CombatAction::CombatMatch::Check);
-			matcher.add("run", CombatAction::CombatMatch::Run);
-			matcher.add("help", CombatAction::CombatMatch::Help);
-		}
-		try {
-			return matcher.find(reply);
-		} catch (GameException& ge) {
-			return CombatAction::CombatMatch::Help;
+		static FuzzyStringMatcher<CombatMatch> matcher;
+		switch (combatState) {
+			case CombatMatch::Ask:
+				if (matcher.empty()) {
+					matcher.add("a", CombatMatch::Attack);
+					matcher.add("s", CombatMatch::Attack);
+					matcher.add("c", CombatMatch::Check);
+					matcher.add("r", CombatMatch::Run);
+					matcher.add("h", CombatMatch::Help);
+					matcher.add("x", CombatMatch::Berserk);
+					matcher.add("berserk", CombatMatch::Berserk);
+					matcher.add("fight until death", CombatMatch::Berserk);
+					matcher.add("fight till death", CombatMatch::Berserk);
+					matcher.add("attack", CombatMatch::Attack);
+					matcher.add("strike", CombatMatch::Attack);
+					matcher.add("check", CombatMatch::Check);
+					matcher.add("status", CombatMatch::Check);
+					matcher.add("run", CombatMatch::Run);
+					matcher.add("help", CombatMatch::Help);
+				}
+				try {
+					return matcher.find(reply);
+				} catch (GameException& ge) {
+					return CombatMatch::Help;
+				}
+			default:
+				auto mode = combatState;
+				combatState = CombatMatch::Ask;
+				return mode;
 		}
 	}
 
@@ -263,11 +274,15 @@ namespace Dungeon {
 		if (!checkValidity(ad)) {
 			return;
 		}
+		CombatMatch action = matchAnswer(reply);
+		combatStep(ad, action);
+	}
 
+	void CombatAction::combatStep(ActionDescriptor* ad, CombatMatch action) {
 		Creature* creature = creaturePtr.unsafeCast<Creature>();
-		CombatAction::CombatMatch action = matchAnswer(reply);
-		// TODO: Add some actually useful info :) What about calculating chances to win?
-		if (action == CombatAction::CombatMatch::Check) {
+		Human* human = ad->getCaller();
+		// TODO: Add some actually useful info :)
+		if (action == CombatMatch::Check) {
 			if (creature->getPercentageHp() > 0.75) {
 				*ad << creature->getName() << " looks very vital." << eos;
 			} else if (creature->getPercentageHp() > 0.50) {
@@ -279,9 +294,13 @@ namespace Dungeon {
 			}
 		}
 
+		size_t sumDamage = 0;
+
 		// User strikes
-		if (action == CombatAction::CombatMatch::Attack) {
-			creature->damageAlive(ad->getCaller(), creature->calculateDamage(ad->getCaller(), ad->getCaller()->getAttack()), ad);
+		if (action == CombatMatch::Attack || action == CombatMatch::Berserk) {
+			int damage = creature->calculateDamage(human, human->getAttack());
+			sumDamage += damage;
+			creature->damageAlive(human, damage, ad);
 			if (creature->getState() == Alive::State::Dying) {
 				creature->die(ad);
 				return;
@@ -289,11 +308,14 @@ namespace Dungeon {
 		}
 
 		// Creature strikes
-		if (action != CombatAction::CombatMatch::Check)
-			ad->getCaller()->damageAlive(creaturePtr, ad->getCaller()->calculateDamage(creaturePtr, creature->getAttack()), ad);
-		if (ad->getCaller()->getState() != Alive::State::Living) return;
+		if (action != CombatMatch::Check) {
+			int damage = human->calculateDamage(creaturePtr, creature->getAttack());
+			sumDamage += damage;
+			human->damageAlive(creaturePtr, damage, ad);
+		}
+		if (human->getState() != Alive::State::Living) return;
 
-		if (action == CombatAction::CombatMatch::Run) {
+		if (action == CombatMatch::Run) {
 			// TODO: Some dexterity-based randomness?
 			*ad << "You have managed to run from " << creature->getName() << "." << eos;
 			return;
@@ -301,7 +323,9 @@ namespace Dungeon {
 
 		if (!combatModeInformed || action == CombatAction::Help) {
 			ad->flushContainers();
-			*ad << "\nYou are in fight, you have to act fast. To strike the enemy, write 's'. To run from the fight, type 'r'. To get this information again, type 'h'. Currently, you can't use your special skills and equipment during a fight." << eos;
+			*ad << "\nYou are in fight, you have to act fast. To strike the enemy, write 's'. To run from the fight, type 'r'. To get this information again, type 'h'." << eos;
+			if (sumDamage) *ad << "If you're brave, cross your fingers and fight till death with 'x'." << eos;
+			*ad << "Currently, you can't use your special skills and equipment during a fight." << eos;
 			combatModeInformed = true;
 		}
 
@@ -311,9 +335,12 @@ namespace Dungeon {
 		out << ": ";
 		out.emplace<Output::ProgressBar>(creature->getCurrentHp(), creature->getMaxHp(), 10, "#FF0000");
 		out << "     ";
-		out.emplace<Output::FormattedString>("b", ad->getCaller()->getName());
+		out.emplace<Output::FormattedString>("b", human->getName());
 		out << ": ";
-		out.emplace<Output::ProgressBar>(ad->getCaller()->getCurrentHp(), ad->getCaller()->getMaxHp(), 10, "#00FF00");
+		out.emplace<Output::ProgressBar>(human->getCurrentHp(), human->getMaxHp(), 10, "#00FF00");
+
+		if (action == CombatMatch::Berserk && sumDamage)
+			return combatStep(ad, CombatMatch::Berserk);
 		ad->waitForReply(this, &CombatAction::combatLoop);
 	}
 

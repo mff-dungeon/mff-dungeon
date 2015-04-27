@@ -213,8 +213,7 @@ namespace Dungeon {
 				}
 			}
 		}
-		if (amount == 0) return this;
-		changeHp(-amount, ad);
+		if (amount > 0) changeHp(-amount, ad);
 		return this;
 	}
 

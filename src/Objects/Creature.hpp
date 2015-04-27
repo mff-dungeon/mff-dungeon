@@ -52,13 +52,14 @@ namespace Dungeon {
 	public:
 
 		enum CombatMatch {
-			Invalid = 0,
+			Ask = 0,
 			Attack = 1,
 			Check = 2,
 			Run = 3,
-			Help = 4
-		};
-                
+			Help = 4,
+			Berserk = 5
+		} combatState = Ask;
+
 		CombatAction(const string& type = "creature-combat") : MultiTargetAction(type) {
                     messages.unspecified = "You can attack either %. Which one first?";
                     messages.nextTime = "You should tell me what do you want to attack. But this time it was pretty obvious.";
@@ -77,6 +78,7 @@ namespace Dungeon {
 
 		bool checkValidity(ActionDescriptor* ad);
 		void combatLoop(ActionDescriptor* ad, const string& reply);
+		void combatStep(ActionDescriptor* ad, CombatMatch action);
 		CombatMatch matchAnswer(const string& reply);
 	private:
 		ObjectPointer creaturePtr;
