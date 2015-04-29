@@ -10,7 +10,7 @@
 \date{}
 
 \def\class#1{\emph{#1}}
-\def\jid{\texttt{dungeon@eideo.cz}}
+\def\jid{\texttt{dungeon@eideo.cz}\relax}
 \newenvironment{example}%
 {\smallskip\noindent\ignorespaces\obeylines\tt}%
 {\smallskip\par\noindent
@@ -35,7 +35,7 @@
 
 Projekt byl zadán jako zápočtový program na MFF UK. Cílem bylo vytvořit herní systém textové adventury, kterou bude možno hrát přes komunikační síť Jabber. Samotná adventura by měla být rozumně ovladatelná textovými příkazy a komunikovat s uživatelem přirozeným jazykem - v angličtině. Herní svět je společný pro všechny hráče, kteří se v něm pohybují nezávisle.
 
-Jako jazyk implementace byl zvolen \texttt{C++}. Součet schopností programovat v týmu byl pro tento jazyk největší, a zároveň je vhodný pro objektový návrh.
+Jako jazyk implementace byl zvolen \texttt{C++}, jelikož je vhodný pro objektový návrh. Zpočátku jsme jazyk příliš neuměli, proto je v základním návrhu několik nedostatků. Všechny nalezené nedostatky jsme však opravili po absolvování předmětu Programování v C++.
 
 \section{Základní návrh}
 
@@ -49,7 +49,7 @@ Nejprve, jak vypadá životní cyklus \class{ActionDescriptoru}.
 \label{ad-lifecycle}
 \end{figure}
 
-Každý běžící \class{Driver} má své vlastní vlákno (na obrázku zeleně), odlišné od hlavního herního vlákna (modře). V okamžiku přijetí zprávy vytvoří driver objekt AD nebo jeho potomka. Uloží si do něj všechny potřebné informace pro další zpracování (odesílatele, text zprávy atp.) a  zařadí jej do fronty v ActionQueue. Ta pak ve svém vlákně přiděluje čas na zpracování akce postupně a zajišťuje tím atomicitu operací \uv{zadarmo}. Když na tuto akci dojde řada, tak se teprve zjišťuje Driver co vlastně má provést. Jako první sváže akci s herním objektem uživatele - v tomto vlákně již má přístup k databázi. Poté z věcí v okolí sežene seznam proveditelných akcí a zjistí, která odpovídá vstupnímu textu. Jakmile je akce svázána, předá se řízení dané akci. Ta provede změny v herním světě a vloží do AD informace potřebné k sestavení odpovědi.
+Každý běžící \class{Driver} má své vlastní vlákno (na obrázku zeleně), odlišné od hlavního herního vlákna (modře). V okamžiku přijetí zprávy vytvoří driver objekt AD nebo jeho potomka. Uloží si do něj všechny potřebné informace pro další zpracování (odesílatele, text zprávy atp.) a  zařadí jej do fronty v ActionQueue. Ta pak ve svém vlákně přiděluje čas na zpracování akce postupně a zajišťuje tím atomicitu operací \uv{zadarmo}. Když na tuto akci dojde řada, tak teprve zjišťuje Driver co vlastně má provést. Jako první sváže akci s herním objektem uživatele - v tomto vlákně již má přístup k databázi. Poté z věcí v okolí sežene seznam proveditelných akcí a zjistí, která odpovídá vstupnímu textu. Jakmile je akce svázána, předá se řízení dané akci. Ta provede změny v herním světě a vloží do AD informace potřebné k sestavení odpovědi.
 
 Stručně pár dalších důležitých tříd v návrhu:
 
@@ -59,11 +59,11 @@ Stručně pár dalších důležitých tříd v návrhu:
 
 \paragraph{Driver} Implementovány jsou aktuálně \class{TextDriver}, obsluhující zprávy textového charakteru, a jeho potomci \class{ConsoleDriver} a \class{JabberDriver}. Jeden umožňuje ovládat postavu ze standartního vstupu a zprávy vypisovat na standartní výstup, druhý se přihlašuje jako jabber klient s adresou \jid a komunikuje pomocí XMPP.
 
-\paragraph{Action} Její potomci reprezentují proveditelnou akci. Obsahuje zejména metodu \texttt{match}, která porovnává vstup od uživatele s očekávaným vzorem (regulárním výrazem) a metodu \texttt{commit}, která spustí provedení akce.
+\paragraph{Action} Její potomci reprezentují proveditelnou akci. Obsahuje zejména metodu \texttt{match}, která porovnává vstup od uživatele s očekávaným vzorem (zpravidla regulárním výrazem) a metodu \texttt{commit}, která spustí provedení akce.
 
 \paragraph{ActionDescriptor} Třída reprezentující komunikaci s jedním konkrétním uživatelem a provedení jedné, nebo i více akcí. Pamatuje si přijatou zprávu od uživatele a uživatele, který ji odeslal a ukládá si všechny odpovědi, které se mají odeslat zpět k uživateli.
 
-\paragraph{Output} Je celý namespace jednoduchých objektů. Protože chceme využívat rozšíření XMPP XEP-0071, XHTML-IM, je potřeba umět generovat zprávy v XHTML. Protože ale zároveň není podpora úplně dokonalá, každý klient umí nějakou jinou podmnožinu, pokud vůbec, chceme umět generovat i zprávy v čistm textu. Output moduly abstrahují podobu výstupu od semantiky.
+\paragraph{Output} Je celý namespace jednoduchých objektů. Protože chceme využívat rozšíření XMPP XEP-0071, XHTML-IM, je potřeba umět generovat zprávy v XHTML. Protože ale zároveň není podpora úplně dokonalá, každý klient umí nějakou jinou podmnožinu, pokud vůbec, chceme umět generovat i zprávy v čistém textu. Output moduly abstrahují podobu výstupu od sémantiky.
 
 \paragraph{Base} Každý objekt ve hře implementuje toto rozhraní. Obsahuje metody pro zjišťování informací o objektu, persistenci vlastností a udržování relací.
 
@@ -81,9 +81,7 @@ To ale není jediné využití této metody. Dá se ji podstrčit libovolný obj
 
 \subsection{Uchovávání v paměti}
 
-Herní svět může být snadno docela veliký, proto jej nikdy nechceme načítat do paměti celý. Všechny herní objekty se proto načítají na vyžádání v době potřeby, kde to jde tak se používá pouze id objektu, předávané pomocí OP. Pro uchovávání již načtených objektů používáme Splay strom, protože umožňuje rychle přistupovat k objektům, které se používají hodně.
-
-V současné chvíli to není implementováno, ale je možné tento strom upravit tak, aby objekty v určité hloubce (tedy dlouho nepoužité) zahazoval, a tím uvolnil paměť.
+Herní svět může být snadno docela veliký, proto jej nikdy nechceme načítat do paměti celý. Všechny herní objekty se proto načítají na vyžádání v době potřeby, kde to jde tak se používá pouze id objektu, předávané pomocí OP. Pro uchovávání již načtených objektů používáme Splay strom.
 
 Z databáze načítá objekty \class{ObjectLoader}, ke čtení vlastností se využívá Archiveru. \class{DatabaseHandler} uzavírá práci s databází, používáme SQLite.
 
@@ -109,11 +107,11 @@ Dalšími obecnými typy objektů jsou:
 
 \paragraph{Door} Jedno nebo obousměrný teleportační tunel mezi dvěma lokacemi. Akcí na tomto objektu je průchod skrz. Může mít také speciální zámek, který lze odemknout pouze přiřazeným klíčem.
 
-\paragraph{Crafter} Speciální objekt, který je používán pro tvorbu věcí. Udržuje v sobě objekty \class{Recipe}, které říkají, jaké věci umí \class{Crafter} vyrobit. Ve hře se vyskytuje například jako kovadlina.
+\paragraph{Crafter} Speciální objekt, který je používán pro tvorbu věcí. Udržuje si relace na objekty \class{Recipe}, které říkají, jaké věci umí \class{Crafter} vyrobit. Ve hře se vyskytuje například jako kovadlina.
 
 \paragraph{Resource} Potomek třídy \class{Item}, reprezentuje věci, které se seskupují, tedy například peníze, nebo materiály pro \class{Crafter}. Má na sobě metody \texttt{split} a \texttt{join}, které umožňují objektům vyjadřující stejnou \class{Resource} se buď rozdělit na dva podobjekty, nebo spojit do jednoho objektu.
 
-\paragraph{Interactive} Jednoduchá obálka pro vytváření herních objektů, jako jsou cedule, nebo někdo, s kým si může hráč promluvit. Přidává pouze k zkratky k zajištění tohoto chování, více viz sekce \texttt{Behavior}
+\paragraph{Interactive} Jednoduchá obálka pro vytváření herních objektů, jako jsou cedule, nebo někdo, s kým si může hráč promluvit. Přidává pouze k zkratky k zajištění tohoto chování, více viz sekce \texttt{Behavior}.
 
 \paragraph{Spell} Umožňuje používat kouzla. Každý hráč se kouzlo naučí přečtením speciálního svitku. Mezi kouzla se dají například zařadit léčivá, nebo teleportovací kouzla.
 
@@ -125,7 +123,7 @@ Velmi častým požadavkem je, aby akce měla nějaký parametr. Například kdy
 
 Zároveň, pokud je v místnosti pouze jeden lektvar, pak spuštění akce vypije právě ten jeden lektvar i bez bližšího určení.
 
-Při výběru objektů se porovnává editační vzdálenost (Damerau-Levenshteinova) slov z názvu objektu od slov ze zadaného textu. Při počítání vzdálenosti je změna znaku pocítána jako větší úprava, než přidání či odebrání. Počítají se pouze dostatečně podobná slova ve správném pořadí. Proto přidání neurčujících slov (členů, zájmen) neovlivní volbu, a naopak nespecifikování částí názvu (bližší popisy) nemusí nutně znamenat chybu ve výběru. Pokud se nedokáže mechanismus rozhodnout, který objekt vybrat, dá uživateli na výběr.
+Při výběru objektů se porovnává editační vzdálenost (Damerau-Levenshteinova) slov z názvu objektu od slov ze zadaného textu. Při počítání vzdálenosti je změna znaku počítána jako větší úprava, než přidání či odebrání. Počítají se pouze dostatečně podobná slova ve správném pořadí. Proto přidání neurčujících slov (členů, zájmen) neovlivní volbu, a naopak nespecifikování částí názvu (bližší popisy) nemusí nutně znamenat chybu ve výběru. Pokud se nedokáže mechanismus rozhodnout, který objekt vybrat, dá uživateli na výběr.
 
 Tento mechanismus je silně spojen s objektem \class{MTATrap}, který zajišťuje přerušení akce a umožňuje dát uživateli na výběr, co se má provést bez toho, aby byly ztraceny informace o pasti. Tento objekt navíc umí rozpoznat speciální klíčová slova, jako jsou například \textit{it}, \textit{any}, \textit{none} apod.
 
