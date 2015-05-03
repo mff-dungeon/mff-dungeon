@@ -18,16 +18,18 @@ namespace Dungeon {
 	}
 
 	void ActionQueue::process() {
-		ulock u(q_mutex);
-		while (actions.empty() && running) {
-			q_condvar.wait(u);
-		}
-		if (actions.empty()) return;
+		ActionDescriptor *ad;
+		{
+			ulock u(q_mutex);
+			while (actions.empty() && running) q_condvar.wait(u);
+			if (actions.empty()) return;
 
-		ActionDescriptor *ad = actions.front();
+			ad = actions.front();
+			actions.pop();
+		}
+
 		LOGS(Verbose) << "Processing action \"" << ad->in_msg << "\"." << LOGF;
 		gm->roundBegin(ad);
-		actions.pop();
 
 		bool flawless = false;
 		try {
