@@ -79,7 +79,7 @@ namespace Dungeon {
         {
             bool cap = true;
 
-            for (size_t i = 0; i <= s.length(); i++) {
+            for (size_t i = 0; i < s.length(); i++) {
                 if (isalpha(s[i]) && cap) {
                     s[i] = toupper(s[i]);
                     cap = false;
@@ -95,7 +95,7 @@ namespace Dungeon {
 
         static inline std::string decapitalize(std::string&& s)
         {
-            for (size_t i = 0; i <= s.length(); i++) {
+            for (size_t i = 0; i < s.length(); i++) {
                 if (isalpha(s[i])) {
                     s[i] = tolower(s[i]);
                 }
@@ -106,7 +106,7 @@ namespace Dungeon {
         static inline std::string decapitalize(const std::string& cs)
         {
             std::string s(cs);
-            for (size_t i = 0; i <= s.length(); i++) {
+            for (size_t i = 0; i < s.length(); i++) {
                 if (isalpha(s[i])) {
                     s[i] = tolower(s[i]);
                 }
