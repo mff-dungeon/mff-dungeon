@@ -121,7 +121,7 @@ namespace Dungeon {
 	}
 
 	Alive* Alive::setMaxHp(int hp, ActionDescriptor* ad) {
-		if (ad != nullptr && this->maxHp != maxHp && ad->getCaller() == this) {
+		if (ad != nullptr && this->maxHp != hp && ad->getCaller() == this) {
 			*ad << "Your maximum hitpoints have changed to " + to_string(maxHp) + "." << eos;
 		}
 		this->maxHp = hp;
